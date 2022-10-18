@@ -1,0 +1,232 @@
+version: "2"
+services:
+  MongoDB:
+    image: setup-speedy.tools.publicis.sapient.com/speedy/mongodb:offline_release-version
+    tty: true
+    container_name: mongodb
+    restart: on-failure
+    ports:
+      - 27017:27017
+    volumes:
+      - /app/apps/db_data:/data/db
+      - /app/apps/logs/mongodb:/data/logs
+    mem_limit: 4096M
+    mem_reservation: 2048M
+    environment:
+      - MONGODB_ADMIN_USER=admin
+      - MONGODB_ADMIN_PASS=reset@123
+      - MONGODB_APPLICATION_DATABASE=kpidashboard
+      - MONGODB_APPLICATION_USER=devadmin
+      - MONGODB_APPLICATION_PASS=admin@123
+      - server_ip=10.207.16.213
+      - ROLE=PRODUCER
+      - VERTICALS=fs
+    networks:
+      - Network_apps
+
+  CustomAPI:
+    image: setup-speedy.tools.publicis.sapient.com/speedy/customapi:offline_release-version
+    restart: on-failure
+    tty: true
+    container_name: customapi
+    depends_on:
+      - MongoDB
+    mem_limit: 4096m
+    mem_reservation: 1024m
+    ports:
+      - 8080:8080
+    volumes:
+      - /app/apps/logs/customapi:/app/logs
+      - /app/apps/properties/:/app/properties/
+      - /app/apps/offline_data:/app/offline_data/
+      - /app/apps/certs:/app/certs/
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - CONFIG_LOCATION=file:/app/properties/customapi.properties
+      - forgotPassword.uiHost=10.207.16.213
+      - corsFilterValidOrigin=10.207.16.213,localhost
+      - speedyCurrentVersionFile=offline_release-version
+      - version.number=offline_release-version
+    links:
+      - MongoDB:mongodb
+    networks:
+      - Network_apps
+
+  UI:
+    image: setup-speedy.tools.publicis.sapient.com/speedy/ui:offline_release-version
+    restart: on-failure
+    tty: true
+    container_name: ui
+    depends_on:
+      - MongoDB
+      - CustomAPI
+    mem_limit: 256m
+    mem_reservation: 256m
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /app/apps/logs/ui:/var/log/nginx
+    links:
+      - CustomAPI:customapi
+    environment:
+      - API_HOST=customapi
+      - API_PORT=8080
+      - DNS_SSL=10.207.16.213
+    networks:
+      - Network_apps
+
+  Jira_Processor:
+    image: setup-speedy.tools.publicis.sapient.com/speedy/jira-processor:offline_release-version
+    restart: on-failure
+    tty: true
+    container_name: jira-processor
+    mem_limit: 2048m
+    mem_reservation: 1024m
+    ports:
+      - 50008:50008
+    depends_on:
+      - MongoDB
+      - UI
+    volumes:
+      - /app/apps/logs/jira_processor:/app/logs
+      - /app/apps/properties/:/app/properties/
+      - /app/apps/offline_data:/app/offline_data
+      - /etc/hosts:/etc/hosts
+    links:
+      - MongoDB:mongodb
+      - CustomAPI:customapi
+    networks:
+      - Network_apps
+
+  nonJira_Processor:
+    image: setup-speedy.tools.publicis.sapient.com/speedy/nonjira-processor:offline_release-version
+    restart: on-failure
+    tty: true
+    container_name: nonjira-processor
+    mem_limit: 8192m
+    mem_reservation: 2048m
+    ports:
+      - 50001:50001
+      - 50002:50002
+      - 50003:50003
+      - 50007:50007
+      - 50011:50011
+      - 50012:50012
+      - 50014:50014
+    depends_on:
+      - MongoDB
+      - UI
+    volumes:
+      - /app/apps/logs/nonjira_processor:/app/logs
+      - /app/apps/properties/:/app/properties/
+      - /app/apps/offline_data:/app/offline_data
+      - /etc/hosts:/etc/hosts
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - producer.instanceName=10.207.16.213
+    links:
+      - MongoDB:mongodb
+      - CustomAPI:customapi
+    networks:
+      - Network_apps
+  
+  Azure_Processor:
+    image: setup-speedy.tools.publicis.sapient.com/speedy/azure-processor:offline_release-version
+    restart: on-failure
+    tty: true
+    container_name: azure-processor
+    mem_limit: 1024m
+    mem_reservation: 512m
+    ports:
+      - 50017:50017
+    depends_on:
+      - MongoDB
+      - UI
+    volumes:
+      - /app/apps/logs/azure_processor:/app/logs
+      - /app/apps/properties/:/app/properties/
+      - /app/apps/offline_data:/app/offline_data
+      - /etc/hosts:/etc/hosts
+    links:
+      - MongoDB:mongodb
+      - CustomAPI:customapi
+    networks:
+      - Network_apps
+
+  nonAzureBoards_Processor:
+    image: setup-speedy.tools.publicis.sapient.com/speedy/nonazureboards-processor:offline_release-version
+    restart: on-failure
+    tty: true
+    container_name: nonazureboards-processor
+    mem_limit: 2048m
+    mem_reservation: 1024m
+    ports:
+      - 50015:50015
+      - 50016:50016
+    depends_on:
+      - MongoDB
+      - UI
+    volumes:
+      - /app/apps/logs/nonazureboards_processor:/app/logs
+      - /app/apps/properties/:/app/properties/
+      - /app/apps/offline_data:/app/offline_data
+      - /app/apps/certs:/app/certs/
+      - /etc/hosts:/etc/hosts
+      - /var/run/docker.sock:/var/run/docker.sock
+    links:
+      - MongoDB:mongodb
+      - CustomAPI:customapi
+    networks:
+      - Network_apps
+
+  notification-consumer:
+    image: setup-speedy.tools.publicis.sapient.com/speedy/notification-consumer:offline_release-version
+    restart: on-failure
+    depends_on:
+      - MongoDB
+    tty: true
+    container_name: notification-consumer
+    volumes:
+      - /app/apps/properties/:/app/properties/
+    mem_limit: 2048m
+    mem_reservation: 1024m
+    ports:
+      - 50020:50020
+    links:
+      - MongoDB:mongodb
+    networks:
+      - Network_apps
+  kafka:
+    image: setup-speedy.tools.publicis.sapient.com/speedy/kafka:offline_release-version
+    restart: on-failure
+    depends_on:
+      - zookeeper
+    tty: true
+    container_name: kafka
+    mem_limit: 2048m
+    mem_reservation: 1024m
+    environment:
+      - KAFKA_ADVERTISED_HOST_NAME=localhost
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_CREATE_TOPICS=mail-topic:1:1
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://10.207.16.213:9092
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 9092:9092
+    links:
+      - MongoDB:mongodb
+    networks:
+      - Network_apps
+  zookeeper:
+    image: setup-speedy.tools.publicis.sapient.com/speedy/zookeeper:offline_release-version
+    container_name: zookeeper
+    mem_limit: 2048m
+    mem_reservation: 1024m
+    ports:
+      - "2181:2181"
+    networks:
+      - Network_apps
+networks:
+  Network_apps:

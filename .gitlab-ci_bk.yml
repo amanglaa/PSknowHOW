@@ -1,0 +1,39 @@
+stages:
+  - build-customapi
+  - cleanup
+  
+build-customapi:
+  stage: build-customapi
+  tags:
+    - del2vmplinvtech2.sapient.com
+  script: 
+    - echo "RUNNING"
+    - docker version
+    - pwd
+    - mvn clean install -Pcustomapi -DskipTests
+  artifacts:
+    paths:
+      - customapi/target/customapi.jar
+      
+#This one is ran
+on_build-customapi_failure:
+  stage: cleanup
+  script: 
+    - echo "Time to clean up"
+    - set "BUILD_DIR=%CI_PROJECT_DIR%"
+    - set "BUILD_DIR=%BUILD_DIR:/=\%"
+    - echo "Cleaning %BUILD_DIR%"
+    - rmdir /S /Q %BUILD_DIR%
+    - exit /b 0 
+  when: on_failure
+
+clean:
+  stage: cleanup
+  script:
+  - echo "Time to clean up"
+  after_script:
+  - set "BUILD_DIR=%CI_PROJECT_DIR%"
+  - set "BUILD_DIR=%BUILD_DIR:/=\%"
+  - echo "Cleaning %BUILD_DIR%"
+  - rmdir /S /Q %BUILD_DIR%
+  - exit /b 0

@@ -1,0 +1,16 @@
+[
+    {
+      "sc": "default-organization",
+      "id": "AVu3b-MAphY78UZXuYHp",
+      "k": "com.publicissapient.kpidashboard.sonar:TestProject",
+      "nm": "com.publicissapient.kpidashboard.sonar:TestProject",
+      "qu": "TRK"
+    },
+    {
+      "sc": "default-organization",
+      "id": "BVx3b-MAphY78UZXuYHp",
+      "k": "com.publicissapient.kpidashboard.sonar:AnotherTestProject",
+      "nm": "com.publicissapient.kpidashboard.sonar:AnotherTestProject",
+      "qu": "TRK"
+    }
+  ]

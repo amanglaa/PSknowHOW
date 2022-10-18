@@ -1,0 +1,18 @@
+
+FROM mongo
+
+ENV AUTH="yes" \
+    JOURNALING="yes" \
+    DATA_DIR="/data/db" \
+    LOG_DIR="/data/logs" \
+    MONGODB_HOME="/data" \
+    STORAGE_ENGINE="wiredTiger" \
+    SCRIPT_PATH="/etc/init.d/"
+
+COPY scripts/* $SCRIPT_PATH
+
+RUN chmod +x $SCRIPT_PATH/mongodb_start.sh $SCRIPT_PATH/create_db_user.sh
+
+EXPOSE 27017
+RUN ls -lrt $SCRIPT_PATH/
+ENTRYPOINT ["/etc/init.d/mongodb_start.sh"]

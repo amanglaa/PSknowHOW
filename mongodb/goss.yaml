@@ -1,0 +1,40 @@
+file:
+  /etc/init.d/create_db_user.sh:
+    exists: true
+    filetype: file
+    owner: devopsadmin
+    group: devopsadmin
+  /etc/init.d/mongodb_start.sh:
+    exists: true
+    filetype: file
+    owner: devopsadmin
+    group: devopsadmin
+  /usr/bin/mongod:
+    exists: true
+    filetype: file
+    owner: root
+    group: root
+  /usr/bin/mongod:
+    exists: true
+    filetype: file
+    owner: root
+    group: root
+
+group:
+  devopsadmin:
+    exists: true
+    gid: 2017
+
+user:
+  devopsadmin:
+    exists: true
+    gid: 2017
+    uid: 2017
+    groups:
+    - devopsadmin
+
+package:
+  mongodb:
+    installed: true
+  mongodb-tools:
+    installed: true

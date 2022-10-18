@@ -1,0 +1,93 @@
+pipeline {
+   agent any
+   stages {
+
+		stage('Clean workspace') {
+			steps {
+			   cleanWs()
+			}
+		}
+		stage('Checkout') {
+			steps {
+               checkout scm: [$class: 'GitSCM', userRemoteConfigs: [[url: 'https://github.com/PublicisSapient/KnowHow.git',credentialsId: 'githubcred']], branches: [[name: '${SBRANCH}']]], poll: false
+			}
+		}
+		stage('Capture Version') {
+			steps {
+                script {
+					def pom = readMavenPom file: 'pom.xml'
+					env.version = pom.version
+					echo "${pom.version}"
+					echo "${env.version}"
+
+					if(env.version.contains("SNAPSHOT")) {
+						env.version=env.version.replaceAll("-SNAPSHOT","")
+					}
+
+					version = env.version
+                }
+			}
+		}
+
+		stage('docker pull'){
+			steps {
+				withCredentials([usernamePassword(credentialsId: 'REGISTRY_setup-speedy.tools.publicis.sapient.com', passwordVariable: 'REGISTRY_PASSWORD', usernameVariable: 'REGISTRY_USERNAME')]) {
+				sh """
+                   docker login -u ${REGISTRY_USERNAME} -p ${REGISTRY_PASSWORD} setup-speedy.tools.publicis.sapient.com
+                   docker pull setup-speedy.tools.publicis.sapient.com/speedy/jira-processor:$version
+                   docker pull setup-speedy.tools.publicis.sapient.com/speedy/nonjira-processor:$version
+                   docker pull setup-speedy.tools.publicis.sapient.com/speedy/ui:$version
+                   docker pull setup-speedy.tools.publicis.sapient.com/speedy/customapi:$version
+                   docker pull setup-speedy.tools.publicis.sapient.com/speedy/mongodb:$version
+                   docker pull setup-speedy.tools.publicis.sapient.com/speedy/azure-processor:$version
+		   docker pull setup-speedy.tools.publicis.sapient.com/speedy/nonazureboards-processor:$version
+		   docker pull setup-speedy.tools.publicis.sapient.com/speedy/zookeeper:$version
+		   docker pull setup-speedy.tools.publicis.sapient.com/speedy/kafka:$version
+		   docker pull setup-speedy.tools.publicis.sapient.com/speedy/notification-consumer:$version
+				   
+                   docker save setup-speedy.tools.publicis.sapient.com/speedy/jira-processor:$version -o jira.zip
+                   docker save setup-speedy.tools.publicis.sapient.com/speedy/nonjira-processor:$version -o non-jira.zip
+                   docker save setup-speedy.tools.publicis.sapient.com/speedy/ui:$version -o ui.zip
+                   docker save setup-speedy.tools.publicis.sapient.com/speedy/customapi:$version -o customapi.zip
+                   docker save setup-speedy.tools.publicis.sapient.com/speedy/mongodb:$version -o mongo.zip
+		   docker save setup-speedy.tools.publicis.sapient.com/speedy/azure-processor:$version -o azure-processor.zip
+		   docker save setup-speedy.tools.publicis.sapient.com/speedy/nonazureboards-processor:$version -o nonazureboards-processor.zip
+		   docker save setup-speedy.tools.publicis.sapient.com/speedy/zookeeper:$version -o zookeeper.zip
+		   docker save setup-speedy.tools.publicis.sapient.com/speedy/kafka:$version -o kafka.zip
+		   docker save setup-speedy.tools.publicis.sapient.com/speedy/notification-consumer:$version -o notification-consumer.zip
+                   docker logout setup-speedy.tools.publicis.sapient.com
+				"""
+				}
+			}
+		}
+		stage('Create artifact ') {
+			steps{
+				sh """
+					pwd
+					mkdir -p /tmp/${env.version}/
+                                        sed -i 's/offline_release-version/${env.version}/' $workspace/offline/docker-compose.yaml
+					cp -r $workspace/offline/readme.md /tmp/${env.version}/
+					cp -r $workspace/offline/docker-compose.yaml /tmp/${env.version}/
+					cp -r $workspace/offline/scripts /tmp/${env.version}/
+					cd $workspace && zip -r dockers.zip *.zip
+					cp -r $workspace/dockers.zip /tmp/${env.version}
+					cp -r $workspace/offline/apex.json /tmp/${env.version}/
+					cp -r $workspace/offline/appx.json /tmp/${env.version}/
+					cp -r $workspace/offline/upgrade.sh /tmp/${env.version}/scripts
+					cp -r $workspace/offline/migration.sh /tmp/${env.version}/scripts
+					cd /tmp/${env.version}/
+					zip -r Speedy-${env.version}.zip dockers.zip readme.md docker-compose.yaml scripts apex.json appx.json
+                """
+			}
+		}
+		stage('Push artifactory'){
+			steps{
+				sh """
+					#chmod +x $workspace/offline/speedy-packet-send.sh
+					#bash -x $workspace/offline/speedy-packet-send.sh
+					sshpass -p 'sapient@123' scp -r /tmp/${env.version}/Speedy-${env.version}.zip offline@10.148.240.64:/app/offline_release_packet
+				"""
+			}
+		}
+	}
+}

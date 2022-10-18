@@ -1,0 +1,153 @@
+version: "2"
+services:
+  MongoDB:
+    image: mongodb:<version>
+    tty: true
+    container_name: mongodb
+    restart: on-failure
+    ports:
+      - 27017:27017
+    volumes:
+      - /app/apps/db_data:/data/db
+      - /app/apps/logs/mongodb:/data/logs
+    mem_limit: 4096M
+    mem_reservation: 2048M
+    environment:
+      - MONGODB_ADMIN_USER=admin
+      - MONGODB_ADMIN_PASS=reset@123
+      - MONGODB_APPLICATION_DATABASE=kpidashboard
+      - MONGODB_APPLICATION_USER=devadmin
+      - MONGODB_APPLICATION_PASS=admin@123
+      - ROLE=PRODUCER
+      - VERTICALS=health
+    networks:
+      - Network_apps
+
+  CustomAPI:
+    image: customapi:<version>
+    restart: on-failure
+    tty: true
+    container_name: customapi
+    mem_limit: 4096m
+    mem_reservation: 1024m
+    ports:
+      - 8080:8080
+    volumes:
+      - /app/apps/logs/customapi:/app/logs
+      - /app/apps/properties/:/app/properties/
+      - /app/apps/offline_data:/app/offline_data/
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - CONFIG_LOCATION=file:/app/properties/customapi.properties
+      - forgotPassword.uiHost=<ip>
+      - corsFilterValidOrigin=<ip>,localhost
+      - speedyCurrentVersionFile=<version>
+      - version.number=<version>
+      - dbname=kpidashboard
+      - dbusername=devadmin
+      - dbpassword=admin@123
+    networks:
+      - Network_apps
+
+  UI:
+    image: ui:<version>
+    restart: on-failure
+    tty: true
+    container_name: ui
+    mem_limit: 256m
+    mem_reservation: 256m
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /app/apps/logs/ui:/var/log/nginx
+    environment:
+      - API_HOST=customapi
+      - API_PORT=8080
+    networks:
+      - Network_apps
+
+  Jira_Processor:
+    image: jira-processor:<version>
+    restart: on-failure
+    tty: true
+    container_name: jira_processor
+    mem_limit: 1024m
+    mem_reservation: 512m
+    ports:
+      - 50008:50008
+    volumes:
+      - /app/apps/logs/jira_processor:/app/logs
+      - /app/apps/properties/:/app/properties/
+      - /app/apps/offline_data:/app/offline_data
+      - /etc/hosts:/etc/hosts
+    networks:
+      - Network_apps
+      
+  Azure_Processor:
+    image: azure-processor:<version>
+    restart: on-failure
+    tty: true
+    container_name: azure_processor
+    mem_limit: 1024m
+    mem_reservation: 512m
+    ports:
+      - 50017:50017
+    volumes:
+      - /app/apps/logs/azure_processor:/app/logs
+      - /app/apps/properties/:/app/properties/
+      - /app/apps/offline_data:/app/offline_data
+      - /etc/hosts:/etc/hosts
+    networks:
+      - Network_apps
+
+  nonJira_Processor:
+    image: nonjira-processor:<version>
+    restart: on-failure
+    tty: true
+    container_name: nonjira_processor
+    mem_limit: 8192m
+    mem_reservation: 2048m
+    ports:
+      - 50001:50001
+      - 50002:50002
+      - 50003:50003
+      - 50006:50006
+      - 50007:50007
+      - 50011:50011
+      - 50012:50012
+      - 50014:50014
+      - 50019:50019
+    volumes:
+      - /app/apps/logs/nonjira_processor:/app/logs
+      - /app/apps/properties/:/app/properties/
+      - /app/apps/offline_data:/app/offline_data
+      - /etc/hosts:/etc/hosts
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - producer.instanceName=<ip>
+    networks:
+      - Network_apps
+      
+  nonAzureBoards_Processor:
+    image: nonazureboards-processor:<version>
+    restart: on-failure
+    tty: true
+    container_name: nonazureboards_processor
+    mem_limit: 2048m
+    mem_reservation: 1024m
+    ports:
+      - 50015:50015
+      - 50016:50016
+    volumes:
+      - /app/apps/logs/nonazureboards_processor:/app/logs
+      - /app/apps/properties/:/app/properties/
+      - /app/apps/offline_data:/app/offline_data
+      - /etc/hosts:/etc/hosts
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - Network_apps
+
+
+networks:
+  Network_apps:

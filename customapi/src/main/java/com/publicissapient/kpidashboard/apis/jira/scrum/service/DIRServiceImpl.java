@@ -1,0 +1,306 @@
+/*******************************************************************************
+ * Copyright 2014 CapitalOne, LLC.
+ * Further development Copyright 2022 Sapient Corporation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ ******************************************************************************/
+
+package com.publicissapient.kpidashboard.apis.jira.scrum.service;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.publicissapient.kpidashboard.apis.common.service.impl.KpiHelperService;
+import com.publicissapient.kpidashboard.apis.config.CustomApiConfig;
+import com.publicissapient.kpidashboard.apis.enums.Filters;
+import com.publicissapient.kpidashboard.apis.enums.KPICode;
+import com.publicissapient.kpidashboard.apis.enums.KPISource;
+import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
+import com.publicissapient.kpidashboard.apis.jira.service.JiraKPIService;
+import com.publicissapient.kpidashboard.apis.model.KpiElement;
+import com.publicissapient.kpidashboard.apis.model.KpiRequest;
+import com.publicissapient.kpidashboard.apis.model.Node;
+import com.publicissapient.kpidashboard.apis.model.TreeAggregatorDetail;
+import com.publicissapient.kpidashboard.common.model.application.DataCount;
+import com.publicissapient.kpidashboard.common.model.application.ValidationData;
+import com.publicissapient.kpidashboard.common.model.jira.JiraIssue;
+import com.publicissapient.kpidashboard.common.model.jira.SprintWiseStory;
+
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * This class calculates the DIR and trend analysis of the DIR.
+ * 
+ * @author pkum34
+ *
+ */
+@Component
+@Slf4j
+public class DIRServiceImpl extends JiraKPIService<Double, List<Object>, Map<String, Object>> {
+	private static final String STORY_DATA = "storyData";
+	private static final String DEFECT_DATA = "defectData";
+	private static final String STORY = "Stories";
+	private static final String DEFECT = "Defects";
+
+	@Autowired
+	private KpiHelperService kpiHelperService;
+
+	@Autowired
+	private CustomApiConfig customApiConfig;
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getQualifierType() {
+		return KPICode.DEFECT_INJECTION_RATE.name();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public KpiElement getKpiData(KpiRequest kpiRequest, KpiElement kpiElement,
+			TreeAggregatorDetail treeAggregatorDetail) throws ApplicationException {
+
+		List<DataCount> trendValueList = new ArrayList<>();
+		Node root = treeAggregatorDetail.getRoot();
+		Map<String, Node> mapTmp = treeAggregatorDetail.getMapTmp();
+
+		treeAggregatorDetail.getMapOfListOfLeafNodes().forEach((k, v) -> {
+
+			if (Filters.getFilter(k) == Filters.SPRINT) {
+				sprintWiseLeafNodeValue(mapTmp, v, trendValueList, kpiElement, kpiRequest);
+			}
+
+		});
+
+		log.debug("[DIR-LEAF-NODE-VALUE][{}]. Values of leaf node after KPI calculation {}",
+				kpiRequest.getRequestTrackerId(), root);
+
+		Map<Pair<String, String>, Node> nodeWiseKPIValue = new HashMap<>();
+		calculateAggregatedValue(root, nodeWiseKPIValue, KPICode.DEFECT_INJECTION_RATE);
+		List<DataCount> trendValues = getTrendValues(kpiRequest, nodeWiseKPIValue,KPICode.DEFECT_INJECTION_RATE);
+		kpiElement.setTrendValueList(trendValues);
+
+		return kpiElement;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> fetchKPIDataFromDb(List<Node> leafNodeList, String startDate, String endDate,
+			KpiRequest kpiRequest) {
+
+		long startTime = System.currentTimeMillis();
+
+		Map<String, Object> resultListMap = kpiHelperService.fetchDIRDataFromDb(leafNodeList, kpiRequest);
+
+		if (log.isDebugEnabled()) {
+			List<SprintWiseStory> storyDataList = (List<SprintWiseStory>) resultListMap.get(STORY_DATA);
+			List<JiraIssue> defectDataList = (List<JiraIssue>) resultListMap.get(DEFECT_DATA);
+			long processTime = System.currentTimeMillis() - startTime;
+			log.info("[DIR-DB-QUERY][]. storyData count: {} defectData count: {}  time: {}", storyDataList.size(),
+					defectDataList.size(), processTime);
+		}
+
+		return resultListMap;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Double calculateKPIMetrics(Map<String, Object> filterComponentIdWiseFCHMap) {
+		return null;
+	}
+
+	/**
+	 * This method populates KPI value to sprint leaf nodes. It also gives the
+	 * trend analysis at sprint wise.
+	 * 
+	 * @param mapTmp
+	 *            node is map
+	 * @param sprintLeafNodeList
+	 *            sprint nodes list
+	 * @param trendValueList
+	 *            list to hold trend data
+	 * @param kpiElement
+	 *            KpiElement
+	 * @param kpiRequest
+	 *            KpiRequest
+	 */
+	@SuppressWarnings("unchecked")
+	private void sprintWiseLeafNodeValue(Map<String, Node> mapTmp, List<Node> sprintLeafNodeList,
+			List<DataCount> trendValueList, KpiElement kpiElement, KpiRequest kpiRequest) {
+
+		String requestTrackerId = getRequestTrackerId();
+		sprintLeafNodeList.sort((node1, node2) -> node1.getSprintFilter().getStartDate()
+				.compareTo(node2.getSprintFilter().getStartDate()));
+		String startDate = sprintLeafNodeList.get(0).getSprintFilter().getStartDate();
+		String endDate = sprintLeafNodeList.get(sprintLeafNodeList.size() - 1).getSprintFilter().getEndDate();
+
+		Map<String, Object> storyDefectDataListMap = fetchKPIDataFromDb(sprintLeafNodeList, startDate, endDate,
+				kpiRequest);
+		List<SprintWiseStory> sprintWiseStoryList = (List<SprintWiseStory>) storyDefectDataListMap.get(STORY_DATA);
+
+		Map<Pair<String, String>, List<SprintWiseStory>> sprintWiseMap = sprintWiseStoryList.stream().collect(Collectors
+				.groupingBy(sws -> Pair.of(sws.getBasicProjectConfigId(), sws.getSprint()), Collectors.toList()));
+
+		Map<String, String> sprintIdSprintNameMap = sprintWiseStoryList.stream().collect(
+				Collectors.toMap(SprintWiseStory::getSprint, SprintWiseStory::getSprintName, (name1, name2) -> name1));
+
+		Map<Pair<String, String>, Double> sprintWiseDIRMap = new HashMap<>();
+		Map<String, ValidationData> validationDataMap = new HashMap<>();
+		Map<Pair<String, String>, Map<String, Integer>> sprintWiseHowerMap = new HashMap<>();
+		sprintWiseMap.forEach((sprint, sprintWiseStories) -> {
+			List<JiraIssue> sprintWiseDefectList = new ArrayList<>();
+
+			List<String> totalStoryIdList = new ArrayList<>();
+			sprintWiseStories.stream().map(SprintWiseStory::getStoryList).collect(Collectors.toList())
+					.forEach(totalStoryIdList::addAll);
+
+			List<JiraIssue> defectList = ((List<JiraIssue>) storyDefectDataListMap.get(DEFECT_DATA))
+					.stream()
+					.filter(f -> sprint.getKey().equals(f.getBasicProjectConfigId())
+							&& CollectionUtils.containsAny(f.getDefectStoryID(), totalStoryIdList))
+					.collect(Collectors.toList());
+
+			double dirForCurrentLeaf = 0.0d;
+			if (CollectionUtils.isNotEmpty(defectList)
+					&& CollectionUtils.isNotEmpty(sprintWiseStories)) {
+				dirForCurrentLeaf = ((double) defectList.size() / totalStoryIdList.size()) * 100;
+			}
+
+			sprintWiseDefectList.addAll(defectList);
+
+			String validationDataKey = sprintIdSprintNameMap.get(sprint.getValue());
+
+			populateValidationDataObject(kpiElement, requestTrackerId, validationDataKey, validationDataMap,
+					totalStoryIdList, defectList);
+
+			sprintWiseDIRMap.put(sprint, dirForCurrentLeaf);
+			setHowerMap(sprintWiseHowerMap, sprint, totalStoryIdList, sprintWiseDefectList);
+		});
+
+		sprintLeafNodeList.forEach(node -> {
+
+			String trendLineName = node.getProjectFilter().getName();
+			String currentSprintComponentId = node.getSprintFilter().getId();
+			Pair<String, String> currentNodeIdentifier = Pair
+					.of(node.getProjectFilter().getBasicProjectConfigId().toString(), currentSprintComponentId);
+
+			double defectInjectionRateForCurrentLeaf;
+
+			if (sprintWiseDIRMap.containsKey(currentNodeIdentifier)) {
+				defectInjectionRateForCurrentLeaf = sprintWiseDIRMap.get(currentNodeIdentifier);
+			} else {
+				defectInjectionRateForCurrentLeaf = 0.0d;
+			}
+
+			log.debug("[DIR-SPRINT-WISE][{}]. DIR for sprint {}  is {}", requestTrackerId,
+					node.getSprintFilter().getName(), defectInjectionRateForCurrentLeaf);
+
+			DataCount dataCount = new DataCount();
+			dataCount.setData(String.valueOf(Math.round(defectInjectionRateForCurrentLeaf)));
+			dataCount.setSProjectName(trendLineName);
+			dataCount.setSSprintID(node.getSprintFilter().getId());
+			dataCount.setSSprintName(node.getSprintFilter().getName());
+			dataCount.setSprintIds(new ArrayList<>(Arrays.asList(node.getSprintFilter().getId())));
+			dataCount.setSprintNames(new ArrayList<>(Arrays.asList(node.getSprintFilter().getName())));
+			dataCount.setValue(defectInjectionRateForCurrentLeaf);
+			dataCount.setHoverValue(sprintWiseHowerMap.get(currentNodeIdentifier));
+			mapTmp.get(node.getId()).setValue(new ArrayList<>(Arrays.asList(dataCount)));
+
+			trendValueList.add(dataCount);
+		});
+	}
+
+	/**
+	 * This method sets the defect and story count for each leaf node to show
+	 * data on trend line on mouse hover.
+	 * 
+	 * @param sprintWiseHowerMap
+	 *            map of sprint key and hover value
+	 * @param sprint
+	 *            key to identify sprint
+	 * @param storyIdList
+	 *            story id list
+	 * @param sprintWiseDefectList
+	 *            defects linked to story
+	 */
+	private void setHowerMap(Map<Pair<String, String>, Map<String, Integer>> sprintWiseHowerMap,
+			Pair<String, String> sprint, List<String> storyIdList, List<JiraIssue> sprintWiseDefectList) {
+		Map<String, Integer> howerMap = new LinkedHashMap<>();
+		if (CollectionUtils.isNotEmpty(sprintWiseDefectList)) {
+			howerMap.put(DEFECT, sprintWiseDefectList.size());
+		} else {
+			howerMap.put(DEFECT, 0);
+		}
+		if (CollectionUtils.isNotEmpty(storyIdList)) {
+			howerMap.put(STORY, storyIdList.size());
+		} else {
+			howerMap.put(STORY, 0);
+		}
+		sprintWiseHowerMap.put(sprint, howerMap);
+	}
+
+	/**
+	 * This method populates KPI Element with Validation data. It will be
+	 * triggered only for request originated to get Excel data.
+	 * 
+	 * @param kpiElement
+	 *            KpiElement
+	 * @param requestTrackerId
+	 *            request id
+	 * @param validationDataKey
+	 *            validation data key
+	 * @param validationDataMap
+	 *            validation data map
+	 * @param storyIdList
+	 *            story id list
+	 * @param sprintWiseDefectList
+	 *            sprints defect list
+	 */
+	private void populateValidationDataObject(KpiElement kpiElement, String requestTrackerId, String validationDataKey,
+			Map<String, ValidationData> validationDataMap, List<String> storyIdList,
+			List<JiraIssue> sprintWiseDefectList) {
+
+		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
+			ValidationData validationData = new ValidationData();
+			validationData.setStoryKeyList(storyIdList);
+			validationData.setDefectKeyList(
+					sprintWiseDefectList.stream().map(JiraIssue::getNumber).collect(Collectors.toList()));
+			validationDataMap.put(validationDataKey, validationData);
+			kpiElement.setMapOfSprintAndData(validationDataMap);
+		}
+	}
+
+	@Override
+	public Double calculateKpiValue(List<Double> valueList, String kpiName) {
+		return calculateKpiValueForDouble(valueList, kpiName);
+	}
+}

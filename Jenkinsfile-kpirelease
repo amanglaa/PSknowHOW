@@ -1,0 +1,118 @@
+pipeline {
+   agent any
+   stages {
+      stage('Checkout') {
+        steps {
+            sh"""
+            #git config --local --unset credential.helper
+            """
+            checkout scm: [$class: 'GitSCM', userRemoteConfigs: [[url: 'https://pscode.lioncloud.net/psinnersource/monitor-measure-metrics/speedy-product/open-source-speedy.git',credentialsId: 'service']], branches: [[name: '${SBRANCH}']]], poll: false
+        }
+
+      }    
+      stage('Update Version') {
+          when {
+             expression { !env.version.isEmpty() }
+          }
+          steps{
+            withCredentials([usernamePassword(credentialsId: "service", passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+              sh"""
+                   #git config --global user.name  "${GIT_USERNAME}"
+                   #git config --global user.email "${GIT_USERNAME}"
+                   #git config --system --unset credential.helper
+                   #git config --local credential.helper "!f() { echo username=\\$GIT_USERNAME; echo password=\\$GIT_PASSWORD; }; f"
+   				   git config --local credential.helper 'cache --timeout=30'
+                   #git checkout master
+                   git fetch origin
+                   git reset --hard origin/master
+                   mvn versions:set -DnewVersion=${env.version} -DprocessAllModules=true
+                   git add .
+                   git commit -am 'POM version changed to ${env.version}'
+                   git push origin HEAD:master
+                   #git push https://rapkalya:kalyan12345@pscode.lioncloud.net/psinnersource/monitor-measure-metrics/speedy-product/open-source-speedy.git HEAD:"${SBRANCH}"
+
+				   #git config --local --unset credential.helper
+            """
+            }
+          }
+      }
+      stage('Capture Version') {
+          when {
+             expression { env.version.isEmpty() }
+          }
+          steps {
+                script {
+                       def pom = readMavenPom file: 'pom.xml'
+                       env.version = pom.version
+                       echo "${pom.version}"
+                       echo "${env.version}"
+                       env.tempversion = env.version
+                       env.tempversion=env.tempversion.replaceAll("-SNAPSHOT","")
+                       echo "tempversion ${env.tempversion}"
+                       
+                      release_type = new ChoiceParameterDefinition('RELEASE_TYPE', ['MAJOR','MINOR','PATCH','NONE'] as String[], '')
+                      String[] version = "$env.tempversion".tokenize(".")
+                      value = input(message: 'Please select the release type', parameters: [release_type])  
+                        env.RELEASE_TYPE=value
+                        echo "${env.RELEASE_TYPE}"
+                        Integer MAJOR=version[0].toInteger()
+                        Integer MINOR=version[1].toInteger()
+                        Integer PATCH=version[2].toInteger()
+                      switch (RELEASE_TYPE) {
+                        case 'MAJOR':
+                              MAJOR++
+                            MINOR=0
+                              PATCH=0
+                            break
+                    case 'MINOR':
+                      MINOR++
+                      PATCH=0
+                      break
+                    case 'PATCH':
+                      PATCH++
+                      break
+                    case 'NONE':
+                            println "INFO => you have opted release type as NONE, proceeding with default version number"
+                      break
+                    default:
+                      error '\u001B[41mERROR => unsupported $RELEASE_TYPE, exiting...'
+                      break
+                    }
+                    NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+                    echo "${NEW_VERSION}"
+                    env.NEW_VERSION=NEW_VERSION
+
+                }
+           }
+      }
+      stage('Delete tag - optional') {
+        when {
+             expression { env.version.isEmpty() }
+        }
+        steps {
+              catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                     sh """ 
+                       git tag -d ${env.NEW_VERSION}
+                     """
+            }
+        }
+      } 
+      stage('Release') {
+        when {
+             expression { !env.NEW_VERSION.isEmpty() }
+        }
+        steps {
+              withCredentials([usernamePassword(credentialsId: "service", passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+               sh """
+                  git config --local credential.helper 'cache --timeout=150'
+                  git fetch origin
+                  git reset --hard origin/master
+                  git checkout master
+                  mvn  -B release:clean 
+                  mvn  -B release:clean release:prepare  -DreleaseVersion=${env.NEW_VERSION} -DdevelopmentVersion=${env.NEW_VERSION}-SNAPSHOT -Dusername=${GIT_USERNAME} -D'password=${GIT_PASSWORD}'
+                """
+              }
+        }
+      }
+   }
+}

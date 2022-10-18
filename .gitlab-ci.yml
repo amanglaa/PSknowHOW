@@ -1,0 +1,88 @@
+image: docker:latest
+services:
+  - docker:dind
+
+variables:
+  DOCKER_DRIVER: overlay
+  SPRING_PROFILES_ACTIVE: gitlab-ci
+
+
+
+stages:
+  - clean-docker
+  - build-customapi
+  - test-customapi
+  - build-jiraProcessor
+  - test-jiraProcessor
+  - build-nonJiraProcessor
+  - test-nonJiraProcessor
+
+clean-docker:
+  image: maven:3-jdk-8
+  stage: clean-docker
+  tags:
+    - SPEEDY
+  script:
+    - "docker system prune -a --volumes --force"
+    - "docker system df"
+    - "docker images"
+
+build-customapi:
+  image: maven:3-jdk-8
+  stage: build-customapi
+  tags:
+    - SPEEDY
+  script: "mvn clean install -Pcustomapi -DskipTests"
+  artifacts:
+    paths:
+      - customapi/target/customapi.jar
+
+test-customapi:
+  image: maven:3-jdk-8
+  stage: test-customapi
+  tags:
+    - SPEEDY
+  script: "mvn clean test -Pcustomapi"
+  artifacts:
+    paths:
+      - customapi/target/customapi.jar
+
+build-jiraProcessor:
+  image: maven:3-jdk-8
+  stage: build-jiraProcessor
+  tags:
+    - SPEEDY
+  script: "mvn clean install -PjiraProcessor -DskipTests"
+  artifacts:
+    paths:
+      - processors/jira/target/jira.jar
+
+test-jiraProcessor:
+  image: maven:3-jdk-8
+  stage: test-jiraProcessor
+  tags:
+    - SPEEDY
+  script: "mvn clean test -PjiraProcessor"
+  artifacts:
+    paths:
+      - processors/jira/target/jira.jar
+
+build-nonJiraProcessor:
+  image: maven:3-jdk-8
+  stage: build-nonJiraProcessor
+  tags:
+    - SPEEDY
+  script: "mvn clean install -PnonJiraProcessor -DskipTests"
+  artifacts:
+    paths:
+      - processors/jira/target/jira.jar
+
+test-nonJiraProcessor:
+  image: maven:3-jdk-8
+  stage: test-nonJiraProcessor
+  tags:
+    - SPEEDY
+  script: "mvn clean test -PnonJiraProcessor"
+  artifacts:
+    paths:
+      - processors/jira/target/jira.jar
