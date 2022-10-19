@@ -172,5 +172,39 @@ customapi/test-output/
 
 customapi/.eclipse-pmd
 
+
+# compiled output
+/**/dist
+/**/tmp
+/**/out-tsc
 /**/coverage
+/**/.scannerwork
+
+
+# dependencies
 /**/node_modules
+
+# IDEs and editors
+.c9/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# misc
+/**/.sass-cache
+/**/connect.lock
+/**/UI/libpeerconnection.log
+npm-debug.log
+yarn-error.log
+testem.log
+**/UI/typings
+
+# System Files
+.DS_Store
+Thumbs.db
+package-lock.json
