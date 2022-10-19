@@ -185,12 +185,7 @@ customapi/.eclipse-pmd
 /**/node_modules
 
 # IDEs and editors
-/.idea
-.project
-.classpath
 .c9/
-*.launch
-.settings/
 *.sublime-workspace
 
 # IDE - VSCode
@@ -203,7 +198,6 @@ customapi/.eclipse-pmd
 # misc
 /**/.sass-cache
 /**/connect.lock
-/**/UI/coverage
 /**/UI/libpeerconnection.log
 npm-debug.log
 yarn-error.log
