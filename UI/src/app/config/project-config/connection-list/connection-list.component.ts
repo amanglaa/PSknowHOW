@@ -797,7 +797,7 @@ export class ConnectionListComponent implements OnInit {
     }
     this.testConnectionMsg = '';
     this.testConnectionValid = true;
-
+    
     switch (this.connection.type) {
       case 'Jira':
         this.testConnectionService.testJira(reqData['baseUrl'], reqData['apiEndPoint'], reqData['username'], reqData['password']).subscribe(next => {
@@ -1019,14 +1019,14 @@ export class ConnectionListComponent implements OnInit {
     if (type == 'bitbucket' && field == 'cloudEnv' && event) {
       let tempArr = [...this.addEditConnectionFieldsNlabels];
       let bitbucketObj = tempArr.filter((item) => item.connectionLabel.toLowerCase() == 'bitbucket')[0];
-      bitbucketObj.labels = ['Connection Type', 'Connection Name', 'Is Cloud Environment', 'Base Url', 'Username (Profile Username)', 'Password (App Password)', 'API End Point', 'Is Connection Private'];
+      bitbucketObj.labels = ['Connection Type', 'Connection Name', 'Is Cloud Environment', 'Base Url', 'Username (Profile Username)', 'Use vault password', 'Password (App Password)', 'API End Point', 'Is Connection Private'];
       let index = tempArr.findIndex((item) => item.connectionLabel.toLowerCase() == 'bitbucket');
       tempArr[index] = bitbucketObj;
       this.addEditConnectionFieldsNlabels = [...tempArr];
     } else {
       let tempArr = [...this.addEditConnectionFieldsNlabels];
       let bitbucketObj = tempArr.filter((item) => item.connectionLabel.toLowerCase() == 'bitbucket')[0];
-      bitbucketObj.labels = ['Connection Type', 'Connection Name', 'Is Cloud Environment', 'Base Url', 'Username', 'Password', 'API End Point', 'Is Connection Private'];
+      bitbucketObj.labels = ['Connection Type', 'Connection Name', 'Is Cloud Environment', 'Base Url', 'Username', 'Use vault password','Password', 'API End Point', 'Is Connection Private'];
       let index = tempArr.findIndex((item) => item.connectionLabel.toLowerCase() == 'bitbucket');
       tempArr[index] = bitbucketObj;
       this.addEditConnectionFieldsNlabels = [...tempArr];
