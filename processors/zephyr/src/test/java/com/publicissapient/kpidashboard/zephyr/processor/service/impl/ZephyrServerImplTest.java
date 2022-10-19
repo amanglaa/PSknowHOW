@@ -139,7 +139,7 @@ public class ZephyrServerImplTest {
 				Mockito.any(Class.class))).thenReturn(testCaseResponse);
 		when(testCaseResponse.getStatusCode()).thenReturn(HttpStatus.OK);
 		when(testCaseResponse.getBody()).thenReturn(zephyrTestCaseArr);
-		assertEquals((zephyrServer.getTestCase(0, projectConfFieldMapping, folderPath)).size(), testCaseList.size());
+		assertEquals((zephyrServer.getTestCase(0, projectConfFieldMapping)).size(), testCaseList.size());
 	}
 
 	@Test()
@@ -155,7 +155,7 @@ public class ZephyrServerImplTest {
 		when(testCaseResponse.getStatusCode()).thenReturn(HttpStatus.NOT_FOUND);
 		when(testCaseResponse.getBody()).thenReturn(null);
 		assertThrows(RestClientException.class, () -> {
-			zephyrServer.getTestCase(0, projectConfFieldMapping, folderPath);
+			zephyrServer.getTestCase(0, projectConfFieldMapping);
 		});
 	}
 }

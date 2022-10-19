@@ -154,7 +154,7 @@ public class ZephyrCloudImplTest {
 						eq("https://api.zephyrscale.smartbear.com/v2/folders?maxResults=1000"), eq(HttpMethod.GET),
 						eq(stringHttpEntity), eq(String.class));
 
-		assertEquals(zephyrCloud.getTestCase(0, projectConfFieldMapping, folderPath).size(), testCaseList.size());
+		assertEquals(zephyrCloud.getTestCase(0, projectConfFieldMapping).size(), testCaseList.size());
 
 	}
 
@@ -197,7 +197,7 @@ public class ZephyrCloudImplTest {
 						eq("https://tetrapak-smartsales.atlassian.net/rest/api/2/issue/66229"), eq(HttpMethod.GET),
 						eq(stringHttpEntity2), eq(String.class));
 
-		assertEquals(zephyrCloud.getTestCase(0, projectConfFieldMapping, folderPath).size(), testCaseList2.size());
+		assertEquals(zephyrCloud.getTestCase(0, projectConfFieldMapping).size(), testCaseList2.size());
 
 	}
 
@@ -224,7 +224,7 @@ public class ZephyrCloudImplTest {
 				eq(HttpMethod.GET), eq(stringHttpEntity), eq(String.class));
 
 		assertThrows(RestClientException.class, () -> {
-			zephyrCloud.getTestCase(0, projectConfFieldMapping, folderPath);
+			zephyrCloud.getTestCase(0, projectConfFieldMapping);
 		});
 
 	}
