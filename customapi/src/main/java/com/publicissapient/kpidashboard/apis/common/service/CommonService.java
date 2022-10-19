@@ -86,4 +86,16 @@ public interface CommonService {
 	 */
 	public Map<String,List<DataCount>> sortTrendValueMap(Map<String,List<DataCount>> trendMap);
 
+	/**
+	 * to send email without running kafka
+	 * @param emailAddresses
+	 * @param customData
+	 * @param notSubKey
+	 * @param notKey
+	 * @param topic
+	 * @param templateKey
+	 */
+	void sendEmailWithoutKafka(List<String> emailAddresses, Map<String, String> customData, String notSubKey,
+						  String notKey, String topic, String templateKey);
+
 }

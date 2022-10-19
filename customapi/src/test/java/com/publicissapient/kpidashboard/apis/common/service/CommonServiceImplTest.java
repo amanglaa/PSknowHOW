@@ -18,6 +18,7 @@
 
 package com.publicissapient.kpidashboard.apis.common.service;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -62,8 +63,9 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.mail.MailSendException;
 import org.testng.collections.Lists;
-
+import org.thymeleaf.spring5.SpringTemplateEngine;
 
 
 @SuppressWarnings("deprecation")
@@ -95,6 +97,8 @@ public class CommonServiceImplTest {
 	ProjectBasicConfigRepository projectBasicConfigRepository;
 	@Mock
 	private GlobalConfigRepository globalConfigRepository;
+	@Mock
+	private SpringTemplateEngine templateEngine;
 
 	private GlobalConfig globalConfig;
 
@@ -377,6 +381,47 @@ public class CommonServiceImplTest {
 		basicConfig.setProjectName("project");
 		return basicConfig;
 	}
+
+
+	@Test
+	public void testSendEmailWithoutKafka() {
+		List<String> emailList = new ArrayList<>();
+		emailList.add("abc@xyz.com");
+		Map<String, String> customData = new HashMap<>();
+		customData.put("abc", "xyz");
+		String notSubject = "subject";
+		String notKey = "key";
+		String topic = "topic";
+		when(globalConfigRepository.findAll()).thenReturn(globalConfigs);
+		when(templateEngine.process(anyString(), any())).thenReturn("abc");
+		EmailEvent emailEvent = new EmailEvent(globalConfig.getEmailServerDetail().getFromEmail(), emailList, null,
+				null, notSubject, null, customData, globalConfig.getEmailServerDetail().getEmailHost(),
+				globalConfig.getEmailServerDetail().getEmailPort());
+		notificationEventProducer.sendNotificationEvent(notKey, emailEvent, null, topic);
+		Assert.assertThrows(MailSendException.class,()->
+				commonService.sendEmailWithoutKafka(emailList, customData, notSubject, notKey, topic,"Forgot_Password_Template")
+		);
+
+	}
+
+	@Test
+	public void testSendEmailWithoutKafkaKeyNotFound() {
+		List<String> emailList = new ArrayList<>();
+		emailList.add("abc@xyz.com");
+		Map<String, String> customData = new HashMap<>();
+		customData.put("abc", "xyz");
+		String notSubject = "subject";
+		String notKey = "key";
+		String topic = "topic";
+		when(globalConfigRepository.findAll()).thenReturn(globalConfigs);
+		when(templateEngine.process(anyString(), any())).thenReturn(null);
+		EmailEvent emailEvent = new EmailEvent(globalConfig.getEmailServerDetail().getFromEmail(), emailList, null,
+				null, notSubject, null, customData, globalConfig.getEmailServerDetail().getEmailHost(),
+				globalConfig.getEmailServerDetail().getEmailPort());
+		notificationEventProducer.sendNotificationEvent(notKey, emailEvent, null, topic);
+		commonService.sendEmailWithoutKafka(emailList, customData, notSubject, notKey, topic,"Forgot_Password_Template");
+	}
+
 
 
 }
