@@ -171,3 +171,6 @@ customapi/test-output/
 **/.factorypath
 
 customapi/.eclipse-pmd
+
+/**/coverage
+/**/node_modules
