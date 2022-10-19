@@ -44,14 +44,14 @@ public class DefaultLogoInsertorTest {
 	@Test
 	public void testInsertDefaultImage() {
 
-		when(customApiConfig.getApplicationDefaultLogo()).thenReturn("default.gif");
+		when(customApiConfig.getApplicationDefaultLogo()).thenReturn("PsKnowHowLogo.png");
 		defaultLogoInsertor.insertDefaultImage();
 	}
 
 	@Test
 	public void testInsertDefaultImageGridFileNotNull() {
 
-		when(customApiConfig.getApplicationDefaultLogo()).thenReturn("default.gif");
+		when(customApiConfig.getApplicationDefaultLogo()).thenReturn("PsKnowHowLogo.png");
 		defaultLogoInsertor.insertDefaultImage();
 
 	}
@@ -59,7 +59,7 @@ public class DefaultLogoInsertorTest {
 	@Test
 	public void testInsertDefaultImageGridFileNull() {
 
-		when(customApiConfig.getApplicationDefaultLogo()).thenReturn("default.gif");
+		when(customApiConfig.getApplicationDefaultLogo()).thenReturn("PsKnowHowLogo.png");
 
 		defaultLogoInsertor.insertDefaultImage();
 
