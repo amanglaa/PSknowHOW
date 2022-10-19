@@ -457,6 +457,7 @@ public class ConnectionServiceImpl implements ConnectionService {
 		existingConnection.setOffline(connection.isOffline());
 		existingConnection.setOfflineFilePath(connection.getOfflineFilePath());
 		existingConnection.setCloudEnv(connection.isCloudEnv());
+		existingConnection.setVault(connection.isVault());
 		existingConnection.setUpdatedAt(DateUtil.dateTimeFormatter(LocalDateTime.now(), DateUtil.TIME_FORMAT));
 		existingConnection.setConnPrivate(connection.isConnPrivate());
 		existingConnection.setUpdatedBy(authenticationService.getLoggedInUser());
