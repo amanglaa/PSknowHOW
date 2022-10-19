@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 
+import com.publicissapient.kpidashboard.apis.common.service.impl.KpiHelperService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bson.types.ObjectId;
@@ -274,10 +275,7 @@ public class FirstTimePassRateServiceImpl extends JiraKPIService<Double, List<Ob
 			addPriorityProjectWise(projectWisePriority, configPriority, leaf, fieldMapping);
 			addRCAProjectWise(projectWiseRCA, leaf, fieldMapping);
 
-			statusConfigsOfRejectedStoriesByProject.put(basicProjectConfigId.toString(),
-					fieldMapping.getResolutionTypeForRejection() == null ? new ArrayList<>()
-							: fieldMapping.getResolutionTypeForRejection().stream().map(String::toLowerCase)
-									.collect(Collectors.toList()));
+			KpiHelperService.getDroppedDefectsFilters(statusConfigsOfRejectedStoriesByProject, basicProjectConfigId, fieldMapping);
 
 			mapOfProjectFilters.put(JiraFeature.ISSUE_TYPE.getFieldValueInFeature(),
 					CommonUtils.convertToPatternList(fieldMapping.getJiraStoryIdentification()));

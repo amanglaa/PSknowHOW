@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 
+import com.publicissapient.kpidashboard.apis.common.service.impl.KpiHelperService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -330,10 +331,7 @@ public class AverageResolutionTimeServiceImpl extends JiraKPIService<Double, Lis
 			FieldMapping fieldMapping = configHelperService.getFieldMappingMap().get(basicProjectConfigId);
 			if (null != fieldMapping) {
 				projectFieldMapping.put(basicProjectConfigId.toString(), fieldMapping);
-				statusConfigsOfRejectedStoriesByProject.put(basicProjectConfigId.toString(),
-						fieldMapping.getResolutionTypeForRejection() == null ? new ArrayList<>()
-								: fieldMapping.getResolutionTypeForRejection().stream().map(String::toLowerCase)
-										.collect(Collectors.toList()));
+				KpiHelperService.getDroppedDefectsFilters(statusConfigsOfRejectedStoriesByProject, basicProjectConfigId, fieldMapping);
 				List<String> jiraIssueTypes = new ArrayList<>(Arrays.asList(fieldMapping.getJiraIssueTypeNames()));
 				if (CollectionUtils.containsAny(jiraIssueTypes, fieldMapping.getJiradefecttype())) {
 					jiraIssueTypes.add(NormalizedJira.DEFECT_TYPE.getValue());

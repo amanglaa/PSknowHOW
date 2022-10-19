@@ -4,10 +4,10 @@
     <div *ngIf="selectedtype == 'Scrum'">
       <div class="clearfix"></div>
       <div class="right-container col">
-        <div class="p-grid justify-content-start p-pt-3">
+        <div class="p-grid justify-content-start p-pt-3 p-ml-0 p-mr-0">
           <ng-container *ngIf="(updatedConfigGlobalData | json) != '{}' && updatedConfigGlobalData != undefined">
             <ng-container *ngFor="let kpi of updatedConfigGlobalData; let i = index;">
-              <div class="p-sm-6 backlog-chart" [ngClass]="{'backlog-dashboard' : kpi?.kpiDetail?.chartType ==='progress-bar', 'p-pl-4': i%2 == 0, 'p-pr-4': i%2 != 0}">
+              <div class="p-sm-6 backlog-chart" [ngClass]="{'backlog-dashboard' : kpi?.kpiDetail?.chartType ==='progress-bar'}">
                 <app-kpi-card [trendBoxColorObj]="trendBoxColorObj" [kpiData]="kpi"
                   [trendData]="kpiChartData[kpi?.kpiId]"
                   (downloadExcel)="downloadExcel(kpi.kpiId, kpi.kpiName, kpi.kpiDetail.kanban)"

@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.publicissapient.kpidashboard.apis.common.service.impl.KpiHelperService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bson.types.ObjectId;
@@ -135,6 +136,7 @@ public class DREServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 		List<String> basicProjectConfigIds = new ArrayList<>();
 		Map<String, List<String>> projectWiseDefectRemovelStatus = new HashMap<>();
 		Map<String, Map<String, Object>> uniqueProjectMap = new HashMap<>();
+		Map<String, List<String>> droppedDefects = new HashMap<>();
 
 		leafNodeList.forEach(leaf -> {
 
@@ -151,6 +153,7 @@ public class DREServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 			mapOfProjectFilters.put(JiraFeature.ISSUE_TYPE.getFieldValueInFeature(),
 					CommonUtils.convertToPatternList(fieldMapping.getJiraDefectRemovalIssueType()));
 			uniqueProjectMap.put(basicProjectConfigId.toString(), mapOfProjectFilters);
+			KpiHelperService.getDroppedDefectsFilters(droppedDefects, basicProjectConfigId, fieldMapping);
 
 		});
 
@@ -177,6 +180,8 @@ public class DREServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 				Arrays.asList(NormalizedJira.DEFECT_TYPE.getValue()));
 		// Fetch Defects linked with story ID's
 		List<JiraIssue> totalDefectList = jiraIssueRepository.findIssuesByType(mapOfFiltersWithStoryIds);
+		List<JiraIssue> defectListWoDrop = new ArrayList<>();
+		KpiHelperService.getDefectsWithoutDrop(droppedDefects, totalDefectList, defectListWoDrop);
 
 		// Find defect with closed status. Avoided making dB query
 		List<JiraIssue> closeDefectList = totalDefectList.stream()
@@ -189,7 +194,7 @@ public class DREServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 
 		resultListMap.put(SPRINT_WISE_STORY_DATA, sprintWiseStoryList);
 		resultListMap.put(CLOSED_DEFECT_DATA, closeDefectList);
-		resultListMap.put(TOTAL_DEFECT_DATA, totalDefectList);
+		resultListMap.put(TOTAL_DEFECT_DATA, defectListWoDrop);
 
 		return resultListMap;
 

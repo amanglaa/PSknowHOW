@@ -50,7 +50,6 @@ public class ZephyrCloudImpl implements ZephyrClient {
 	private static final String PROJECT_KEY = "projectKey";
 	private static final String START_AT = "startAt";
 	private static final String MAX_RESULTS = "maxResults";
-	private static final String FOLDER_ID = "folderId";
 	private static final String VALUES = "values";
 	private static final String KEY = "key";
 	private static final String NAME = "name";
@@ -84,11 +83,10 @@ public class ZephyrCloudImpl implements ZephyrClient {
 	 *
 	 * @param startAt
 	 * @param projectConfig
-	 * @param folderPath
 	 * @return testCaseList
 	 */
 	@Override
-	public List<ZephyrTestCaseDTO> getTestCase(int startAt, ProjectConfFieldMapping projectConfig, String folderPath) {
+	public List<ZephyrTestCaseDTO> getTestCase(int startAt, ProjectConfFieldMapping projectConfig) {
 
 		List<ZephyrTestCaseDTO> testCaseList = new ArrayList<>();
 		ProcessorToolConnection toolInfo = projectConfig.getProcessorToolConnection();
@@ -105,12 +103,6 @@ public class ZephyrCloudImpl implements ZephyrClient {
 				builder.queryParam(PROJECT_KEY, projectConfig.getProjectKey());
 
 				Map<String, String> folderMap = prepareFoldersFullPath(accessToken);
-				if (folderPath != null) {
-					String folderId = getFolderIdUsingFolderPath(folderMap, folderPath);
-					if (folderId != null) {
-						builder.queryParam(FOLDER_ID, folderId);
-					}
-				}
 				queryBuilder = new StringBuilder(builder.build(false).toString());
 
 				if (StringUtils.isNotBlank(queryBuilder)) {
@@ -452,19 +444,5 @@ public class ZephyrCloudImpl implements ZephyrClient {
 		return folderMap;
 	}
 
-	/**
-	 * get folderId using folder full path
-	 *
-	 * @param folderMap
-	 * @param folderName
-	 */
-	private String getFolderIdUsingFolderPath(Map<String, String> folderMap, String folderName) {
-		for (Map.Entry<String, String> entry : folderMap.entrySet()) {
-			if (folderName.equals(entry.getValue())) {
-				return entry.getKey();
-			}
-		}
-		return null;
-	}
 
 }

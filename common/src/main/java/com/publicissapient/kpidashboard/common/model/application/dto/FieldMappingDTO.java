@@ -20,9 +20,9 @@ package com.publicissapient.kpidashboard.common.model.application.dto;//NOPMD
 
 import java.util.List;
 
-import com.publicissapient.kpidashboard.common.model.application.AdditionalFilterConfig;
 import org.bson.types.ObjectId;
 
+import com.publicissapient.kpidashboard.common.model.application.AdditionalFilterConfig;
 import com.publicissapient.kpidashboard.common.model.generic.BasicModel;
 
 import lombok.AllArgsConstructor;
@@ -163,20 +163,21 @@ public class FieldMappingDTO extends BasicModel {
 	private String epicJobSize;
 
 	private String atmSubprojectField;
-	
-	//Squad Mapping
+
+	// Squad Mapping
 	private String squadIdentifier;
 	private List<String> squadIdentMultiValue;
 	private String squadIdentSingleValue;
 
-	//Production Defect Mapping
+	// Production Defect Mapping
 	private String productionDefectCustomField;
 	private String productionDefectIdentifier;
 	private List<String> productionDefectValue;
 	private String productionDefectComponentValue;
 
-	//testCaseMapping
+	// testCaseMapping
 	private String[] jiraTestCaseType;
+	private List<String> testCaseStatus;
 	private String testAutomatedIdentification;
 	private String testAutomationCompletedIdentification;
 	private String testRegressionIdentification;
@@ -187,18 +188,23 @@ public class FieldMappingDTO extends BasicModel {
 	private List<String> jiraRegressionTestValue;
 	private List<String> jiraCanBeAutomatedTestValue;
 
+	// issue status to exclude missing worklogs
+	private List<String> issueStatusToBeExcludedFromMissingWorklogs;
 
 	@Builder.Default
 	private String estimationCriteria = "Story Point";
 
 	@Builder.Default
 	private Double storyPointToHourMapping = 8D;
-	
+
 	@Builder.Default
 	private Double workingHoursDayCPT = 6D;
 
-	//additional filter config fields
+	// additional filter config fields
 	private List<AdditionalFilterConfig> additionalFilterConfig;
+
+	// issue status to exclude missing worklogs
+	private List<String> issueStatusExcluMissingWork;
 
 	/**
 	 * Get jira issue type names string [ ].
@@ -212,7 +218,8 @@ public class FieldMappingDTO extends BasicModel {
 	/**
 	 * Sets jira issue type names.
 	 *
-	 * @param jiraIssueTypeNames the jira issue type names
+	 * @param jiraIssueTypeNames
+	 *            the jira issue type names
 	 */
 	public void setJiraIssueTypeNames(String[] jiraIssueTypeNames) {
 		this.jiraIssueTypeNames = jiraIssueTypeNames == null ? null : jiraIssueTypeNames.clone();
@@ -230,7 +237,8 @@ public class FieldMappingDTO extends BasicModel {
 	/**
 	 * Sets link defect to story field.
 	 *
-	 * @param linkDefectToStoryField the link defect to story field
+	 * @param linkDefectToStoryField
+	 *            the link defect to story field
 	 */
 	public void setLinkDefectToStoryField(String[] linkDefectToStoryField) {
 		this.linkDefectToStoryField = linkDefectToStoryField == null ? null : linkDefectToStoryField.clone();
@@ -248,7 +256,8 @@ public class FieldMappingDTO extends BasicModel {
 	/**
 	 * Sets jira test case type.
 	 *
-	 * @param jiraTestCaseType the jira test case type
+	 * @param jiraTestCaseType
+	 *            the jira test case type
 	 */
 	public void setJiraTestCaseType(String[] jiraTestCaseType) {
 		this.jiraTestCaseType = jiraTestCaseType == null ? null : jiraTestCaseType.clone();

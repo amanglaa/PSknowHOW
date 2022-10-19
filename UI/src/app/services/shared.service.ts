@@ -73,6 +73,8 @@ export class SharedService implements OnInit {
   noSprintsObs = this.noSprints.asObservable();
   noProjects = new Subject<any>();
   noProjectsObs = this.noProjects.asObservable();
+  showTableView = new BehaviorSubject<boolean>(true);
+  showTableViewObs = this.showTableView.asObservable();
   setNoData = new Subject<boolean>();
   clickedItem = new Subject<any>();
   public xLabelValue:any;
@@ -276,6 +278,9 @@ export class SharedService implements OnInit {
   }
   getSelectedDateFilter(){
     return this.xLabelValue;
+  }
+  setShowTableView(val){
+    this.showTableView.next(val);
   }
 }
 

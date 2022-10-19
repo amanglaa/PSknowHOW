@@ -1090,6 +1090,21 @@
                         </div>
                     </div>
                 </div>
+                <div class="p-col-12 p-grid p-formgrid">
+                    <div class="p-field">
+                        <label class="field-title">Status to identify abandoned Test cases</label>
+                        <div class="p-inputgroup">
+                            <p-chips [style]="{'width':'504px', 'border-bottom-right-radius':'0'}"
+                                inputId="testCaseStatus" formControlName="testCaseStatus"
+                                placeholder="Enter Status to identify abandoned Test cases" addOnBlur="true" pTooltip='<span class="tooltiptext">
+                                    Select status like "Abandoned", "Deprecated" etc so that these can be excluded from Regression automation coverage, In Sprint automation coverage and Test case without story link KPI
+                              </span>' tooltipPosition="top" tooltipEvent="hover" [escape]="false">
+                            </p-chips>
+                            <button type="button" pButton pRipple icon="pi pi-search"
+                                (click)="showDialogToAddValue(false, 'testCaseStatus', 'workflow')"></button>
+                        </div>
+                    </div>
+                </div>
             </p-accordionTab>
             <p-accordionTab header="Additional Filters Mapping">
                 <div class="p-grid">

@@ -12,8 +12,10 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import com.publicissapient.kpidashboard.apis.common.service.impl.KpiHelperService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +79,7 @@ public class LeadTimeServiceImpl extends JiraKPIService<Long, List<Object>, Map<
 		Map<String, Object> resultListMap = new HashMap<>();
 		Map<String, List<String>> mapOfFilters = new LinkedHashMap<>();
 		Map<String, Map<String, Object>> uniqueProjectMap = new HashMap<>();
+		Map<String, List<String>> droppedDefects = new HashMap<>();
 
 		List<String> basicProjectConfigIds = new ArrayList<>();
 		leafNodeList.forEach(leaf -> {
@@ -93,12 +96,30 @@ public class LeadTimeServiceImpl extends JiraKPIService<Long, List<Object>, Map<
 			}
 
 			uniqueProjectMap.put(basicProjectConfigId.toString(), mapOfProjectFilters);
+			KpiHelperService.getDroppedDefectsFilters(droppedDefects, basicProjectConfigId, fieldMapping);
 		});
 		mapOfFilters.put(JiraFeature.BASIC_PROJECT_CONFIG_ID.getFieldValueInFeature(),
 				basicProjectConfigIds.stream().distinct().collect(Collectors.toList()));
 
-		resultListMap.put(STORY_HISTORY_DATA, jiraIssueCustomHistoryRepository
-				.findIssuesByCreatedDateAndType(mapOfFilters, uniqueProjectMap, startDate, endDate));
+		List<JiraIssueCustomHistory> issueCustomHistoryList = jiraIssueCustomHistoryRepository
+				.findIssuesByCreatedDateAndType(mapOfFilters, uniqueProjectMap, startDate, endDate);
+		List<JiraIssueCustomHistory> defectListWoDrop = new ArrayList<>();
+		if (CollectionUtils.isNotEmpty(issueCustomHistoryList)) {
+			issueCustomHistoryList.forEach(jiraIssueCustomHistory -> {
+				if (!StringUtils.isBlank(jiraIssueCustomHistory.getStoryType())) {
+					List<String> defectStatus = droppedDefects.get(jiraIssueCustomHistory.getBasicProjectConfigId());
+					if (CollectionUtils.isNotEmpty(defectStatus)) {
+						if (!defectStatus.contains(jiraIssueCustomHistory.getStoryType())) {
+							defectListWoDrop.add(jiraIssueCustomHistory);
+						}
+					} else {
+						defectListWoDrop.add(jiraIssueCustomHistory);
+					}
+				}
+			});
+		}
+
+		resultListMap.put(STORY_HISTORY_DATA, defectListWoDrop);
 
 		return resultListMap;
 	}

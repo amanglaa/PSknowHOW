@@ -6,10 +6,6 @@
     opacity: 1;
     position: relative;
 }
-.kpi-card-body{
-    min-height: 330px;
-    height: 365px;
-}
 .kpi-card-header {
     display: flex;
     justify-content: space-between;

@@ -201,7 +201,6 @@ public class DCServiceImplTest {
 		when(customApiConfig.getpriorityP1()).thenReturn(P1);
 		when(customApiConfig.getpriorityP2()).thenReturn(P2);
 		when(customApiConfig.getpriorityP3()).thenReturn(P3);
-		when(customApiConfig.getpriorityP4()).thenReturn(P4);
 		String kpiRequestTrackerId = "Excel-Jira-5be544de025de212549176a9";
 		when(cacheService.getFromApplicationCache(Constant.KPI_REQUEST_TRACKER_ID_KEY + KPISource.JIRA.name()))
 				.thenReturn(kpiRequestTrackerId);
@@ -266,7 +265,7 @@ public class DCServiceImplTest {
 		Map<String, Object> defectDataListMap = dcServiceImpl.fetchKPIDataFromDb(leafNodeList, startDate, endDate,
 				kpiRequest);
 		assertThat("Total Defects value :", ((List<JiraIssue>) defectDataListMap.get(TOTAL_DEFECT_DATA)).size(),
-				equalTo(17));
+				equalTo(2));
 		assertThat("Total Story :", ((List<JiraIssue>) defectDataListMap.get(SPRINT_WISE_STORY_DATA)).size(),
 				equalTo(5));
 	}

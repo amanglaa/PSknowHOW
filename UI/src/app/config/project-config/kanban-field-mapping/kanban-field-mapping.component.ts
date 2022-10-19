@@ -388,6 +388,7 @@ export class KanbanFieldMappingComponent implements OnInit {
       jiraCanNotAutomatedTestValue: [[]],
       jiraAutomatedTestValue: [[]],
       jiraTestCaseType: [[]],
+      testCaseStatus:[[]],
       regressionAutomationLabels: [[]],
       //squad mapping
       squadIdentifier: [''],

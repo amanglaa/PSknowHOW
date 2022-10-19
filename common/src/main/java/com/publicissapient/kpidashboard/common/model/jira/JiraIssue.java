@@ -18,25 +18,23 @@
 
 package com.publicissapient.kpidashboard.common.model.jira;//NOPMD
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
-
 import com.publicissapient.kpidashboard.common.model.application.AdditionalFilter;
-import org.bson.types.ObjectId;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
-
 import com.publicissapient.kpidashboard.common.model.generic.BasicModel;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@SuppressWarnings({ "javadoc" })
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
+
+@SuppressWarnings({"javadoc"})
 @Getter
 @Setter
 @Builder
@@ -46,184 +44,185 @@ import lombok.Setter;
 @Document(collection = "jira_issue")
 public class JiraIssue extends BasicModel {
 
-	private ObjectId processorId;
-	/*
-	 * Story data
-	 */
-	// sId renamed to issueId
-	@Indexed
-	private String issueId;
-	private String number;
-	private String name;
-	private String typeId;
-	private String typeName;
-	private String status;
-	private String state;
-	private String estimate; // estimate in story points
-	private Double storyPoints;
+    private ObjectId processorId;
+    /*
+     * Story data
+     */
+    // sId renamed to issueId
+    @Indexed
+    private String issueId;
+    private String number;
+    private String name;
+    private String typeId;
+    private String typeName;
+    private String status;
+    private String state;
+    private String estimate; // estimate in story points
+    private Double storyPoints;
 
-	private Integer estimateTime; // estimate in minutes
-	private String url;
-	@Indexed
-	private String changeDate;
-	private String isDeleted;
-	private String priority;
-	private String count;
-	private List<String> labels;
-	private String createdDate;
-	// environmented impacted Eg. Development,QA,MTE,Beta,Production
-	private String envImpacted;
-	// build number
-	private String buildNumber;
-	// root cause
-	private List<String> rootCauseList;
+    private Integer estimateTime; // estimate in minutes
+    private String url;
+    @Indexed
+    private String changeDate;
+    private String isDeleted;
+    private String priority;
+    private String count;
+    private List<String> labels;
+    private String createdDate;
+    // environmented impacted Eg. Development,QA,MTE,Beta,Production
+    private String envImpacted;
+    // build number
+    private String buildNumber;
+    // root cause
+    private List<String> rootCauseList;
 
-	/*
-	 * Owner data
-	 */
-	private List<String> ownersID;
-	private List<String> ownersIsDeleted;
-	private List<String> ownersChangeDate;
-	private List<String> ownersState;
-	private List<String> ownersUsername;
-	private List<String> ownersFullName;
-	private List<String> ownersShortName;
+    /*
+     * Owner data
+     */
+    private List<String> ownersID;
+    private List<String> ownersIsDeleted;
+    private List<String> ownersChangeDate;
+    private List<String> ownersState;
+    private List<String> ownersUsername;
+    private List<String> ownersFullName;
+    private List<String> ownersShortName;
 
-	/*
-	 * ScopeOwner data
-	 */
-	private String teamIsDeleted;
-	private String teamAssetState;
-	private String teamChangeDate;
-	private String teamName;
-	@Indexed
-	private String teamID;
+    /*
+     * ScopeOwner data
+     */
+    private String teamIsDeleted;
+    private String teamAssetState;
+    private String teamChangeDate;
+    private String teamName;
+    @Indexed
+    private String teamID;
 
-	/*
-	 * Sprint data
-	 */
-	private String sprintIsDeleted;
+    /*
+     * Sprint data
+     */
+    private String sprintIsDeleted;
 
-	/*
-	 * Automated Test Data
-	 */
-	private String testAutomated;
-	private String isTestAutomated;
-	private String isTestCanBeAutomated;
-	private String testAutomatedDate;
+    /*
+     * Automated Test Data
+     */
+    private String testAutomated;
+    private String isTestAutomated;
+    private String isTestCanBeAutomated;
+    private String testAutomatedDate;
 
-	private String sprintChangeDate;
-	private String sprintAssetState;
-	@Indexed
-	private String sprintEndDate;
-	@Indexed
-	private String sprintBeginDate;
-	private String sprintName;
-	@Indexed
-	private String sprintID;
-	private String sprintUrl;
-	private List<String> sprintIdList;
 
-	/*
-	 * Epic data
-	 */
-	private String epicIsDeleted;
-	private String epicChangeDate;
-	private String epicAssetState;
-	private String epicType;
-	private String epicEndDate;
-	private String epicBeginDate;
-	private String epicName;
-	private String epicUrl;
-	private String epicNumber;
-	private String epicID;
+    private String sprintChangeDate;
+    private String sprintAssetState;
+    @Indexed
+    private String sprintEndDate;
+    @Indexed
+    private String sprintBeginDate;
+    private String sprintName;
+    @Indexed
+    private String sprintID;
+    private String sprintUrl;
+    private List<String> sprintIdList;
 
-	// Epic Issue Type Data
-	private Integer reopeningCounter;
-	private double costOfDelay;
-	private double jobSize;
-	private double wsjf;
-	private double businessValue;
-	private double timeCriticality;
-	private double riskReduction;
+    /*
+     * Epic data
+     */
+    private String epicIsDeleted;
+    private String epicChangeDate;
+    private String epicAssetState;
+    private String epicType;
+    private String epicEndDate;
+    private String epicBeginDate;
+    private String epicName;
+    private String epicUrl;
+    private String epicNumber;
+    private String epicID;
 
-	/*
-	 * Scope data
-	 */
-	private String projectPath;
-	private String projectIsDeleted;
-	private String projectState;
-	private String projectChangeDate;
-	private String projectEndDate;
-	private String projectBeginDate;
-	private String projectName;
-	private String projectID;
-	private String projectKey;
-	private String jiraProjectName;
-	private Integer bufferedEstimateTime; // buffered estimate in days
-	private String resolution; // Added to store Jira resolution
-	private List<String> affectedVersions;
+    // Epic Issue Type Data
+    private Integer reopeningCounter;
+    private double costOfDelay;
+    private double jobSize;
+    private double wsjf;
+    private double businessValue;
+    private double timeCriticality;
+    private double riskReduction;
 
-	/*
-	 * Work Stream data
-	 */
-	private String workStreamID;
-	private String workStream;
+    /*
+     * Scope data
+     */
+    private String projectPath;
+    private String projectIsDeleted;
+    private String projectState;
+    private String projectChangeDate;
+    private String projectEndDate;
+    private String projectBeginDate;
+    private String projectName;
+    private String projectID;
+    private String projectKey;
+    private String jiraProjectName;
+    private Integer bufferedEstimateTime; // buffered estimate in days
+    private String resolution; // Added to store Jira resolution
+    private List<String> affectedVersions;
 
-	private List<AdditionalFilter> additionalFilters;
+    /*
+     * Work Stream data
+     */
+    private String workStreamID;
+    private String workStream;
 
-	private String release;
+    private List<AdditionalFilter> additionalFilters;
 
-	private String releaseId;
+    private String release;
 
-	private String releaseDate;
+    private String releaseId;
 
-	private String assigneeId;
-	private String assigneeName;
+    private String releaseDate;
 
-	private String developerId;
-	private String developerName;
-	private String qaId;
-	private String qaName;
+    private String assigneeId;
+    private String assigneeName;
 
-	// SRDEVOPSDA-474
-	private String assignAttributeValue;
-	// Custom Team field
-	private String teamNameValue;
+    private String developerId;
+    private String developerName;
+    private String qaId;
+    private String qaName;
 
-	// Story demonstrated to client field
-	private String storyDemonstratedFieldValue;
-	private LocalDateTime storyDemonstratedFieldValueDate;
+    // SRDEVOPSDA-474
+    private String assignAttributeValue;
+    // Custom Team field
+    private String teamNameValue;
 
-	/**
-	 * Device Platform (iOS/Android/Desktop)
-	 */
-	private String devicePlatform;
+    // Story demonstrated to client field
+    private String storyDemonstratedFieldValue;
+    private LocalDateTime storyDemonstratedFieldValueDate;
 
-	private String defectRaisedBy;
+    /**
+     * Device Platform (iOS/Android/Desktop)
+     */
+    private String devicePlatform;
 
-	private String jiraStatus;
+    private String defectRaisedBy;
 
-	private Set<String> defectStoryID;
-	private String speedyIssueType;
-	private Integer timeSpentInMinutes;
-	private String basicProjectConfigId;
-	private String testCaseFolderName;
+    private String jiraStatus;
 
-	private List<ReleaseVersion> releaseVersions;
-	private boolean defectRaisedByQA;
+    private Set<String> defectStoryID;
+    private String speedyIssueType;
+    private Integer timeSpentInMinutes;
+    private String basicProjectConfigId;
+    private String testCaseFolderName;
 
-	public boolean isDefectRaisedByQA() {
-		return defectRaisedByQA;
-	}
+    private List<ReleaseVersion> releaseVersions;
+    private boolean defectRaisedByQA;
 
-	public void setDefectRaisedByQA(boolean defectRaisedByQA) {
-		this.defectRaisedByQA = defectRaisedByQA;
-	}
-	
-	private Integer originalEstimateMinutes;
-	private Integer remainingEstimateMinutes;
-	private boolean productionDefect;
-	@Indexed
-	private String updateDate;
+    public boolean isDefectRaisedByQA() {
+        return defectRaisedByQA;
+    }
+
+    public void setDefectRaisedByQA(boolean defectRaisedByQA) {
+        this.defectRaisedByQA = defectRaisedByQA;
+    }
+
+    private Integer originalEstimateMinutes;
+    private Integer remainingEstimateMinutes;
+    private boolean productionDefect;
+    @Indexed
+    private String updateDate;
 }

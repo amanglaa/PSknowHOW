@@ -33,6 +33,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.publicissapient.kpidashboard.apis.common.service.impl.KpiHelperService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -210,7 +211,7 @@ public class RCAServiceImpl extends JiraKPIService<Long, List<Object>, Map<Strin
 				mapOfProjectFilters.put(JiraFeature.ISSUE_TYPE.getFieldValueInFeature(),
 						CommonUtils.convertToPatternList(fieldMapping.getJiraDefectCountlIssueType()));
 			}
-			droppedDefects.put(basicProjectConfigId.toString(), fieldMapping.getJiraDefectDroppedStatus());
+			KpiHelperService.getDroppedDefectsFilters(droppedDefects, basicProjectConfigId, fieldMapping);
 			uniqueProjectMap.put(basicProjectConfigId.toString(), mapOfProjectFilters);
 
 		});
@@ -459,20 +460,7 @@ public class RCAServiceImpl extends JiraKPIService<Long, List<Object>, Map<Strin
 
 	private void addJiraIssueTodefectListWoDrop(List<JiraIssue> defectLinkedWithStory, List<JiraIssue> defectListWoDrop,
 			Map<String, List<String>> droppedDefects) {
-		if (CollectionUtils.isNotEmpty(defectLinkedWithStory)) {
-			defectLinkedWithStory.forEach(jiraIssue -> {
-				if (!StringUtils.isBlank(jiraIssue.getStatus())) {
-					List<String> defectStatus = droppedDefects.get(jiraIssue.getBasicProjectConfigId());
-					if (CollectionUtils.isNotEmpty(defectStatus)) {
-						if (!defectStatus.contains(jiraIssue.getStatus())) {
-							defectListWoDrop.add(jiraIssue);
-						}
-					} else {
-						defectListWoDrop.add(jiraIssue);
-					}
-				}
-			});
-		}
+		KpiHelperService.getDefectsWithoutDrop(droppedDefects, defectLinkedWithStory, defectListWoDrop);
 
 	}
 

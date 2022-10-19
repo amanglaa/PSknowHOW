@@ -16,7 +16,7 @@
  *
  ******************************************************************************/
 
-import { Component, OnInit, ElementRef, HostListener, ViewChild, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { HttpService } from '../../services/http.service';
 import { ExcelService } from '../../services/excel.service';
 import { SharedService } from '../../services/shared.service';
@@ -106,6 +106,7 @@ export class FilterComponent implements OnInit {
     hierarchies: object = {};
     filteredAddFilters: object = {};
     initFlag: boolean = false;
+    showChart:boolean = true;
     constructor(private service: SharedService, private httpService: HttpService, private excelService: ExcelService, private elemRef: ElementRef, private getAuthorizationService: GetAuthorizationService, public router: Router, private ga: GoogleAnalyticsService, private messageService: MessageService, private helperService: HelperService) {
         this.service.setSelectedType('Scrum');
         this.selectedTab = (this.service.getSelectedTab() || 'mydashboard');
@@ -972,5 +973,11 @@ export class FilterComponent implements OnInit {
     getLevelName(id) {
         let name = this.hierarchyLevels?.filter(x => x.hierarchyLevelId == id)[0]?.hierarchyLevelName;
         return name;
+    }
+
+    showChartToggle(val){
+        console.log(val);
+        this.showChart = val;
+        this.service.setShowTableView(this.showChart);
     }
 }

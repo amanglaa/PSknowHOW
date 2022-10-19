@@ -347,22 +347,30 @@ export class UploadComponent implements OnInit {
 
     /*After selection of file get the byte array and dimension of file*/
     onSelectImage(event) {
-        this.warning = undefined;
-        /*convert image to  byte array*/
-        if (event.target.files[0]) {
-            const reader = new FileReader();
-            reader.readAsDataURL(event.target.files[0]);
-            reader.onload = (evt: any) => { // when file has loaded
-                this.logoImage = reader.result;
-                const img = new Image();
-                img.src = this.logoImage;
-                img.onload = () => {
-                    if (img.width > 100 || img.height > 100) {
-                        this.warning = 'Image is too big(' + img.width + ' x ' + img.height + '). The maximum dimensions are 100 x 100 pixels';
-                    }
+        return new Promise((resolve) => {
+            let isImageFit = true;
+            this.warning = undefined;
+            /*convert image to  byte array*/
+            if (event.target.files[0]) {
+                const reader = new FileReader();
+                reader.readAsDataURL(event.target.files[0]);
+                reader.onload = (evt: any) => { // when file has loaded
+                    this.logoImage = reader.result;
+                    const img = new Image();
+                    img.src = this.logoImage;
+                    img.onload = () => {
+                        if (img.width > 250 || img.height > 100) {
+                            this.warning = 'Image is too big(' + img.width + ' x ' + img.height + '). The maximum dimensions are 250 x 100 pixels';
+                            isImageFit = false;
+                            resolve(isImageFit);
+                        }else{
+                            resolve(isImageFit);
+                        }
+                    };
                 };
-            };
-        }
+            }
+            
+        });
     }
 
     /*check validation of file*/
@@ -375,9 +383,9 @@ export class UploadComponent implements OnInit {
         /*Validate the size*/
         const imagesize = this.uploadedFile.size / 1024;
 
-        if (imagesize > 50) {
+        if (imagesize > 100) {
             this.invalid = true;
-            this.error = 'File should not be more than 50 KB';
+            this.error = 'File should not be more than 100 KB';
         }
 
         /*Validate the format*/
@@ -390,7 +398,7 @@ export class UploadComponent implements OnInit {
 
 
     /*Upload the file*/
-    onUpload(event) {
+    async onUpload(event) {
 
         this.uploadedFile = event.target.files[0];
 
@@ -400,20 +408,22 @@ export class UploadComponent implements OnInit {
             return;
         }
         /*conversion of image to byte array */
-        this.onSelectImage(event);
-
+        let isImageFit = await this.onSelectImage(event);
+        
         /*call service to upload */
-        this.http_service.uploadImage(this.uploadedFile).pipe(first())
-            .subscribe(
-                data => {
-                    if (data['status'] && data['status'] === 500) {
-                        this.error = data['statusText'];
-                    } else {
-                        this.message = data['message'];
-                        this.sharedService.setLogoImage(this.uploadedFile);
-
-                    }
-                });
+        if(isImageFit){
+            this.http_service.uploadImage(this.uploadedFile).pipe(first())
+                .subscribe(
+                    data => {
+                        if (data['status'] && data['status'] === 500) {
+                            this.error = data['statusText'];
+                        } else {
+                            this.message = data['message'];
+                            this.sharedService.setLogoImage(this.uploadedFile);
+    
+                        }
+                    });
+        }
     }
 
 

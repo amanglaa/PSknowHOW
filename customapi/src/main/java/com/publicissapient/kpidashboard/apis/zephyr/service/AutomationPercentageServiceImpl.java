@@ -141,6 +141,7 @@ public final class AutomationPercentageServiceImpl extends ZephyrKPIService<Doub
 		List<String> basicProjectConfigIds = new ArrayList<>();
 		Map<String, Map<String, Object>> uniqueProjectMap = new HashMap<>();
 		Map<String, Map<String, Object>> uniqueProjectMapFolder = new HashMap<>();
+		Map<String, Map<String, Object>> uniqueProjectMapNotIn = new HashMap<>();
 		Map<String, String> sprintProjectIdMap = new HashMap<>();
 		Map<ObjectId, Map<String, List<ProjectToolConfig>>> toolMap = (Map<ObjectId, Map<String, List<ProjectToolConfig>>>) cacheService
 				.cacheProjectToolConfigMapData();
@@ -151,6 +152,7 @@ public final class AutomationPercentageServiceImpl extends ZephyrKPIService<Doub
 
 			Map<String, Object> mapOfProjectFilters = new LinkedHashMap<>();
 			Map<String, Object> mapOfFolderPathFilters = new LinkedHashMap<>();
+			Map<String, Object> mapOfProjectFiltersNotIn = new LinkedHashMap<>();
 			FieldMapping fieldMapping = basicProjetWiseConfig.get(basicProjectConfigId);
 
 			sprintList.add(leaf.getSprintFilter().getId());
@@ -172,10 +174,17 @@ public final class AutomationPercentageServiceImpl extends ZephyrKPIService<Doub
 							CommonUtils.convertTestFolderToPatternList(sprintAutomationFolderPath));
 				}
 			}
+
+			if (CollectionUtils.isNotEmpty(fieldMapping.getTestCaseStatus())) {
+				mapOfProjectFiltersNotIn.put(JiraFeature.STATUS.getFieldValueInFeature(),
+						CommonUtils.convertTestFolderToPatternList(fieldMapping.getTestCaseStatus()));
+			}
+
 			// if Zephyr squad as a jira plguin is setup with project
 			uniqueProjectMapFolder.put(basicProjectConfigId.toString(), mapOfFolderPathFilters);
 
 			uniqueProjectMap.put(basicProjectConfigId.toString(), mapOfProjectFilters);
+			uniqueProjectMapNotIn.put(basicProjectConfigId.toString(),mapOfProjectFiltersNotIn);
 
 		});
 		// additional filter
@@ -185,6 +194,7 @@ public final class AutomationPercentageServiceImpl extends ZephyrKPIService<Doub
 				sprintList.stream().distinct().collect(Collectors.toList()));
 		mapOfFilters.put(JiraFeature.BASIC_PROJECT_CONFIG_ID.getFieldValueInFeature(),
 				basicProjectConfigIds.stream().distinct().collect(Collectors.toList()));
+
 
 		List<SprintWiseStory> sprintWiseStoryList = jiraIssueRepository.findIssuesGroupBySprint(mapOfFilters,
 				uniqueProjectMap, kpiRequest.getFilterToShowOnTrend(), DEV);
@@ -210,8 +220,9 @@ public final class AutomationPercentageServiceImpl extends ZephyrKPIService<Doub
 		mapOfFiltersStoryQuery.put(JiraFeature.ISSUE_TYPE.getFieldValueInFeature(),
 				Arrays.asList(NormalizedJira.TEST_TYPE.getValue()));
 
-		List<TestCaseDetails> testCasesList = testCaseDetailsRepository.findTestCases(mapOfFiltersStoryQuery,
-				uniqueProjectMapFolder);
+
+		List<TestCaseDetails> testCasesList = testCaseDetailsRepository.findTestDetails(mapOfFiltersStoryQuery,
+				uniqueProjectMapFolder,uniqueProjectMapNotIn);
 
 		resultListMap.put(SPRINTSTORIES, sprintWiseStoryList);
 		resultListMap.put(TESTCASEKEY, testCasesList);

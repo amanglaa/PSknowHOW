@@ -474,6 +474,7 @@ export class FieldMappingComponent implements OnInit {
       jiraCanNotAutomatedTestValue: [[]],
       jiraAutomatedTestValue: [[]],
       jiraTestCaseType: [[]],
+      testCaseStatus:[[]],
       regressionAutomationLabels: [[]],
       excludeRCAFromFTPR: [[]]
     };

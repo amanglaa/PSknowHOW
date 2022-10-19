@@ -16,7 +16,7 @@
  *
  ******************************************************************************/
 
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { UploadComponent } from './upload.component';
 import { CommonModule } from '@angular/common';
 import { InputSwitchModule } from 'primeng/inputswitch';
@@ -708,10 +708,10 @@ const fakeTestExecutionData = {
     const blob: Blob = new Blob([component.logoImage], { type: 'image/png' });
     component.uploadedFile = new File([blob], 'upload.png', { type: 'image/png' });
     Object.defineProperty(component.uploadedFile, 'size', {
-      value: 51 * 1024
+      value: 101 * 1024
     });
     component.validate();
-    expect(component.error).toBe('File should not be more than 50 KB');
+    expect(component.error).toBe('File should not be more than 100 KB');
   }));
 
 
@@ -720,7 +720,7 @@ const fakeTestExecutionData = {
     const blob: Blob = new Blob([component.logoImage], { type: 'image/png' });
     component.uploadedFile = new File([blob], 'upload.png', { type: 'image/png' });
     Object.defineProperty(component.uploadedFile, 'size', {
-      value: 51 * 1024
+      value: 101 * 1024
     });
     Object.defineProperty(component.uploadedFile, 'name', {
       value: 'upload.tef'
@@ -740,14 +740,14 @@ const fakeTestExecutionData = {
     const blob: Blob = new Blob([component.logoImage], { type: 'image/png' });
     event.target.files[0] = new File([blob], 'upload.png', { type: 'image/png' });
     Object.defineProperty(event.target.files[0], 'size', {
-      value: 51 * 1024
+      value: 101 * 1024
     });
     component.onUpload(event);
     expect(component.invalid).toBeTruthy();
   }));
 
 
-  it('file should be uploaded if correct size and type ', waitForAsync(() => {
+  it('file should be uploaded if correct size and type ', fakeAsync(() => {
     const event = {
       target: {
         files: File
@@ -757,19 +757,21 @@ const fakeTestExecutionData = {
     const blob: Blob = new Blob([component.logoImage], { type: 'image/png' });
     event.target.files[0] = new File([blob], 'upload.png', { type: 'image/png' });
     Object.defineProperty(event.target.files[0], 'size', {
-      value: 49
+      value: 99
     });
     Object.defineProperty(event.target.files[0], 'name', {
       value: 'upload.png'
     });
-
+    spyOn(component, "onSelectImage").and.resolveTo(true);
     component.onUpload(event);
+    tick();
     const httpreq = httpMock.expectOne(baseUrl + '/api/file/upload');
-    httpreq.flush({ 'message': 'File upload successfully' });
-    expect(component.message).toBe('File upload successfully');
+    
+    httpreq.flush({ 'message': 'File uploaded successfully' });
+    expect(component.message).toBe('File uploaded successfully');
   }));
 
-  it('file should be uploaded if correct size and type ', waitForAsync(() => {
+  it('file should be uploaded if correct size and type ', fakeAsync(() => {
     const event = {
       target: {
         files: File
@@ -779,13 +781,14 @@ const fakeTestExecutionData = {
     const blob: Blob = new Blob([component.logoImage], { type: 'image/png' });
     event.target.files[0] = new File([blob], 'upload.png', { type: 'image/png' });
     Object.defineProperty(event.target.files[0], 'size', {
-      value: 49
+      value: 99
     });
     Object.defineProperty(event.target.files[0], 'name', {
       value: 'upload.png'
     });
-
+    spyOn(component, "onSelectImage").and.resolveTo(true);
     component.onUpload(event);
+    tick();
     const httpreq = httpMock.expectOne(baseUrl + '/api/file/upload');
     httpreq.flush(fakeErrorOnUpload);
     expect(component.error).toBe(fakeErrorOnUpload.statusText);

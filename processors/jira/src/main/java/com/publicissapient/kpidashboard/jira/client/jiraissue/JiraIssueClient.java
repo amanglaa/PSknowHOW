@@ -365,6 +365,7 @@ public abstract class JiraIssueClient {// NOPMD //NOSONAR
 		testCaseDetails.setTestAutomatedDate(jiraIssue.getTestAutomatedDate());
 		testCaseDetails.setDefectStoryID(jiraIssue.getDefectStoryID());
 		testCaseDetails.setDefectRaisedBy(jiraIssue.getDefectRaisedBy());
+		testCaseDetails.setTestCaseStatus(jiraIssue.getStatus());
 		testCaseDetailsList.add(testCaseDetails);
 		if (CollectionUtils.isNotEmpty(testCaseDetailsList)) {
 			testCaseDetailsRepository.saveAll(testCaseDetailsList);

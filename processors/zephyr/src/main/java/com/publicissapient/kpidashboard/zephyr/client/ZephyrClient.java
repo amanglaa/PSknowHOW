@@ -31,12 +31,11 @@ public interface ZephyrClient {
 
 	/**
 	 * Method to fetch list of test cases from Zephyr server/cloud based on
-	 * project key and folder
+	 * project key
 	 *
 	 * @param startAt
 	 * @param projectConfig
-	 * @param folderPath
 	 * @return List<ZephyrTestCaseDTO>
 	 */
-	List<ZephyrTestCaseDTO> getTestCase(int startAt, ProjectConfFieldMapping projectConfig, String folderPath);
+	List<ZephyrTestCaseDTO> getTestCase(int startAt, ProjectConfFieldMapping projectConfig);
 }

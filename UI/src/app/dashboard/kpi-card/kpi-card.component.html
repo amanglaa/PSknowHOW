@@ -67,9 +67,11 @@
             </div>
         </div>
     </div>
-    <div class="kpi-card-body">
-        <div class="kpi-card-indicator" *ngIf="isShow && trendData?.length  > 0  && showTrendIndicator"
-            [ngStyle]="{'justify-content': trendData?.length < 3 ? 'right' : 'space-around'}">
+    <div class="kpi-card-body" 
+    [ngStyle]="{'height': showChartView ? '365px' : '110px', 
+    'min-height': showChartView ? '330px' : '100px'}">
+        <div class="kpi-card-indicator p-jc-evenly" *ngIf="isShow && trendData?.length  > 0  && showTrendIndicator"
+            >
             <ng-container *ngFor="let item of trendData; let i = index;">
                 <!--Grouped Column Plus Chart has line value(lineValue) and bar value(value). We need to send lineValue to the latest value indicator.-->
                 <ng-container *ngIf="kpiData?.kpiDetail?.chartType !== 'grouped_column_plus_line'">

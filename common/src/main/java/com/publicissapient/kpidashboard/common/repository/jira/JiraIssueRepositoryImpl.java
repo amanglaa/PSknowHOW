@@ -551,4 +551,43 @@ public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom {// NO
 		return operations.find(query, JiraIssue.class);
 
 	}
+
+	@Override
+	public List<SprintWiseStory> findIssuesAndTestDetailsGroupBySprint(Map<String, List<String>> mapOfFilters,
+														 Map<String, Map<String, Object>> uniqueProjectMap, String filterToShowOnTrend,
+														 String individualDevOrQa,Map<String, Map<String, Object>> uniqueProjectMapNotIn) {
+
+		Criteria criteria = new Criteria();
+
+		// map of common filters Project and Sprint
+		criteria = getCommonFiltersCriteria(mapOfFilters, criteria);
+		// Project level storyType filters
+		List<Criteria> projectCriteriaList = new ArrayList<>();
+		uniqueProjectMap.forEach((project, filterMap) -> {
+			Criteria projectCriteria = new Criteria();
+			projectCriteria.and(CONFIG_ID).is(project);
+			filterMap.forEach((subk, subv) -> projectCriteria.and(subk).in((List<Pattern>) subv));
+			projectCriteriaList.add(projectCriteria);
+
+		});
+
+		uniqueProjectMapNotIn.forEach((project, filterMap) -> {
+			Criteria projectCriteria = new Criteria();
+			projectCriteria.and(CONFIG_ID).is(project);
+			filterMap.forEach((subk, subv) -> projectCriteria.and(subk).nin((List<Pattern>) subv));
+			projectCriteriaList.add(projectCriteria);
+
+		});
+		Criteria criteriaAggregatedAtProjectLevel = new Criteria()
+				.orOperator(projectCriteriaList.toArray(new Criteria[0]));
+		Criteria criteriaProjectLevelAdded = new Criteria().andOperator(criteria, criteriaAggregatedAtProjectLevel);
+		MatchOperation matchStage = Aggregation.match(criteriaProjectLevelAdded);
+
+		GroupOperation groupBySprint = Aggregation.group(SPRINT_ID).last(SPRINT_ID).as(SPRINT).last(SPRINT_NAME).as(SPRINT_NAME)
+				.last(CONFIG_ID).as(CONFIG_ID).addToSet(NUMBER).as(STORY_LIST);
+
+		Aggregation aggregation = Aggregation.newAggregation(matchStage, groupBySprint);
+		return operations.aggregate(aggregation, JiraIssue.class, SprintWiseStory.class).getMappedResults();
+	}
+
 }

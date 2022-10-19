@@ -49,5 +49,6 @@ public class TestCaseDetails extends BasicModel {
     private String testAutomatedDate;
     private Set<String> defectStoryID;
     private String defectRaisedBy;
+    private String testCaseStatus;
 
 }

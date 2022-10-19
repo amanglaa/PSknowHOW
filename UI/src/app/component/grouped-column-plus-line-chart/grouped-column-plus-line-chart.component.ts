@@ -32,7 +32,7 @@ import { SharedService } from 'src/app/services/shared.service';
   templateUrl: './grouped-column-plus-line-chart.component.html',
   styleUrls: ['./grouped-column-plus-line-chart.component.css'],
 })
-export class GroupedColumnPlusLineChartComponent implements OnInit {
+export class GroupedColumnPlusLineChartComponent implements OnInit, OnChanges {
   @Input() data: any;
   @Input() lineChart: boolean;
   @Input() thresholdValue: number;

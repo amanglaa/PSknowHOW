@@ -63,6 +63,7 @@ public class KpiMaster extends BasicModel {
 	private String barLegend;
 	private String boxType;
 	private boolean calculateMaturity;
+	private boolean hideOverallFilter;
 
 	@JsonProperty("videoLink")
 	private KPIVideoLink videoLink;

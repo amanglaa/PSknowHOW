@@ -27,6 +27,7 @@ export class KpiCardComponent implements OnInit, OnDestroy {
   @Input() isShow?: any;
   @Input() showExport: boolean;
   @Input() showTrendIndicator: boolean =true;
+  @Input() showChartView: boolean = true;
 
   constructor(private service: SharedService) {
   }
@@ -38,6 +39,8 @@ export class KpiCardComponent implements OnInit, OnDestroy {
           if (x[this.kpiData?.kpiId][key]?.includes('Overall')) {
             this.filterOptions = {};
             this.filterOption = 'Overall';
+          } else {
+            this.filterOption = this.kpiSelectedFilterObj[this.kpiData?.kpiId][0];
           }
         }
         if (this.kpiData?.kpiDetail?.hasOwnProperty('kpiFilter') && this.kpiData?.kpiDetail?.kpiFilter?.toLowerCase() == 'radiobutton') {

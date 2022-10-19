@@ -257,7 +257,7 @@ public class KpiHelperService { // NOPMD
 			mapOfProjectFilters.put(JiraFeature.ISSUE_TYPE.getFieldValueInFeature(),
 					CommonUtils.convertToPatternList(fieldMapping.getJiraDefectInjectionIssueType()));
 			uniqueProjectMap.put(basicProjectConfigId.toString(), mapOfProjectFilters);
-			droppedDefects.put(basicProjectConfigId.toString(), fieldMapping.getJiraDefectDroppedStatus());
+			getDroppedDefectsFilters(droppedDefects, basicProjectConfigId, fieldMapping);
 		});
 
 		KpiDataHelper.createAdditionalFilterMap(kpiRequest, mapOfFilters, Constant.SCRUM, DEV, flterHelperService);
@@ -294,20 +294,7 @@ public class KpiHelperService { // NOPMD
 		// Fetch Defects linked with story ID's
 		List<JiraIssue> defectDataList = jiraIssueRepository.findIssuesByType(mapOfFiltersWithStoryIds);
 		List<JiraIssue> defectListWoDrop = new ArrayList<>();
-		if (CollectionUtils.isNotEmpty(defectDataList)) {
-			defectDataList.forEach(jiraIssue -> {
-				if (!StringUtils.isBlank(jiraIssue.getStatus())) {
-					List<String> defectStatus = droppedDefects.get(jiraIssue.getBasicProjectConfigId());
-					if (CollectionUtils.isNotEmpty(defectStatus)) {
-						if (!defectStatus.contains(jiraIssue.getStatus())) {
-							defectListWoDrop.add(jiraIssue);
-						}
-					} else {
-						defectListWoDrop.add(jiraIssue);
-					}
-				}
-			});
-		}
+		getDefectsWithoutDrop(droppedDefects, defectDataList, defectListWoDrop);
 		resultListMap.put(STORY_DATA, sprintWiseStoryList);
 		resultListMap.put(DEFECT_DATA, defectListWoDrop);
 
@@ -323,6 +310,7 @@ public class KpiHelperService { // NOPMD
 		List<String> basicProjectConfigIds = new ArrayList<>();
 		Map<String, Map<String, Object>> uniqueProjectMapFH = new HashMap<>();
 		Map<String, Map<String, Object>> uniqueProjectMap = new HashMap<>();
+		Map<String, List<String>> droppedDefects = new HashMap<>();
 		leafNodeList.forEach(leaf -> {
 			Map<String, Object> mapOfProjectFiltersFH = new LinkedHashMap<>();
 			Map<String, Object> mapOfProjectFilters = new LinkedHashMap<>();
@@ -347,6 +335,7 @@ public class KpiHelperService { // NOPMD
 			mapOfProjectFilters.put(JiraFeature.ISSUE_TYPE.getFieldValueInFeature(),
 					CommonUtils.convertToPatternList(fieldMapping.getJiraQADefectDensityIssueType()));
 			uniqueProjectMap.put(basicProjectConfigId.toString(), mapOfProjectFilters);
+			getDroppedDefectsFilters(droppedDefects, basicProjectConfigId, fieldMapping);
 		});
 
 		KpiDataHelper.createAdditionalFilterMap(kpiRequest, mapOfFilters, Constant.SCRUM, DEV, flterHelperService);
@@ -387,10 +376,12 @@ public class KpiHelperService { // NOPMD
 
 		// Fetch Defects linked with story ID's
 		List<JiraIssue> defectDataList = jiraIssueRepository.findIssuesByType(mapOfFiltersWithStoryIds);
+		List<JiraIssue> defectListWoDrop = new ArrayList<>();
+		getDefectsWithoutDrop(droppedDefects, defectDataList, defectListWoDrop);
 
 		resultListMap.put(STORY_POINTS_DATA, storyList);
 		resultListMap.put(STORY_DATA, sprintWiseStoryList);
-		resultListMap.put(DEFECT_DATA, defectDataList);
+		resultListMap.put(DEFECT_DATA, defectListWoDrop);
 
 		return resultListMap;
 	}
@@ -1195,6 +1186,38 @@ public class KpiHelperService { // NOPMD
 			fieldWiseIssuesLatestMap.put(field, ids);
 		});
 		return fieldWiseIssuesLatestMap;
+	}
+
+	public static void getDroppedDefectsFilters(Map<String, List<String>> droppedDefects,
+															  ObjectId basicProjectConfigId, FieldMapping fieldMapping) {
+		List<String> filtersList = new ArrayList<>();
+		if (CollectionUtils.isNotEmpty(fieldMapping.getResolutionTypeForRejection())) {
+			filtersList.addAll(fieldMapping.getResolutionTypeForRejection());
+		}
+		if (StringUtils.isNotEmpty(fieldMapping.getJiraDefectRejectionStatus())) {
+			filtersList.add(fieldMapping.getJiraDefectRejectionStatus());
+		}
+		if(CollectionUtils.isNotEmpty(filtersList)) {
+			droppedDefects.put(basicProjectConfigId.toString(), filtersList);
+		}
+	}
+
+	public static void getDefectsWithoutDrop(Map<String, List<String>> droppedDefects, List<JiraIssue> defectDataList,
+											 List<JiraIssue> defectListWoDrop) {
+		if (CollectionUtils.isNotEmpty(defectDataList)) {
+			defectDataList.forEach(jiraIssue -> {
+				if (!StringUtils.isBlank(jiraIssue.getStatus())) {
+					List<String> defectStatus = droppedDefects.get(jiraIssue.getBasicProjectConfigId());
+					if (CollectionUtils.isNotEmpty(defectStatus)) {
+						if (!defectStatus.contains(jiraIssue.getStatus())) {
+							defectListWoDrop.add(jiraIssue);
+						}
+					} else {
+						defectListWoDrop.add(jiraIssue);
+					}
+				}
+			});
+		}
 	}
 
 }

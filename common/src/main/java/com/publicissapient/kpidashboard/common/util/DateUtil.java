@@ -44,6 +44,8 @@ public class DateUtil {
 
 	public static final String TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
 
+	public static final String TIME_FORMAT_WITH_SEC = "yyyy-MM-dd'T'HH:mm:ss.SSSX";
+
 	private DateUtil() {
 		// to prevent creation on object
 	}
