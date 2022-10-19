@@ -91,7 +91,7 @@ public final class Constant {
 	public static final int LAST_X_DAYS_INTERVAL = 7;
 	public static final String WASTAGE = "wastage";
 
-	public static final String LOGO_FIL_NAME = "default.gif";
+	public static final String LOGO_FIL_NAME = "PsKnowHowLogo.png";
 	public static final String FALSE = "False";
 
 	public static final String KPI_REQUEST_TRACKER_ID_KEY = "kpiRequestTrackerId";
