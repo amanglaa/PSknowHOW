@@ -700,7 +700,7 @@ const fakeTestExecutionData = {
     component.onDelete();
     const httpreq = httpMock.expectOne(baseUrl + '/api/file/delete');
     httpreq.flush('true');
-    expect(component.message).toBe('File delete successfully');
+    expect(component.message).toBe('File deleted successfully');
   }));
 
   it('check size validation on image', waitForAsync(() => {

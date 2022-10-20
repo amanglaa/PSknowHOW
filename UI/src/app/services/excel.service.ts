@@ -17,7 +17,7 @@
  ******************************************************************************/
 
 import { Injectable } from '@angular/core';
-import { Workbook } from 'exceljs';
+import * as Excel from "exceljs";
 import * as fs from 'file-saver';
 import { DatePipe } from '../../../node_modules/@angular/common';
 
@@ -33,7 +33,7 @@ export class ExcelService {
     generateExcel(kpiData, kpiType, kpiName, isKanban) {
 
         let worksheet;
-        const workbook = new Workbook();
+        const workbook = new Excel.Workbook();
         if (kpiName === 'Engineering Maturity') {
             worksheet = workbook.addWorksheet(kpiName);
         } else {

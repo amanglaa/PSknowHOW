@@ -18,7 +18,6 @@ ADD ${JAR_FILE} /app/customapi.jar
 WORKDIR /app
 
 COPY src/main/resources/application.properties /app/properties/customapi.properties
-COPY EncryptionUtility.jar /app/EncryptionUtility.jar
 COPY start_combined_collector.sh /app/start_combined_collector.sh
 
 RUN ["chmod", "+x", "/app/start_combined_collector.sh"]

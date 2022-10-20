@@ -146,7 +146,7 @@ public class ZephyrCloudImplTest {
 		when(zephyrConfig.getPageSize()).thenReturn(5);
 		doReturn(new ResponseEntity<>(getServerResponseFromJson("test_cases_response_zephyr_cloud.json"),
 				HttpStatus.OK)).when(restTemplate).exchange(eq(
-						"https://api.zephyrscale.smartbear.com/v2/testcases?maxResults=5&startAt=0&projectKey=SMAR&folderId=661589"),
+						"https://api.zephyrscale.smartbear.com/v2/testcases?maxResults=5&startAt=0&projectKey=SMAR"),
 						eq(HttpMethod.GET), eq(stringHttpEntity), eq(String.class));
 
 		doReturn(new ResponseEntity<>(getServerResponseFromJson("folder_details_response_zephyr_cloud.json"),
@@ -179,7 +179,7 @@ public class ZephyrCloudImplTest {
 		when(zephyrConfig.getPageSize()).thenReturn(5);
 		doReturn(new ResponseEntity<>(getServerResponseFromJson("test_cases_response_zephyr_cloud.json"),
 				HttpStatus.OK)).when(restTemplate).exchange(eq(
-						"https://api.zephyrscale.smartbear.com/v2/testcases?maxResults=5&startAt=0&projectKey=SMAR&folderId=661589"),
+						"https://api.zephyrscale.smartbear.com/v2/testcases?maxResults=5&startAt=0&projectKey=SMAR"),
 						eq(HttpMethod.GET), eq(stringHttpEntity), eq(String.class));
 
 		doReturn(new ResponseEntity<>(getServerResponseFromJson("folder_details_response_zephyr_cloud.json"),
@@ -220,7 +220,7 @@ public class ZephyrCloudImplTest {
 						eq(stringHttpEntity), eq(String.class));
 
 		doReturn(new ResponseEntity<>(null, HttpStatus.NO_CONTENT)).when(restTemplate).exchange(eq(
-				"https://api.zephyrscale.smartbear.com/v2/testcases?maxResults=5&startAt=0&projectKey=SMAR&folderId=661589"),
+				"https://api.zephyrscale.smartbear.com/v2/testcases?maxResults=5&startAt=0&projectKey=SMAR"),
 				eq(HttpMethod.GET), eq(stringHttpEntity), eq(String.class));
 
 		assertThrows(RestClientException.class, () -> {
