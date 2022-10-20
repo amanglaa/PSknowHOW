@@ -335,7 +335,7 @@ public final class AutomationPercentageServiceImpl extends ZephyrKPIService<Doub
 			List<SprintWiseStory> sprintWiseStory) {
 		return testCaseList.stream()
 				.filter(tc -> sprintWiseStory.stream()
-						.anyMatch(st -> st.getProjectID().equals(tc.getProjectID())
+						.anyMatch(st -> st.getBasicProjectConfigId().equals(tc.getBasicProjectConfigId())
 								&& CollectionUtils.containsAny(tc.getDefectStoryID(), st.getStoryList())
 								&& NormalizedJira.YES_VALUE.getValue().equals(tc.getIsTestAutomated())))
 				.collect(Collectors.toList());
@@ -349,7 +349,7 @@ public final class AutomationPercentageServiceImpl extends ZephyrKPIService<Doub
 			List<SprintWiseStory> sprintWiseStory) {
 		return testCaseList.stream()
 				.filter(tc -> sprintWiseStory.stream()
-						.anyMatch(st -> st.getProjectID().equals(tc.getProjectID())
+						.anyMatch(st -> st.getBasicProjectConfigId().equals(tc.getBasicProjectConfigId())
 								&& CollectionUtils.containsAny(tc.getDefectStoryID(), st.getStoryList())))
 				.collect(Collectors.toList());
 	}
