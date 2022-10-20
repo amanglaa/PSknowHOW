@@ -67,7 +67,7 @@ export class SharedService implements OnInit {
   currentSelectedSprintObs = this.currentSelectedSprintSub.asObservable();
   mapColorToProject = new BehaviorSubject<any>({});
   mapColorToProjectObs = this.mapColorToProject.asObservable();
-  selectedFilterOption = new Subject<any>();
+  selectedFilterOption = new BehaviorSubject<any>({});
   selectedFilterOptionObs = this.selectedFilterOption.asObservable();
   noSprints = new Subject<any>();
   noSprintsObs = this.noSprints.asObservable();
