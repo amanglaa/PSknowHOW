@@ -54,7 +54,6 @@ export class UploadComponent implements OnInit {
 
     error = '';
     message = '';
-    warning = '';
     uploadedFile: File;
     logoImage: any;
     invalid: boolean;
@@ -349,7 +348,7 @@ export class UploadComponent implements OnInit {
     onSelectImage(event) {
         return new Promise((resolve) => {
             let isImageFit = true;
-            this.warning = undefined;
+            this.error = undefined;
             /*convert image to  byte array*/
             if (event.target.files[0]) {
                 const reader = new FileReader();
@@ -360,7 +359,7 @@ export class UploadComponent implements OnInit {
                     img.src = this.logoImage;
                     img.onload = () => {
                         if (img.width > 250 || img.height > 100) {
-                            this.warning = 'Image is too big(' + img.width + ' x ' + img.height + '). The maximum dimensions are 250 x 100 pixels';
+                            this.error = 'Image is too big(' + img.width + ' x ' + img.height + '). The maximum dimensions are 250 x 100 pixels';
                             isImageFit = false;
                             resolve(isImageFit);
                         }else{
@@ -435,9 +434,8 @@ export class UploadComponent implements OnInit {
                 data => {
                     this.isUploadFile = true;
                     if (data) {
-                        this.message = 'File delete successfully';
+                        this.message = 'File deleted successfully';
                         this.logoImage = undefined;
-                        this.warning = undefined;
                         this.error = undefined;
                         this.sharedService.setLogoImage(undefined);
                     }
