@@ -23,7 +23,6 @@ import { MessageService, ConfirmationService } from 'primeng/api';
 import { HttpService } from '../../../services/http.service';
 import { SharedService } from '../../../services/shared.service';
 import { GetAuthorizationService } from '../../../services/get-authorization.service';
-import { element } from 'protractor';
 import { KeyValue } from '@angular/common';
 declare const require: any;
 
