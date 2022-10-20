@@ -64,7 +64,7 @@ pipeline {
               sh """
                     cd UI/
                     npm install
-                    npm install -g @angular/cli@11.0.2
+                    npm install -g @angular/cli@12.2.16
                     #npm install --save-dev @angular-devkit/build-angular
                     npm run build
 
