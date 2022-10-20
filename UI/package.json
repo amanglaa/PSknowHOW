@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "node --max_old_space_size=8048 ./node_modules/@angular/cli/bin/ng serve --proxy-config proxy.conf.json",
+    "start": "node --max_old_space_size=8048 ./node_modules/@angular/cli/bin/ng serve --configuration=local --proxy-config proxy.conf.json",
     "build": "ng build --configuration=docker --aot --output-hashing=all",
     "test": "node --max_old_space_size=8048 ./node_modules/@angular/cli/bin/ng test --code-coverage",
     "lint": "ng lint",
@@ -53,7 +53,7 @@
     "chart.js": "^2.9.4",
     "core-js": "^3.25.5",
     "crypto-js": "^3.3.0",
-    "d3": "^7.6.1",
+    "d3": "^5.5.0",
     "d3-3": "0.0.0",
     "events": "^3.0.0",
     "exceljs": "^1.15.0",
@@ -81,7 +81,7 @@
     "@angular/language-service": "^12.2.16",
     "@types/jasmine": "~3.6.0",
     "@types/jasminewd2": "2.0.3",
-    "@types/node": "^14.17.11",
+    "@types/node": "^12.0.2",
     "@typescript-eslint/eslint-plugin": "4.28.2",
     "@typescript-eslint/parser": "4.28.2",
     "codelyzer": "^6.0.2",
@@ -104,7 +104,7 @@
     "protractor": "~7.0.0",
     "rxjs-tslint": "^0.1.8",
     "sonar-scanner": "^3.1.0",
-    "ts-node": "~5.0.1",
+    "ts-node": "~10.4.0",
     "typescript": "4.2.3"
   },
   "peerDependencies": {
