@@ -104,7 +104,7 @@ public class ZephyrProcessorJobExecutorTest {
 		toolList.add(toolInfo);
 		zephyrProcessorJobExecutor = new ZephyrProcessorJobExecutor(taskScheduler);
 		this.zephyrProcessor = zephyrProcessorJobExecutor.getProcessor();
-		MockitoAnnotations.openMocks(this);
+		//MockitoAnnotations.openMocks(this);
 		projectBasicConfig = new ProjectBasicConfig();
 		projectBasicConfig.setId(new ObjectId("604092b52b424d5e90d39342"));
 
