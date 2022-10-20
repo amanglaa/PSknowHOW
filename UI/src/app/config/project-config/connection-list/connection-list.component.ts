@@ -645,6 +645,7 @@ export class ConnectionListComponent implements OnInit {
       this.checkBitbucketValue(true, "cloudEnv", connection.type.toLowerCase())
     } else if (connection.type.toLowerCase() == 'zephyr' && connection.cloudEnv == true) {
       this.checkZephyr(true, "cloudEnv", connection.type.toLowerCase());
+      this.checkZephyr(true, "vault", connection.type.toLowerCase());
     }
   }
 
@@ -1079,10 +1080,10 @@ export class ConnectionListComponent implements OnInit {
       this.basicConnectionForm.controls['password'].enable();
       this.basicConnectionForm.controls['apiEndPoint'].enable();
     }
-    if(type == 'zephyr' && (this.basicConnectionForm.controls['vault'].value == true || this.basicConnectionForm.controls['cloudEnv'].value == true)){
+    if(type == 'zephyr' && (field == 'cloudEnv' || field == 'vault')){
       this.basicConnectionForm.controls['password'].setValue('');
       this.basicConnectionForm.controls['password'].disable();
-      if(this.basicConnectionForm.controls['vault'].value == true){
+      if(field == 'vault'){
         this.basicConnectionForm.controls['accessToken'].setValue('');
         this.basicConnectionForm.controls['accessToken'].disable();
       }
@@ -1101,10 +1102,10 @@ export class ConnectionListComponent implements OnInit {
       this.basicConnectionForm.controls['accessToken'].setValue('');
       this.basicConnectionForm.controls['accessToken'].disable();
     }
-    if(type == 'sonar' && (this.basicConnectionForm.controls['vault'].value == true || this.basicConnectionForm.controls['cloudEnv'].value == true)){
+    if(type == 'sonar' && (field == 'cloudEnv' || field == 'vault')){
       this.basicConnectionForm.controls['password'].setValue('');
       this.basicConnectionForm.controls['password'].disable();
-      if(this.basicConnectionForm.controls['vault'].value == true){
+      if(field == 'vault'){
         this.basicConnectionForm.controls['accessToken'].setValue('');
         this.basicConnectionForm.controls['accessToken'].disable();
       }
