@@ -184,7 +184,7 @@ public class ProjectAccessManager {
 		if (hasPendingAccessRequest(accessRequest)) {
 			listenAccessRequestFailure(listener, "Already has a pending request");
 		} else if (handelSuperAdminProjectLevelAccessRequest(accessRequest)){
-			listenAccessRequestFailure(listener, "SuperAdmin Role have all level of access, you can request for any hierarchy or project level");
+			listenAccessRequestFailure(listener, "SuperAdmin Role have all level of access, you can not request for any hierarchy or project level");
 		} else if (handleAccessRequest(accessRequest)) {
 			List<AccessRequest> requestList = getRequestList(accessRequest);
 			requestList = accessRequestsRepository.saveAll(requestList);
