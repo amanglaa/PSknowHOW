@@ -133,7 +133,7 @@ public class RegressionPercentageServiceImplTest {
 		maturityRangeMap.put("automationPercentage", Arrays.asList("-20", "20-40", "40-60", "60-79", "80-"));
 
 		when(configHelperService.calculateMaturity()).thenReturn(maturityRangeMap);
-		when(testCaseDetailsRepository.findTestCases(any(), any())).thenReturn(testCaseDetailsList);
+		when(testCaseDetailsRepository.findTestDetails(any(),any(), any())).thenReturn(testCaseDetailsList);
 
 		when(configHelperService.getFieldMappingMap()).thenReturn(fieldMappingMap);
 		String kpiRequestTrackerId = "Excel-Zephyr-5be544de025de212549176a9";

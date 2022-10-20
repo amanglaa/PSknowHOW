@@ -176,7 +176,7 @@ public final class AutomationPercentageServiceImpl extends ZephyrKPIService<Doub
 			}
 
 			if (CollectionUtils.isNotEmpty(fieldMapping.getTestCaseStatus())) {
-				mapOfProjectFiltersNotIn.put(JiraFeature.STATUS.getFieldValueInFeature(),
+				mapOfProjectFiltersNotIn.put(JiraFeature.TEST_CASE_STATUS.getFieldValueInFeature(),
 						CommonUtils.convertTestFolderToPatternList(fieldMapping.getTestCaseStatus()));
 			}
 
