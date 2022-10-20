@@ -61,11 +61,12 @@ export class TestConnectionService {
     );
   }
 
-  testAzureBoards(baseUrl, username, pat): Observable<any> {
+  testAzureBoards(baseUrl, username, pat, vault): Observable<any> {
     const postData = {
       baseUrl: baseUrl,
       username: username,
-      password: this.rsa.encrypt(pat)
+      password: pat ? this.rsa.encrypt(pat) : '',
+      vault: vault
     };
     let headers: HttpHeaders = new HttpHeaders();
     headers = headers.append('requestArea', 'thirdParty');
@@ -74,10 +75,11 @@ export class TestConnectionService {
     );
   }
 
-    testGitLab(baseUrl, accessToken): Observable<any> {
+    testGitLab(baseUrl, accessToken, vault): Observable<any> {
       const postData = {
         baseUrl: baseUrl,
-        accessToken: this.rsa.encrypt(accessToken)
+        accessToken: accessToken ? this.rsa.encrypt(accessToken) : '',
+        vault: vault
       };
       let headers: HttpHeaders = new HttpHeaders();
       headers = headers.append('requestArea', 'thirdParty');
@@ -110,7 +112,7 @@ export class TestConnectionService {
 
       postData = {
         baseUrl: baseUrl,
-        accessToken: this.rsa.encrypt(accesstoken),
+        accessToken: accesstoken ? this.rsa.encrypt(accesstoken) : '',
         cloudEnv: true,
         vault: vault
       };
@@ -131,11 +133,12 @@ export class TestConnectionService {
     );
   }
 
-  testJenkins(baseUrl, username, apiKey): Observable<any> {
+  testJenkins(baseUrl, username, apiKey, vault): Observable<any> {
     const postData = {
       baseUrl: baseUrl,
       username: username,
-      apiKey: this.rsa.encrypt(apiKey)
+      apiKey: apiKey ? this.rsa.encrypt(apiKey) : '',
+      vault: vault
     };
     let headers: HttpHeaders = new HttpHeaders();
     headers = headers.append('requestArea', 'thirdParty');
@@ -181,11 +184,12 @@ export class TestConnectionService {
     );
   }
 
-  testAzurePipeline(baseUrl, username, pat): Observable<any> {
+  testAzurePipeline(baseUrl, username, pat, vault): Observable<any> {
     const postData = {
       baseUrl: baseUrl,
       username: username,
-      password: this.rsa.encrypt(pat)
+      password: pat ? this.rsa.encrypt(pat) : '',
+      vault: vault
     };
     let headers: HttpHeaders = new HttpHeaders();
     headers = headers.append('requestArea', 'thirdParty');
@@ -194,11 +198,12 @@ export class TestConnectionService {
     );
   }
 
-  testAzureRepository(baseUrl, username, pat): Observable<any> {
+  testAzureRepository(baseUrl, username, pat, vault): Observable<any> {
     const postData = {
       baseUrl: baseUrl,
       username: username,
-      password: this.rsa.encrypt(pat)
+      password: pat ? this.rsa.encrypt(pat) : '',
+      vault: vault
     };
     let headers: HttpHeaders = new HttpHeaders();
     headers = headers.append('requestArea', 'thirdParty');
@@ -208,11 +213,12 @@ export class TestConnectionService {
 
   }
 
-  testGithub(baseUrl, username, accessToken): Observable<any> {
+  testGithub(baseUrl, username, accessToken, vault): Observable<any> {
     const postData = {
       baseUrl: baseUrl,
       username: username,
-      accessToken: this.rsa.encrypt(accessToken),
+      accessToken: accessToken ? this.rsa.encrypt(accessToken) : '',
+      vault: vault
     };
     let headers: HttpHeaders = new HttpHeaders();
     headers = headers.append('requestArea', 'thirdParty');
