@@ -216,7 +216,6 @@
       }
     }
   },
-  "defaultProject": "dashboard",
   "cli": {
     "analytics": false
   }
