@@ -183,6 +183,8 @@ public class ProjectAccessManager {
 	public void createAccessRequest(AccessRequest accessRequest, AccessRequestListener listener) {
 		if (hasPendingAccessRequest(accessRequest)) {
 			listenAccessRequestFailure(listener, "Already has a pending request");
+		} else if (handelSuperAdminProjectLevelAccessRequest(accessRequest)){
+			listenAccessRequestFailure(listener, "SuperAdmin Role have all level of access, you can request for any hierarchy or project level");
 		} else if (handleAccessRequest(accessRequest)) {
 			List<AccessRequest> requestList = getRequestList(accessRequest);
 			requestList = accessRequestsRepository.saveAll(requestList);
@@ -192,6 +194,23 @@ public class ProjectAccessManager {
 		} else {
 			listenAccessRequestFailure(listener, "Already has an access to parent level");
 		}
+	}
+
+	/**
+	 * ROLE_SUPERADMIN have all level access but any user request for with role is superAdmin and
+	 * access request of any particular level or list of projects then denied request
+	 * @param accessRequest
+	 * @return
+	 */
+	private boolean handelSuperAdminProjectLevelAccessRequest(AccessRequest accessRequest) {
+		String accessLevel = accessRequest.getAccessNode().getAccessLevel();
+		Set<String> requestIds = accessRequest.getAccessNode().getAccessItems().stream().map(AccessItem::getItemId)
+				.collect(Collectors.toSet());
+		if (accessRequest.getRole().equals(Constant.ROLE_SUPERADMIN) && (StringUtils.isNotEmpty(accessLevel)
+				|| CollectionUtils.isNotEmpty(requestIds))) {
+			return true;
+		}
+		return false;
 	}
 
 	/**
