@@ -24,6 +24,12 @@ import com.publicissapient.kpidashboard.common.repository.connection.ConnectionR
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * class for jira tool config fetch data api
+ *
+ * @author Hirenkumar babariya
+ *
+ */
 @Service
 @Slf4j
 public class JiraToolConfigServiceImpl {
