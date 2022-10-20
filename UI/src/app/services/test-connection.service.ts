@@ -30,11 +30,12 @@ export class TestConnectionService {
   constructor(private http: HttpClient, private rsa: RsaEncryptionService) { }
 
   /** get: test JIRA connection */
-  testJira(baseUrl, apiEndPoint, username, password): Observable<any> {
+  testJira(baseUrl, apiEndPoint, username, password, vault): Observable<any> {
     const postData = {
       baseUrl: baseUrl,
       username: username,
-      password: this.rsa.encrypt(password)
+      password: password ? this.rsa.encrypt(password) : '',
+      vault: vault
     };
     let headers: HttpHeaders = new HttpHeaders();
     headers = headers.append('requestArea', 'thirdParty');
@@ -43,14 +44,15 @@ export class TestConnectionService {
     );
   }
 
-  testZephyr(baseUrl, username, password, apiEndPoint, accessToken, cloudEnv): Observable<any> {
+  testZephyr(baseUrl, username, password, apiEndPoint, accessToken, cloudEnv, vault): Observable<any> {
     const postData = {
       baseUrl: baseUrl,
       username: username,
-      password: this.rsa.encrypt(password),
+      password: password ? this.rsa.encrypt(password) : '',
       apiEndPoint: apiEndPoint,
       accessToken: accessToken,
-      cloudEnv: cloudEnv
+      cloudEnv: cloudEnv,
+      vault: vault
     };
     let headers: HttpHeaders = new HttpHeaders();
     headers = headers.append('requestArea', 'thirdParty');
@@ -84,13 +86,14 @@ export class TestConnectionService {
       );
     }
 
-  testBitbucket(baseUrl, username, password, apiEndPoint, cloudEnv): Observable<any> {
+  testBitbucket(baseUrl, username, password, apiEndPoint, cloudEnv, vault): Observable<any> {
     const postData = {
       baseUrl: baseUrl,
       username: username,
-      password: this.rsa.encrypt(password),
+      password: password ? this.rsa.encrypt(password) : '',
       apiEndPoint: apiEndPoint,
-      cloudEnv: cloudEnv
+      cloudEnv: cloudEnv,
+      vault: vault
     };
     let headers: HttpHeaders = new HttpHeaders();
     headers = headers.append('requestArea', 'thirdParty');
@@ -99,7 +102,7 @@ export class TestConnectionService {
     );
   }
 
-  testSonar(baseUrl, username, password, accesstoken, cloudEnv): Observable<any> {
+  testSonar(baseUrl, username, password, accesstoken, cloudEnv, vault): Observable<any> {
 
     let postData = {};
 
@@ -108,14 +111,16 @@ export class TestConnectionService {
       postData = {
         baseUrl: baseUrl,
         accessToken: this.rsa.encrypt(accesstoken),
-        cloudEnv: true
+        cloudEnv: true,
+        vault: vault
       };
     } else {
       postData = {
         baseUrl: baseUrl,
         username: username,
-        password: this.rsa.encrypt(password),
-        cloudEnv: false
+        password: password ? this.rsa.encrypt(password) : '',
+        cloudEnv: false,
+        vault: vault
       };
     }
 
@@ -148,11 +153,12 @@ export class TestConnectionService {
     });
   }
 
-  testBamboo(baseUrl, username, password): Observable<any> {
+  testBamboo(baseUrl, username, password, vault): Observable<any> {
     const postData = {
       baseUrl: baseUrl,
       username: username,
-      password: this.rsa.encrypt(password)
+      password: password ? this.rsa.encrypt(password) : '',
+      vault: vault
     };
     let headers: HttpHeaders = new HttpHeaders();
     headers = headers.append('requestArea', 'thirdParty');
@@ -161,11 +167,12 @@ export class TestConnectionService {
     );
   }
 
-  testTeamCity(baseUrl, username, password): Observable<any> {
+  testTeamCity(baseUrl, username, password, vault): Observable<any> {
     const postData = {
       baseUrl: baseUrl,
       username: username,
-      password: this.rsa.encrypt(password)
+      password: password ? this.rsa.encrypt(password) : '',
+      vault: vault
     };
     let headers: HttpHeaders = new HttpHeaders();
     headers = headers.append('requestArea', 'thirdParty');

@@ -795,12 +795,15 @@ export class ConnectionListComponent implements OnInit {
     if (this.connection['type'].toLowerCase() === 'zephyr' && this.connection['cloudEnv']) {
       reqData['baseUrl'] = this.basicConnectionForm.controls['baseUrl']['value'];
     }
+    if(reqData['vault'] == true){
+      reqData['password'] = '';
+    }
     this.testConnectionMsg = '';
     this.testConnectionValid = true;
     
     switch (this.connection.type) {
       case 'Jira':
-        this.testConnectionService.testJira(reqData['baseUrl'], reqData['apiEndPoint'], reqData['username'], reqData['password']).subscribe(next => {
+        this.testConnectionService.testJira(reqData['baseUrl'], reqData['apiEndPoint'], reqData['username'], reqData['password'], reqData['vault']).subscribe(next => {
           if (next.success && next.data === 200) {
             this.testConnectionMsg = 'Valid Connection';
             this.testConnectionValid = true;
@@ -848,7 +851,7 @@ export class ConnectionListComponent implements OnInit {
         this.testingConnection = false;
       });
         break;
-      case 'Bitbucket': this.testConnectionService.testBitbucket(reqData['baseUrl'], reqData['username'], reqData['password'], reqData['apiEndPoint'], reqData['cloudEnv']).subscribe(next => {
+      case 'Bitbucket': this.testConnectionService.testBitbucket(reqData['baseUrl'], reqData['username'], reqData['password'], reqData['apiEndPoint'], reqData['cloudEnv'], reqData['vault']).subscribe(next => {
         if (next.success && next.data === 200) {
           this.testConnectionMsg = 'Valid Connection';
           this.testConnectionValid = true;
@@ -864,7 +867,7 @@ export class ConnectionListComponent implements OnInit {
       });
         break;
       case 'Sonar':
-        this.testConnectionService.testSonar(reqData['baseUrl'], reqData['username'], reqData['password'], reqData['accessToken'], reqData['cloudEnv']).subscribe(next => {
+        this.testConnectionService.testSonar(reqData['baseUrl'], reqData['username'], reqData['password'], reqData['accessToken'], reqData['cloudEnv'], reqData['vault']).subscribe(next => {
           if (next.success && next.data === 200) {
             this.testConnectionMsg = 'Valid Connection';
             this.testConnectionValid = true;
@@ -905,7 +908,7 @@ export class ConnectionListComponent implements OnInit {
       });
 
         break;
-      case 'Bamboo': this.testConnectionService.testBamboo(reqData['baseUrl'], reqData['username'], reqData['password']).subscribe(next => {
+      case 'Bamboo': this.testConnectionService.testBamboo(reqData['baseUrl'], reqData['username'], reqData['password'], reqData['vault']).subscribe(next => {
         if (next.success && next.data === 200) {
           this.testConnectionMsg = 'Valid Connection';
           this.testConnectionValid = true;
@@ -920,7 +923,7 @@ export class ConnectionListComponent implements OnInit {
         this.testingConnection = false;
       });
         break;
-      case 'Teamcity': this.testConnectionService.testTeamCity(reqData['baseUrl'], reqData['username'], reqData['password']).subscribe(next => {
+      case 'Teamcity': this.testConnectionService.testTeamCity(reqData['baseUrl'], reqData['username'], reqData['password'], reqData['vault']).subscribe(next => {
         if (next.success && next.data === 200) {
           this.testConnectionMsg = 'Valid Connection';
           this.testConnectionValid = true;
@@ -985,7 +988,7 @@ export class ConnectionListComponent implements OnInit {
       });
         break;
 
-      case 'Zephyr': this.testConnectionService.testZephyr(reqData['baseUrl'], reqData['username'], reqData['password'], reqData['apiEndPoint'], reqData['accessToken'], reqData['cloudEnv']).subscribe(next => {
+      case 'Zephyr': this.testConnectionService.testZephyr(reqData['baseUrl'], reqData['username'], reqData['password'], reqData['apiEndPoint'], reqData['accessToken'], reqData['cloudEnv'], reqData['vault']).subscribe(next => {
         if (next.success && next.data === 200) {
           this.testConnectionMsg = 'Valid Connection';
           this.testConnectionValid = true;
