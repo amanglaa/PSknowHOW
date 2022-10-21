@@ -274,21 +274,14 @@ public class ConnectionServiceImpl implements ConnectionService {
 			break;
 		case TOOL_GITHUB:
 		case TOOL_GITLAB:
-			String accessToken = rsaEncryptionService.decrypt(inputConn.getAccessToken(),
-					customApiConfig.getRsaPrivateKey());
-			String accessTokenExists = aesEncryptionService.decrypt(currConn.getAccessToken(),
-					customApiConfig.getAesEncryptionKey());
-
-			if (checkConnDetails(inputConn, currConn) && accessToken.equals(accessTokenExists))
-				existingConnection = currConn;
+			boolean commonConnection = checkConnDetails(inputConn, currConn);
+			checkVaultConnection(inputConn, currConn, existingConnection, commonConnection);
 			break;
 		case TOOL_AZURE:
 		case TOOL_AZUREPIPELINE:
 		case TOOL_AZUREREPO:
-			String pat = rsaEncryptionService.decrypt(inputConn.getPat(), customApiConfig.getRsaPrivateKey());
-			String patExists = aesEncryptionService.decrypt(currConn.getPat(), customApiConfig.getAesEncryptionKey());
-			if (inputConn.getBaseUrl().equals(currConn.getBaseUrl()) && pat.equals(patExists))
-				existingConnection = currConn;
+			checkVaultConnection(inputConn, currConn, existingConnection,
+					inputConn.getBaseUrl().equals(currConn.getBaseUrl()));
 			break;
 		case TOOL_JIRA:
 		case TOOL_BITBUCKET:
@@ -296,11 +289,7 @@ public class ConnectionServiceImpl implements ConnectionService {
 				existingConnection = currConn;
 			break;
 		case TOOL_JENKINS:
-			String apiKey = rsaEncryptionService.decrypt(inputConn.getApiKey(), customApiConfig.getRsaPrivateKey());
-			String apiKeyExists = aesEncryptionService.decrypt(currConn.getApiKey(),
-					customApiConfig.getAesEncryptionKey());
-			if (checkConnDetails(inputConn, currConn) && apiKey.equals(apiKeyExists))
-				existingConnection = currConn;
+			checkVaultConnection(inputConn, currConn, existingConnection, checkConnDetails(inputConn, currConn));
 			break;
 		case TOOL_ZEPHYR:
 			existingConnection = checkConnDetailsZephyr(inputConn, currConn, api);
@@ -413,6 +402,25 @@ public class ConnectionServiceImpl implements ConnectionService {
 						customApiConfig.getAesEncryptionKey());
 				accessTokenSimilarity = inputConn.getAccessToken().equals(accessTokenExistsZephyr);
 				break;
+			case TOOL_GITLAB:
+				String gitAccessToken = rsaEncryptionService.decrypt(inputConn.getAccessToken(),
+						customApiConfig.getRsaPrivateKey());
+				String accessTokenExists = aesEncryptionService.decrypt(currConn.getAccessToken(),
+						customApiConfig.getAesEncryptionKey());
+				accessTokenSimilarity = gitAccessToken.equals(accessTokenExists);
+				break;
+			case TOOL_AZUREREPO:
+				String pat = rsaEncryptionService.decrypt(inputConn.getPat(), customApiConfig.getRsaPrivateKey());
+				String patExists = aesEncryptionService.decrypt(currConn.getPat(),
+						customApiConfig.getAesEncryptionKey());
+				accessTokenSimilarity = pat.equals(patExists);
+				break;
+			case TOOL_JENKINS:
+				String apiKey = rsaEncryptionService.decrypt(inputConn.getApiKey(), customApiConfig.getRsaPrivateKey());
+				String apiKeyExists = aesEncryptionService.decrypt(currConn.getApiKey(),
+						customApiConfig.getAesEncryptionKey());
+				accessTokenSimilarity = apiKey.equals(apiKeyExists);
+				break;
 			default:
 				accessTokenSimilarity = false;
 				break;
@@ -496,7 +504,8 @@ public class ConnectionServiceImpl implements ConnectionService {
 	/**
 	 * Checks if @param Connection has non empty connectionName
 	 *
-	 * @param conn for details.
+	 * @param conn
+	 *            for details.
 	 * @return Boolean
 	 */
 	private boolean isDataValid(Connection conn) {
@@ -660,7 +669,8 @@ public class ConnectionServiceImpl implements ConnectionService {
 	/**
 	 * delete a connection by id.
 	 *
-	 * @param id deleted the connection data present at id.
+	 * @param id
+	 *            deleted the connection data present at id.
 	 * @return ServiceResponse with data object,message and status flag true if data
 	 *         is found,false if not data found
 	 */
