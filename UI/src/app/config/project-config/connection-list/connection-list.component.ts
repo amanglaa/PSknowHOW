@@ -17,7 +17,7 @@
  ******************************************************************************/
 
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ConfirmationService } from 'primeng/api';
 import { HttpService } from '../../../services/http.service';
 import { TestConnectionService } from '../../../services/test-connection.service';
@@ -30,7 +30,7 @@ import { RsaEncryptionService } from 'src/app/services/rsa.encryption.service';
   styleUrls: ['./connection-list.component.css']
 })
 export class ConnectionListComponent implements OnInit {
-  basicConnectionForm: FormGroup;
+  basicConnectionForm: UntypedFormGroup;
   addEditConnectionFieldsNlabels = [
     {
       connectionType: 'Jira',
@@ -322,7 +322,7 @@ export class ConnectionListComponent implements OnInit {
   currentUser: string = '';
   zephyrUrl: string = '';
 
-  constructor(private httpService: HttpService, private formBuilder: FormBuilder, private rsa: RsaEncryptionService, private confirmationService: ConfirmationService, private testConnectionService: TestConnectionService
+  constructor(private httpService: HttpService, private formBuilder: UntypedFormBuilder, private rsa: RsaEncryptionService, private confirmationService: ConfirmationService, private testConnectionService: TestConnectionService
     , private authorization: GetAuthorizationService) { }
 
   ngOnInit(): void {

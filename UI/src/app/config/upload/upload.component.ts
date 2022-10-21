@@ -26,7 +26,7 @@ import { MessageService } from 'primeng/api';
 import { HttpService } from '../../services/http.service';
 import { first } from 'rxjs/operators';
 import { GetAuthorizationService } from '../../services/get-authorization.service';
-import { FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 declare var $: any;
 
 interface CapacitySubmissionReq {
@@ -86,7 +86,7 @@ export class UploadComponent implements OnInit {
     loader: boolean = false;
     executionDateGroup: any;
     isSuperAdmin: boolean = false;
-    filterForm: FormGroup;
+    filterForm: UntypedFormGroup;
     projectListArr: Array<object> = [];
     sprintListArr: Array<object> = [];
     selectedFilterArray: Array<any> = [];
@@ -95,7 +95,7 @@ export class UploadComponent implements OnInit {
     sprintDetails: any;
     projectDetails: any;
     selectedProjectBaseConfigId: string;
-    popupForm: FormGroup;
+    popupForm: UntypedFormGroup;
 
     statusMessage = {
         200: 'Data Saved Successfully!!',
@@ -251,27 +251,27 @@ export class UploadComponent implements OnInit {
         this.setFormControlValues();
     }
     setFormControlValues() {
-        this.filterForm = new FormGroup({
-            selectedProjectValue: new FormControl()
+        this.filterForm = new UntypedFormGroup({
+            selectedProjectValue: new UntypedFormControl()
         });
         if (this.selectedView === 'upload_tep') {
             if (this.kanban) {
-                this.popupForm = new FormGroup({
-                    executionDate: new FormControl(),
-                    totalTestCases: new FormControl(),
-                    executedTestCase: new FormControl(),
-                    passedTestCase: new FormControl()
+                this.popupForm = new UntypedFormGroup({
+                    executionDate: new UntypedFormControl(),
+                    totalTestCases: new UntypedFormControl(),
+                    executedTestCase: new UntypedFormControl(),
+                    passedTestCase: new UntypedFormControl()
                 });
             } else {
-                this.popupForm = new FormGroup({
-                    totalTestCases: new FormControl(),
-                    executedTestCase: new FormControl(),
-                    passedTestCase: new FormControl()
+                this.popupForm = new UntypedFormGroup({
+                    totalTestCases: new UntypedFormControl(),
+                    executedTestCase: new UntypedFormControl(),
+                    passedTestCase: new UntypedFormControl()
                 });
             }
         } else if (this.selectedView === 'upload_Sprint_Capacity') {
-            this.popupForm = new FormGroup({
-                capacity: new FormControl()
+            this.popupForm = new UntypedFormGroup({
+                capacity: new UntypedFormControl()
             });
         }
     }
@@ -315,11 +315,11 @@ export class UploadComponent implements OnInit {
                 this.loader = true;
                 this.selectedProjectBaseConfigId = '';
                 if (this.selectedView === 'upload_Sprint_Capacity') {
-                    this.filterForm = new FormGroup({
-                        selectedProjectValue: new FormControl()
+                    this.filterForm = new UntypedFormGroup({
+                        selectedProjectValue: new UntypedFormControl()
                     });
-                    this.popupForm = new FormGroup({
-                        capacity: new FormControl()
+                    this.popupForm = new UntypedFormGroup({
+                        capacity: new UntypedFormControl()
                     });
                 }
                 this.getFilterDataOnLoad();
@@ -684,10 +684,10 @@ export class UploadComponent implements OnInit {
             this.selectedView === 'upload_tep' ? this.reqObj['executionDate'] = this.executionDate : '';
         }
         if (this.selectedView === 'upload_tep') {
-            this.popupForm = new FormGroup({
-                totalTestCases: new FormControl(data?.totalTestCases ? data?.totalTestCases : ''),
-                executedTestCase: new FormControl(data?.executedTestCase ? data?.executedTestCase : ''),
-                passedTestCase: new FormControl(data?.passedTestCase ? data?.passedTestCase : '')
+            this.popupForm = new UntypedFormGroup({
+                totalTestCases: new UntypedFormControl(data?.totalTestCases ? data?.totalTestCases : ''),
+                executedTestCase: new UntypedFormControl(data?.executedTestCase ? data?.executedTestCase : ''),
+                passedTestCase: new UntypedFormControl(data?.passedTestCase ? data?.passedTestCase : '')
             });
 
             this.reqObj['totalTestCases'] = data?.totalTestCases;
@@ -695,8 +695,8 @@ export class UploadComponent implements OnInit {
             this.reqObj['passedTestCase'] = data?.passedTestCase;
 
         } else if (this.selectedView === 'upload_Sprint_Capacity') {
-            this.popupForm = new FormGroup({
-                capacity: new FormControl(data?.capacity ? data?.capacity : '')
+            this.popupForm = new UntypedFormGroup({
+                capacity: new UntypedFormControl(data?.capacity ? data?.capacity : '')
             });
             this.reqObj["capacity"] = data?.capacity ? data?.capacity : '';;
             if(this.kanban) {

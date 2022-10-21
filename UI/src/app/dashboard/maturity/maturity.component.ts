@@ -23,7 +23,7 @@ This is used to show maturity of kpi in form of d3.chart (sunburst chart).
 **************/
 
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import * as d3v3 from 'd3-3';
+// import * as d3v3 from 'd3-3';
 import { SharedService } from '../../services/shared.service';
 import { HttpService } from '../../services/http.service';
 import { HelperService } from '../../services/helper.service';
@@ -316,7 +316,7 @@ export class MaturityComponent implements OnInit, OnDestroy {
     }
 
     drawAreaChart(totalDefectCount, sprintVelocity) {
-        d3v3.select('svg').remove();
+       /* d3v3.select('svg').remove();
         d3v3.select('.tooltip').remove();
 
 
@@ -841,7 +841,7 @@ export class MaturityComponent implements OnInit, OnDestroy {
 
 
 
-    }
+    */}
 
 
 }

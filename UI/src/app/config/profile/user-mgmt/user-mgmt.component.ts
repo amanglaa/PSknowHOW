@@ -19,7 +19,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpService } from '../../../services/http.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { TextEncryptionService } from '../../../services/text.encryption.service';
 
@@ -29,12 +29,12 @@ import { TextEncryptionService } from '../../../services/text.encryption.service
   styleUrls: ['./user-mgmt.component.css', '../profile.component.css']
 })
 export class UserMgmtComponent implements OnInit {
-  changePasswordForm: FormGroup;
+  changePasswordForm: UntypedFormGroup;
   submitted = false;
   error = '';
   success = '';
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private route: ActivatedRoute,
     private router: Router,
     private httpService: HttpService,
@@ -58,7 +58,7 @@ export class UserMgmtComponent implements OnInit {
   }
 
   // Validation for confirm-password
-  checkPasswords(group: FormGroup) {
+  checkPasswords(group: UntypedFormGroup) {
     const pass = group.controls.password.value;
     const confirmPass = group.controls.confirmpassword.value;
     return pass === confirmPass ? null : { notSame: true };

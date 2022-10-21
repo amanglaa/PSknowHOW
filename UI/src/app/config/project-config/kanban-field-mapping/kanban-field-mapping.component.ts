@@ -17,7 +17,7 @@
  ******************************************************************************/
 
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { HttpService } from '../../../services/http.service';
@@ -33,7 +33,7 @@ declare const require: any;
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class KanbanFieldMappingComponent implements OnInit {
-  fieldMappingForm: FormGroup;
+  fieldMappingForm: UntypedFormGroup;
   fieldMappingFormObj: any;
   selectedConfig: any = {};
   fieldMappingMultiSelectValues: any = [];
@@ -69,7 +69,7 @@ export class KanbanFieldMappingComponent implements OnInit {
   }
 
 
-  constructor(private formBuilder: FormBuilder, private router: Router, private sharedService: SharedService,
+  constructor(private formBuilder: UntypedFormBuilder, private router: Router, private sharedService: SharedService,
     private http: HttpService, private messenger: MessageService, private getAuthorizationService: GetAuthorizationService) { }
 
   ngOnInit(): void {

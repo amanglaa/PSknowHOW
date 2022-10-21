@@ -19,7 +19,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpService } from '../../services/http.service';
 import { Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { TextEncryptionService } from '../../services/text.encryption.service';
 @Component({
     selector: 'app-register',
@@ -28,13 +28,13 @@ import { TextEncryptionService } from '../../services/text.encryption.service';
 })
 export class RegisterComponent implements OnInit {
 
-    registorForm: FormGroup;
+    registorForm: UntypedFormGroup;
     loading = false;
     submitted = false;
     error = '';
     success: string = '';
     constructor(
-        private formBuilder: FormBuilder,
+        private formBuilder: UntypedFormBuilder,
         private router: Router,
         private httpService: HttpService, private aesEncryption: TextEncryptionService) { }
     ngOnInit() {
@@ -52,7 +52,7 @@ export class RegisterComponent implements OnInit {
     }
 
     // Validation for confirm-password
-    checkPasswords(group: FormGroup) {
+    checkPasswords(group: UntypedFormGroup) {
         const pass = group.controls.password.value;
         const confirmPass = group.controls.confirmpassword.value;
         return pass === confirmPass ? null : { notSame: true };

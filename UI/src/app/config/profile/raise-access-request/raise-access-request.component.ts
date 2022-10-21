@@ -17,7 +17,7 @@
  ******************************************************************************/
 
 import { Component, OnInit, AfterViewChecked } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { HttpService } from '../../../services/http.service';
 import { MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
@@ -30,7 +30,7 @@ declare var $: any;
   styleUrls: ['./raise-access-request.component.css', '../profile.component.css']
 })
 export class RaiseAccessRequestComponent implements OnInit {
-  requestForm: FormGroup;
+  requestForm: UntypedFormGroup;
   filterKpiRequest = <any>'';
   rolesRequest = <any>'';
   accessRequest = <any>'';

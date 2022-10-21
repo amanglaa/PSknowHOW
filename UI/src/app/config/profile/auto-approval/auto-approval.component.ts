@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpService } from '../../../services/http.service';
 import { MessageService } from 'primeng/api';
-import { FormGroup, Validators, FormControl } from '@angular/forms';
+import { UntypedFormGroup, Validators, UntypedFormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-auto-approval',
@@ -10,15 +10,15 @@ import { FormGroup, Validators, FormControl } from '@angular/forms';
 })
 export class AutoApprovalComponent implements OnInit {
   rolesData: Array<object> = [];
-  autoApprovalForm: FormGroup;
+  autoApprovalForm: UntypedFormGroup;
   autoApprovedId: string = '';
   constructor(private httpService: HttpService, private messageService: MessageService) { }
 
   ngOnInit(): void {
     this.getAutoApprovedRoles();
-    this.autoApprovalForm = new FormGroup({
-      enableAutoApprove: new FormControl(false, [Validators.required]),
-      roles: new FormControl([]),
+    this.autoApprovalForm = new UntypedFormGroup({
+      enableAutoApprove: new UntypedFormControl(false, [Validators.required]),
+      roles: new UntypedFormControl([]),
     });
     this.getRolesList();
   }

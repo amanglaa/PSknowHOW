@@ -17,7 +17,7 @@
  ******************************************************************************/
 
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { HttpService } from '../../services/http.service';
 import { RsaEncryptionService } from '../../services/rsa.encryption.service';
@@ -29,11 +29,11 @@ import { RsaEncryptionService } from '../../services/rsa.encryption.service';
   styleUrls: []
 })
 export class AdSettingsComponent implements OnInit {
-  adSettingsForm: FormGroup;
+  adSettingsForm: UntypedFormGroup;
   adSettingsFormObj: any;
   submitted = false;
 
-  constructor(private formBuilder: FormBuilder, private http: HttpService, private messenger: MessageService, private rsa: RsaEncryptionService) { }
+  constructor(private formBuilder: UntypedFormBuilder, private http: HttpService, private messenger: MessageService, private rsa: RsaEncryptionService) { }
 
   ngOnInit(): void {
     this.getADConfig();

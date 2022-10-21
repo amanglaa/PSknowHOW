@@ -17,7 +17,7 @@
  ******************************************************************************/
 import { Component, OnInit } from '@angular/core';
 import { HttpService } from '../../services/http.service';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { Router } from '@angular/router';
 @Component({
@@ -27,14 +27,14 @@ import { Router } from '@angular/router';
 })
 export class ForgotPasswordComponent implements OnInit {
 
-    emailForm: FormGroup;
+    emailForm: UntypedFormGroup;
     loading = false;
     submitted = false;
     returnUrl: string;
     error = '';
     success = '';
     isPasswordUpdated = false;
-    constructor(private formBuilder: FormBuilder, private httpService: HttpService, private router: Router) { }
+    constructor(private formBuilder: UntypedFormBuilder, private httpService: HttpService, private router: Router) { }
 
     ngOnInit() {
         // Set validation for ForgotPasswordComponent-form elements
