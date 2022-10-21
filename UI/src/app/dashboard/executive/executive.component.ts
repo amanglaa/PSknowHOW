@@ -185,13 +185,7 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
             if (sharedobject?.filterData?.length) {
                 if (!this.helperService.compareFilters(this.serviceObject['filterApplyData'], sharedobject.filterApplyData, this.kanbanActivated) || this.boardId !== this.service.getSelectBoardId()) {
                     this.serviceObject = JSON.parse(JSON.stringify(sharedobject));
-                    if (this.serviceObject['makeAPICall']) {
-                        this.allKpiArray = [];
-                        this.kpiChartData = {};
-                        this.chartColorList = {};
-                        this.kpiSelectedFilterObj = {};
-                        this.kpiDropdowns = {};
-                    }
+                    
 
                     this.iSAdditionalFilterSelected = sharedobject?.isAdditionalFilters;
                     this.receiveSharedData(sharedobject);
@@ -294,8 +288,15 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
             this.boardId = this.service.getSelectBoardId();
             this.setBoardIdForSelectedTab();
             this.configGlobalData = this.service.getDashConfigData()[this.kanbanActivated ? 'kanban' : 'scrum'].filter((item) => item.boardId === this.boardId)[0]?.kpis;
-            this.updatedConfigGlobalData = this.configGlobalData?.filter(item => { return item.shown && item.isEnabled; });
+            this.updatedConfigGlobalData = this.configGlobalData?.filter(item => { return item.shown && item.isEnabled; });           
             if (JSON.stringify(this.filterApplyData) !== JSON.stringify($event.filterApplyData) || (this.previousBoardId !== this.boardId) && this.configGlobalData) {
+                if (this.serviceObject['makeAPICall']) {
+                    this.allKpiArray = [];
+                    this.kpiChartData = {};
+                    this.chartColorList = {};
+                    this.kpiSelectedFilterObj = {};
+                    this.kpiDropdowns = {};
+                }
                 let kpiIdsForCurrentBoard = this.configGlobalData?.map(kpiDetails => kpiDetails.kpiId);
                 this.previousBoardId = this.boardId;
                 this.masterData = $event.masterData;
@@ -984,7 +985,7 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
             }
             this.showKpiTrendIndicator[kpiId] = false;
 
-        }
+        } 
     }
 
     ifKpiExist(kpiId) {
