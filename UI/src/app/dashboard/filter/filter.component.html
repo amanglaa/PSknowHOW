@@ -267,7 +267,7 @@
             </ng-container>
          </ul>
          <!-- toggle view -->
-         <div class="tabs">
+         <div class="tabs" *ngIf="selectedTab?.toLowerCase() !== 'maturity'">
             <input id="chart-view" class="chart-view" type="radio" name="view" [checked]='showChart'>
             <label class="label1" for="chart-view" (click)="showChartToggle(true)" id="Layout-Chart">
                <img src="../../../assets/img/ico-graph-white.svg" alt="Chart View" class="ico-active" />
