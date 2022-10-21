@@ -643,9 +643,8 @@ export class ConnectionListComponent implements OnInit {
     this.disableEnableCheckBox();
     if (connection.type.toLowerCase() == 'bitbucket' && connection.cloudEnv == true) {
       this.checkBitbucketValue(true, "cloudEnv", connection.type.toLowerCase())
-    } else if (connection.type.toLowerCase() == 'zephyr' && connection.cloudEnv == true) {
-      this.checkZephyr(true, "cloudEnv", connection.type.toLowerCase());
-      this.checkZephyr(true, "vault", connection.type.toLowerCase());
+    } else if (connection.type.toLowerCase() == 'zephyr') {
+      this.checkZephyr(connection.cloudEnv, "cloudEnv", connection.type.toLowerCase());
     }
   }
 
@@ -722,7 +721,7 @@ export class ConnectionListComponent implements OnInit {
     } else if (this.selectedConnectionType.toLowerCase() === 'zephyr' && !!this.basicConnectionForm.controls['cloudEnv'] && this.connection['cloudEnv'] === true) {
       this.basicConnectionForm.controls['username'].disable();
       this.basicConnectionForm.controls['password'].disable();
-      //this.basicConnectionForm.controls['apiEndpoint'].disable();
+      // this.basicConnectionForm.controls['apiEndpoint'].disable();
       this.basicConnectionForm.controls['baseUrl'].disable();
       this.basicConnectionForm.controls['accessToken'].enable();
     } else if (this.selectedConnectionType.toLowerCase() === 'zephyr' && !!this.basicConnectionForm.controls['cloudEnv'] && this.connection['cloudEnv'] === false) {
@@ -738,7 +737,10 @@ export class ConnectionListComponent implements OnInit {
       this.basicConnectionForm.controls['password'].enable();
       this.basicConnectionForm.controls['accessToken'].disable();
     }
-
+    if(this.selectedConnectionType.toLowerCase() === 'sonar' && !!this.basicConnectionForm.controls['vault'] && this.connection['vault'] === true){
+      this.basicConnectionForm.controls['password'].disable();
+      this.basicConnectionForm.controls['accessToken'].disable();
+    }
   }
 
   enableDisableSwitch(event, field, type?) {
@@ -1063,7 +1065,6 @@ export class ConnectionListComponent implements OnInit {
   checkZephyr(event, field, type) {
     /** to add information besides username and password labels for bitbucket when isCloudEnv = true */
     if (type == 'zephyr' && field == 'cloudEnv' && event) {
-
       this.basicConnectionForm.controls['baseUrl'].setValue(this.zephyrUrl);
       this.basicConnectionForm.controls['baseUrl'].disable();
       this.basicConnectionForm.controls['apiEndPoint'].setValue('');
@@ -1080,10 +1081,11 @@ export class ConnectionListComponent implements OnInit {
       this.basicConnectionForm.controls['password'].enable();
       this.basicConnectionForm.controls['apiEndPoint'].enable();
     }
-    if(type == 'zephyr' && (field == 'cloudEnv' || field == 'vault')){
+
+    if(type == 'zephyr' && (this.basicConnectionForm.get('vault').value || this.connection['vault'] === true || this.basicConnectionForm.controls['cloudEnv'].value)){
       this.basicConnectionForm.controls['password'].setValue('');
       this.basicConnectionForm.controls['password'].disable();
-      if(field == 'vault'){
+      if(this.basicConnectionForm.controls['vault'].value || this.connection['vault'] === true){ 
         this.basicConnectionForm.controls['accessToken'].setValue('');
         this.basicConnectionForm.controls['accessToken'].disable();
       }
@@ -1102,10 +1104,10 @@ export class ConnectionListComponent implements OnInit {
       this.basicConnectionForm.controls['accessToken'].setValue('');
       this.basicConnectionForm.controls['accessToken'].disable();
     }
-    if(type == 'sonar' && (field == 'cloudEnv' || field == 'vault')){
+    if(type == 'sonar' && (this.basicConnectionForm.controls['vault'].value == true || this.basicConnectionForm.controls['cloudEnv'].value == true)){
       this.basicConnectionForm.controls['password'].setValue('');
       this.basicConnectionForm.controls['password'].disable();
-      if(field == 'vault'){
+      if(this.basicConnectionForm.controls['vault'].value == true){
         this.basicConnectionForm.controls['accessToken'].setValue('');
         this.basicConnectionForm.controls['accessToken'].disable();
       }
