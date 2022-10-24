@@ -18,16 +18,12 @@
 
 package com.publicissapient.kpidashboard.apis.jira.scrum.service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.core.Feature;
 
+import com.publicissapient.kpidashboard.apis.common.service.impl.KpiHelperService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -134,8 +130,7 @@ public class DRRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 		List<String> sprintList = new ArrayList<>();
 		List<String> basicProjectConfigIds = new ArrayList<>();
 		Map<String, Map<String, Object>> uniqueProjectMap = new HashMap<>();
-		Map<String, String> defectRejectionStatusMap = new HashMap<>();
-		Map<String, List<String>> defectResolutionRejectionMap = new HashMap<>();
+		Map<String, Map<String,List<String>>> defectResolutionRejectionMap = new HashMap<>();
 		leafNodeList.forEach(leaf -> {
 			ObjectId basicProjectConfigId = leaf.getProjectFilter().getBasicProjectConfigId();
 			Map<String, Object> mapOfProjectFilters = new LinkedHashMap<>();
@@ -144,14 +139,7 @@ public class DRRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 			sprintList.add(leaf.getSprintFilter().getId());
 			basicProjectConfigIds.add(basicProjectConfigId.toString());
 
-			if (StringUtils.isNotBlank(fieldMapping.getJiraDefectRejectionStatus())) {
-				defectRejectionStatusMap.put(basicProjectConfigId.toString(),
-						fieldMapping.getJiraDefectRejectionStatus().toLowerCase().trim());
-			}
-			defectResolutionRejectionMap.put(basicProjectConfigId.toString(),
-					fieldMapping.getResolutionTypeForRejection() == null ? new ArrayList<>()
-							: fieldMapping.getResolutionTypeForRejection().stream().map(String::toLowerCase)
-									.collect(Collectors.toList()));
+			KpiHelperService.getDroppedDefectsFilters(defectResolutionRejectionMap, basicProjectConfigId, fieldMapping);
 			mapOfProjectFilters.put(JiraFeature.ISSUE_TYPE.getFieldValueInFeature(),
 					CommonUtils.convertToPatternList(fieldMapping.getJiraDefectRejectionlIssueType()));
 			uniqueProjectMap.put(basicProjectConfigId.toString(), mapOfProjectFilters);
@@ -181,18 +169,9 @@ public class DRRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 		List<JiraIssue> totalDefectList = jiraIssueRepository.findIssuesByType(mapOfFiltersWithStoryIds);
 
 		// Find defect with rejected status. Avoided making dB query
-		if (!defectRejectionStatusMap.isEmpty()) {
-			List<JiraIssue> canceledDefectList = totalDefectList.stream()
-					.filter(f -> null != defectRejectionStatusMap.get(f.getBasicProjectConfigId())
-							&& defectRejectionStatusMap.get(f.getBasicProjectConfigId())
-									.equalsIgnoreCase(f.getJiraStatus())
-							&& (CollectionUtils.isEmpty(defectResolutionRejectionMap.get(f.getBasicProjectConfigId()))
-									|| (CollectionUtils
-											.isNotEmpty(defectResolutionRejectionMap.get(f.getBasicProjectConfigId()))
-											&& StringUtils.isNotBlank(f.getResolution())
-											&& defectResolutionRejectionMap.get(f.getBasicProjectConfigId())
-													.contains(f.getResolution().toLowerCase()))))
-					.collect(Collectors.toList());
+		if (!defectResolutionRejectionMap.isEmpty()) {
+			List<JiraIssue> canceledDefectList = new ArrayList<>();
+			getDefectsWithDrop(defectResolutionRejectionMap, totalDefectList, canceledDefectList);
 
 			setDbQueryLogger(storyIdList, totalDefectList, canceledDefectList);
 
@@ -449,6 +428,36 @@ public class DRRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 	@Override
 	public Double calculateKpiValue(List<Double> valueList, String kpiName) {
 		return calculateKpiValueForDouble(valueList, kpiName);
+	}
+
+	public static void getDefectsWithDrop(Map<String, Map<String,List<String>>> droppedDefects, List<JiraIssue> defectDataList,
+											 List<JiraIssue> defectListWthDrop) {
+		if (org.apache.commons.collections4.CollectionUtils.isNotEmpty(defectDataList)) {
+			Set<JiraIssue> defectListWthDropSet = new HashSet<>();
+			defectDataList.forEach(jiraIssue -> {
+				getDefectsWthDrop(droppedDefects, defectListWthDropSet, jiraIssue);
+			});
+			defectListWthDrop.addAll(defectListWthDropSet);
+		}
+	}
+
+	private static void getDefectsWthDrop(Map<String, Map<String,List<String>>> droppedDefects, Set<JiraIssue> defectListWthDropSet, JiraIssue jiraIssue) {
+		if (!StringUtils.isBlank(jiraIssue.getStatus())) {
+			Map<String,List<String>> defectStatus = droppedDefects.get(jiraIssue.getBasicProjectConfigId());
+			if (!defectStatus.isEmpty()) {
+				if (StringUtils.isNotEmpty(jiraIssue.getResolution()) &&
+						CollectionUtils.isNotEmpty(defectStatus.get(Constant.RESOLUTION_TYPE_FOR_REJECTION)) &&
+						defectStatus.get(Constant.RESOLUTION_TYPE_FOR_REJECTION).contains(jiraIssue.getResolution())) {
+					defectListWthDropSet.add(jiraIssue);
+				} else if (StringUtils.isNotEmpty(jiraIssue.getStatus()) &&
+						CollectionUtils.isNotEmpty(defectStatus.get(Constant.DEFECT_REJECTION_STATUS)) &&
+						defectStatus.get(Constant.DEFECT_REJECTION_STATUS).contains(jiraIssue.getStatus())) {
+					defectListWthDropSet.add(jiraIssue);
+				}
+			} else {
+				defectListWthDropSet.add(jiraIssue);
+			}
+		}
 	}
 
 }
