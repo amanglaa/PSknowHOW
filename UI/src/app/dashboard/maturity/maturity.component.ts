@@ -822,8 +822,5 @@ export class MaturityComponent implements OnInit, OnDestroy {
             renderDescription += '</div></div>';
             return renderDescription;
         }
-
-
-
     }
 }

@@ -37,9 +37,9 @@ export const ConfigRoutes: Routes = [
             // },
             {
                 path: '',
-                // loadChildren: './project-config/project-config.module#ProjectConfigModule',
                 canActivate: [GuestGuard],
-                loadChildren: () => import('./profile/profile.module').then(m => m.ProfileModule)
+                // loadChildren: () => import('./profile/profile.module').then(m => m.ProfileModule)
+                loadChildren: () => import('./project-config/project-config.module').then(m => m.ProjectConfigModule)
             },
             {
                 path: 'Upload',
