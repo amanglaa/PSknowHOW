@@ -560,7 +560,7 @@ export class GroupedColumnPlusLineChartComponent implements OnInit, OnChanges {
           .enter()
           .append('g')
           .attr('class', 'circle')
-          .on('mouseover', function (d) {
+          .on('mouseover', function (event,d) {
             let topValue = 80;
             if (d.hoverValue) {
               div.transition()
@@ -569,7 +569,7 @@ export class GroupedColumnPlusLineChartComponent implements OnInit, OnChanges {
                 .style('position', 'fixed')
                 .style('opacity', .9);
 
-              const circle = d3.event.target;
+              const circle = event.target;
               let {
                 top: yPosition,
                 left: xPosition

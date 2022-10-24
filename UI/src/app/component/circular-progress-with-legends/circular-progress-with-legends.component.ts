@@ -150,13 +150,13 @@ export class CircularProgressWithLegendsComponent implements OnInit, OnChanges {
                 if (this.projectName && this.projectName.length >= 20) {
                     const projectLabel = d3.selectAll('.projectName');
                     projectLabel
-                        .on("mouseover", function (d) {
+                        .on("mouseover", function (event,d) {
                             div.transition()
                                 .duration(200)
                                 .style("opacity", .9);
                             div.html(self.projectName)
-                                .style("left", (d3.event.layerX - 25) + 'px')
-                                .style("top", (d3.event.layerY + 10) + 'px');
+                                .style("left", (event.layerX - 25) + 'px')
+                                .style("top", (event.layerY + 10) + 'px');
                         })
                         .on("mouseout", function (d) {
                             div.transition()

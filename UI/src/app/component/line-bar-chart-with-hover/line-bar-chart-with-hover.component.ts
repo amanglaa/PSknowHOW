@@ -293,13 +293,13 @@ export class LineBarChartWithHowerComponent implements OnChanges, AfterViewInit 
 						}
 						return barColor;
 					})
-					.on('mouseover', function (d) {
+					.on('mouseover', function (event,d) {
 						if (d[2] && d[2][d[0]]) {
 							tooltip.transition().duration(200).style('display', 'block').style('opacity', 0.9);
 							tooltip
 								.html(self.stringify(d[2][d[0]]).split(',').join('<br/>'))
-								.style('left', (d3.event.layerX - 25 + 100 > width ? d3.event.layerX - 100 : d3.event.layerX - 25) + 'px')
-								.style('top', d3.event.layerY + 10 + 'px');
+								.style('left', (event.layerX - 25 + 100 > width ? event.layerX - 100 : event.layerX - 25) + 'px')
+								.style('top', event.layerY + 10 + 'px');
 						}
 					})
 					.on('mouseout', function (d) {
@@ -432,13 +432,13 @@ export class LineBarChartWithHowerComponent implements OnChanges, AfterViewInit 
 							return yScale(d[1]);
 						})
 						.attr('r', 5)
-						.on('mouseover', function (d) {
+						.on('mouseover', function (event,d) {
 							if (d[2] && d[2][d[0]]) {
 								tooltip.transition().duration(200).style('display', 'block').style('opacity', 0.9);
 								tooltip
 									.html(self.stringify(d[2][d[0]]).split(',').join('<br/>'))
-									.style('left', (d3.event.layerX - 25 + 100 > width ? d3.event.layerX - 100 : d3.event.layerX - 25) + 'px')
-									.style('top', d3.event.layerY + 10 + 'px');
+									.style('left', (event.layerX - 25 + 100 > width ? event.layerX - 100 : event.layerX - 25) + 'px')
+									.style('top', event.layerY + 10 + 'px');
 							}
 						})
 						.on('mouseout', function (d) {
