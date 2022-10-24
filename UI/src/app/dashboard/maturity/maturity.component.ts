@@ -23,11 +23,13 @@ This is used to show maturity of kpi in form of d3.chart (sunburst chart).
 **************/
 
 import { Component, OnInit, OnDestroy } from '@angular/core';
-// import * as d3v3 from 'd3-3';
+// import * as d3 from 'd3-3';
+import * as d3 from 'd3';
 import { SharedService } from '../../services/shared.service';
 import { HttpService } from '../../services/http.service';
 import { HelperService } from '../../services/helper.service';
 import { Router } from '@angular/router';
+import { Children } from 'preact/compat';
 
 
 @Component({
@@ -97,13 +99,14 @@ export class MaturityComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
     }
     receiveSharedData($event) {
-        if(this.service.getSelectedTab() === 'Maturity'){
+        if (this.service.getSelectedTab() === 'Maturity') {
             this.masterData = $event.masterData;
             this.filterData = $event.filterData;
             this.filterApplyData = $event.filterApplyData;
             this.loaderMaturity = true;
             let kpiIdsForCurrentBoard = this.service.getMasterData()['kpiList'].filter(kpi => kpi.calculateMaturity).map(kpi => kpi.kpiId);
-            this.drawAreaChart(null, null);
+            // this.drawAreaChart(null, null);
+            // this.chart(null);
             this.groupJenkinsKpi(kpiIdsForCurrentBoard);
             this.groupZypherKpi(kpiIdsForCurrentBoard);
             this.groupBitBucketKpi(kpiIdsForCurrentBoard);
@@ -161,7 +164,7 @@ export class MaturityComponent implements OnInit, OnDestroy {
             if (groupId) {
                 this.kpiJira = this.helperService.groupKpiFromMaster('Jira', false, this.masterData, this.filterApplyData, this.filterData, kpiIdsForCurrentBoard, groupId);
                 if (this.kpiJira?.kpiList?.length > 0) {
-                this.postJiraKpi(this.kpiJira, 'jira');
+                    this.postJiraKpi(this.kpiJira, 'jira');
                 }
             }
         });
@@ -185,7 +188,7 @@ export class MaturityComponent implements OnInit, OnDestroy {
         this.sonarKpiRequest = this.httpService.postKpi(postData, source)
             .subscribe(getData => {
                 this.loaderSonar = false;
-                this.loaderMaturity = false;
+                // this.loaderMaturity = false;
                 if (!(getData !== null && getData[0] === 'error')) {
                     this.sonarKpiData = getData;
                     const newObject = {};
@@ -222,12 +225,12 @@ export class MaturityComponent implements OnInit, OnDestroy {
                         newObject[this.jenkinsKpiData[obj].kpiId] = this.jenkinsKpiData[obj];
                         this.maturityValue[this.jenkinsKpiData[obj].kpiId] = this.jenkinsKpiData[obj];
                     }
-                    this.loaderMaturity = false;
-                    this.jenkinsKpiData =newObject
-                    // if (this.jenkinsKpiData && this.jenkinsKpiData.kpi41 && this.jenkinsKpiData.kpi39) {
-                    //     this.drawAreaChart(this.jenkinsKpiData.kpi41.value, this.jenkinsKpiData.kpi39.value);
+                    // this.loaderMaturity = false;
+                    this.jenkinsKpiData = newObject
+                    // if (this.jenkinsKpiData && this.jenkinsKpiData.kpi70 && this.jenkinsKpiData.kpi42) {
+                    //     this.drawAreaChart(this.jenkinsKpiData.kpi70.trendValueList, this.jenkinsKpiData.kpi42.trendValueList);
                     // } else {
-                    //     this.drawAreaChart(null, null);
+                    //     // this.drawAreaChart(null, null);
                     // }
 
                 }
@@ -277,8 +280,8 @@ export class MaturityComponent implements OnInit, OnDestroy {
                         this.maturityValue[this.jiraKpiData[obj].kpiId] = this.jiraKpiData[obj];
                     }
                     this.jiraKpiData = newObject;
-                    if (this.jiraKpiData && this.jiraKpiData.kpi41 && this.jiraKpiData.kpi39) {
-                        this.drawAreaChart(this.jiraKpiData.kpi41.value, this.jiraKpiData.kpi39.value);
+                    if (this.jiraKpiData && this.jiraKpiData.kpi35 && this.jiraKpiData.kpi111) {
+                        this.drawAreaChart(this.jiraKpiData.kpi35.trendValueList, this.jiraKpiData.kpi111.trendValueList);
                     } else {
                         this.drawAreaChart(null, null);
                     }
@@ -295,7 +298,7 @@ export class MaturityComponent implements OnInit, OnDestroy {
         this.bitBucketKpiRequest = this.httpService.postKpi(postData, source)
             .subscribe(getData => {
                 this.loaderBitBucket = false;
-                this.loaderMaturity = false;
+                // this.loaderMaturity = false;
                 if (!(getData !== null && getData[0] === 'error')) {
                     this.bitBucketKpiData = getData;
                     const newObject = {};
@@ -305,8 +308,8 @@ export class MaturityComponent implements OnInit, OnDestroy {
                     }
                     this.bitBucketKpiData = newObject;
 
-                    // if (this.bitBucketKpiData && this.bitBucketKpiData.kpi41 && this.bitBucketKpiData.kpi39) {
-                    //     this.drawAreaChart(this.bitBucketKpiData.kpi41.value, this.bitBucketKpiData.kpi39.value);
+                    // if (this.bitBucketKpiData && this.bitBucketKpiData.kpi11 && this.bitBucketKpiData.kpi84) {
+                    //     this.drawAreaChart(this.bitBucketKpiData.kpi11.value, this.bitBucketKpiData.kpi84.value);
                     // } else {
                     //     this.drawAreaChart(null, null);
                     // }
@@ -316,9 +319,9 @@ export class MaturityComponent implements OnInit, OnDestroy {
     }
 
     drawAreaChart(totalDefectCount, sprintVelocity) {
-       /* d3v3.select('svg').remove();
-        d3v3.select('.tooltip').remove();
-
+        d3.select('svg').remove();
+        d3.select('.tooltip').remove();
+        let self = this;
 
         const startRotation = this.loaderMaturity;
         let root;
@@ -326,68 +329,68 @@ export class MaturityComponent implements OnInit, OnDestroy {
 
             root = {
                 'textLines': ['..'],
-                'groups': [{
+                'children': [{
                     'textLines': ['..'],
-                    'bars': [{
+                    'children': [{
                         'textLines': ['..'],
-                        'value': 0
+                        'maturity': 0
                     }, {
                         'textLines': ['..'],
-                        'value': 0
+                        'maturity': 0
                     }, {
                         'textLines': ['..'],
-                        'value': 0
+                        'maturity': 0
                     }, {
                         'textLines': ['..'],
-                        'value': 0
+                        'maturity': 0
                     }, {
                         'textLines': ['..'],
-                        'value': 0
+                        'maturity': 0
                     }, {
                         'textLines': ['..'],
-                        'value': 0
+                        'maturity': 0
                     }, {
                         'textLines': ['..'],
-                        'value': 0
+                        'maturity': 0
                     }, {
                         'textLines': ['..'],
-                        'value': 0
+                        'maturity': 0
                     }, {
                         'textLines': ['..'],
-                        'value': 0
+                        'maturity': 0
                     }, {
                         'textLines': ['..'],
-                        'value': 0
+                        'maturity': 0
                     }, {
                         'textLines': ['..'],
-                        'value': 0
+                        'maturity': 0
                     }]
                 }, {
                     'textLines': ['..'],
-                    'bars': [{
+                    'children': [{
                         'textLines': ['..'],
-                        'value': 0
+                        'maturity': 0
                     }]
                 }, {
                     'textLines': ['..'],
-                    'bars': [{
+                    'children': [{
                         'textLines': ['..'],
-                        'value': 0
+                        'maturity': 0
                     }, {
                         'textLines': ['..'],
-                        'value': 0
+                        'maturity': 0
                     }, {
                         'textLines': ['..'],
-                        'value': 0
+                        'maturity': 0
                     }, {
                         'textLines': ['..'],
-                        'value': 0
+                        'maturity': 0
                     }, {
                         'textLines': ['..'],
-                        'value': 0
+                        'maturity': 0
                     }, {
                         'textLines': ['..'],
-                        'value': 0
+                        'maturity': 0
                     }]
                 }]
             };
@@ -396,95 +399,108 @@ export class MaturityComponent implements OnInit, OnDestroy {
 
             root = {
                 'textLines': ['KPI', 'Maturity Wheel'],
-                'groups': [{
-                    'textLines': [''],
-                    'bars': [{
+                'children': [{
+                    'textLines': ['ABC'],
+                    'children': [{
                         'textLines': ['Mean Time', 'To Merge'],
-                      'value': getMaturityValue(undefinedCheck(this.maturityValue.kpi84) || undefinedCheck(this.maturityValue.kpi84.trendValueList) || undefinedCheck(this.maturityValue.kpi84.trendValueList[0]) ? -1 : this.maturityValue.kpi84.trendValueList[0].maturity),
-                      'maturityRange': undefinedCheck(this.maturityValue.kpi84) ? 'undefined' : this.maturityValue.kpi84.maturityRange
+                        'maturity': getMaturityValueForChart('kpi84'),
+                        'maturityRange': undefinedCheck(this.maturityValue.kpi84) ? 'undefined' : this.maturityValue.kpi84.maturityRange
                     },
                     {
-                      "textLines": ["Number of", "Check Ins  Merge"," Requests"],
-                      "value": getMaturityValue(undefinedCheck(this.maturityValue.kpi11) || undefinedCheck(this.maturityValue.kpi11.trendValueList) || undefinedCheck(this.maturityValue.kpi11.trendValueList[0]) || undefinedCheck(this.maturityValue.kpi11.trendValueList[0].value) ? -1 : this.maturityValue.kpi11.trendValueList[0].value[0].maturity),
-                      "maturityRange": undefinedCheck(this.maturityValue.kpi11) ? 'undefined' : this.maturityValue.kpi11.maturityRange
-                     },
+                        "textLines": ["Number of", "Check Ins  Merge", " Requests"],
+                        "maturity": getMaturityValueForChart('kpi11'),
+                        "maturityRange": undefinedCheck(this.maturityValue.kpi11) ? 'undefined' : this.maturityValue.kpi11.maturityRange
+                    },
                     {
                         'textLines': ['Code Build', 'Time'],
-                      'value': getMaturityValue(undefinedCheck(this.maturityValue.kpi8) || undefinedCheck(this.maturityValue.kpi8.trendValueList) || undefinedCheck(this.maturityValue.kpi8.trendValueList[0]) ? -1 : this.maturityValue.kpi8.trendValueList[0].maturity),
-                      'maturityRange': undefinedCheck(this.maturityValue.kpi8) ? 'undefined' : this.maturityValue.kpi8.maturityRange
+                        'maturity': getMaturityValueForChart('kpi8'),
+                        'maturityRange': undefinedCheck(this.maturityValue.kpi8) ? 'undefined' : this.maturityValue.kpi8.maturityRange
                     }, {
                         'textLines': ['Sonar', 'Tech Debt'],
-                      'value': getMaturityValue(undefinedCheck(this.maturityValue.kpi27) || undefinedCheck(this.maturityValue.kpi27.trendValueList) || undefinedCheck(this.maturityValue.kpi27.trendValueList[0]) || getMaturityValue(this.maturityValue.kpi27.trendValueList[0].value[0]) ? -1 : this.maturityValue.kpi27.trendValueList[0].value[0].maturity),
-                      'maturityRange': undefinedCheck(this.maturityValue.kpi27) ? 'undefined' : this.maturityValue.kpi27.maturityRange
+                        'maturity': getMaturityValueForChart('kpi27'),
+                        'maturityRange': undefinedCheck(this.maturityValue.kpi27) ? 'undefined' : this.maturityValue.kpi27.maturityRange
                     }, {
                         'textLines': ['First Time', 'Pass Rate'],
-                      'value': getMaturityValue(undefinedCheck(this.maturityValue.kpi82) || undefinedCheck(this.maturityValue.kpi82.trendValueList)  || undefinedCheck(this.maturityValue.kpi82.trendValueList[0]) ? -1 : this.maturityValue.kpi82.trendValueList[0].maturity),
-                      'maturityRange': undefinedCheck(this.maturityValue.kpi82) ? 'undefined' : this.maturityValue.kpi82.maturityRange
+                        'maturity': getMaturityValueForChart('kpi82'),
+                        'maturityRange': undefinedCheck(this.maturityValue.kpi82) ? 'undefined' : this.maturityValue.kpi82.maturityRange
                     }, {
                         'textLines': ['Intake', 'to', 'DOR'],
-                      'value': getMaturityValue(undefinedCheck(this.maturityValue.kpi3) || undefinedCheck(this.maturityValue.kpi3.trendValueList) || undefinedCheck(this.maturityValue.kpi3.trendValueList[1]) ? -1 : this.maturityValue.kpi3.trendValueList[1].value[0].maturity),
-                      'maturityRange': undefinedCheck(this.maturityValue.kpi3) || undefinedCheck(this.maturityValue.kpi3.maturityRange) ? 'undefined' : this.maturityValue.kpi3.maturityRange.slice(5, 11)
+                        'maturity': getMaturityValue(undefinedCheck(this.maturityValue.kpi3) || undefinedCheck(this.maturityValue.kpi3.trendValueList) || undefinedCheck(this.maturityValue.kpi3.trendValueList[1]) ? -1 : this.maturityValue.kpi3.trendValueList[1].value[0].maturity),
+                        'maturityRange': undefinedCheck(this.maturityValue.kpi3) || undefinedCheck(this.maturityValue.kpi3.maturityRange) ? 'undefined' : this.maturityValue.kpi3.maturityRange.slice(5, 11)
                     }, {
                         'textLines': ['DoR', 'to', 'DoD'],
-                      'value': getMaturityValue(undefinedCheck(this.maturityValue.kpi3) || undefinedCheck(this.maturityValue.kpi3.trendValueList) || undefinedCheck(this.maturityValue.kpi3.trendValueList[2]) ? -1 : this.maturityValue.kpi3.trendValueList[2].value[0].maturity),
-                      'maturityRange': undefinedCheck(this.maturityValue.kpi3) || undefinedCheck(this.maturityValue.kpi3.maturityRange) ? 'undefined' : this.maturityValue.kpi3.maturityRange.slice(10, 15)
+                        'maturity': getMaturityValue(undefinedCheck(this.maturityValue.kpi3) || undefinedCheck(this.maturityValue.kpi3.trendValueList) || undefinedCheck(this.maturityValue.kpi3.trendValueList[2]) ? -1 : this.maturityValue.kpi3.trendValueList[2].value[0].maturity),
+                        'maturityRange': undefinedCheck(this.maturityValue.kpi3) || undefinedCheck(this.maturityValue.kpi3.maturityRange) ? 'undefined' : this.maturityValue.kpi3.maturityRange.slice(10, 15)
                     }, {
                         'textLines': ['DoD', 'to', 'Live'],
-                      'value': getMaturityValue(undefinedCheck(this.maturityValue.kpi3) || undefinedCheck(this.maturityValue.kpi3.trendValueList) || undefinedCheck(this.maturityValue.kpi3.trendValueList[3]) ? -1 : this.maturityValue.kpi3.trendValueList[3].value[0].maturity),
-                      'maturityRange': undefinedCheck(this.maturityValue.kpi3) || undefinedCheck(this.maturityValue.kpi3.maturityRange) ? 'undefined' : this.maturityValue.kpi3.maturityRange.slice(15, 20)
+                        'maturity': getMaturityValue(undefinedCheck(this.maturityValue.kpi3) || undefinedCheck(this.maturityValue.kpi3.trendValueList) || undefinedCheck(this.maturityValue.kpi3.trendValueList[3]) ? -1 : this.maturityValue.kpi3.trendValueList[3].value[0].maturity),
+                        'maturityRange': undefinedCheck(this.maturityValue.kpi3) || undefinedCheck(this.maturityValue.kpi3.maturityRange) ? 'undefined' : this.maturityValue.kpi3.maturityRange.slice(15, 20)
                     },
                     {
                         'textLines': ['Average', 'Resolution', 'Time'],
-                      'value': getMaturityValue(undefinedCheck(this.maturityValue.kpi83) || undefinedCheck(this.maturityValue.kpi83.trendValueList) || undefinedCheck(this.maturityValue.kpi83.trendValueList[0]) || getMaturityValue(this.maturityValue.kpi83.trendValueList[0].value[0]) ? -1 : this.maturityValue.kpi83.trendValueList[0].value[0].maturity),
-                      'maturityRange': undefinedCheck(this.maturityValue.kpi83) ? 'undefined' : this.maturityValue.kpi83.maturityRange
+                        'maturity': getMaturityValueForChart('kpi83'),
+                        'maturityRange': undefinedCheck(this.maturityValue.kpi83) ? 'undefined' : this.maturityValue.kpi83.maturityRange
                     }]
                 }, {
-                    'textLines': [''],
-                    'bars': [{
+                    'textLines': ['DEF'],
+                    'children': [{
                         'textLines': ['Defect', 'Injection', 'Rate'],
-                      'value': getMaturityValue(undefinedCheck(this.maturityValue.kpi14) || undefinedCheck(this.maturityValue.kpi14.trendValueList) || undefinedCheck(this.maturityValue.kpi14.trendValueList[0]) ? -1 : this.maturityValue.kpi14.trendValueList[0].maturity),
-                      'maturityRange': undefinedCheck(this.maturityValue.kpi14) ? 'undefined' : this.maturityValue.kpi14.maturityRange
+                        'maturity': getMaturityValueForChart('kpi14'),
+                        'maturityRange': undefinedCheck(this.maturityValue.kpi14) ? 'undefined' : this.maturityValue.kpi14.maturityRange
                     }, {
                         'textLines': ['Defect', 'Seepage', 'Rate'],
-                      'value': getMaturityValue(undefinedCheck(this.maturityValue.kpi35) || undefinedCheck(this.maturityValue.kpi35.trendValueList) || undefinedCheck(this.maturityValue.kpi35.trendValueList[0]) ? -1 : this.maturityValue.kpi35.trendValueList[0].maturity),
-                      'maturityRange': undefinedCheck(this.maturityValue.kpi35) ? 'undefined' : this.maturityValue.kpi35.maturityRange
+                        'maturity': getMaturityValueForChart('kpi35'),
+                        'maturityRange': undefinedCheck(this.maturityValue.kpi35) ? 'undefined' : this.maturityValue.kpi35.maturityRange
                     }, {
                         'textLines': ['Defect', 'Removal', 'Efficiency'],
-                      'value': getMaturityValue(undefinedCheck(this.maturityValue.kpi34) || undefinedCheck(this.maturityValue.kpi34.trendValueList) || undefinedCheck(this.maturityValue.kpi34.trendValueList[0]) ? -1 : this.maturityValue.kpi34.trendValueList[0].maturity),
-                      'maturityRange': undefinedCheck(this.maturityValue.kpi34) ? 'undefined' : this.maturityValue.kpi34.maturityRange
+                        'maturity': getMaturityValueForChart('kpi34'),
+                        'maturityRange': undefinedCheck(this.maturityValue.kpi34) ? 'undefined' : this.maturityValue.kpi34.maturityRange
                     }, {
                         'textLines': ['Defect', 'Rejection', 'Rate'],
-                      'value': getMaturityValue(undefinedCheck(this.maturityValue.kpi37) || undefinedCheck(this.maturityValue.kpi37.trendValueList) || undefinedCheck(this.maturityValue.kpi37.trendValueList[0]) ? -1 : this.maturityValue.kpi37.trendValueList[0].maturity),
-                      'maturityRange': undefinedCheck(this.maturityValue.kpi37) ? 'undefined' : this.maturityValue.kpi37.maturityRange
+                        'maturity': getMaturityValueForChart('kpi37'),
+                        'maturityRange': undefinedCheck(this.maturityValue.kpi37) ? 'undefined' : this.maturityValue.kpi37.maturityRange
                     }, {
-                      'textLines': ['Test Execution', 'and', 'pass percentage'],
-                      'value': getMaturityValue(undefinedCheck(this.maturityValue.kpi70) || undefinedCheck(this.maturityValue.kpi70.trendValueList) || undefinedCheck(this.maturityValue.kpi70.trendValueList[0]) ? -1 : this.maturityValue.kpi70.trendValueList[0].maturity),
-                      'maturityRange': undefinedCheck(this.maturityValue.kpi70) ? 'undefined' : this.maturityValue.kpi70.maturityRange
+                        'textLines': ['Test Execution', 'and', 'pass percentage'],
+                        'maturity': getMaturityValueForChart('kpi70'),
+                        'maturityRange': undefinedCheck(this.maturityValue.kpi70) ? 'undefined' : this.maturityValue.kpi70.maturityRange
                     }, {
                         'textLines': ['Unit', 'Test', 'Coverage'],
-                      'value': getMaturityValue(undefinedCheck(this.maturityValue.kpi17) || undefinedCheck(this.maturityValue.kpi17.trendValueList) || undefinedCheck(this.maturityValue.kpi17.trendValueList[0]) || getMaturityValue(this.maturityValue.kpi17.trendValueList[0].value[0]) ? -1 : this.maturityValue.kpi17.trendValueList[0].value[0].maturity),
-                      'maturityRange': undefinedCheck(this.maturityValue.kpi17) ? 'undefined' : this.maturityValue.kpi17.maturityRange
+                        'maturity': getMaturityValueForChart('kpi17'),
+                        'maturityRange': undefinedCheck(this.maturityValue.kpi17) ? 'undefined' : this.maturityValue.kpi17.maturityRange
                     }, {
                         'textLines': ['Regression', 'Automation', 'Coverage'],
-                      'value': getMaturityValue(undefinedCheck(this.maturityValue.kpi42) || undefinedCheck(this.maturityValue.kpi42.trendValueList) || undefinedCheck(this.maturityValue.kpi42.trendValueList[0]) ? -1 : this.maturityValue.kpi42.trendValueList[0].maturity),
-                      'maturityRange': undefinedCheck(this.maturityValue.kpi42) ? 'undefined' : this.maturityValue.kpi42.maturityRange
+                        'maturity': getMaturityValueForChart('kpi42'),
+                        'maturityRange': undefinedCheck(this.maturityValue.kpi42) ? 'undefined' : this.maturityValue.kpi42.maturityRange
                     }, {
                         'textLines': ['In-sprint', 'Automation', 'Coverage'],
-                      'value': getMaturityValue(undefinedCheck(this.maturityValue.kpi16) || undefinedCheck(this.maturityValue.kpi16.trendValueList) || undefinedCheck(this.maturityValue.kpi16.trendValueList[0]) ? -1 : this.maturityValue.kpi16.trendValueList[0].maturity),
-                      'maturityRange': undefinedCheck(this.maturityValue.kpi16) ? 'undefined' : this.maturityValue.kpi16.maturityRange
+                        'maturity': getMaturityValueForChart('kpi16'),
+                        'maturityRange': undefinedCheck(this.maturityValue.kpi16) ? 'undefined' : this.maturityValue.kpi16.maturityRange
                     }]
                 }]
             };
 
 
-      }
-
-      function undefinedCheck(attr) {
-        if (attr === undefined || attr === 'undefined') {
-          return true;
         }
-        return false;
-      }
+
+        function getMaturityValueForChart(kpiId) {
+            let result = 0;
+            if (kpiId === 'kpi11') {
+                result = getMaturityValue(undefinedCheck(self.maturityValue.kpi11) || undefinedCheck(self.maturityValue.kpi11.trendValueList) || undefinedCheck(self.maturityValue.kpi11.trendValueList[0]) || undefinedCheck(self.maturityValue.kpi11.trendValueList[0].value) ? -1 : self.maturityValue.kpi11.trendValueList[0].value[0].maturity);
+
+            } else {
+                result = getMaturityValue(undefinedCheck(self.maturityValue[kpiId]) ||
+                    undefinedCheck(self.maturityValue[kpiId].trendValueList) ||
+                    undefinedCheck(self.maturityValue[kpiId].trendValueList[0]) ? -1 : self.maturityValue[kpiId].trendValueList[0].maturity);
+            }
+            return result;
+        }
+
+        function undefinedCheck(attr) {
+            if (attr === undefined || attr === 'undefined') {
+                return true;
+            }
+            return false;
+        }
 
         function getMaturityValue(mv) {
             if (mv === undefined) {
@@ -496,119 +512,41 @@ export class MaturityComponent implements OnInit, OnDestroy {
             }
         }
 
-        function getTotalCountMaturityValue() {
-            if (sprintVelocity && totalDefectCount) {
-                let defectCountFinal = 0;
-                if (Array.isArray(totalDefectCount)) {
-                    totalDefectCount.forEach((elem) => {
-                        if (elem && elem.noOfDefect) {
-                            defectCountFinal += elem.noOfDefect;
-                        }
-                    });
-                }
-                totalDefectCount = defectCountFinal;
-                const totalDefectCal = totalDefectCount / sprintVelocity;
-                if (totalDefectCal <= 5) {
-                    return 5;
-                } else if (totalDefectCal > 5 && totalDefectCal <= 15) {
-                    return 4;
-                } else if (totalDefectCal > 15 && totalDefectCal <= 30) {
-                    return 3;
-                } else if (totalDefectCal > 30 && totalDefectCal < 50) {
-                    return 2;
-                } else {
-                    return 1;
-                }
-            } else {
-                return 0;
-            }
-
-        }
-
-        d3v3.select('.chart123').datum(root).call(sunburstBarChart());
+        d3.select('.chart123').datum(root).call(sunburstBarChart());
 
 
-        const div = d3v3.select('.chart123').append('div')
+        const div = d3.select('.chart123').append('div')
             .attr('class', 'tooltip')
             .style('opacity', 1)
             .style('display', 'inline-block');
 
         function sunburstBarChart() {
-            const edge = 520,
+            const edge = 720,
                 maxBarValue = 5,
                 rotation = -95 * Math.PI / 180;
 
             const radius = edge / 2,
-                effectiveEdge = edge * 1.2,
-                scale = d3v3.scale.linear().domain([0, maxBarValue + 2]);
-
-            const partition = d3v3.layout.partition()
-                .sort(null)
-                .size([2 * Math.PI, radius * radius])
-                .value(function (d) { return 1; });
-
-            const arc = d3v3.svg.arc()
-                .startAngle(function (d) { return d.x + rotation; })
-                .endAngle(function (d) { return d.x + d.dx + rotation; })
-                .innerRadius(function (d) {
-                    if (d.depth === 0) {
-                        d.yi = Math.sqrt(d.y);
-                    } else {
-                        d.yi = scale.range([Math.sqrt(d.dy), edge / 2.15])(d.depth);
-                    }
-                    return d.yi;
-                })
-                .outerRadius(function (d) {
-                    if (d.depth === 0) {
-                        d.yo = Math.sqrt(d.y + d.dy);
-                    } else if (d.depth === maxBarValue + 1) {
-                        d.yo = edge / 2;
-                    } else {
-                        d.yo = scale.range([Math.sqrt(d.y + d.dy), edge / 2.15])(d.depth);
-                    }
-                    return d.yo;
-                });
-
-            const labelArc = d3v3.svg.arc()
-                .startAngle(function (d) { return d.x + rotation; })
-                .endAngle(function (d) { return d.x + d.dx + rotation; })
-                .innerRadius(function (d, i) {
-                    return d3v3.scale.linear().domain([-1, d.textLines.length]).range([d.yi, d.yo])(i);
-                })
-                .outerRadius(function (d, i) {
-                    return d3v3.scale.linear().domain([-1, d.textLines.length]).range([d.yi, d.yo])(i);
-                });
-
-            const oArc = d3v3.svg.arc()
-                .startAngle(function (d) {
-                    return d.values[0].x + rotation;
-                })
-                .endAngle(function (d) {
-                    return d.values[d.values.length - 1].x + d.values[d.values.length - 1].dx + rotation;
-                })
-                .innerRadius(function (d) { d.yi = edge / 2; return d.yi; })
-                .outerRadius(function (d) { d.yo = effectiveEdge * 0.96 / 2; return d.yo; });
-
-            const outerLabelArc = d3v3.svg.arc()
-                .startAngle(function (d) {
-                    return d.values[0].x + rotation;
-                })
-                .endAngle(function (d) {
-                    return d.values[d.values.length - 1].x + d.values[d.values.length - 1].dx + rotation;
-                })
-                .innerRadius(function (d, i) {
-                    return d3v3.scale.linear().domain([0, d.values[0].textLines.length - 1]).range([d.yi * 1.05, d.yo * 0.9])(i);
-                })
-                .outerRadius(function (d, i) {
-                    // (edge / 2) + ((effectiveEdge - edge) * 0.12)
-                    return d3v3.scale.linear().domain([0, d.values[0].textLines.length - 1]).range([d.yi * 1.05, d.yo * 0.9])(i);
-                });
+                effectiveEdge = edge * 0.9;
+                // scale = d3.scaleLinear().domain([0, maxBarValue + 5]);
 
             const chart = function (selection) {
                 selection.each(function (data) {
-                    const root1 = getRoot(data);
 
-                    const svg = d3v3.select(this).append('svg')
+                    // Data strucure
+                    var partition = d3.partition()
+                        .size([2 * Math.PI, radius]);
+
+                    // Find data root
+                    var root = d3.hierarchy(getRoot2(JSON.parse(JSON.stringify(data))))
+                        .sum(function (d) {
+                            return d.size
+                        });
+
+
+                    // Size arcs
+                    partition(root);
+
+                    const svg = d3.select(this).append('svg')
                         .attr('width', effectiveEdge)
                         .attr('height', effectiveEdge)
                         .append('g')
@@ -627,51 +565,87 @@ export class MaturityComponent implements OnInit, OnDestroy {
                         window.clearInterval(intervalId);
                     }
 
-
-                    // Inner nodes including the last node for names
-                    const g = svg.datum(root1).selectAll('path')
-                        .data(partition.nodes)
-                        .enter()
-                        .append('g');
-
-
-
-                    g.append('path')
-                        .attr('display', function (d) { return d.depth ? null : 'none'; }) // hide inner ring
-                        .attr('d', arc)
-                        .attr('class', function (d) {
-
+                    var y = d3.scaleLinear()
+                        .range([-(maxBarValue + 2), maxBarValue + 2]);
+                    const arc = d3.arc()
+                        .startAngle(function (d) { return d.x0 + rotation })
+                        .endAngle(function (d) { return d.x1 + rotation })
+                        .innerRadius(function (d) {
+                            if (d.depth && d.depth > 2 && d.depth < maxBarValue + 3) {
+                                d.yi = Math.max(0,radius - y(Math.sqrt(d.y1)));
+                            } else {
+                                d.yi = radius -24 - d.y1;
+                            }
+                            return d.yi;
                         })
+                        .outerRadius(function (d) {
+                            if (d.depth && d.depth > 2 && d.depth < maxBarValue + 3) {
+                                d.yo = Math.max(0,radius - y(Math.sqrt(d.y0)));
+                            } else {
+                                d.yo = radius -24 - d.y0;
+                            }
+                            return d.yo;
+                        });
+
+                    // Put it all together
+                    svg.selectAll('path')
+                        .data(root.descendants())
+                        .enter().append('g').attr("class", "node")
+                        .append('path')
+                        .attr("display", function (d) { return d.depth ? null : "none"; })
+                        .attr("d", arc)
+                        .style('stroke', '#fff')
                         .on('mouseover', function (d) {
-                            d3v3.select(this).classed('highlight', true);
+                            if(d.depth > 1) {
+                            d3.select(this).classed('highlight', true);
                             div.transition()
                                 .duration(200)
                                 .style('opacity', .9);
-                            div.html(d.maturityLevelsToolTip);
-
-
+                            div.html(d.data.maturityLevelsToolTip);
+                            }
                         })
                         .on('mouseout', function (d) {
-                            d3v3.select(this).classed('highlight', false);
+                            d3.select(this).classed('highlight', false);
                             div.transition()
                                 .duration(500)
                                 .style('opacity', 1);
                         })
                         .attr('class', function (d) {
                             let styleClass = 'nodesBorder';
-                            if (d.depth && d.depth <= maxBarValue) {
-                                styleClass += ' group-' + d.group + (d.on ? '-on' : '-off');
-                            } else if (d.depth === maxBarValue + 1) {
+                            if (d.depth && d.depth > 2 && d.depth < maxBarValue + 3) {
+                                styleClass += ' group-' + d.data.group + (d.data.on ? '-on' : '-off');
+                            }
+                            if (d.depth === 2) {
                                 styleClass += ' labelTextBackground';
+                            }
+
+                            if (d.depth === 1) {
+                                styleClass += ' group-' + d.data.children[0].group + '-on';
                             }
                             return styleClass;
                         })
                         .attr('fill-rule', 'evenodd');
 
+                    const labelArc = d3.arc()
+                        .startAngle(function (d) { return d.x0 + rotation; })
+                        .endAngle(function (d) { return d.x1 + rotation; })
+                        .innerRadius(function (d, i) {
+                            if (d.data && d.data.textLines) {
+                                return d3.scaleLinear().domain([-1, d.data.textLines.length]).range([d.yi, d.yo])(i);
+                            }
+                            return radius + 80 - d.y1;
+                        })
+                        .outerRadius(function (d, i) {
+                            if (d.data && d.data.textLines) {
+                                return d3.scaleLinear().domain([-1, d.data.textLines.length]).range([d.yi, d.yo])(i);
+                            }
+                            return radius + 80 - d.y0;
+                        });
+
                     // Add labels to the last arc
-                    g.filter(function (d) { return d.depth === maxBarValue + 1; })
+                    svg.selectAll(".node").filter(function (d) { return d.depth === 2; })
                         .selectAll('.labelPath')
-                        .data(function (d, i) { d.i = i; return Array(d.textLines.length).fill(d); })
+                        .data(function (d, i) { d.i = i; return Array(d.data.textLines.length).fill(d); })
                         .enter()
                         .append('path')
                         .attr('fill', 'none')
@@ -681,9 +655,9 @@ export class MaturityComponent implements OnInit, OnDestroy {
                         })
                         .attr('d', labelArc);
 
-                    g.filter(function (d) { return d.depth === maxBarValue + 1; })
+                    svg.selectAll(".node").filter(function (d) { return d.depth === 2; })
                         .selectAll('.labelText')
-                        .data(function (d, i) { d.i = i; return Array(d.textLines.length).fill(d); })
+                        .data(function (d, i) { d.i = i; return Array(d.data.textLines.length).fill(d); })
                         .enter()
                         .append('text')
                         .attr('text-anchor', 'middle')
@@ -694,109 +668,119 @@ export class MaturityComponent implements OnInit, OnDestroy {
                             return '#arc-label' + d.i + '-' + i;
                         })
                         .text(function (d, i) {
-                            return d.textLines[d.textLines.length - 1 - i];
+                            return d.data.textLines[d.data.textLines.length - 1 - i];
                         });
 
-                    // Groups data for outer circle
-                    const groups = d3v3.nest()
-                        .key(function (d) { return d.group; })
-                        .entries(root1.children);
-
-                    const og = svg.selectAll('.outerLabels')
-                        .data(groups, function (d, i) { return i; })
-                        .enter()
-                        .append('g');
-
-                    // Outer circle
-                    og.append('path')
-                        .attr('d', oArc)
-                        .attr('class', function (d, i) { return 'outerCircleBorder group-' + (i + 1) + '-on'; });
-
-                    // Outer labels
-                    og.selectAll('.outerLabelPath')
-                        .data(function (d, i) { d.i = i; return Array(d.values[0].textLines.length).fill(d); })
-                        .enter()
-                        .append('path')
-                        .attr('fill', 'none')
-                        .attr('stroke', 'none')
-                        .attr('id', function (d, i) {
-                            return 'outer-arc-label' + d.i + '-' + i;
-                        })
-                        .attr('d', outerLabelArc);
-
-                    og.selectAll('.outerLabelText')
-                        .data(function (d, i) { d.i = i; return Array(d.values[0].textLines.length).fill(d); })
-                        .enter()
-                        .append('text')
-                        .attr('text-anchor', 'middle')
-                        .attr('class', 'outerLabelText')
-                        .append('textPath')
-                        .attr('startOffset', '25%')
-                        .attr('xlink:href', function (d, i) {
-                            return '#outer-arc-label' + d.i + '-' + i;
-                        })
-                        .text(function (d, i) {
-                            return d.values[0].textLines[d.values[0].textLines.length - 1 - i];
-                            // return d.key;
-                        });
-
-                    // Center labels
-                    const cg = svg.append('g');
-                    const yScale = d3v3.scale.linear().domain([-1, root1.textLines.length]).range([-root1.yo * 0.5, root1.yo * 0.8]);
-
-                    cg.selectAll('.centerLabelText')
-                        .data(root1.textLines)
-                        .enter()
-                        .append('text')
-                        .attr('x', 0)
-                        .attr('y', function (d, i) { return yScale(i); })
-                        .attr('text-anchor', 'middle')
-                        .attr('class', 'centerLabelText')
-                        .text(function (d) { return d; });
+					// Center labels
+                     const cg = svg.append('g');
+                     const yScale = d3.scaleLinear().domain([-1, root.data.textLines.length]).range([-root.yo * 0.5, root.yo * 0.8]);
+ 
+                     cg.selectAll('.centerLabelText')
+                         .data(root.data.textLines)
+                         .enter()
+                         .append('text')
+                         .attr('x', 0)
+                         .attr('y', function (d, i) { return yScale(i) - 100*i; })
+                         .attr('text-anchor', 'middle')
+                         .attr('class', 'centerLabelText')
+                         .text(function (d) { return d; });
+                    
                 });
             };
 
-
-
-
-
-            function appendChild(parent, g, b, i, j) {
-                const child = <any>{};
-                child.group = (i + 1);
-                child.textLines = (g.textLines);
-                // for display description and M1 -M5  data on mouse hover
-                child.maturityLevelsToolTip = <any>maturityLevelTooltip(b);
-
-                if (j < b.value) {
-                    child.on = true;
-                }
-                parent.children = parent.children || [];
-                parent.children.push(child);
-
-                if (j < maxBarValue) {
-                    appendChild(parent.children[parent.children.length - 1], g, b, i, j + 1);
-                } else {
-                    child.textLines = b.textLines;
-                }
-            }
-
-            function getRoot(data) {
+            function getRoot2(data) {
                 const root2 = <any>{};
 
                 root2.textLines = data.textLines;
                 root2.children = [];
 
-                data.groups.forEach(function (g, i) {
-                    g.bars.forEach(function (b) {
-                        appendChild(root2, g, b, i, 0);
+                data.children.forEach(function (group, i) {
+                    root2.children.push(group);
+                });
+
+                root2.children.forEach((group, groupId) => {
+                    group.children.forEach(function (kpi) {
+                        kpi.children = [];
+                        kpi.group = groupId + 1;
+                        kpi.children = appendChild2(kpi, groupId, 0);
+
+                        // swap parents and children
+                        let flatData = collectNodes(JSON.parse(JSON.stringify(kpi.children)));
+                        kpi.children = reverseNodes(JSON.parse(JSON.stringify(flatData.reverse())));
                     });
                 });
 
                 return root2;
             }
 
+            function reverseNodes(flatData) {
+                let nodes = [];
+                nodes[0] = flatData.shift();
+                delete nodes[0].children;
+                delete nodes[0].size;
+                function visitNode(collection) {
+                    if (collection) {
+                        while (flatData.length > 1) {
+                            collection.children = [flatData.shift()];
+                            delete collection.children[0].size;
+                            collection.children[0].children = [{}];
+                            visitNode(collection.children[0]);
+                        }
+
+                        if (flatData.length === 1) {
+                            collection.children = [flatData.shift()];
+                            collection.children[0].size = 1;
+                            delete collection.children[0].children;
+                        }
+                    }
+                }
+                visitNode(nodes[0]);
+                return nodes;
+            }
+
+            function collectNodes(rootNode) {
+                const nodes = []
+                function visitNode(node) {
+                    nodes.push(node)
+                    if (node.children) {
+                        node.children.forEach(visitNode)
+                    }
+                }
+                visitNode(rootNode[0]);
+                return nodes;
+            }
+
+            function appendChild2(kpi, groupId, j) {
+                
+                const child = <any>{};
+                child.group = (groupId + 1);
+                child.maturity = kpi.maturity;
+                child.maturityRange = kpi.maturityRange;
+                child.maturityLevelsToolTip = <any>maturityLevelTooltip(kpi);
+                child.textLines = kpi.textLines;
+                if (j < kpi.maturity) {
+                    child.on = true;
+                }
+                if (j + 1 < maxBarValue) {
+                    child.children = [];
+                    kpi.children.push(child);
+                    appendChild2(kpi.children[kpi.children.length - 1], groupId, j + 1);
+                } else {
+                    child.textLines = kpi.textLines;
+                    child.maturity = kpi.maturity;
+                    child.group = (groupId + 1);
+                    child.size = 1;
+                    child.maturityLevelsToolTip = <any>maturityLevelTooltip(kpi);
+                    child.maturityRange = kpi.maturityRange;
+                    kpi.children.push(child);
+                }
+
+                return kpi.children;
+            }
+
             return chart;
         }
+
 
         function maturityLevelTooltip(maturityLevelData) {
             if (maturityLevelData.maturityRange === undefined) {
@@ -841,7 +825,5 @@ export class MaturityComponent implements OnInit, OnDestroy {
 
 
 
-    */}
-
-
+    }
 }
