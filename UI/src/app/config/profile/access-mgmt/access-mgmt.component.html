@@ -105,13 +105,13 @@
         </ng-template>
         <ng-template pTemplate="rowexpansion" let-rowData>
           <tr [pSelectableRow]="rowData" style="background-color: #e8e8e8;">
-            <td [attr.colspan]="5" class="pad-16">
+            <td [attr.colspan]="5">
               <ng-container>
                 <table class="project-access-container">
                   <tr>
                     <th id="projects" class="p-text-center">Add/ remove Projects</th>
-                    <th id="Role" style="width: 240px;" class="p-text-center">Edit Role</th>
-                    <th id="action" style="width: 160px;" class="p-text-center">Remove Row</th>
+                    <th id="Role" style="width: 140px;" class="p-text-center">Edit Role</th>
+                    <th id="action" style="width: 140px;" class="p-text-center">Remove Row</th>
                   </tr>
                   <tr *ngFor="let access of rowData.projectsAccess; let i = index" [attr.data-index]="i">
                     <td class="nested-td">
@@ -131,14 +131,14 @@
                         iconPos="left" label="Add Projects"
                         (click)="showDialogToAdd(access.accessNodes, rowData.projectsAccess, i)"></button>
                     </td>
-                    <td class="nested-td">
+                    <td class="nested-td"  style="width:140px;">
                       <div class="role-box">
                         <p-dropdown id="roleList" class="mb-2 mr-sm-2" [options]="roleList" [(ngModel)]="access.role"
                           (onChange)="onRoleChange($event, i, rowData.projectsAccess)">
                         </p-dropdown>
                       </div>
                     </td>
-                    <td class="nested-td">
+                    <td class="nested-td" style="width:100px;">
                       <button pButton pRipple type="button" class="p-button-sm p-button-danger p-button-raised mar-tb-5"
                         icon="pi pi-minus" iconPos="left" label="Remove Row"
                         (click)="removeRow(rowData.projectsAccess, i)"></button>
