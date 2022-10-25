@@ -424,8 +424,7 @@ export class ConnectionListComponent implements OnInit {
         });
       }
     });   
-    this.basicConnectionForm = this.formBuilder.group(this.fieldsObj);   
-    this.basicConnectionForm.controls['baseUrl'].setValue('');
+    this.basicConnectionForm = this.formBuilder.group(this.fieldsObj);  
   }
 
   onChangeConnection(connection) {
