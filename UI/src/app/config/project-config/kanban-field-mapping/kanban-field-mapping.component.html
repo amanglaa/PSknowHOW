@@ -17,7 +17,7 @@
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
 <p-toast [style]="{marginTop: '80px'}"></p-toast>
-<div class="main p-5">
+<div class="main field-mapping p-5">
     <div class="p-d-flex p-align-center p-jc-between position-relative p-pb-3">
         <div class="p-d-flex p-align-center">
             <a routerLink="/dashboard/Config/ToolMenu" pButton pRipple type="button" icon="pi pi-arrow-left"
@@ -536,7 +536,7 @@
                     <div class="p-field">
                         <label class="field-title">Test Case Issue Type</label>
                         <div class="p-inputgroup">
-                            <p-chips [style]="{'width':'504px', 'border-bottom-right-radius':'0'}"
+                            <p-chips
                                 inputId="jiraTestCaseType" formControlName="jiraTestCaseType"
                                 placeholder="Enter Test Case Issue Type" addOnBlur="true" pTooltip='<span class="tooltiptext">
                                 Issue type of Test Case.
@@ -672,7 +672,7 @@
                     <div class="p-field">
                         <label class="field-title">Status to identify abandoned Test cases</label>
                         <div class="p-inputgroup">
-                            <p-chips [style]="{'width':'504px', 'border-bottom-right-radius':'0'}"
+                            <p-chips
                                 inputId="testCaseStatus" formControlName="testCaseStatus"
                                 placeholder="Enter Status to identify abandoned Test cases" addOnBlur="true" pTooltip='<span class="tooltiptext">
                                     Select status like "Abandoned", "Deprecated" etc so that these can be excluded from Regression automation coverage, In Sprint automation coverage and Test case without story link KPI
