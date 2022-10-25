@@ -17,7 +17,7 @@
  ******************************************************************************/
 
 import { ChangeDetectionStrategy, Component, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, AbstractControl, FormControl } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators, AbstractControl, FormControl } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { HttpService } from '../../../services/http.service';
 import { SharedService } from '../../../services/shared.service';
@@ -45,10 +45,10 @@ export class BasicConfigComponent implements OnInit {
   loading: boolean = false;
   formData: any;
   getFieldsResponse: any;
-  public form: FormGroup = this.formBuilder.group({});
+  public form: UntypedFormGroup = this.formBuilder.group({});
   blocked: boolean = true;
 
-  constructor(private formBuilder: FormBuilder, private sharedService: SharedService, private http: HttpService, private messenger: MessageService, private getAuthorizationService: GetAuthorizationService, private aesEncryption: TextEncryptionService) {
+  constructor(private formBuilder: UntypedFormBuilder, private sharedService: SharedService, private http: HttpService, private messenger: MessageService, private getAuthorizationService: GetAuthorizationService, private aesEncryption: TextEncryptionService) {
     this.projectTypeOptions = [
       { name: 'Scrum', value: false },
       { name: 'Kanban', value: true }

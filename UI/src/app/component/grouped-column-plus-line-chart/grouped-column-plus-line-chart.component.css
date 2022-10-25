@@ -26,7 +26,7 @@
   z-index: 2;
 }
 
-*>>>.xAxis .domain {
+*>>>.xAxis .domain, *>>>.yAxis .domain{
   display: none;
 }
 

@@ -122,7 +122,7 @@ describe('MaturityComponent', () => {
     }
     let spy = spyOn(service,'getSelectedTab').and.returnValue('Maturity');
     let spyongetMasterData = spyOn(service,'getMasterData').and.returnValue(masterData);
-    let spyDrawAreaChart =spyOn(component,'drawAreaChart');
+    // let spyDrawAreaChart =spyOn(component,'drawAreaChart');
     let groupingMethods =['groupJenkinsKpi','groupZypherKpi','groupBitBucketKpi','groupSonarKpi','groupJiraKpi'];
     let spyGroupingMthods =[];
     for(let i=0;i<groupingMethods.length;i++){
@@ -130,7 +130,7 @@ describe('MaturityComponent', () => {
     }
 
     component.receiveSharedData(event);
-    expect(spyDrawAreaChart).toHaveBeenCalled();
+    // expect(spyDrawAreaChart).toHaveBeenCalled();
     for(let i=0;i<groupingMethods.length;i++){
      expect(spyGroupingMthods[i]).toHaveBeenCalled();
      }

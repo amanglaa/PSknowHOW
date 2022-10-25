@@ -17,8 +17,8 @@
  ******************************************************************************/
 
 import { Component, Input, ViewContainerRef, OnChanges, SimpleChanges } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 
 @Component({
     selector: 'app-auto-complete',
@@ -28,8 +28,8 @@ import { FormGroup } from '@angular/forms';
 export class AutoCompleteComponent implements OnChanges {
     @Input() data: any;
     @Input() name: string;
-    @Input() controlName: FormControl;
-    @Input() parentForm: FormGroup;
+    @Input() controlName: UntypedFormControl;
+    @Input() parentForm: UntypedFormGroup;
     elem;
     constructor(private viewContainerRef: ViewContainerRef) {
     }

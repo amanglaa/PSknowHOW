@@ -172,17 +172,18 @@ export class GroupstackchartComponent implements OnChanges {
     data.forEach(function (d) { if (d.type && !actualTypes.includes(d.type)) { actualTypes.push(d.type); } });
     z.domain(actualTypes);
     var keys = z.domain();
-    var groupData = d3.nest()
-      .key(function (d) { return d.xName + d.sprojectName; })
-      .rollup(function (d, i) {
-        var d2 = { sprojectName: d[0].sprojectName, xName: d[0].xName, hoverValue: d[0].hoverValue, sSprintName: d[0].sSprintName };
-        d.forEach(function (d) {
-          d2[d.type] = d.value;
-        });
-        return d2;
-      })
-      .entries(data)
-      .map(function (d) { return d.value; });
+    var groupData = d3.rollup(data, function (d, i) {
+      var d2 = { sprojectName: d[0].sprojectName, xName: d[0].xName, hoverValue: d[0].hoverValue, sSprintName: d[0].sSprintName };
+      d.forEach(function (d) {
+        d2[d.type] = d.value;
+      });
+      return d2;
+    }, function (d) { return d.xName + d.sprojectName; })
+      // .key(function (d) { return d.xName + d.sprojectName; })
+      // .entries(data)
+      // .map(function (d) { return d.value; });
+      groupData = Array.from(groupData).map(function (d) { return d[1]; });
+      console.log(groupData);
     var stackData = stack
       .keys(keys)(groupData);
 
@@ -263,11 +264,11 @@ export class GroupstackchartComponent implements OnChanges {
       .attr("height", function (d) { return Math.abs(y(d[0]) - y(d[1])); })
       .attr("width", barWidth)
       .on("click", function (d, i) { console.log("serie-rect click d", i, d); })
-      .on('mouseover', function (d) {
+      .on('mouseover', function (event,d) {
         let topValue = 75;
         if (d.data.hoverValue) {
 
-          const circle = d3.event.target;
+          const circle = event.target;
           var {
             top: yPosition,
             left: xPosition

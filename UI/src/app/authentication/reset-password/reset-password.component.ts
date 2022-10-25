@@ -19,7 +19,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpService } from '../../services/http.service';
 import { ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 @Component({
     selector: 'app-reset-password',
@@ -28,7 +28,7 @@ import { first } from 'rxjs/operators';
 })
 export class ResetPasswordComponent implements OnInit {
 
-    resetPasswordForm: FormGroup;
+    resetPasswordForm: UntypedFormGroup;
     loading = false;
     submitted = false;
     returnUrl: string;
@@ -36,7 +36,7 @@ export class ResetPasswordComponent implements OnInit {
     message = '';
     resetToken = '';
     isPasswordUpdated = false;
-    constructor(private formBuilder: FormBuilder, private route: ActivatedRoute, private httpService: HttpService) { }
+    constructor(private formBuilder: UntypedFormBuilder, private route: ActivatedRoute, private httpService: HttpService) { }
 
     ngOnInit() {
         // get the token value from url
@@ -57,7 +57,7 @@ export class ResetPasswordComponent implements OnInit {
     }
 
     // Validation for confirm-password
-    checkPasswords(group: FormGroup) {
+    checkPasswords(group: UntypedFormGroup) {
         const pass = group.controls.password.value;
         const confirmPass = group.controls.confirmpassword.value;
         return pass === confirmPass ? null : { notSame: true };

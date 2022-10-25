@@ -16,7 +16,7 @@
             <div [ngSwitch]="kpiData?.kpiDetail?.kpiFilter?.toLowerCase()" class="kpi-filter">
                 <ng-container *ngSwitchCase="'dropdown'">
                     <ng-select [(ngModel)]="filterOption" [dropdownPosition]="'bottom'"
-                        (change)="handleChange('single')" *ngIf="dropdownArr?.length>0"
+                        (change)="handleChange('single')" *ngIf="dropdownArr?.length && dropdownArr[0]?.options?.length"
                         [placeholder]="dropdownArr[0]?.filterType" [clearable]="false" class="p-pb-0 kpi-dropdown">
                         <ng-option *ngFor="let item of dropdownArr[0]?.options" [value]="item">
                             <span [attr.title]="item">{{item}}</span>
@@ -25,7 +25,7 @@
                 </ng-container>
                 <div *ngSwitchCase="'multiselectdropdown'" class="p-d-flex p-justify-between">
                     <ng-container *ngFor="let filter of dropdownArr;let k = index">
-                        <ng-select [(ngModel)]="filterOptions['filter'+(k+1)]" [dropdownPosition]="'bottom'"
+                        <ng-select *ngIf="filter?.options?.length" [(ngModel)]="filterOptions['filter'+(k+1)]" [dropdownPosition]="'bottom'"
                             (change)="handleChange('multi')" [placeholder]="filter?.filterType"
                             (clear)="handleClearAll('filter'+(k+1))" class="p-pb-0 kpi-dropdown"
                             [ngClass]="{'p-mr-3': k != (dropdownArr?.length-1)}"

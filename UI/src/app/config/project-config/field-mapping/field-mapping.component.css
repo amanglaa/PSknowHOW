@@ -90,3 +90,11 @@ label.btn-import-label {
   border-radius:4px;
   cursor: pointer;
 }
+
+::ng-deep .field-mapping .p-inputgroup .p-inputtext, 
+::ng-deep .field-mapping .p-fluid .p-inputgroup .p-inputtext, 
+::ng-deep .field-mapping .p-inputgroup .p-inputwrapper, 
+::ng-deep .field-mapping .p-inputgroup .p-inputwrapper>.p-component {
+  flex: unset;
+  width: unset;
+} 

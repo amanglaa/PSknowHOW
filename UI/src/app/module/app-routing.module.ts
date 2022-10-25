@@ -42,8 +42,8 @@ const routes: Routes = [
   { path: '', redirectTo: 'authentication', pathMatch: 'full' },
   {
     path: 'authentication',
-    loadChildren: '../authentication/authentication.module#AuthenticationModule',
-    // loadChildren: () => import('../authentication/authentication.module#AuthenticationModule').then(m => m.LazyModule),
+    // loadChildren: '../authentication/authentication.module#AuthenticationModule',
+    loadChildren: () => import('../authentication/authentication.module').then(m => m.AuthenticationModule),
     resolve: [Logged]
   },
   {
@@ -58,8 +58,8 @@ const routes: Routes = [
       { path: 'Error', component: ErrorComponent, pathMatch: 'full' },
       {
         path: 'Config',
-        loadChildren: '../config/config.module#ConfigModule'
-        // loadChildren: () => import('../config/config.module#ConfigModule').then(m => m.LazyModule),
+        // loadChildren: '../config/config.module#ConfigModule'
+        loadChildren: () => import('../config/config.module').then(m => m.ConfigModule),
       },
       { path: ':boardName/:boardId', component: ExecutiveComponent, pathMatch: 'full', canActivate: [AccessGuard] },
 

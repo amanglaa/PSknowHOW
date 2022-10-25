@@ -17,7 +17,7 @@
  ******************************************************************************/
 
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, Validators, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, Validators, UntypedFormBuilder } from '@angular/forms';
 import { GetAuthorizationService } from '../../../services/get-authorization.service';
 import { HttpService } from '../../../services/http.service';
 import { ProfileComponent } from '../profile.component';
@@ -32,7 +32,7 @@ export class MyprofileComponent implements OnInit {
   isProjectAdmin = false;
   emailSubmitted = false;
   emailConfigured = false;
-  userEmailForm: FormGroup;
+  userEmailForm: UntypedFormGroup;
   userName = localStorage.getItem('user_name') ? localStorage.getItem('user_name') : '--';
   authorities = this.aesEncryption.convertText(localStorage.getItem('authorities'), 'decrypt');
   
@@ -46,7 +46,7 @@ export class MyprofileComponent implements OnInit {
   roleBasedProjectList = [];
   adLogin = false;
   dynamicCols: Array<any> = [];
-  constructor(private formBuilder: FormBuilder, private getAuthorizationService: GetAuthorizationService, private http: HttpService, private profile: ProfileComponent, private aesEncryption: TextEncryptionService) { }
+  constructor(private formBuilder: UntypedFormBuilder, private getAuthorizationService: GetAuthorizationService, private http: HttpService, private profile: ProfileComponent, private aesEncryption: TextEncryptionService) { }
 
   ngOnInit() {
     if (this.getAuthorizationService.checkIfSuperUser()) {
@@ -116,7 +116,7 @@ export class MyprofileComponent implements OnInit {
   }
 
   // Validation for confirm-email
-  checkConfirmEmail(group: FormGroup) {
+  checkConfirmEmail(group: UntypedFormGroup) {
     const email = group.controls.email.value;
     const confirmEmail = group.controls.confirmEmail.value;
     return email === confirmEmail ? null : { notSame: true };

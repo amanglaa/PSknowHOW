@@ -24,7 +24,7 @@ import { HelperService } from '../../services/helper.service';
 import { GoogleAnalyticsService } from '../../services/google-analytics.service';
 import { GetAuthorizationService } from 'src/app/services/get-authorization.service';
 import { Router } from '@angular/router';
-import { FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { faRotateRight } from '@fortawesome/fontawesome-free';
 import { NgSelectComponent } from '@ng-select/ng-select';
@@ -64,12 +64,12 @@ export class FilterComponent implements OnInit {
     kpiListData: any = {};
     kpiList: Array<object> = [];
     showKpisList: Array<object> = [];
-    kpiForm: FormGroup;
+    kpiForm: UntypedFormGroup;
     activeSprintList: any = [];
     currentSelectedSprintId: any;
     noAccessMsg = false;
 
-    filterForm: FormGroup;
+    filterForm: UntypedFormGroup;
     toggleFilterDropdown: boolean = false;
     selectedFilterArray: Array<any> = [];
     faRotateRight: faRotateRight;
@@ -144,12 +144,12 @@ export class FilterComponent implements OnInit {
 
     ngOnInit() {
         this.service.setSelectedDateFilter(this.selectedDayType);
-        this.filterForm = new FormGroup({
-            selectedTrendValue: new FormControl(),
-            date: new FormControl(''),
-            selectedLevel: new FormControl(),
-            selectedProjectValue: new FormControl(),
-            selectedSprintValue: new FormControl()
+        this.filterForm = new UntypedFormGroup({
+            selectedTrendValue: new UntypedFormControl(),
+            date: new UntypedFormControl(''),
+            selectedLevel: new UntypedFormControl(),
+            selectedProjectValue: new UntypedFormControl(),
+            selectedSprintValue: new UntypedFormControl()
         });
 
         if (localStorage.getItem('authorities')) {
@@ -367,11 +367,11 @@ export class FilterComponent implements OnInit {
         if (arr?.length > 0) {
             let obj = {};
             for (let i = 0; i < arr?.length; i++) {
-                obj[arr[i]['nodeId']] = new FormControl(false);
+                obj[arr[i]['nodeId']] = new UntypedFormControl(false);
             }
-            this.filterForm.controls[level] = new FormGroup(obj);
+            this.filterForm.controls[level] = new UntypedFormGroup(obj);
         } else {
-            this.filterForm.controls[level] = new FormControl('');
+            this.filterForm.controls[level] = new UntypedFormControl('');
         }
     }
 
@@ -644,15 +644,15 @@ export class FilterComponent implements OnInit {
                     if (!showKpi) {
                         count++;
                     }
-                    kpiObj[this.kpiList[i]['kpiId']] = new FormControl(showKpi);
+                    kpiObj[this.kpiList[i]['kpiId']] = new UntypedFormControl(showKpi);
                     this.showKpisList.push(this.kpiList[i]);
                 }
             }
             if (this.showKpisList && this.showKpisList?.length > 0) {
                 this.noAccessMsg = false;
-                this.kpiForm = new FormGroup({
-                    enableAllKpis: new FormControl(count > 0 ? false : true),
-                    kpis: new FormGroup(kpiObj)
+                this.kpiForm = new UntypedFormGroup({
+                    enableAllKpis: new UntypedFormControl(count > 0 ? false : true),
+                    kpis: new UntypedFormGroup(kpiObj)
                 });
             } else {
                 this.noAccessMsg = true;

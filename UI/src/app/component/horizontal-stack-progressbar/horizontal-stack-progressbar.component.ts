@@ -155,9 +155,9 @@ export class HorizontalStackProgressbarComponent implements OnChanges {
 
                 });
 
-                progress.on('mousemove', function (d) {
-                    tooltip.style('top', (d3.event.layerY + 10) + 'px')
-                        .style('left', (d3.event.layerX - 25) + 'px');
+                progress.on('mousemove', function (event,d) {
+                    tooltip.style('top', (event.layerY + 10) + 'px')
+                        .style('left', (event.layerX - 25) + 'px');
                 });
 
                 progress.on('mouseout', function () {

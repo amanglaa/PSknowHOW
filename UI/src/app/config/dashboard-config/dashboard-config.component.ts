@@ -17,7 +17,7 @@
  ******************************************************************************/
 
  import { Component, OnInit } from '@angular/core';
- import { FormControl, FormGroup } from '@angular/forms';
+ import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
  import { HttpService } from '../../services/http.service';
  import { MessageService } from 'primeng/api';
  import { SharedService } from '../../services/shared.service';
@@ -31,7 +31,7 @@
     kpiListData: any = {};
     tabListContent: Object = {};
     tabHeaders: any = [];
-    kpiForm: FormGroup = new FormGroup({});
+    kpiForm: UntypedFormGroup = new UntypedFormGroup({});
     kpiList:any;
     selectedTab = 'scrum';
     kpiData: any;
@@ -79,19 +79,19 @@
           let allShownFlag = false;
             if ((item?.boardName && item?.kpis) ) {
                 list = item.kpis.map(function(kpi) {
-                    kpiObj[kpi.kpiId] = new FormControl(kpi.shown);
+                    kpiObj[kpi.kpiId] = new UntypedFormControl(kpi.shown);
                     trueShowCount =  kpi.shown ? ++trueShowCount : trueShowCount;
                     return kpiObj;
                 });
                 if (trueShowCount ===  item?.kpis?.length) {
                   allShownFlag = true;
                 }
-                boardNames[item.boardName] = new FormControl(allShownFlag);
+                boardNames[item.boardName] = new UntypedFormControl(allShownFlag);
             }
         });
-        this.kpiForm = new FormGroup({
-          kpiCategories: new FormGroup(boardNames),
-          kpis: new FormGroup(kpiObj)
+        this.kpiForm = new UntypedFormGroup({
+          kpiCategories: new UntypedFormGroup(boardNames),
+          kpis: new UntypedFormGroup(kpiObj)
         });
      }
 

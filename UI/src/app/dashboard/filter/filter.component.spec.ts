@@ -20,7 +20,7 @@ import { ComponentFixture, ComponentFixtureAutoDetect, fakeAsync, inject, TestBe
 
 import { FilterComponent } from './filter.component';
 import { CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpService } from '../../services/http.service';
 import { SharedService } from '../../services/shared.service';
 import { APP_CONFIG, AppConfig } from '../../services/app.config';
@@ -406,8 +406,8 @@ describe('FilterComponent', () => {
   });
 
   it('should create form group based on level', () => {
-    component.filterForm = new FormGroup({
-      sprint: new FormControl()
+    component.filterForm = new UntypedFormGroup({
+      sprint: new UntypedFormControl()
     });
     component.createFormGroup('sprint', []);
     expect(component.filterForm.controls['sprint'].value).toBeFalsy();
@@ -477,8 +477,8 @@ describe('FilterComponent', () => {
   });
 
   it('should handle all kpi change', () => {
-    component.kpiForm = new FormGroup({
-      'kpis': new FormControl()
+    component.kpiForm = new UntypedFormGroup({
+      'kpis': new UntypedFormControl()
     });
     component.showKpisList = [
       {
@@ -498,8 +498,8 @@ describe('FilterComponent', () => {
     let event = {
       checked: false
     };
-    component.kpiForm = new FormGroup({
-      'enableAllKpis': new FormControl()
+    component.kpiForm = new UntypedFormGroup({
+      'enableAllKpis': new UntypedFormControl()
     });
     component.handleKpiChange(event);
     expect(component.kpiFormValue['enableAllKpis'].value).toBeFalsy();
@@ -647,8 +647,8 @@ describe('FilterComponent', () => {
       "level": 1
     };
 
-    component.filterForm = new FormGroup({
-      'selectedLevel': new FormControl('project')
+    component.filterForm = new UntypedFormGroup({
+      'selectedLevel': new UntypedFormControl('project')
     })
     component.kanban = false;
     component.filterApplyData = filterApplyData;
@@ -658,9 +658,9 @@ describe('FilterComponent', () => {
   });
 
   it('should handle iteration filter', () => {
-    component.filterForm = new FormGroup({
-      'selectedProjectValue': new FormControl('DEMO_SONAR_63284960fdd20276d60e4df5'),
-      'selectedSprintValue': new FormControl('')
+    component.filterForm = new UntypedFormGroup({
+      'selectedProjectValue': new UntypedFormControl('DEMO_SONAR_63284960fdd20276d60e4df5'),
+      'selectedSprintValue': new UntypedFormControl('')
     });
     component.trendLineValueList = [];
     component.additionalFiltersDdn = [];
@@ -689,8 +689,8 @@ describe('FilterComponent', () => {
           "level": 6
         }]
     };
-    component.filterForm = new FormGroup({
-      'selectedSprintValue': new FormControl('38998_DEMO_SONAR_63284960fdd20276d60e4df5')
+    component.filterForm = new UntypedFormGroup({
+      'selectedSprintValue': new UntypedFormControl('38998_DEMO_SONAR_63284960fdd20276d60e4df5')
     });
 
     let result = component.getDate('start');
@@ -702,8 +702,8 @@ describe('FilterComponent', () => {
 
 
   it('should remove sprint', () => {
-    component.filterForm = new FormGroup({
-      'sprint': new FormControl({})
+    component.filterForm = new UntypedFormGroup({
+      'sprint': new UntypedFormControl({})
     });
 
     let spy = spyOn(component, 'applyChanges');
@@ -757,8 +757,8 @@ describe('FilterComponent', () => {
       }
     ];
 
-    component.filterForm = new FormGroup({
-      'selectedTrendValue': new FormControl('')
+    component.filterForm = new UntypedFormGroup({
+      'selectedTrendValue': new UntypedFormControl('')
     });
     let spy = spyOn(component, 'applyChanges');
     component.removeNode('Corpate1_corporate');
@@ -778,8 +778,8 @@ describe('FilterComponent', () => {
     component.kpiListData = configGlobalData['data'];
     component.kanban = false;
     component.selectedTab = "My KnowHOW"
-    component.kpiForm = new FormGroup({
-      'kpis': new FormControl({
+    component.kpiForm = new UntypedFormGroup({
+      'kpis': new UntypedFormControl({
         'kpi14': true
       })
     });

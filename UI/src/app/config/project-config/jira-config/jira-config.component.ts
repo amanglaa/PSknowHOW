@@ -17,13 +17,12 @@
  ******************************************************************************/
 
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, UntypedFormControl, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { HttpService } from '../../../services/http.service';
 import { SharedService } from '../../../services/shared.service';
 import { GetAuthorizationService } from '../../../services/get-authorization.service';
-import { element } from 'protractor';
 import { KeyValue } from '@angular/common';
 declare const require: any;
 
@@ -36,7 +35,7 @@ declare const require: any;
   ],
 })
 export class JiraConfigComponent implements OnInit {
-  toolForm: FormGroup;
+  toolForm: UntypedFormGroup;
   toolFormObj: any;
   formTitle = '';
   connections: any;
@@ -89,7 +88,7 @@ export class JiraConfigComponent implements OnInit {
   azurePipelineApiVersion: string = '6.0';
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private router: Router,
     private route: ActivatedRoute,
     private http: HttpService,
@@ -1698,9 +1697,9 @@ export class JiraConfigComponent implements OnInit {
         validatorArr.push(Validators[element]);
       });
 
-      group[input_template.id] = new FormControl('', validatorArr);
+      group[input_template.id] = new UntypedFormControl('', validatorArr);
     });
-    this.toolForm = new FormGroup(group);
+    this.toolForm = new UntypedFormGroup(group);
 
     if (this.urlParam === 'Jira' || this.urlParam === 'Azure' || this.urlParam === 'Zephyr') {
       if (this.selectedToolConfig && this.selectedToolConfig.length) {
@@ -1734,21 +1733,21 @@ export class JiraConfigComponent implements OnInit {
     }
 
     if (this.queryEnabled) {
-      group['queryEnabled'] = new FormControl(true);
+      group['queryEnabled'] = new UntypedFormControl(true);
       if (this.urlParam === 'Azure') {
-        group['apiVersion'] = new FormControl('', [Validators.required]);
+        group['apiVersion'] = new UntypedFormControl('', [Validators.required]);
       }
-      group['projectKey'] = new FormControl('', [Validators.required]);
-      group['boardQuery'] = new FormControl('', [Validators.required]);
-      this.toolForm = new FormGroup(group);
+      group['projectKey'] = new UntypedFormControl('', [Validators.required]);
+      group['boardQuery'] = new UntypedFormControl('', [Validators.required]);
+      this.toolForm = new UntypedFormGroup(group);
     } else {
-      group['queryEnabled'] = new FormControl(false);
-      group['projectKey'] = new FormControl('', [Validators.required]);
-      group['boardQuery'] = new FormControl('');
+      group['queryEnabled'] = new UntypedFormControl(false);
+      group['projectKey'] = new UntypedFormControl('', [Validators.required]);
+      group['boardQuery'] = new UntypedFormControl('');
       if (this.urlParam === 'Azure') {
-        group['apiVersion'] = new FormControl('', [Validators.required]);
+        group['apiVersion'] = new UntypedFormControl('', [Validators.required]);
       }
-      this.toolForm = new FormGroup(group);
+      this.toolForm = new UntypedFormGroup(group);
     }
 
     for (const obj in formData) {

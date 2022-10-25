@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormControl, Validators } from '@angular/forms';
 import { HttpService } from 'src/app/services/http.service';
 
 declare var require: any
@@ -15,10 +15,10 @@ export class LandingPageComponent implements OnInit {
   overallSummary: any;
   area;
   landingInfo;
-  voiceForm = new FormGroup({
-    feedbackType: new FormControl('', Validators.required),
-    category: new FormControl('', Validators.required),
-    feedback: new FormControl('', {validators:[Validators.required, Validators.maxLength(600)]})
+  voiceForm = new UntypedFormGroup({
+    feedbackType: new UntypedFormControl('', Validators.required),
+    category: new UntypedFormControl('', Validators.required),
+    feedback: new UntypedFormControl('', {validators:[Validators.required, Validators.maxLength(600)]})
   });
   isFeedbackSubmitted: boolean = false;
   formMessage: string = '';
