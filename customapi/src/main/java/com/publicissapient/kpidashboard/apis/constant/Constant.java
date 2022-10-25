@@ -129,6 +129,8 @@ public final class Constant {
 	public static final String CODE = "code";
 	public static final String CODING = "coding";
 	public static final String CACHE_ADDITIONAL_FILTER_HIERARCHY_LEVEL = "additionalFilterHierLevel";
+	public static final String RESOLUTION_TYPE_FOR_REJECTION = "Resolution Type for Rejection";
+	public static final String DEFECT_REJECTION_STATUS = "Defect Rejection Status";
 
 	private Constant() {
 	}

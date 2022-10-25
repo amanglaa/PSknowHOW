@@ -199,6 +199,7 @@ export class FilterComponent implements OnInit {
                 // }, 1000)
             }
         });
+        this.service.setShowTableView(this.showChart);
     }
 
     /**create dynamic hierarchy levels for filter dropdown */
@@ -976,7 +977,6 @@ export class FilterComponent implements OnInit {
     }
 
     showChartToggle(val){
-        console.log(val);
         this.showChart = val;
         this.service.setShowTableView(this.showChart);
     }
