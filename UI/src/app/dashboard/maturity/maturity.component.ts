@@ -595,7 +595,7 @@ export class MaturityComponent implements OnInit, OnDestroy {
                         .attr("display", function (d) { return d.depth ? null : "none"; })
                         .attr("d", arc)
                         .style('stroke', '#fff')
-                        .on('mouseover', function (d) {
+                        .on('mouseover', function (event,d) {
                             if(d.depth > 1) {
                             d3.select(this).classed('highlight', true);
                             div.transition()
@@ -604,7 +604,7 @@ export class MaturityComponent implements OnInit, OnDestroy {
                             div.html(d.data.maturityLevelsToolTip);
                             }
                         })
-                        .on('mouseout', function (d) {
+                        .on('mouseout', function (event,d) {
                             d3.select(this).classed('highlight', false);
                             div.transition()
                                 .duration(500)
