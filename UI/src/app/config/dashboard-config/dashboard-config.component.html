@@ -17,7 +17,7 @@
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
   <div class="dashboard-config-block p-p-3">
     <p-toast position="top-right"></p-toast>
-    <button (click)="save()" class="save-kpi p-p-2"><img src="../../../assets/img/save_icon.svg" class="save-icon"/>Save</button>
+    <button (click)="save()" class="save-kpi p-p-2"><img src="../../../assets/img/save_icon.svg" alt="save" class="save-icon"/>Save</button>
     <p-tabView (onChange)="handleTabChange($event)" class="dashboard-config-tabs">
         <p-tabPanel *ngFor='let item of tabHeaders' header="{{item}}" headerStyleClass="tab-{{item}}">
             <form [formGroup]="kpiForm" autocomplete="off" *ngIf="item === selectedTab">

@@ -61,7 +61,6 @@ export class RaiseAccessRequestComponent implements OnInit {
       element.active = false;
     });
     item.active = true;
-    this.requestData['role'] = "";
     this.requestData['role'] = item.roleName;
     this.roleSelected = true;
   }
@@ -122,21 +121,14 @@ export class RaiseAccessRequestComponent implements OnInit {
       this.requestData["accessNode"] = {
         "accessLevel": accessItem.accessType
       }
-      if (accessItem.accessType !== 'project') {
+      
         this.requestData["accessNode"]["accessItems"] = accessItem.value.map((item) => {
           return {
             "itemId": item.itemId,
             "itemName": item.itemName
           }
         });
-      } else {
-        this.requestData["accessNode"]["accessItems"] = accessItem.value.map((item) => {
-          return {
-            "itemId": item.itemId,
-            "itemName": item.itemName
-          }
-        });
-      }
+      
     } else {
       this.requestData['accessNode'] = {};
       this.roleList.filter((role) => role.roleName === "ROLE_SUPERADMIN")[0].disabled = false;
