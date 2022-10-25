@@ -122,6 +122,19 @@
                                     (click)="showDialogToAddValue(true, 'jiraDefectRejectionStatus', 'workflow')"></button>
                             </div>
                         </div>
+                        <div class="p-mb-3">
+                            <label class="field-title">Issue status to be excluded from Missing Worklogs</label>
+                            <div class="p-inputgroup">
+                                <input type="text" pInputText id="excludedMissingWorklogStatus"
+                                    formControlName="excludedMissingWorklogStatus"
+                                    placeholder="Enter Issue status to be excluded from Missing Worklogs" [style]="{'width':'500px'}" pTooltip='<span class="tooltiptext">
+                                      Statuses selected depict all created status of issue types included in the Project.
+                                  </span>' tooltipPosition="top" tooltipEvent="hover" [escape]="false">
+                                <button type="button" pButton pRipple icon="pi pi-search"
+                                    (click)="showDialogToAddValue(true, 'excludedMissingWorklogStatus', 'workflow')"></button>
+                            </div>
+                        </div>
+                        
                     </div>
                     <div class="p-field p-col p-p-0">
 
