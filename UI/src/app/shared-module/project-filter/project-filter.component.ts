@@ -350,11 +350,7 @@ export class ProjectFilterComponent implements OnInit {
     }
     obj['hierarchyArr'] = this.hierarchyArray;
     obj['valueRemoved'] = this.valueRemoved;
-    if (obj.value && obj.value.length) {
-      this.projectSelectedEvent.emit(obj);
-    } else {
-      this.projectSelectedEvent.emit(obj);
-    }
+    this.projectSelectedEvent.emit(obj);
   }
 
   getSelectedValTemplateValue(hierarchyLevelId) {

@@ -561,7 +561,6 @@ export class IterationComponent implements OnInit, OnDestroy {
         })
       }
     }
-    this.kpiDropdowns[kpiId] = [];
     this.kpiDropdowns[kpiId] = [...dropdownArr];
   }
 
