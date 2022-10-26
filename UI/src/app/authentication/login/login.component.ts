@@ -81,6 +81,11 @@ export class LoginComponent implements OnInit {
         this.httpService.getLoginConfig().subscribe(response => {
             if(response.success) {
                this.loginConfig = response.data;
+            } else {
+                this.loginConfig = {
+                    standardLogin: true,
+                    adLogin: false
+                };
             }
         });
     }
