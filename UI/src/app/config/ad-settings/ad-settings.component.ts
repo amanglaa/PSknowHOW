@@ -45,7 +45,10 @@ export class AdSettingsComponent implements OnInit {
     label: 'AD Authentication'
   }];
 
-  selectedTypes: any[] = [];
+  selectedTypes: any[] = [{
+    name: 'standardLogin',
+    label: 'KnowHOW Local Authentication'
+  }];
   disableSave: boolean;
 
   constructor(private formBuilder: UntypedFormBuilder, private http: HttpService, private messenger: MessageService, private rsa: RsaEncryptionService) { }
@@ -63,6 +66,7 @@ export class AdSettingsComponent implements OnInit {
     this.http.getAuthConfig().subscribe(response => {
       if (response && response.success) {
         if (response && response.data && response.data.authTypeStatus) {
+          this.selectedTypes = [];
           if (response.data.authTypeStatus.standardLogin) {
             this.selectedTypes.push({
               name: 'standardLogin',
@@ -108,6 +112,13 @@ export class AdSettingsComponent implements OnInit {
       this.disableSave = true;
     } else {
       this.disableSave = false;
+    }
+
+    if (!this.selectedTypes.length) {
+      this.selectedTypes = [{
+        name: 'standardLogin',
+        label: 'KnowHOW Local Authentication'
+      }];
     }
   }
 
