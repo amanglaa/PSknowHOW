@@ -7,6 +7,7 @@ import { MessageService } from 'primeng/api';
 import { HttpService } from '../../services/http.service';
 import { AdSettingsComponent } from './ad-settings.component';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { CheckboxModule } from 'primeng/checkbox';
 import { environment } from 'src/environments/environment';
 
 describe('AdSettingsComponent', () => {
@@ -41,7 +42,8 @@ describe('AdSettingsComponent', () => {
         ReactiveFormsModule,
         RouterTestingModule,
         HttpClientTestingModule,
-        InputNumberModule
+        InputNumberModule,
+        CheckboxModule
       ],
       providers: [
         HttpService,
