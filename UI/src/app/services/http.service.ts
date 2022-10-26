@@ -36,7 +36,7 @@ import { UserAccessApprovalResponseDTO, UserAccessReqPayload } from '../model/us
 
 ) export class HttpService {
 
-
+    public currentVersion = '';
     /*use to change the base url according to the environment variable */
     private baseUrl = environment.baseUrl;  // Servers Env
     private filterDataUrl = this.baseUrl + '/api/filterdata';
@@ -100,11 +100,13 @@ import { UserAccessApprovalResponseDTO, UserAccessReqPayload } from '../model/us
     private getEmmStatsUrl = this.baseUrl + '/api/emm-upload/monthly-stats';
     private getPreCalculatedConfigUrl = this.baseUrl + '/api/pre-calculated-config';
     private getADConfigUrl = this.baseUrl + '/api/activedirectory';
+    private getAuthConfigUrl = this.baseUrl + '/api/auth-types';
+    private getLoginConfigUrl = this.baseUrl + '/api/auth-types-status';
     private getSuggestionsUrl = this.baseUrl + '/api/suggestions/project';
     private updateSuggestionsUrl = this.baseUrl + '/api/suggestions/account/';
     private getEmm360Url = this.baseUrl + '/api/emm-feed/download';
     private analyticsSwitchUrl = this.baseUrl + '/api/analytics/switch';
-    public currentVersion = '';
+
     private landingInfoUrl = 'https://setup-speedy.tools.publicis.sapient.com/landingpage/staticcontent';
     private feedbackCategoryUrl = this.baseUrl + '/api/feedback/categories';
     private submitFeedbackUrl = this.baseUrl + '/api/feedback/submitfeedback';
@@ -143,9 +145,7 @@ import { UserAccessApprovalResponseDTO, UserAccessReqPayload } from '../model/us
 
     /** get individual kpi excel report from the server */
     downloadExcel(downloadKpiReport, kpiId): Observable<object> {
-        const KpiId = kpiId;
-
-        return this.http.post<object>(this.downloadKpiWiseReportUrl + '/' + KpiId, downloadKpiReport)
+        return this.http.post<object>(this.downloadKpiWiseReportUrl + '/' + kpiId, downloadKpiReport)
             .pipe(tap(getData => { }
             ));
     }
@@ -656,6 +656,18 @@ import { UserAccessApprovalResponseDTO, UserAccessReqPayload } from '../model/us
     /** get Active Directory Config */
     getADConfig() {
         return this.http.get<any>(this.getADConfigUrl);
+    }
+
+    getAuthConfig() {
+        return this.http.get<any>(this.getAuthConfigUrl);
+    }
+
+    getLoginConfig() {
+        return this.http.get<any>(this.getLoginConfigUrl);
+    }
+
+    setAuthConfig(data) {
+        return this.http.post(this.getAuthConfigUrl, data);
     }
 
     setADConfig(postData) {

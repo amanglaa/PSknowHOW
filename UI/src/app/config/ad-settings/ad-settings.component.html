@@ -17,10 +17,47 @@
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
 <p-toast [style]="{marginTop: '80px'}"></p-toast>
-<div class="main p-pb-1">
-    <h3 class="card__primary__title__text p-mb-5">AD Settings</h3>
-    <form [formGroup]="adSettingsForm" autocomplete="off" class="p-mx-auto">
-        <div class="p-grid">
+<div class="main login-settings-container p-pb-1">
+    <h3 class="card__primary__title__text p-mb-3 p-mt-1">Configuration</h3>
+    <div class="checkbox-options-container border-top p-mt-3" *ngIf="selectedTypes.length">
+        <div *ngFor="let option of loginSettingsTypes;let i=index" class="checkbox-option p-pl-3 p-pr-3">
+            <p-checkbox name="group" value="option" [value]="option" [(ngModel)]="selectedTypes"
+                [inputId]="option.name" (click)="checkValues()"></p-checkbox>
+            <label [for]="option.name" class="p-ml-3">{{option.label}}</label>
+        </div>
+        <span>* Select atleast 1 Authentication type</span>
+    </div>
+    <!-- <form [hidden]="typeNotSelected('standardLogin')" [formGroup]="standardLoginForm" autocomplete="off" class="p-mx-auto">
+        <h3 class="form-title">KnowHOW Local Authentication</h3>
+        <div class="p-grid p-pt-1">
+            <div class="p-field p-p-0 p-lg-5 p-mr-4 p-ml-2">
+                <div class="p-field p-p-0">
+                    <span class="p-float-label">
+                        <input type="text" pInputText id="username" formControlName="username"
+                            [style]="{'width':'100%'}" required
+                            [ngClass]="{ 'p-invalid': submitted && adForm.username.errors }">
+                        <label for="username">Enter
+                            User Name</label>
+                    </span>
+                </div>
+            </div>
+            <div class="p-field p-p-0 p-lg-5">
+                <div class="p-field p-p-0">
+                    <span class="p-float-label">
+                        <input type="password" pInputText id="password" formControlName="password"
+                            [style]="{'width':'100%'}" required
+                            [ngClass]="{ 'p-invalid': submitted && adForm.password.errors }"
+                            autocomplete="new-password">
+                        <label for="password">Enter
+                            Password</label>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </form> -->
+    <form [style.opacity]="typeNotSelected('adLogin') ? '0' : '1'" [style.visibility]="typeNotSelected('adLogin') ? 'hidden' : 'visible'" [formGroup]="adSettingsForm" autocomplete="off" class="p-mx-auto">
+        <h3 class="form-title">AD Authentication</h3>
+        <div class="p-grid p-pt-1">
             <div class="p-field p-p-0 p-lg-5 p-mr-4 p-ml-2">
                 <div class="p-field p-p-0">
                     <span class="p-float-label">
@@ -77,9 +114,36 @@
                 </div>
             </div>
         </div>
-        <div class="save-container">
-            <button pButton pRipple type="button" class="p-button-lg p-button-success p-button-raised p-mr-3"
-                icon="pi pi-save" iconPos="left" label="Save" (click)="submit()"></button>
-        </div>
     </form>
+    <!-- <form [hidden]="typeNotSelected('ping')" [formGroup]="pingAuthenticationForm" autocomplete="off" class="p-mx-auto">
+        <h3 class="form-title">PING Authentication</h3>
+        <div class="p-grid p-pt-1">
+            <div class="p-field p-p-0 p-lg-5 p-mr-4 p-ml-2">
+                <div class="p-field p-p-0">
+                    <span class="p-float-label">
+                        <input type="text" pInputText id="field1" formControlName="field1" [style]="{'width':'100%'}"
+                            required [ngClass]="{ 'p-invalid': submitted && adForm.username.errors }">
+                        <label for="username">Enter
+                            field1</label>
+                    </span>
+                </div>
+            </div>
+            <div class="p-field p-p-0 p-lg-5">
+                <div class="p-field p-p-0">
+                    <span class="p-float-label">
+                        <input type="password" pInputText id="field2" formControlName="field2"
+                            [style]="{'width':'100%'}" required
+                            [ngClass]="{ 'p-invalid': submitted && adForm.password.errors }"
+                            autocomplete="new-password">
+                        <label for="password">Enter
+                            field2</label>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </form> -->
+    <div class="save-container">
+        <button pButton pRipple type="button" class="p-button-lg p-button-success p-button-raised p-mr-3"
+            icon="pi pi-save" [disabled]="disableSave" iconPos="left" label="Save" (click)="submit()"></button>
+    </div>
 </div>
