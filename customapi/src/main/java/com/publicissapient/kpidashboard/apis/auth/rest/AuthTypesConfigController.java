@@ -7,6 +7,7 @@ import com.publicissapient.kpidashboard.common.model.application.AuthTypeStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +20,7 @@ public class AuthTypesConfigController {
     private AuthTypesConfigService authTypesConfigService;
 
     @PostMapping("/auth-types")
+    @PreAuthorize("hasPermission(null,'CONFIGURE_LOGIN_TYPE')")
     public ResponseEntity<ServiceResponse> addAuthTypesConfig(@RequestBody AuthTypeConfig authTypeConfig) {
 
         AuthTypeConfig savedAuthTypeConfig = authTypesConfigService.saveAuthTypeConfig(authTypeConfig);
@@ -37,6 +39,7 @@ public class AuthTypesConfigController {
     }
 
     @GetMapping("/auth-types")
+    @PreAuthorize("hasPermission(null,'GET_LOGIN_TYPES_CONFIG')")
     public ResponseEntity<ServiceResponse> getAuthTypesConfig() {
         ServiceResponse serviceResponse = null;
         AuthTypeConfig authTypeConfig = authTypesConfigService.getAuthTypeConfig();
