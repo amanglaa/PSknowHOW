@@ -1,4 +1,4 @@
-import { HttpClientModule } from '@angular/common/http';          
+import { HttpClientModule } from '@angular/common/http';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -30,33 +30,33 @@ describe('LandingPageComponent', () => {
     fixture = TestBed.createComponent(LandingPageComponent);
     component = fixture.componentInstance;
     httpMock = TestBed.inject(HttpTestingController);
-    httpService = TestBed.inject(HttpService)
+    httpService = TestBed.inject(HttpService);
     fixture.detectChanges();
   });
 
-  
+
   xit('should  return additional information', () => {
     component.ngOnInit();
     httpMock.expectOne(fakeLandingInfo).flush();
     expect(Object.keys(component.landingInfo).length).toBe(Object.keys(fakeLandingInfo.data).length);
   });
-  
+
   xit('should  return categories for feedback', () => {
     component.ngOnInit();
     httpMock.expectOne(fakeFeedbackAreaList).flush();
     httpMock.expectOne(baseUrl + '/api/feedback/categories').flush(fakeLandingInfo);
     expect(component.area.length).toBe(fakeLandingInfo.data.length);
   });
-  
+
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
   it('should set landing Info',fakeAsync(()=>{
-    let response ={
+    const response ={
       data:'adLogin: false'
     };
-    let spy=spyOn(httpService,'getLandingInfo').and.returnValue(of(response));
+    const spy=spyOn(httpService,'getLandingInfo').and.returnValue(of(response));
     component.getImpInfo();
     tick();
     expect(component.landingInfo).toBe(response.data);
@@ -64,19 +64,19 @@ describe('LandingPageComponent', () => {
 
 
   it('should set category Info',fakeAsync(()=>{
-    let response ={
-      "message": "Found all feedback categories",
-      "success": true,
-      "data": [
-          "EMM",
-          "Additional KPI",
-          "Tool Integration",
-          "Admin",
-          "UI",
-          "Other"
+    const response ={
+      message: 'Found all feedback categories',
+      success: true,
+      data: [
+          'EMM',
+          'Additional KPI',
+          'Tool Integration',
+          'Admin',
+          'UI',
+          'Other'
       ]
-  }
-    let spy=spyOn(httpService,'getFeedbackCategory').and.returnValue(of(response));
+  };
+    const spy=spyOn(httpService,'getFeedbackCategory').and.returnValue(of(response));
     component.getCategory();
     tick();
     expect(component.area).toEqual(response.data);
@@ -84,15 +84,15 @@ describe('LandingPageComponent', () => {
 
 
   it('should set TotalUsers Count',fakeAsync(()=>{
-    let response ={
-      "message": "Found TotalUsers count",
-      "success": true,
-      "data": {
-        "Total Users":5,
-        "New Users Added in last 30 days":2
-      }  
-  }
-    let spy=spyOn(httpService,'getUsersCount').and.returnValue(of(response));
+    const response ={
+      message: 'Found TotalUsers count',
+      success: true,
+      data: {
+        'Total Users':5,
+        'New Users Added in last 30 days':2
+      }
+  };
+    const spy=spyOn(httpService,'getUsersCount').and.returnValue(of(response));
     component.getTotalUsersCount();
     tick();
     expect(component.totalUsers).toEqual(response.data['Total Users']);

@@ -17,13 +17,13 @@ describe('ViewNewUserAuthRequestComponent', () => {
   const baseUrl = environment.baseUrl;
 
   const fakeRequestsData = {
-    "message": "Unapproved User details",
-    "success": true,
-    "data": [
+    message: 'Unapproved User details',
+    success: true,
+    data: [
       {
-        "username": "testuser8",
-        "email": "test8@gmail.com",
-        "approved": false
+        username: 'testuser8',
+        email: 'test8@gmail.com',
+        approved: false
       }
     ]
   };
@@ -66,15 +66,15 @@ describe('ViewNewUserAuthRequestComponent', () => {
 
   it('should approve user requests', () => {
     component.newUserAccessRequestData = fakeRequestsData.data;
-    let fakeRequest = {
-      "username": "testuser8",
-      "email": "test8@gmail.com",
-      "approved": false
+    const fakeRequest = {
+      username: 'testuser8',
+      email: 'test8@gmail.com',
+      approved: false
     };
-    let fakeResponse = {
-      "message": "Unapproved User details",
-      "success": true,
-      "data": []
+    const fakeResponse = {
+      message: 'Unapproved User details',
+      success: true,
+      data: []
     };
     component.updateRequestStatus(fakeRequest, true);
     fixture.detectChanges();

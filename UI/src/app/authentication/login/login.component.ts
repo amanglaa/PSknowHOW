@@ -19,7 +19,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpService } from '../../services/http.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { SharedService } from '../../services/shared.service';
 import { RsaEncryptionService } from '../../services/rsa.encryption.service';
@@ -31,8 +31,8 @@ import { TextEncryptionService } from '../../services/text.encryption.service';
     styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-    loginForm: FormGroup;
-    adLoginForm: FormGroup;
+    loginForm: UntypedFormGroup;
+    adLoginForm: UntypedFormGroup;
     loading = false;
     submitted = false;
     returnUrl: string;
@@ -44,7 +44,7 @@ export class LoginComponent implements OnInit {
 
 
 
-    constructor(private formBuilder: FormBuilder, private route: ActivatedRoute, private router: Router, private httpService: HttpService, private sharedService: SharedService, private rsa: RsaEncryptionService, private aesEncryption: TextEncryptionService) {
+    constructor(private formBuilder: UntypedFormBuilder, private route: ActivatedRoute, private router: Router, private httpService: HttpService, private sharedService: SharedService, private rsa: RsaEncryptionService, private aesEncryption: TextEncryptionService) {
     }
 
     ngOnInit() {
@@ -57,7 +57,7 @@ export class LoginComponent implements OnInit {
         this.route.queryParams.subscribe(params => {
             this.sessionMsg = params['sessionExpire'];
         });
-        
+
         /*Set required validation for login elements*/
         this.loginForm = this.formBuilder.group({
             username: ['', Validators.required],
@@ -78,10 +78,14 @@ export class LoginComponent implements OnInit {
     }
 
     /* convenience getter for easy access to form fields*/
-    get f() { return this.loginForm.controls; }
+    get f() {
+ return this.loginForm.controls;
+}
 
     /* convenience getter for easy access to form fields*/
-    get adf() { return this.adLoginForm.controls; }
+    get adf() {
+ return this.adLoginForm.controls;
+}
 
     rememberMe() {
         if (localStorage.getItem('SpeedyUser') !== null) {
@@ -130,7 +134,7 @@ export class LoginComponent implements OnInit {
         if (!localStorage.getItem('user_email') || localStorage.getItem('user_email') === '') {
             return true;
         }
-        let decryptedText = this.aesEncryption.convertText(localStorage.getItem('authorities'), 'decrypt');
+        const decryptedText = this.aesEncryption.convertText(localStorage.getItem('authorities'), 'decrypt');
         if (decryptedText && JSON.parse(decryptedText).includes('ROLE_SUPERADMIN')) {
             return false;
         } else if (localStorage.getItem('projectsAccess') === 'undefined' || !localStorage.getItem('projectsAccess').length) {

@@ -1,5 +1,5 @@
-import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
-import { GetAuthorizationService } from "src/app/services/get-authorization.service";
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { GetAuthorizationService } from 'src/app/services/get-authorization.service';
 
 @Component({
     selector: 'app-no-access',
@@ -10,7 +10,7 @@ export class NoAccessComponent {
 
     @Input() selectedTab: string;
     @Input() userEnable: boolean;
-    isSuperAdmin: boolean = false;
+    isSuperAdmin = false;
     constructor( private getAuthorizationService: GetAuthorizationService){}
     ngOnInit() {
         if (this.getAuthorizationService.checkIfSuperUser()) {

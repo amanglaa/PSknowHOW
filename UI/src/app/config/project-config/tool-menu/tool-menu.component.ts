@@ -33,8 +33,8 @@ export class ToolMenuComponent implements OnInit {
   selectedProject: any;
   projectTypeOptions: any = [];
   selectedType = false;
-  dataLoading: boolean = false;
-  disableSwitch: boolean = false;
+  dataLoading = false;
+  disableSwitch = false;
   selectedTools: Array<any> = [];
   constructor(public router: Router, private sharedService: SharedService, private http: HttpService, private messenger: MessageService) {
 
@@ -46,7 +46,7 @@ export class ToolMenuComponent implements OnInit {
       { name: 'Azure Boards', value: true }
     ];
 
-    this.selectedProject = this.sharedService.getSelectedProject(); 
+    this.selectedProject = this.sharedService.getSelectedProject();
     if (!this.selectedProject) {
       this.router.navigate(['./dashboard/Config/ProjectList']);
     } else {
@@ -181,7 +181,7 @@ export class ToolMenuComponent implements OnInit {
             queryParams1: 'GitHub',
             index: 10
           }
-          
+
         ];
       }
     }
@@ -234,11 +234,9 @@ export class ToolMenuComponent implements OnInit {
     if(toolName === 'Azure Repo') {
       toolName = 'AzureRepository';
     }
-    let configuredProject = this.selectedTools.filter((tool) => tool.toolName.toLowerCase() == toolName.toLowerCase());
+    const configuredProject = this.selectedTools.filter((tool) => tool.toolName.toLowerCase() == toolName.toLowerCase());
     return (configuredProject && configuredProject.length > 0 ? true : false);
   }
   // Preserve original property order
-  originalOrder = (a: KeyValue<number,string>, b: KeyValue<number,string>): number => {
-    return 0;
-  }
+  originalOrder = (a: KeyValue<number,string>, b: KeyValue<number,string>): number => 0;
 }

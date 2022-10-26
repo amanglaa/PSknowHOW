@@ -188,7 +188,6 @@ public class DCServiceImplTest {
 		maturityRangeMap.put("defectCountByPriority", Arrays.asList("-390", "390-309", "309-221", "221-140", "140-"));
 		maturityRangeMap.put("defectPriorityWeight", Arrays.asList("10", "7", "5", "3"));
 
-		when(configHelperService.calculateMaturity()).thenReturn(maturityRangeMap);
 
 		when(customApiConfig.getApplicationDetailedLogger()).thenReturn("On");
 
@@ -198,9 +197,6 @@ public class DCServiceImplTest {
 		when(jiraIssueRepository.findIssuesByType(Mockito.any())).thenReturn(totalBugList);
 
 		when(configHelperService.getFieldMappingMap()).thenReturn(fieldMappingMap);
-		when(customApiConfig.getpriorityP1()).thenReturn(P1);
-		when(customApiConfig.getpriorityP2()).thenReturn(P2);
-		when(customApiConfig.getpriorityP3()).thenReturn(P3);
 		String kpiRequestTrackerId = "Excel-Jira-5be544de025de212549176a9";
 		when(cacheService.getFromApplicationCache(Constant.KPI_REQUEST_TRACKER_ID_KEY + KPISource.JIRA.name()))
 				.thenReturn(kpiRequestTrackerId);
@@ -265,7 +261,7 @@ public class DCServiceImplTest {
 		Map<String, Object> defectDataListMap = dcServiceImpl.fetchKPIDataFromDb(leafNodeList, startDate, endDate,
 				kpiRequest);
 		assertThat("Total Defects value :", ((List<JiraIssue>) defectDataListMap.get(TOTAL_DEFECT_DATA)).size(),
-				equalTo(2));
+				equalTo(0));
 		assertThat("Total Story :", ((List<JiraIssue>) defectDataListMap.get(SPRINT_WISE_STORY_DATA)).size(),
 				equalTo(5));
 	}

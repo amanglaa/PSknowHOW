@@ -116,7 +116,7 @@ export class LineBarChartComponent implements OnChanges, AfterViewInit {
 
             data = newFormat;
 
-            const max = d3.max(data, (function (d) {
+            const max = d3.max(data, (function(d) {
                 return d[1];
             }));
 
@@ -138,8 +138,8 @@ export class LineBarChartComponent implements OnChanges, AfterViewInit {
                 right: 15,
                 bottom: 5,
                 left: 15 + marginOnBasisOfMax
-            },
-                width = this.width;
+            };
+                const width = this.width;
             let height = 200 - 25 - 25;
 
 
@@ -151,13 +151,13 @@ export class LineBarChartComponent implements OnChanges, AfterViewInit {
             const xScale = d3.scaleBand()
                 .rangeRound([0, width - margin.left - margin.right])
                 .padding(0.1)
-                .domain(data.map(function (d) {
+                .domain(data.map(function(d) {
                     return d[0];
                 }));
             // defining scale y
             const yScale = d3.scaleLinear()
                 .rangeRound([height, 0])
-                .domain([0, this.maxValue && this.maxValue > 0 ? this.maxValue : d3.max(data, (function (d) {
+                .domain([0, this.maxValue && this.maxValue > 0 ? this.maxValue : d3.max(data, (function(d) {
                     return parseInt(d[1]);
                 }))]);
 
@@ -178,10 +178,10 @@ export class LineBarChartComponent implements OnChanges, AfterViewInit {
                 .data(colors)
                 .enter()
                 .append('stop')
-                .style('stop-color', function (d) {
+                .style('stop-color', function(d) {
                     return d;
                 })
-                .attr('offset', function (d, i) {
+                .attr('offset', function(d, i) {
                     return 100 * (i / (colors.length - 1)) + '%';
                 });
 
@@ -191,45 +191,45 @@ export class LineBarChartComponent implements OnChanges, AfterViewInit {
                 .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')').attr('width', width + 'px')
                 .attr('height', '220px');
 
-            var x = d3.scaleBand()
+            const x = d3.scaleBand()
                 .rangeRound([0, width])
                 .paddingInner(.1)
                 .paddingOuter(.3);
 
-            var wrap = function (text, width) {
-                text.each(function () {
-                    var text = d3.select(this),
-                        words = text.text().split(/\s+/).reverse(),
-                        word,
-                        line = [],
-                        lineNumber = 0,
-                        lineHeight = 1.1, // ems
-                        y = text.attr('y'),
-                        dy = parseFloat(text.attr('dy')),
-                        tspan = text.text(null).append('tspan').attr('x', 0).attr('y', y).attr('dy', dy + 'em')
+            const wrap = function(text, width) {
+                text.each(function() {
+                    const text = d3.select(this);
+                        const words = text.text().split(/\s+/).reverse();
+                        let word;
+                        let line = [];
+                        let lineNumber = 0;
+                        const lineHeight = 1.1; // ems
+                        const y = text.attr('y');
+                        const dy = parseFloat(text.attr('dy'));
+                        let tspan = text.text(null).append('tspan').attr('x', 0).attr('y', y).attr('dy', dy + 'em');
                     while (word = words.pop()) {
-                        line.push(word)
-                        tspan.text(line.join(' '))
+                        line.push(word);
+                        tspan.text(line.join(' '));
                         if (tspan.node().getComputedTextLength() > width) {
-                            line.pop()
-                            tspan.text(line.join(' '))
-                            line = [word]
-                            tspan = text.append('tspan').attr('x', 0).attr('y', y).attr('dy', `${++lineNumber * lineHeight + dy}em`).text(word)
+                            line.pop();
+                            tspan.text(line.join(' '));
+                            line = [word];
+                            tspan = text.append('tspan').attr('x', 0).attr('y', y).attr('dy', `${++lineNumber * lineHeight + dy}em`).text(word);
                         }
                     }
                 });
-            }
+            };
 
             // axis-x
             g.append('g')
                 .attr('class', 'axis axis--x')
                 .attr('transform', 'translate(0,' + height + ')')
                 .call(d3.axisBottom(xScale))
-                .selectAll(".tick text")
-                .style("text-anchor", "end")
-                .attr("dx", "-.8em")
-                .attr("dy", ".15em")
-                .attr("transform", "rotate(-45)")
+                .selectAll('.tick text')
+                .style('text-anchor', 'end')
+                .attr('dx', '-.8em')
+                .attr('dy', '.15em')
+                .attr('transform', 'rotate(-45)')
                 .call(wrap, 50);
 
             // axis-y
@@ -278,20 +278,20 @@ export class LineBarChartComponent implements OnChanges, AfterViewInit {
 
                 // bar chart
                 bar.append('rect')
-                    .attr('x', function (d) {
+                    .attr('x', function(d) {
                         return xScale(d[0]) + 6;
                     })
                     .attr('width', xScale.bandwidth() - 10)
-                    .attr('y', function (d) {
+                    .attr('y', function(d) {
                         return height;
                     })
                     .style('fill', fillColor)
                     .transition()
                     .duration(1000)
-                    .attr('y', function (d) {
+                    .attr('y', function(d) {
                         return yScale(d[1]);
                     })
-                    .attr('height', function (d) {
+                    .attr('height', function(d) {
                         if (d[1] === 0) {
                             return 0;
                         } else {
@@ -303,17 +303,17 @@ export class LineBarChartComponent implements OnChanges, AfterViewInit {
                 // labels on the bar chart
                 bar.append('text')
                     .attr('dy', '1.3em')
-                    .attr('x', function (d) {
+                    .attr('x', function(d) {
                         return xScale(d[0]) + xScale.bandwidth() / 2;
                     })
-                    .attr('y', function (d) {
+                    .attr('y', function(d) {
                         return yScale(d[1]) - 22;
                     })
                     .attr('text-anchor', 'middle')
                     .attr('font-family', 'sans-serif')
                     .attr('font-size', '11px')
                     .attr('fill', 'black')
-                    .text(function (d) {
+                    .text(function(d) {
                         if (d[0] && (d[0] + '').indexOf('*') > -1) {
                             return 'No Data';
                         } else {
@@ -343,10 +343,10 @@ export class LineBarChartComponent implements OnChanges, AfterViewInit {
             if (this.lineChart === 'true') {
                 // line chart
                 const line = d3.line()
-                    .x(function (d, i) {
+                    .x(function(d, i) {
                         return xScale(d[0]) + xScale.bandwidth() / 2;
                     })
-                    .y(function (d) {
+                    .y(function(d) {
                         return yScale(d[1]);
                     });
 
@@ -359,27 +359,27 @@ export class LineBarChartComponent implements OnChanges, AfterViewInit {
                     .attr('d', line(data)); // Calls the line generator
                 bar.append('circle') // Uses the enter().append() method
                     .attr('class', 'dot') // Assign a class for styling
-                    .attr('cx', function (d, i) {
+                    .attr('cx', function(d, i) {
                         return xScale(d[0]) + xScale.bandwidth() / 2;
                     })
-                    .attr('cy', function (d) {
+                    .attr('cy', function(d) {
                         return yScale(d[1]);
                     })
                     .attr('r', 5);
                 if (this.barChart === 'false') {
                     bar.append('text')
                         .attr('dy', '1.3em')
-                        .attr('x', function (d) {
+                        .attr('x', function(d) {
                             return xScale(d[0]) + xScale.bandwidth() / 2;
                         })
-                        .attr('y', function (d) {
+                        .attr('y', function(d) {
                             return yScale(d[1]);
                         })
                         .attr('text-anchor', 'middle')
                         .attr('font-family', 'sans-serif')
                         .attr('font-size', '11px')
                         .attr('fill', 'black')
-                        .text(function (d) {
+                        .text(function(d) {
                             return d[1];
                         });
 

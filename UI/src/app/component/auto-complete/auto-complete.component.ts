@@ -17,8 +17,8 @@
  ******************************************************************************/
 
 import { Component, Input, ViewContainerRef, OnChanges, SimpleChanges } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 
 @Component({
     selector: 'app-auto-complete',
@@ -28,8 +28,8 @@ import { FormGroup } from '@angular/forms';
 export class AutoCompleteComponent implements OnChanges {
     @Input() data: any;
     @Input() name: string;
-    @Input() controlName: FormControl;
-    @Input() parentForm: FormGroup;
+    @Input() controlName: UntypedFormControl;
+    @Input() parentForm: UntypedFormGroup;
     elem;
     constructor(private viewContainerRef: ViewContainerRef) {
     }
@@ -54,8 +54,8 @@ export class AutoCompleteComponent implements OnChanges {
         let currentFocus;
 
         /*execute a function when someone writes in the text field:*/
-        inp.addEventListener('input', function (e) {
-            let a, b, i;
+        inp.addEventListener('input', function(e) {
+            let a; let b; let i;
             const val = this.value;
             /*close any already open lists of autocompleted values*/
 
@@ -83,7 +83,7 @@ export class AutoCompleteComponent implements OnChanges {
                     /*insert a input field that will hold the current array item's value:*/
                     b.innerHTML += '<input type=\'hidden\' value=\'' + arr[i] + '\'>';
                     /*execute a function when someone clicks on the item value (DIV element):*/
-                    b.addEventListener('click', function () {
+                    b.addEventListener('click', function() {
                         /*insert the value for the autocomplete text field:*/
                         inp.value = this.getElementsByTagName('input')[0].value;
                         /*close the list of autocompleted values,
@@ -97,7 +97,7 @@ export class AutoCompleteComponent implements OnChanges {
             }
         });
         /*execute a function presses a key on the keyboard:*/
-        inp.addEventListener('keydown', function (e) {
+        inp.addEventListener('keydown', function(e) {
             let x = document.getElementById(this.id + 'autocomplete-list');
             if (x) {
                 x = (<HTMLElement><any>x.getElementsByTagName('div'));
@@ -133,8 +133,12 @@ export class AutoCompleteComponent implements OnChanges {
             }
             /*start by removing the "active" class on all items:*/
             removeActive(x);
-            if (currentFocus >= x.length) { currentFocus = 0; }
-            if (currentFocus < 0) { currentFocus = (x.length - 1); }
+            if (currentFocus >= x.length) {
+ currentFocus = 0;
+}
+            if (currentFocus < 0) {
+ currentFocus = (x.length - 1);
+}
             /*add class "autocomplete-active":*/
             x[currentFocus].classList.add('autocomplete-active');
         }
@@ -157,7 +161,7 @@ export class AutoCompleteComponent implements OnChanges {
             }
         }
         /*execute a function when someone clicks in the document:*/
-        document.addEventListener('click', function (e) {
+        document.addEventListener('click', function(e) {
             closeAllLists(e.target);
         });
     }

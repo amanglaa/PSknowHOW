@@ -30,10 +30,10 @@
 
 }
 
-*>>>.needle {
+::ng-deep .needle {
   fill: #4A4A4A;
 }
 
-*>>>.needle-center {
+::ng-deep .needle-center {
   fill: #4A4A4A;
 }

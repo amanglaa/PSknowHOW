@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpService } from '../../../services/http.service';
 import { MessageService } from 'primeng/api';
-import { FormGroup, Validators, FormControl } from '@angular/forms';
+import { UntypedFormGroup, Validators, UntypedFormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-auto-approval',
@@ -10,15 +10,15 @@ import { FormGroup, Validators, FormControl } from '@angular/forms';
 })
 export class AutoApprovalComponent implements OnInit {
   rolesData: Array<object> = [];
-  autoApprovalForm: FormGroup;
-  autoApprovedId: string = '';
+  autoApprovalForm: UntypedFormGroup;
+  autoApprovedId = '';
   constructor(private httpService: HttpService, private messageService: MessageService) { }
 
   ngOnInit(): void {
     this.getAutoApprovedRoles();
-    this.autoApprovalForm = new FormGroup({
-      enableAutoApprove: new FormControl(false, [Validators.required]),
-      roles: new FormControl([]),
+    this.autoApprovalForm = new UntypedFormGroup({
+      enableAutoApprove: new UntypedFormControl(false, [Validators.required]),
+      roles: new UntypedFormControl([]),
     });
     this.getRolesList();
   }
@@ -52,9 +52,9 @@ export class AutoApprovalComponent implements OnInit {
     this.httpService.getAutoApprovedRoleList().subscribe((response) => {
       if (response && response['success']) {
         this.autoApprovedId = response.data[0].id;
-        let selectedValues = response.data[0];
+        const selectedValues = response.data[0];
         this.autoApprovalForm.controls['enableAutoApprove'].setValue(JSON.parse(selectedValues['enableAutoApprove']));
-        let selectedRolesName = selectedValues['roles'].map(({ roleName }) => roleName);
+        const selectedRolesName = selectedValues['roles'].map(({ roleName }) => roleName);
         this.autoApprovalForm.controls['roles'].setValue(selectedRolesName);
       }
     }, errorResponse => {
@@ -68,8 +68,8 @@ export class AutoApprovalComponent implements OnInit {
   }
 
   onSubmit() {
-    let submitData = {
-      'roles': []
+    const submitData = {
+      roles: []
     };
     submitData['enableAutoApprove'] = this.autoApprovalFormValue['enableAutoApprove'].value;
     if (submitData['enableAutoApprove']) {
@@ -100,7 +100,7 @@ export class AutoApprovalComponent implements OnInit {
         severity: 'error',
         summary: msg
       });
-    })
+    });
   }
 
   shouldBeDisabled(){

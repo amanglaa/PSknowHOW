@@ -41,45 +41,45 @@ describe('KpiCardComponent', () => {
     component.filterOptions={
       filter1:[],
       filter2:[]
-    }
+    };
     component.handleClearAll('filter1');
     expect(component.filterOptions.hasOwnProperty('filter1')).toBeFalsy();
   });
 
   it('should return color based on nodename',()=>{
     component.trendBoxColorObj ={
-      "C1_corporate": {
-          "nodeName": "C1",
-          "color": "#079FFF"
+      C1_corporate: {
+          nodeName: 'C1',
+          color: '#079FFF'
       },
-      "C1": {
-          "nodeName": "C1",
-          "color": "#079FFF"
+      C1: {
+          nodeName: 'C1',
+          color: '#079FFF'
       }
   };
   expect(component.getColor('C1')).toBe('#079FFF');
   });
 
   it('sholud handle filter change for radio',()=>{
-    let spy = spyOn(component.optionSelected,'emit');
+    const spy = spyOn(component.optionSelected,'emit');
     component.handleChange('radio','Story Points');
     expect(spy).toHaveBeenCalledWith('Story Points');
   });
 
   it('sholud handle filter change for single select',()=>{
-    let filterOptionsingle = {
-      'filter1': [{}]
+    const filterOptionsingle = {
+      filter1: [{}]
     };
     component.filterOptions ={};
-    let spy = spyOn(component.optionSelected,'emit');
+    const spy = spyOn(component.optionSelected,'emit');
     component.handleChange('single',undefined);
     expect(spy).toHaveBeenCalled();
   });
 
   it('sholud handle filter change for multi select',()=>{
-    let filterOptionMulti ={filter1 : ['P1','P2']};
+    const filterOptionMulti ={filter1 : ['P1','P2']};
     component.filterOptions = filterOptionMulti;
-    let spy = spyOn(component.optionSelected,'emit');
+    const spy = spyOn(component.optionSelected,'emit');
     component.handleChange('multi',undefined);
     expect(spy).toHaveBeenCalledWith(filterOptionMulti);
   });
@@ -90,80 +90,80 @@ describe('KpiCardComponent', () => {
   });
 
   it('should return valid maturity value', () => {
-    let item = {
-      "data": "EU",
-      "value": [
+    const item = {
+      data: 'EU',
+      value: [
         {
-          "data": "2",
-          "value": 2,
-          "hoverValue": {},
-          "date": "2022-08-29 to 2022-09-04",
-          "sprojectName": "Aarti Cons",
-          "xName": 1
+          data: '2',
+          value: 2,
+          hoverValue: {},
+          date: '2022-08-29 to 2022-09-04',
+          sprojectName: 'Aarti Cons',
+          xName: 1
         },
         {
-          "data": "5",
-          "value": 5,
-          "hoverValue": {},
-          "date": "2022-09-05 to 2022-09-11",
-          "sprojectName": "Aarti Cons",
-          "xName": 2
+          data: '5',
+          value: 5,
+          hoverValue: {},
+          date: '2022-09-05 to 2022-09-11',
+          sprojectName: 'Aarti Cons',
+          xName: 2
         },
         {
-          "data": "11",
-          "value": 11,
-          "hoverValue": {},
-          "date": "2022-09-12 to 2022-09-18",
-          "sprojectName": "Aarti Cons",
-          "xName": 3
+          data: '11',
+          value: 11,
+          hoverValue: {},
+          date: '2022-09-12 to 2022-09-18',
+          sprojectName: 'Aarti Cons',
+          xName: 3
         },
         {
-          "data": "2",
-          "value": 2,
-          "hoverValue": {},
-          "date": "2022-09-19 to 2022-09-25",
-          "sprojectName": "Aarti Cons",
-          "xName": 4
+          data: '2',
+          value: 2,
+          hoverValue: {},
+          date: '2022-09-19 to 2022-09-25',
+          sprojectName: 'Aarti Cons',
+          xName: 4
         },
         {
-          "data": "4",
-          "value": 4,
-          "hoverValue": {},
-          "date": "2022-09-26 to 2022-10-02",
-          "sprojectName": "Aarti Cons",
-          "xName": 5
+          data: '4',
+          value: 4,
+          hoverValue: {},
+          date: '2022-09-26 to 2022-10-02',
+          sprojectName: 'Aarti Cons',
+          xName: 5
         }
       ],
-      "maturity": "3"
+      maturity: '3'
     };
     expect(component.checkMaturity(item)).toBe('3');
 
-    let item1 = {
-      "data": "EU",
-      "value": [],
-      "maturity": "5"
-    }
+    const item1 = {
+      data: 'EU',
+      value: [],
+      maturity: '5'
+    };
     expect(component.checkMaturity(item1)).toBe(0);
   });
 
 
   it('should set filter default option', fakeAsync(() => {
-    let response = {
-      "kpi113": [
-        "Overall"
+    const response = {
+      kpi113: [
+        'Overall'
       ]
     };
 
     component.kpiData = {
-      "kpiId": "kpi113",
-      "kpiName": "Value delivered (Cost of Delay)",
-      "isEnabled": true,
-      "order": 28,
-      "kpiDetail": {
-        "id": "633ed17f2c2d5abef2451ff3",
-        "kpiId": "kpi113",
+      kpiId: 'kpi113',
+      kpiName: 'Value delivered (Cost of Delay)',
+      isEnabled: true,
+      order: 28,
+      kpiDetail: {
+        id: '633ed17f2c2d5abef2451ff3',
+        kpiId: 'kpi113',
       },
-      "shown": true
+      shown: true
     };
     sharedService.setKpiSubFilterObj(response);
     component.ngOnInit();
@@ -173,22 +173,22 @@ describe('KpiCardComponent', () => {
 
   it('should set default filter value for kpi having radiobutton filter', fakeAsync(() => {
     component.kpiData = {
-      "kpiId": "kpi3",
-      "kpiName": "Lead Time",
-      "isEnabled": true,
-      "order": 25,
-      "kpiDetail": {
-        "id": "633ed17f2c2d5abef2451ff0",
-        "kpiId": "kpi3",
-        "kpiName": "Lead Time",
-        "kpiSource": "Jira",
-        "kanban": false,
-        "kpiFilter": "radioButton",
+      kpiId: 'kpi3',
+      kpiName: 'Lead Time',
+      isEnabled: true,
+      order: 25,
+      kpiDetail: {
+        id: '633ed17f2c2d5abef2451ff0',
+        kpiId: 'kpi3',
+        kpiName: 'Lead Time',
+        kpiSource: 'Jira',
+        kanban: false,
+        kpiFilter: 'radioButton',
       },
-      "shown": true
-    }
+      shown: true
+    };
 
-    let response = { "kpi3": ['default'] };
+    const response = { kpi3: ['default'] };
     sharedService.setKpiSubFilterObj(response);
     component.ngOnInit();
     tick();

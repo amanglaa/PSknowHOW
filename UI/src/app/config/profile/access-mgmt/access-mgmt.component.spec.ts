@@ -106,12 +106,10 @@ describe('AccessMgmtComponent', () => {
     // fixture.detectChanges();
     httpMock.match(baseUrl + '/api/roles')[0].flush(fakeRolesData);
     if (component.rolesData.success) {
-      fakeRolesData.data = fakeRolesData.data.map((role) => {
-        return {
+      fakeRolesData.data = fakeRolesData.data.map((role) => ({
           label: role.roleName,
           value: role.roleName
-        };
-      });
+        }));
       expect(component.roleList).toEqual(fakeRolesData.data);
     } else {
       // component.messageService.add({ severity: 'error', summary: 'Error in fetching roles. Please try after some time.' });
