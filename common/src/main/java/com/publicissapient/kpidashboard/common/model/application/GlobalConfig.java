@@ -42,8 +42,6 @@ public class GlobalConfig extends BasicModel {
 
 	private String env;
 
-	private FieldMapping jiraFieldMapping;
-
 	private AuthTypeStatus authTypeStatus;
 	
 	private ADServerDetail adServerDetail;
