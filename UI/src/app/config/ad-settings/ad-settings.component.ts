@@ -76,6 +76,11 @@ export class AdSettingsComponent implements OnInit {
               label: 'AD Authentication'
             });
           }
+        } else {
+          this.selectedTypes.push({
+            name: 'standardLogin',
+            label: 'KnowHOW Local Authentication'
+          });
         }
         if (response.success && response.data && response.data.adServerDetail) {
           for (const obj in response.data.adServerDetail) {
