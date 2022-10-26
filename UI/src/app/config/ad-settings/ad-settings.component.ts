@@ -49,7 +49,7 @@ export class AdSettingsComponent implements OnInit {
     name: 'standardLogin',
     label: 'KnowHOW Local Authentication'
   }];
-  disableSave: boolean;
+  disableSave = false;
 
   constructor(private formBuilder: UntypedFormBuilder, private http: HttpService, private messenger: MessageService, private rsa: RsaEncryptionService) { }
 
@@ -108,18 +108,18 @@ export class AdSettingsComponent implements OnInit {
   }
 
   checkValues() {
-    if (!this.selectedTypes.map((type) => type.name).length) {
-      this.disableSave = true;
-    } else {
-      this.disableSave = false;
-    }
-
     if (!this.selectedTypes.length) {
       this.selectedTypes = [{
         name: 'standardLogin',
         label: 'KnowHOW Local Authentication'
       }];
     }
+
+    // if (!this.selectedTypes.length) {
+    //   this.disableSave = true;
+    // } else {
+    //   this.disableSave = false;
+    // }
   }
 
   // convenience getter for easy access to form fields
