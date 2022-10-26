@@ -17,14 +17,14 @@ describe('AdSettingsComponent', () => {
   let httpMock;
 
   const fakeADSettings = {
-    "message": "Sucessfully fetch the active directory user ",
-    "success": true,
-    "data": {
-      "username": "test-username",
-      "host": "test-host-name",
-      "port": 639,
-      "rootDn": "test-root",
-      "domain": "testdomain.net"
+    message: 'Sucessfully fetch the active directory user ',
+    success: true,
+    data: {
+      username: 'test-username',
+      host: 'test-host-name',
+      port: 639,
+      rootDn: 'test-root',
+      domain: 'testdomain.net'
     }
   };
   beforeEach(async () => {
@@ -76,18 +76,18 @@ describe('AdSettingsComponent', () => {
     }
     component.adSettingsForm.controls['password'].setValue('testPassword');
     expect(component.adSettingsForm.valid).toBeTrue();
-    let fakeSubmitResponse = {
-      "message": "created and updated active directory user",
-      "success": true,
-      "data": {
-        "username": "test-username",
-        "password": "8HvZjOM5y5T2c6ROq5CN7Z/IaAk0Q/cuubrN9sPOXmWdzEwlwNu9i48pHMPuvbAH",
-        "host": "test-host-name",
-        "port": 639,
-        "rootDn": "test-root",
-        "domain": "testdomain.net"
+    const fakeSubmitResponse = {
+      message: 'created and updated active directory user',
+      success: true,
+      data: {
+        username: 'test-username',
+        password: '8HvZjOM5y5T2c6ROq5CN7Z/IaAk0Q/cuubrN9sPOXmWdzEwlwNu9i48pHMPuvbAH',
+        host: 'test-host-name',
+        port: 639,
+        rootDn: 'test-root',
+        domain: 'testdomain.net'
       }
-    }
+    };
     component.submit();
     httpMock.match(baseUrl + '/api/activedirectory')[0].flush(fakeSubmitResponse);
   });

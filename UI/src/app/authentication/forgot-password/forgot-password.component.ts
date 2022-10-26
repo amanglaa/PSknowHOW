@@ -45,7 +45,9 @@ export class ForgotPasswordComponent implements OnInit {
     }
 
     // convenience getter for easy access to form fields
-    get f() { return this.emailForm.controls; }
+    get f() {
+ return this.emailForm.controls;
+}
 
     onSubmit() {
         this.error = '';

@@ -56,9 +56,7 @@ export class ProjectFilterComponent implements OnInit {
       .subscribe(projectsData => {
         if (projectsData[0] !== 'error' && !projectsData.error && projectsData?.data) {
           this.data = projectsData.data;
-          this.hierarchyArray = this.data[0].hierarchy.map((elem) => {
-            return elem.hierarchyLevel.hierarchyLevelId;
-          });
+          this.hierarchyArray = this.data[0].hierarchy.map((elem) => elem.hierarchyLevel.hierarchyLevelId);
 
           this.service.sendProjectData(this.data);
           this.populateDataLists(projectsData.data, 'all');
@@ -94,8 +92,7 @@ export class ProjectFilterComponent implements OnInit {
                 name: hierarchyElem.value,
                 code: hierarchyElem.value
               });
-            }
-            else {
+            } else {
               // if (this.hierarchyArray.indexOf(hierarchyElem.hierarchyLevel.hierarchyLevelId) === this.hierarchyArray.indexOf(filterType)) {
               //   this.fillLevel(hierarchyElem.hierarchyLevel.hierarchyLevelId);
               // } else {
@@ -135,8 +132,8 @@ export class ProjectFilterComponent implements OnInit {
         this.projects = Object.assign([], data);
       }
 
-      let dataIdMap = data.map((d) => d.id);
-      let selectedValProjectsIdMap = this.selectedValProjects.map((d) => d.id);
+      const dataIdMap = data.map((d) => d.id);
+      const selectedValProjectsIdMap = this.selectedValProjects.map((d) => d.id);
       this.selectedValProjects = [];
       dataIdMap.forEach(element => {
         if (selectedValProjectsIdMap.includes(element)) {
@@ -195,15 +192,15 @@ export class ProjectFilterComponent implements OnInit {
   // }
 
   findUniques(data, propertyArray) {
-    let seen = Object.create(null);
+    const seen = Object.create(null);
     return data.filter(o => {
-      var key = propertyArray.map(k => o[k]).join('|');
+      const key = propertyArray.map(k => o[k]).join('|');
       if (!seen[key]) {
         seen[key] = true;
         return true;
       }
     }).map((proj) => {
-      let obj = {};
+      const obj = {};
       propertyArray.forEach(element => {
         obj[element] = proj[element];
       });
@@ -219,9 +216,9 @@ export class ProjectFilterComponent implements OnInit {
       this.selectedVal[filterType] = [];
     }
     if (!this.selectedVal[filterType] || !this.selectedVal[filterType].filter(f => f.code === filterValue).length) {
-      let obj = {
-        'name': filterValue,
-        'code': filterValue
+      const obj = {
+        name: filterValue,
+        code: filterValue
       };
       this.selectedVal[filterType].push(obj);
     } else {
@@ -260,9 +257,9 @@ export class ProjectFilterComponent implements OnInit {
 
       // refine selectedVal as per the filtered data
       this.hierarchyArray.forEach((level) => {
-        let levelData = this.hierarchyData[level].map((m) => m.code);
+        const levelData = this.hierarchyData[level].map((m) => m.code);
         if (this.selectedVal[level] && this.selectedVal[level].length) {
-          let selectedLevelData = this.selectedVal[level].map((m) => m.code);
+          const selectedLevelData = this.selectedVal[level].map((m) => m.code);
           selectedLevelData.forEach(element => {
             if (levelData.indexOf(element) === -1) {
               this.selectedVal[level] = this.selectedVal[level].filter((f) => f.code !== element);
@@ -280,11 +277,11 @@ export class ProjectFilterComponent implements OnInit {
   hierarchyMatch(project) {
     let result = true;
 
-    let hierarchy = project.hierarchy.reduce(function (a, b) {
+    const hierarchy = project.hierarchy.reduce(function(a, b) {
       a[b.hierarchyLevel.hierarchyLevelId] = b.value;
       return a;
     }, {});
-    let selectedVal = {};
+    const selectedVal = {};
     Object.keys(this.selectedVal).forEach((key) => {
       selectedVal[key] = this.selectedVal[key].map(i => i.code).flat();
     });
@@ -301,10 +298,10 @@ export class ProjectFilterComponent implements OnInit {
   }
 
   sortFilters() {
-    let sortedFilter = {};
+    const sortedFilter = {};
     this.hierarchyArray.forEach((filterType) => {
       if (this.selectedVal[filterType]) {
-        sortedFilter[filterType] = this.selectedVal[filterType]
+        sortedFilter[filterType] = this.selectedVal[filterType];
       }
     });
     this.selectedVal = sortedFilter;
@@ -323,30 +320,26 @@ export class ProjectFilterComponent implements OnInit {
   }
 
   projectSelected() {
-    let obj: any = {};
+    const obj: any = {};
     if (!this.selectedValProjects || !this.selectedValProjects.length) {
       this.hierarchyArray.forEach((hierarchy) => {
         if (this.selectedVal[hierarchy] && this.selectedVal[hierarchy].length) {
           obj['accessType'] = hierarchy;
           obj['value'] = [];
-          let selectedHierarchyArr = this.selectedVal[hierarchy].map((item) => {
-            return {
+          const selectedHierarchyArr = this.selectedVal[hierarchy].map((item) => ({
               itemId: item.name,
               itemName: item.name
-            }
-          });
+            }));
           obj['value'] = [...selectedHierarchyArr];
         }
       });
 
     } else {
       obj['accessType'] = 'project';
-      obj['value'] = this.selectedValProjects.map((item) => {
-        return {
+      obj['value'] = this.selectedValProjects.map((item) => ({
           itemId: item.id,
           itemName: item.projectName
-        }
-      });
+        }));
     }
     obj['hierarchyArr'] = this.hierarchyArray;
     obj['valueRemoved'] = this.valueRemoved;

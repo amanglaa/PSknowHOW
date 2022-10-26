@@ -45,11 +45,11 @@ export class NavComponent implements OnInit {
   notificationPlaceHolder: NotificationDTO[] = [];
   showNotifications = <boolean>true;
   worker: any;
-  showHelp: boolean = false;
-  isGuest: boolean = false;
+  showHelp = false;
+  isGuest = false;
   kpiConfigData: Object = {};
   kpiListData: any = {};
-  showNotificationPanel: boolean = false;
+  showNotificationPanel = false;
   changedBoardName: any;
   displayEditModal: boolean;
   selectedType: string;
@@ -124,7 +124,7 @@ export class NavComponent implements OnInit {
     if (authoritiesArr && authoritiesArr.indexOf('ROLE_SUPERADMIN') != -1) {
       this.showHelp = true;
     } else {
-      let projectsAccess = JSON.parse(localStorage.getItem('projectsAccess'));
+      const projectsAccess = JSON.parse(localStorage.getItem('projectsAccess'));
       this.showHelp =
         projectsAccess &&
         typeof projectsAccess != 'undefined' &&
@@ -136,7 +136,7 @@ export class NavComponent implements OnInit {
 
     document.addEventListener(
       'click',
-      function (e) {
+      function(e) {
         const profileChkBox = document.getElementById(
           'profile2',
         ) as HTMLInputElement;
@@ -244,8 +244,7 @@ export class NavComponent implements OnInit {
         default:
           console.log('default case');
       }
-    }
-    else {
+    } else {
       this.router.navigate(['/dashboard/Config/Profile/RequestStatus']);
     }
   }
@@ -287,18 +286,18 @@ export class NavComponent implements OnInit {
             for (let i = 0; i < this.kpiListData[this.selectedType]?.length; i++) {
               this.boardNameArr.push(
                 {
-                  'boardName': this.kpiListData[this.selectedType][i].boardName,
-                  'link': this.kpiListData[this.selectedType][i].boardName.toLowerCase().split(' ').join('-') + '/' + this.kpiListData[this.selectedType][i].boardId,
-                  'boardId': this.kpiListData[this.selectedType][i].boardId
+                  boardName: this.kpiListData[this.selectedType][i].boardName,
+                  link: this.kpiListData[this.selectedType][i].boardName.toLowerCase().split(' ').join('-') + '/' + this.kpiListData[this.selectedType][i].boardId,
+                  boardId: this.kpiListData[this.selectedType][i].boardId
                 });
             }
           }
 
-          for (let i = 0; i < this.kpiListData["others"]?.length; i++) {
+          for (let i = 0; i < this.kpiListData['others']?.length; i++) {
             this.boardNameArr.push(
               {
-                'boardName': this.kpiListData["others"][i].boardName,
-                'link': this.kpiListData["others"][i].boardName.toLowerCase() + '/' + this.kpiListData[this.selectedType][i].boardId
+                boardName: this.kpiListData['others'][i].boardName,
+                link: this.kpiListData['others'][i].boardName.toLowerCase() + '/' + this.kpiListData[this.selectedType][i].boardId
               });
           }
           this.service.changedMainDashboardValueSub.next(

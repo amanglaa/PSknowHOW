@@ -54,7 +54,7 @@ export class SharedService implements OnInit {
   public suggestionsData: any = [];
   private passServerRole= new BehaviorSubject<boolean>(false);
   public activateKanban;
-  public selectedTypeObs = new BehaviorSubject("scrum");
+  public selectedTypeObs = new BehaviorSubject('scrum');
   public boardId = 1;
 
   // make filterdata and masterdata persistent across dashboards
@@ -77,7 +77,7 @@ export class SharedService implements OnInit {
   showTableViewObs = this.showTableView.asObservable();
   setNoData = new Subject<boolean>();
   clickedItem = new Subject<any>();
-  public xLabelValue:any;
+  public xLabelValue: any;
   constructor() {
     this.passDataToDashboard = new EventEmitter();
     this.onTabRefresh = new EventEmitter();

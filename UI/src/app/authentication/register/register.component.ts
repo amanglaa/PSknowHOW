@@ -32,7 +32,7 @@ export class RegisterComponent implements OnInit {
     loading = false;
     submitted = false;
     error = '';
-    success: string = '';
+    success = '';
     constructor(
         private formBuilder: UntypedFormBuilder,
         private router: Router,
@@ -59,7 +59,9 @@ export class RegisterComponent implements OnInit {
     }
 
     // convenience getter for easy access to form fields
-    get f() { return this.registorForm.controls; }
+    get f() {
+ return this.registorForm.controls;
+}
 
     onSubmit() {
         this.submitted = true;
@@ -80,12 +82,11 @@ export class RegisterComponent implements OnInit {
                     this.loading = false;
                     if(data.success) {
                         // After successfully registration redirect form to dashboard router(Executive page)
-                        
+
                         this.success = data.message;
                         localStorage.setItem('SpeedyPassword', this.aesEncryption.convertText(this.f.password.value, 'encrypt'));
                         this.router.navigate(['./dashboard/']);
-                    }
-                    else {
+                    } else {
                         this.error = data.message;
                     }
                 },

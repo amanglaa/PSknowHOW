@@ -38,7 +38,7 @@ export class DashboardComponent implements OnInit, AfterContentInit {
   headerFixed = <boolean>false;
   scrollOffset = <number>150;
   constructor(public cdRef: ChangeDetectorRef, public router: Router, private service: SharedService, private getAuth: GetAuthService, private httpService: HttpService, private renderer: Renderer2) {
-    this.renderer.listen('document', 'click',(e:Event)=>{
+    this.renderer.listen('document', 'click',(e: Event)=>{
       // setting document click event data to identify outside click for show/hide kpi filter
       this.service.setClickedItem(e?.target);
   });

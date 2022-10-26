@@ -11,7 +11,7 @@ import { UntypedFormGroup, Validators, UntypedFormControl } from '@angular/forms
 export class AutoApprovalComponent implements OnInit {
   rolesData: Array<object> = [];
   autoApprovalForm: UntypedFormGroup;
-  autoApprovedId: string = '';
+  autoApprovedId = '';
   constructor(private httpService: HttpService, private messageService: MessageService) { }
 
   ngOnInit(): void {
@@ -52,9 +52,9 @@ export class AutoApprovalComponent implements OnInit {
     this.httpService.getAutoApprovedRoleList().subscribe((response) => {
       if (response && response['success']) {
         this.autoApprovedId = response.data[0].id;
-        let selectedValues = response.data[0];
+        const selectedValues = response.data[0];
         this.autoApprovalForm.controls['enableAutoApprove'].setValue(JSON.parse(selectedValues['enableAutoApprove']));
-        let selectedRolesName = selectedValues['roles'].map(({ roleName }) => roleName);
+        const selectedRolesName = selectedValues['roles'].map(({ roleName }) => roleName);
         this.autoApprovalForm.controls['roles'].setValue(selectedRolesName);
       }
     }, errorResponse => {
@@ -68,8 +68,8 @@ export class AutoApprovalComponent implements OnInit {
   }
 
   onSubmit() {
-    let submitData = {
-      'roles': []
+    const submitData = {
+      roles: []
     };
     submitData['enableAutoApprove'] = this.autoApprovalFormValue['enableAutoApprove'].value;
     if (submitData['enableAutoApprove']) {
@@ -100,7 +100,7 @@ export class AutoApprovalComponent implements OnInit {
         severity: 'error',
         summary: msg
       });
-    })
+    });
   }
 
   shouldBeDisabled(){

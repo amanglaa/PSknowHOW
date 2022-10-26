@@ -65,7 +65,9 @@ export class UserMgmtComponent implements OnInit {
   }
 
   // convenience getter for easy access to form fields
-  get f() { return this.changePasswordForm.controls; }
+  get f() {
+ return this.changePasswordForm.controls;
+}
 
   onSubmit() {
     this.submitted = true;

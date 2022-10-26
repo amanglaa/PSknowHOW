@@ -34,9 +34,7 @@ export class OverlappedProgressbarComponent implements OnChanges {
     constructor(private viewContainerRef: ViewContainerRef) { }
 
     ngOnChanges(changes: SimpleChanges) {
-        this.maxPercent = this.value.reduce((maxVal, item) => {
-            return Math.max(maxVal.value.replace('%', ''), item.value.replace('%', ''));
-        });
+        this.maxPercent = this.value.reduce((maxVal, item) => Math.max(maxVal.value.replace('%', ''), item.value.replace('%', '')));
         // only run when property "data" changed
         if (changes['value']) {
             this.elem = this.viewContainerRef.element.nativeElement;
@@ -139,7 +137,7 @@ export class OverlappedProgressbarComponent implements OnChanges {
                     .attr('x', 0);
                 const updatedValue = data.data + ': ' + data.count + ' (' + data.value + ')';
 
-                progress.on('mouseover', function (d) {
+                progress.on('mouseover', function(d) {
                     tooltip.select('.label').html(updatedValue);
                     tooltip.style('display', 'block');
                     tooltip.style('opacity', 1);
@@ -147,18 +145,18 @@ export class OverlappedProgressbarComponent implements OnChanges {
 
                 });
 
-                progress.on('mousemove', function (event,d) {
+                progress.on('mousemove', function(event,d) {
                     tooltip.style('top', (event.layerY + 10) + 'px')
                         .style('left', (event.layerX - 25) + 'px');
                 });
 
-                progress.on('mouseout', function () {
+                progress.on('mouseout', function() {
                     tooltip.style('display', 'none');
                     tooltip.style('opacity', 0);
                     d3.select(this).style('opacity', 1);
                 });
 
-                progress.on('mouseenter', function (d) {
+                progress.on('mouseenter', function(d) {
                     d3.select(this)
                         .attr('stroke', 'white')
                         .transition()

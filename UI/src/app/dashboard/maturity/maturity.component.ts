@@ -104,7 +104,7 @@ export class MaturityComponent implements OnInit, OnDestroy {
             this.filterData = $event.filterData;
             this.filterApplyData = $event.filterApplyData;
             this.loaderMaturity = true;
-            let kpiIdsForCurrentBoard = this.service.getMasterData()['kpiList'].filter(kpi => kpi.calculateMaturity).map(kpi => kpi.kpiId);
+            const kpiIdsForCurrentBoard = this.service.getMasterData()['kpiList'].filter(kpi => kpi.calculateMaturity).map(kpi => kpi.kpiId);
             // this.drawAreaChart(null, null);
             // this.chart(null);
             this.groupJenkinsKpi(kpiIdsForCurrentBoard);
@@ -226,7 +226,7 @@ export class MaturityComponent implements OnInit, OnDestroy {
                         this.maturityValue[this.jenkinsKpiData[obj].kpiId] = this.jenkinsKpiData[obj];
                     }
                     // this.loaderMaturity = false;
-                    this.jenkinsKpiData = newObject
+                    this.jenkinsKpiData = newObject;
                     // if (this.jenkinsKpiData && this.jenkinsKpiData.kpi70 && this.jenkinsKpiData.kpi42) {
                     //     this.drawAreaChart(this.jenkinsKpiData.kpi70.trendValueList, this.jenkinsKpiData.kpi42.trendValueList);
                     // } else {
@@ -321,76 +321,76 @@ export class MaturityComponent implements OnInit, OnDestroy {
     drawAreaChart(totalDefectCount, sprintVelocity) {
         d3.select('svg').remove();
         d3.select('.tooltip').remove();
-        let self = this;
+        const self = this;
 
         const startRotation = this.loaderMaturity;
         let root;
         if (startRotation) {
 
             root = {
-                'textLines': ['..'],
-                'children': [{
-                    'textLines': ['..'],
-                    'children': [{
-                        'textLines': ['..'],
-                        'maturity': 0
+                textLines: ['..'],
+                children: [{
+                    textLines: ['..'],
+                    children: [{
+                        textLines: ['..'],
+                        maturity: 0
                     }, {
-                        'textLines': ['..'],
-                        'maturity': 0
+                        textLines: ['..'],
+                        maturity: 0
                     }, {
-                        'textLines': ['..'],
-                        'maturity': 0
+                        textLines: ['..'],
+                        maturity: 0
                     }, {
-                        'textLines': ['..'],
-                        'maturity': 0
+                        textLines: ['..'],
+                        maturity: 0
                     }, {
-                        'textLines': ['..'],
-                        'maturity': 0
+                        textLines: ['..'],
+                        maturity: 0
                     }, {
-                        'textLines': ['..'],
-                        'maturity': 0
+                        textLines: ['..'],
+                        maturity: 0
                     }, {
-                        'textLines': ['..'],
-                        'maturity': 0
+                        textLines: ['..'],
+                        maturity: 0
                     }, {
-                        'textLines': ['..'],
-                        'maturity': 0
+                        textLines: ['..'],
+                        maturity: 0
                     }, {
-                        'textLines': ['..'],
-                        'maturity': 0
+                        textLines: ['..'],
+                        maturity: 0
                     }, {
-                        'textLines': ['..'],
-                        'maturity': 0
+                        textLines: ['..'],
+                        maturity: 0
                     }, {
-                        'textLines': ['..'],
-                        'maturity': 0
+                        textLines: ['..'],
+                        maturity: 0
                     }]
                 }, {
-                    'textLines': ['..'],
-                    'children': [{
-                        'textLines': ['..'],
-                        'maturity': 0
+                    textLines: ['..'],
+                    children: [{
+                        textLines: ['..'],
+                        maturity: 0
                     }]
                 }, {
-                    'textLines': ['..'],
-                    'children': [{
-                        'textLines': ['..'],
-                        'maturity': 0
+                    textLines: ['..'],
+                    children: [{
+                        textLines: ['..'],
+                        maturity: 0
                     }, {
-                        'textLines': ['..'],
-                        'maturity': 0
+                        textLines: ['..'],
+                        maturity: 0
                     }, {
-                        'textLines': ['..'],
-                        'maturity': 0
+                        textLines: ['..'],
+                        maturity: 0
                     }, {
-                        'textLines': ['..'],
-                        'maturity': 0
+                        textLines: ['..'],
+                        maturity: 0
                     }, {
-                        'textLines': ['..'],
-                        'maturity': 0
+                        textLines: ['..'],
+                        maturity: 0
                     }, {
-                        'textLines': ['..'],
-                        'maturity': 0
+                        textLines: ['..'],
+                        maturity: 0
                     }]
                 }]
             };
@@ -398,83 +398,83 @@ export class MaturityComponent implements OnInit, OnDestroy {
             // on loading show data;
 
             root = {
-                'textLines': ['KPI', 'Maturity Wheel'],
-                'children': [{
-                    'textLines': ['ABC'],
-                    'children': [{
-                        'textLines': ['Mean Time', 'To Merge'],
-                        'maturity': getMaturityValueForChart('kpi84'),
-                        'maturityRange': undefinedCheck(this.maturityValue.kpi84) ? 'undefined' : this.maturityValue.kpi84.maturityRange
+                textLines: ['KPI', 'Maturity Wheel'],
+                children: [{
+                    textLines: ['ABC'],
+                    children: [{
+                        textLines: ['Mean Time', 'To Merge'],
+                        maturity: getMaturityValueForChart('kpi84'),
+                        maturityRange: undefinedCheck(this.maturityValue.kpi84) ? 'undefined' : this.maturityValue.kpi84.maturityRange
                     },
                     {
-                        "textLines": ["Number of", "Check Ins  Merge", " Requests"],
-                        "maturity": getMaturityValueForChart('kpi11'),
-                        "maturityRange": undefinedCheck(this.maturityValue.kpi11) ? 'undefined' : this.maturityValue.kpi11.maturityRange
+                        textLines: ['Number of', 'Check Ins  Merge', ' Requests'],
+                        maturity: getMaturityValueForChart('kpi11'),
+                        maturityRange: undefinedCheck(this.maturityValue.kpi11) ? 'undefined' : this.maturityValue.kpi11.maturityRange
                     },
                     {
-                        'textLines': ['Code Build', 'Time'],
-                        'maturity': getMaturityValueForChart('kpi8'),
-                        'maturityRange': undefinedCheck(this.maturityValue.kpi8) ? 'undefined' : this.maturityValue.kpi8.maturityRange
+                        textLines: ['Code Build', 'Time'],
+                        maturity: getMaturityValueForChart('kpi8'),
+                        maturityRange: undefinedCheck(this.maturityValue.kpi8) ? 'undefined' : this.maturityValue.kpi8.maturityRange
                     }, {
-                        'textLines': ['Sonar', 'Tech Debt'],
-                        'maturity': getMaturityValueForChart('kpi27'),
-                        'maturityRange': undefinedCheck(this.maturityValue.kpi27) ? 'undefined' : this.maturityValue.kpi27.maturityRange
+                        textLines: ['Sonar', 'Tech Debt'],
+                        maturity: getMaturityValueForChart('kpi27'),
+                        maturityRange: undefinedCheck(this.maturityValue.kpi27) ? 'undefined' : this.maturityValue.kpi27.maturityRange
                     }, {
-                        'textLines': ['First Time', 'Pass Rate'],
-                        'maturity': getMaturityValueForChart('kpi82'),
-                        'maturityRange': undefinedCheck(this.maturityValue.kpi82) ? 'undefined' : this.maturityValue.kpi82.maturityRange
+                        textLines: ['First Time', 'Pass Rate'],
+                        maturity: getMaturityValueForChart('kpi82'),
+                        maturityRange: undefinedCheck(this.maturityValue.kpi82) ? 'undefined' : this.maturityValue.kpi82.maturityRange
                     }, {
-                        'textLines': ['Intake', 'to', 'DOR'],
-                        'maturity': getMaturityValue(undefinedCheck(this.maturityValue.kpi3) || undefinedCheck(this.maturityValue.kpi3.trendValueList) || undefinedCheck(this.maturityValue.kpi3.trendValueList[1]) ? -1 : this.maturityValue.kpi3.trendValueList[1].value[0].maturity),
-                        'maturityRange': undefinedCheck(this.maturityValue.kpi3) || undefinedCheck(this.maturityValue.kpi3.maturityRange) ? 'undefined' : this.maturityValue.kpi3.maturityRange.slice(5, 11)
+                        textLines: ['Intake', 'to', 'DOR'],
+                        maturity: getMaturityValue(undefinedCheck(this.maturityValue.kpi3) || undefinedCheck(this.maturityValue.kpi3.trendValueList) || undefinedCheck(this.maturityValue.kpi3.trendValueList[1]) ? -1 : this.maturityValue.kpi3.trendValueList[1].value[0].maturity),
+                        maturityRange: undefinedCheck(this.maturityValue.kpi3) || undefinedCheck(this.maturityValue.kpi3.maturityRange) ? 'undefined' : this.maturityValue.kpi3.maturityRange.slice(5, 11)
                     }, {
-                        'textLines': ['DoR', 'to', 'DoD'],
-                        'maturity': getMaturityValue(undefinedCheck(this.maturityValue.kpi3) || undefinedCheck(this.maturityValue.kpi3.trendValueList) || undefinedCheck(this.maturityValue.kpi3.trendValueList[2]) ? -1 : this.maturityValue.kpi3.trendValueList[2].value[0].maturity),
-                        'maturityRange': undefinedCheck(this.maturityValue.kpi3) || undefinedCheck(this.maturityValue.kpi3.maturityRange) ? 'undefined' : this.maturityValue.kpi3.maturityRange.slice(10, 15)
+                        textLines: ['DoR', 'to', 'DoD'],
+                        maturity: getMaturityValue(undefinedCheck(this.maturityValue.kpi3) || undefinedCheck(this.maturityValue.kpi3.trendValueList) || undefinedCheck(this.maturityValue.kpi3.trendValueList[2]) ? -1 : this.maturityValue.kpi3.trendValueList[2].value[0].maturity),
+                        maturityRange: undefinedCheck(this.maturityValue.kpi3) || undefinedCheck(this.maturityValue.kpi3.maturityRange) ? 'undefined' : this.maturityValue.kpi3.maturityRange.slice(10, 15)
                     }, {
-                        'textLines': ['DoD', 'to', 'Live'],
-                        'maturity': getMaturityValue(undefinedCheck(this.maturityValue.kpi3) || undefinedCheck(this.maturityValue.kpi3.trendValueList) || undefinedCheck(this.maturityValue.kpi3.trendValueList[3]) ? -1 : this.maturityValue.kpi3.trendValueList[3].value[0].maturity),
-                        'maturityRange': undefinedCheck(this.maturityValue.kpi3) || undefinedCheck(this.maturityValue.kpi3.maturityRange) ? 'undefined' : this.maturityValue.kpi3.maturityRange.slice(15, 20)
+                        textLines: ['DoD', 'to', 'Live'],
+                        maturity: getMaturityValue(undefinedCheck(this.maturityValue.kpi3) || undefinedCheck(this.maturityValue.kpi3.trendValueList) || undefinedCheck(this.maturityValue.kpi3.trendValueList[3]) ? -1 : this.maturityValue.kpi3.trendValueList[3].value[0].maturity),
+                        maturityRange: undefinedCheck(this.maturityValue.kpi3) || undefinedCheck(this.maturityValue.kpi3.maturityRange) ? 'undefined' : this.maturityValue.kpi3.maturityRange.slice(15, 20)
                     },
                     {
-                        'textLines': ['Average', 'Resolution', 'Time'],
-                        'maturity': getMaturityValueForChart('kpi83'),
-                        'maturityRange': undefinedCheck(this.maturityValue.kpi83) ? 'undefined' : this.maturityValue.kpi83.maturityRange
+                        textLines: ['Average', 'Resolution', 'Time'],
+                        maturity: getMaturityValueForChart('kpi83'),
+                        maturityRange: undefinedCheck(this.maturityValue.kpi83) ? 'undefined' : this.maturityValue.kpi83.maturityRange
                     }]
                 }, {
-                    'textLines': ['DEF'],
-                    'children': [{
-                        'textLines': ['Defect', 'Injection', 'Rate'],
-                        'maturity': getMaturityValueForChart('kpi14'),
-                        'maturityRange': undefinedCheck(this.maturityValue.kpi14) ? 'undefined' : this.maturityValue.kpi14.maturityRange
+                    textLines: ['DEF'],
+                    children: [{
+                        textLines: ['Defect', 'Injection', 'Rate'],
+                        maturity: getMaturityValueForChart('kpi14'),
+                        maturityRange: undefinedCheck(this.maturityValue.kpi14) ? 'undefined' : this.maturityValue.kpi14.maturityRange
                     }, {
-                        'textLines': ['Defect', 'Seepage', 'Rate'],
-                        'maturity': getMaturityValueForChart('kpi35'),
-                        'maturityRange': undefinedCheck(this.maturityValue.kpi35) ? 'undefined' : this.maturityValue.kpi35.maturityRange
+                        textLines: ['Defect', 'Seepage', 'Rate'],
+                        maturity: getMaturityValueForChart('kpi35'),
+                        maturityRange: undefinedCheck(this.maturityValue.kpi35) ? 'undefined' : this.maturityValue.kpi35.maturityRange
                     }, {
-                        'textLines': ['Defect', 'Removal', 'Efficiency'],
-                        'maturity': getMaturityValueForChart('kpi34'),
-                        'maturityRange': undefinedCheck(this.maturityValue.kpi34) ? 'undefined' : this.maturityValue.kpi34.maturityRange
+                        textLines: ['Defect', 'Removal', 'Efficiency'],
+                        maturity: getMaturityValueForChart('kpi34'),
+                        maturityRange: undefinedCheck(this.maturityValue.kpi34) ? 'undefined' : this.maturityValue.kpi34.maturityRange
                     }, {
-                        'textLines': ['Defect', 'Rejection', 'Rate'],
-                        'maturity': getMaturityValueForChart('kpi37'),
-                        'maturityRange': undefinedCheck(this.maturityValue.kpi37) ? 'undefined' : this.maturityValue.kpi37.maturityRange
+                        textLines: ['Defect', 'Rejection', 'Rate'],
+                        maturity: getMaturityValueForChart('kpi37'),
+                        maturityRange: undefinedCheck(this.maturityValue.kpi37) ? 'undefined' : this.maturityValue.kpi37.maturityRange
                     }, {
-                        'textLines': ['Test Execution', 'and', 'pass percentage'],
-                        'maturity': getMaturityValueForChart('kpi70'),
-                        'maturityRange': undefinedCheck(this.maturityValue.kpi70) ? 'undefined' : this.maturityValue.kpi70.maturityRange
+                        textLines: ['Test Execution', 'and', 'pass percentage'],
+                        maturity: getMaturityValueForChart('kpi70'),
+                        maturityRange: undefinedCheck(this.maturityValue.kpi70) ? 'undefined' : this.maturityValue.kpi70.maturityRange
                     }, {
-                        'textLines': ['Unit', 'Test', 'Coverage'],
-                        'maturity': getMaturityValueForChart('kpi17'),
-                        'maturityRange': undefinedCheck(this.maturityValue.kpi17) ? 'undefined' : this.maturityValue.kpi17.maturityRange
+                        textLines: ['Unit', 'Test', 'Coverage'],
+                        maturity: getMaturityValueForChart('kpi17'),
+                        maturityRange: undefinedCheck(this.maturityValue.kpi17) ? 'undefined' : this.maturityValue.kpi17.maturityRange
                     }, {
-                        'textLines': ['Regression', 'Automation', 'Coverage'],
-                        'maturity': getMaturityValueForChart('kpi42'),
-                        'maturityRange': undefinedCheck(this.maturityValue.kpi42) ? 'undefined' : this.maturityValue.kpi42.maturityRange
+                        textLines: ['Regression', 'Automation', 'Coverage'],
+                        maturity: getMaturityValueForChart('kpi42'),
+                        maturityRange: undefinedCheck(this.maturityValue.kpi42) ? 'undefined' : this.maturityValue.kpi42.maturityRange
                     }, {
-                        'textLines': ['In-sprint', 'Automation', 'Coverage'],
-                        'maturity': getMaturityValueForChart('kpi16'),
-                        'maturityRange': undefinedCheck(this.maturityValue.kpi16) ? 'undefined' : this.maturityValue.kpi16.maturityRange
+                        textLines: ['In-sprint', 'Automation', 'Coverage'],
+                        maturity: getMaturityValueForChart('kpi16'),
+                        maturityRange: undefinedCheck(this.maturityValue.kpi16) ? 'undefined' : this.maturityValue.kpi16.maturityRange
                     }]
                 }]
             };
@@ -521,25 +521,25 @@ export class MaturityComponent implements OnInit, OnDestroy {
             .style('display', 'inline-block');
 
         function sunburstBarChart() {
-            const edge = 720,
-                maxBarValue = 5,
-                rotation = -95 * Math.PI / 180;
+            const edge = 720;
+                const maxBarValue = 5;
+                const rotation = -95 * Math.PI / 180;
 
-            const radius = edge / 2,
-                effectiveEdge = edge * 0.9;
+            const radius = edge / 2;
+                const effectiveEdge = edge * 0.9;
                 // scale = d3.scaleLinear().domain([0, maxBarValue + 5]);
 
-            const chart = function (selection) {
-                selection.each(function (data) {
+            const chart = function(selection) {
+                selection.each(function(data) {
 
                     // Data strucure
-                    var partition = d3.partition()
+                    const partition = d3.partition()
                         .size([2 * Math.PI, radius]);
 
                     // Find data root
-                    var root = d3.hierarchy(getRoot2(JSON.parse(JSON.stringify(data))))
-                        .sum(function (d) {
-                            return d.size
+                    const root = d3.hierarchy(getRoot2(JSON.parse(JSON.stringify(data))))
+                        .sum(function(d) {
+                            return d.size;
                         });
 
 
@@ -565,12 +565,16 @@ export class MaturityComponent implements OnInit, OnDestroy {
                         window.clearInterval(intervalId);
                     }
 
-                    var y = d3.scaleLinear()
+                    const y = d3.scaleLinear()
                         .range([-(maxBarValue + 2), maxBarValue + 2]);
                     const arc = d3.arc()
-                        .startAngle(function (d) { return d.x0 + rotation })
-                        .endAngle(function (d) { return d.x1 + rotation })
-                        .innerRadius(function (d) {
+                        .startAngle(function(d) {
+ return d.x0 + rotation;
+})
+                        .endAngle(function(d) {
+ return d.x1 + rotation;
+})
+                        .innerRadius(function(d) {
                             if (d.depth && d.depth > 2 && d.depth < maxBarValue + 3) {
                                 d.yi = Math.max(0,radius - y(Math.sqrt(d.y1)));
                             } else {
@@ -578,7 +582,7 @@ export class MaturityComponent implements OnInit, OnDestroy {
                             }
                             return d.yi;
                         })
-                        .outerRadius(function (d) {
+                        .outerRadius(function(d) {
                             if (d.depth && d.depth > 2 && d.depth < maxBarValue + 3) {
                                 d.yo = Math.max(0,radius - y(Math.sqrt(d.y0)));
                             } else {
@@ -590,12 +594,14 @@ export class MaturityComponent implements OnInit, OnDestroy {
                     // Put it all together
                     svg.selectAll('path')
                         .data(root.descendants())
-                        .enter().append('g').attr("class", "node")
+                        .enter().append('g').attr('class', 'node')
                         .append('path')
-                        .attr("display", function (d) { return d.depth ? null : "none"; })
-                        .attr("d", arc)
+                        .attr('display', function(d) {
+ return d.depth ? null : 'none';
+})
+                        .attr('d', arc)
                         .style('stroke', '#fff')
-                        .on('mouseover', function (event,d) {
+                        .on('mouseover', function(event,d) {
                             if(d.depth > 1) {
                             d3.select(this).classed('highlight', true);
                             div.transition()
@@ -604,13 +610,13 @@ export class MaturityComponent implements OnInit, OnDestroy {
                             div.html(d.data.maturityLevelsToolTip);
                             }
                         })
-                        .on('mouseout', function (event,d) {
+                        .on('mouseout', function(event,d) {
                             d3.select(this).classed('highlight', false);
                             div.transition()
                                 .duration(500)
                                 .style('opacity', 1);
                         })
-                        .attr('class', function (d) {
+                        .attr('class', function(d) {
                             let styleClass = 'nodesBorder';
                             if (d.depth && d.depth > 2 && d.depth < maxBarValue + 3) {
                                 styleClass += ' group-' + d.data.group + (d.data.on ? '-on' : '-off');
@@ -627,15 +633,19 @@ export class MaturityComponent implements OnInit, OnDestroy {
                         .attr('fill-rule', 'evenodd');
 
                     const labelArc = d3.arc()
-                        .startAngle(function (d) { return d.x0 + rotation; })
-                        .endAngle(function (d) { return d.x1 + rotation; })
-                        .innerRadius(function (d, i) {
+                        .startAngle(function(d) {
+ return d.x0 + rotation;
+})
+                        .endAngle(function(d) {
+ return d.x1 + rotation;
+})
+                        .innerRadius(function(d, i) {
                             if (d.data && d.data.textLines) {
                                 return d3.scaleLinear().domain([-1, d.data.textLines.length]).range([d.yi, d.yo])(i);
                             }
                             return radius + 80 - d.y1;
                         })
-                        .outerRadius(function (d, i) {
+                        .outerRadius(function(d, i) {
                             if (d.data && d.data.textLines) {
                                 return d3.scaleLinear().domain([-1, d.data.textLines.length]).range([d.yi, d.yo])(i);
                             }
@@ -643,48 +653,60 @@ export class MaturityComponent implements OnInit, OnDestroy {
                         });
 
                     // Add labels to the last arc
-                    svg.selectAll(".node").filter(function (d) { return d.depth === 2; })
+                    svg.selectAll('.node').filter(function(d) {
+ return d.depth === 2;
+})
                         .selectAll('.labelPath')
-                        .data(function (d, i) { d.i = i; return Array(d.data.textLines.length).fill(d); })
+                        .data(function(d, i) {
+ d.i = i; return Array(d.data.textLines.length).fill(d);
+})
                         .enter()
                         .append('path')
                         .attr('fill', 'none')
                         .attr('stroke', 'none')
-                        .attr('id', function (d, i) {
+                        .attr('id', function(d, i) {
                             return 'arc-label' + d.i + '-' + i;
                         })
                         .attr('d', labelArc);
 
-                    svg.selectAll(".node").filter(function (d) { return d.depth === 2; })
+                    svg.selectAll('.node').filter(function(d) {
+ return d.depth === 2;
+})
                         .selectAll('.labelText')
-                        .data(function (d, i) { d.i = i; return Array(d.data.textLines.length).fill(d); })
+                        .data(function(d, i) {
+ d.i = i; return Array(d.data.textLines.length).fill(d);
+})
                         .enter()
                         .append('text')
                         .attr('text-anchor', 'middle')
                         .append('textPath')
                         .attr('class', 'labelText')
                         .attr('startOffset', '25%')
-                        .attr('xlink:href', function (d, i) {
+                        .attr('xlink:href', function(d, i) {
                             return '#arc-label' + d.i + '-' + i;
                         })
-                        .text(function (d, i) {
+                        .text(function(d, i) {
                             return d.data.textLines[d.data.textLines.length - 1 - i];
                         });
 
 					// Center labels
                      const cg = svg.append('g');
                      const yScale = d3.scaleLinear().domain([-1, root.data.textLines.length]).range([-root.yo * 0.5, root.yo * 0.8]);
- 
+
                      cg.selectAll('.centerLabelText')
                          .data(root.data.textLines)
                          .enter()
                          .append('text')
                          .attr('x', 0)
-                         .attr('y', function (d, i) { return yScale(i) - 100*i; })
+                         .attr('y', function(d, i) {
+ return yScale(i) - 100*i;
+})
                          .attr('text-anchor', 'middle')
                          .attr('class', 'centerLabelText')
-                         .text(function (d) { return d; });
-                    
+                         .text(function(d) {
+ return d;
+});
+
                 });
             };
 
@@ -694,18 +716,18 @@ export class MaturityComponent implements OnInit, OnDestroy {
                 root2.textLines = data.textLines;
                 root2.children = [];
 
-                data.children.forEach(function (group, i) {
+                data.children.forEach(function(group, i) {
                     root2.children.push(group);
                 });
 
                 root2.children.forEach((group, groupId) => {
-                    group.children.forEach(function (kpi) {
+                    group.children.forEach(function(kpi) {
                         kpi.children = [];
                         kpi.group = groupId + 1;
                         kpi.children = appendChild2(kpi, groupId, 0);
 
                         // swap parents and children
-                        let flatData = collectNodes(JSON.parse(JSON.stringify(kpi.children)));
+                        const flatData = collectNodes(JSON.parse(JSON.stringify(kpi.children)));
                         kpi.children = reverseNodes(JSON.parse(JSON.stringify(flatData.reverse())));
                     });
                 });
@@ -714,7 +736,7 @@ export class MaturityComponent implements OnInit, OnDestroy {
             }
 
             function reverseNodes(flatData) {
-                let nodes = [];
+                const nodes = [];
                 nodes[0] = flatData.shift();
                 delete nodes[0].children;
                 delete nodes[0].size;
@@ -739,11 +761,11 @@ export class MaturityComponent implements OnInit, OnDestroy {
             }
 
             function collectNodes(rootNode) {
-                const nodes = []
+                const nodes = [];
                 function visitNode(node) {
-                    nodes.push(node)
+                    nodes.push(node);
                     if (node.children) {
-                        node.children.forEach(visitNode)
+                        node.children.forEach(visitNode);
                     }
                 }
                 visitNode(rootNode[0]);
@@ -751,7 +773,7 @@ export class MaturityComponent implements OnInit, OnDestroy {
             }
 
             function appendChild2(kpi, groupId, j) {
-                
+
                 const child = <any>{};
                 child.group = (groupId + 1);
                 child.maturity = kpi.maturity;

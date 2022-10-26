@@ -23,7 +23,7 @@ import { MessageService } from 'primeng/api';
 import { HttpService } from '../../../services/http.service';
 import { SharedService } from '../../../services/shared.service';
 import { GetAuthorizationService } from '../../../services/get-authorization.service';
-import { ChangeDetectionStrategy } from "@angular/core";
+import { ChangeDetectionStrategy } from '@angular/core';
 declare const require: any;
 
 @Component({
@@ -37,10 +37,10 @@ export class KanbanFieldMappingComponent implements OnInit {
   fieldMappingFormObj: any;
   selectedConfig: any = {};
   fieldMappingMultiSelectValues: any = [];
-  fieldMappingSubmitted: boolean = false;
-  singleSelectionDropdown: boolean = false;
+  fieldMappingSubmitted = false;
+  singleSelectionDropdown = false;
   additionalFilterIdentificationOptions: any = [];
-  displayDialog: boolean = false;
+  displayDialog = false;
   fieldMappingMetaData: any = [];
   dropdownSettingsMulti = {};
   dropdownSettingsSingle = {};
@@ -50,12 +50,12 @@ export class KanbanFieldMappingComponent implements OnInit {
   bodyScrollPosition = 0;
   estimationCriteriaTypes: any = [];
   techDebtIdentification: any = [];
-  isZephyr: boolean = false;
+  isZephyr = false;
   selectedToolConfig: any = {};
   selectedFieldMapping: any = {};
-  disableSave: boolean = false;
-  populateDropdowns: boolean = true;
-  uploadedFileName: string = '';
+  disableSave = false;
+  populateDropdowns = true;
+  uploadedFileName = '';
   testCaseIdentification: any = [];
   // additional filters
   filterHierarchy: any = [];
@@ -66,7 +66,7 @@ export class KanbanFieldMappingComponent implements OnInit {
     element: {
       dynamicDownload: null as HTMLElement
     }
-  }
+  };
 
 
   constructor(private formBuilder: UntypedFormBuilder, private router: Router, private sharedService: SharedService,
@@ -184,10 +184,10 @@ export class KanbanFieldMappingComponent implements OnInit {
     this.addAdditionalFilterOptions();
     this.selectedFieldMapping = this.sharedService.getSelectedFieldMapping();
     if (this.selectedFieldMapping) {
-      let additionalFilterMappings = this.selectedFieldMapping.additionalFilterConfig;
+      const additionalFilterMappings = this.selectedFieldMapping.additionalFilterConfig;
       this.additionalFiltersArray = [];
 
-      let additionalFilters = this.filterHierarchy.filter((filter) => filter.level > this.filterHierarchy.filter(f => f.hierarchyLevelId === 'project')[0].level);
+      const additionalFilters = this.filterHierarchy.filter((filter) => filter.level > this.filterHierarchy.filter(f => f.hierarchyLevelId === 'project')[0].level);
 
       additionalFilterMappings.forEach(element => {
 
@@ -308,19 +308,19 @@ export class KanbanFieldMappingComponent implements OnInit {
         this.fieldMappingForm.controls[this.selectedField].setValue(this.selectedValue);
       }
     } else {
-      let selectedMultiValueLabels = [];
+      const selectedMultiValueLabels = [];
       if (this.selectedMultiValue.length) {
         if (this.fieldMappingForm.controls[this.selectedField].value) {
-          for (let index in this.selectedMultiValue) {
+          for (const index in this.selectedMultiValue) {
             selectedMultiValueLabels.push(this.selectedMultiValue[index].key);
           }
-          let allMultiValueLabels = [];
-          for (let index in this.fieldMappingMultiSelectValues) {
+          const allMultiValueLabels = [];
+          for (const index in this.fieldMappingMultiSelectValues) {
             allMultiValueLabels.push(this.fieldMappingMultiSelectValues[index].key);
           }
 
           if (!selectedMultiValueLabels.includes(this.fieldMappingForm.controls[this.selectedField].value)) {
-            for (let selectedFieldIndex in this.fieldMappingForm.controls[this.selectedField].value) {
+            for (const selectedFieldIndex in this.fieldMappingForm.controls[this.selectedField].value) {
               if (!allMultiValueLabels.includes(this.fieldMappingForm.controls[this.selectedField].value[selectedFieldIndex])) {
                 selectedMultiValueLabels.push(this.fieldMappingForm.controls[this.selectedField].value[selectedFieldIndex]);
               }
@@ -401,7 +401,7 @@ export class KanbanFieldMappingComponent implements OnInit {
 
   addAdditionalFilterOptions() {
     this.additionalFilterOptions = [];
-    let additionalFilters = this.filterHierarchy.filter((filter) => filter.level > this.filterHierarchy.filter(f => f.hierarchyLevelId === 'project')[0].level);
+    const additionalFilters = this.filterHierarchy.filter((filter) => filter.level > this.filterHierarchy.filter(f => f.hierarchyLevelId === 'project')[0].level);
     additionalFilters.forEach(element => {
       this.additionalFilterOptions.push({
         name: element.hierarchyLevelName,
@@ -526,14 +526,14 @@ export class KanbanFieldMappingComponent implements OnInit {
   onUpload(event) {
     this.uploadedFileName = event.target.files[0].name;
     const fileReader = new FileReader();
-    fileReader.readAsText(event.target.files[0], "UTF-8");
+    fileReader.readAsText(event.target.files[0], 'UTF-8');
     fileReader.onload = () => {
       this.sharedService.setSelectedFieldMapping(JSON.parse(fileReader.result as string));
       this.getMappings();
-    }
+    };
     fileReader.onerror = (error) => {
       console.log(error);
-    }
+    };
   };
 
   export() {
@@ -558,12 +558,12 @@ export class KanbanFieldMappingComponent implements OnInit {
 
   handleAdditionalFilters(submitData: any): any {
     /** addiitional filters start*/
-    let additionalFilters = this.filterHierarchy.filter((filter) => filter.level > this.filterHierarchy.filter(f => f.hierarchyLevelId === 'project')[0].level);
+    const additionalFilters = this.filterHierarchy.filter((filter) => filter.level > this.filterHierarchy.filter(f => f.hierarchyLevelId === 'project')[0].level);
     // modify submitData
     submitData['additionalFilterConfig'] = [];
     additionalFilters.forEach(element => {
       if (submitData[element.hierarchyLevelId + 'Identifier'] && submitData[element.hierarchyLevelId + 'Identifier'].length) {
-        let additionalFilterObj = {};
+        const additionalFilterObj = {};
         additionalFilterObj['filterId'] = element.hierarchyLevelId;
         additionalFilterObj['identifyFrom'] = submitData[element.hierarchyLevelId + 'Identifier'];
         if (additionalFilterObj['identifyFrom'] === 'CustomField') {
@@ -583,8 +583,8 @@ export class KanbanFieldMappingComponent implements OnInit {
   }
 
   private dyanmicDownloadByHtmlTag(arg: {
-    fileName: string,
-    text: string
+    fileName: string;
+    text: string;
   }) {
     if (!this.setting.element.dynamicDownload) {
       this.setting.element.dynamicDownload = document.createElement('a');
@@ -594,7 +594,7 @@ export class KanbanFieldMappingComponent implements OnInit {
     element.setAttribute('href', `data:${fileType};charset=utf-8,${encodeURIComponent(arg.text)}`);
     element.setAttribute('download', arg.fileName);
 
-    var event = new MouseEvent("click");
+    const event = new MouseEvent('click');
     element.dispatchEvent(event);
   }
 }

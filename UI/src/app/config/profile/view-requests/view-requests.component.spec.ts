@@ -41,101 +41,101 @@ describe('ViewRequestsComponent', () => {
   const baseUrl = environment.baseUrl;
 
   const fakeRequestsData = {
-    'message': 'Found access_requests for status Pending',
-    'success': true,
-    'data': [{
-      '_id': '5da428e6e645ca28a026e729',
-      'username': 'anamital',
-      'status': 'Pending',
-      'projects': [{
-        'projectName': 'check',
-        'projectId': 'a'
+    message: 'Found access_requests for status Pending',
+    success: true,
+    data: [{
+      _id: '5da428e6e645ca28a026e729',
+      username: 'anamital',
+      status: 'Pending',
+      projects: [{
+        projectName: 'check',
+        projectId: 'a'
       }],
-      'roles': [{
-        '_id': '5da03f242afa421ae416cad7',
-        'roleName': 'ROLE_PROJECT_VIEWER'
+      roles: [{
+        _id: '5da03f242afa421ae416cad7',
+        roleName: 'ROLE_PROJECT_VIEWER'
       }]
     }, {
-      '_id': '5da46ff3e645ca33dc927b83',
-      'username': 'Rishabh',
-      'status': 'Pending',
-      'reviewComments': '',
-      'projects': [{
-        'projectName': 'Automotive | Cooper Tire & Rubber Company | 196036 | Digital AOR',
-        'projectId': 'Automotive | Cooper Tire & Rubber Company | 196036 | Digital AOR_68500_Automotive | Cooper Tire & Rubber Company | 196036 | Digital AOR'
+      _id: '5da46ff3e645ca33dc927b83',
+      username: 'Rishabh',
+      status: 'Pending',
+      reviewComments: '',
+      projects: [{
+        projectName: 'Automotive | Cooper Tire & Rubber Company | 196036 | Digital AOR',
+        projectId: 'Automotive | Cooper Tire & Rubber Company | 196036 | Digital AOR_68500_Automotive | Cooper Tire & Rubber Company | 196036 | Digital AOR'
       }],
-      'roles': [{
-        '_id': '5da46000e645ca33dc927b4a',
-        'roleName': 'ROLE_PROJECT_VIEWER'
+      roles: [{
+        _id: '5da46000e645ca33dc927b4a',
+        roleName: 'ROLE_PROJECT_VIEWER'
       }]
     }, {
-      '_id': '5da47bdde645ca33dc927ba8',
-      'username': 'Rishabh',
-      'status': 'Pending',
-      'reviewComments': '',
-      'projects': [{
-        'projectName': 'Automotive | Cooper Tire & Rubber Company | 196036 | Digital AOR',
-        'projectId': 'Automotive | Cooper Tire & Rubber Company | 196036 | Digital AOR_68500_Automotive | Cooper Tire & Rubber Company | 196036 | Digital AOR'
+      _id: '5da47bdde645ca33dc927ba8',
+      username: 'Rishabh',
+      status: 'Pending',
+      reviewComments: '',
+      projects: [{
+        projectName: 'Automotive | Cooper Tire & Rubber Company | 196036 | Digital AOR',
+        projectId: 'Automotive | Cooper Tire & Rubber Company | 196036 | Digital AOR_68500_Automotive | Cooper Tire & Rubber Company | 196036 | Digital AOR'
       }],
-      'roles': [{
-        '_id': '5da03f242afa421ae416cad7',
-        'roleName': 'ROLE_PROJECT_VIEWER'
+      roles: [{
+        _id: '5da03f242afa421ae416cad7',
+        roleName: 'ROLE_PROJECT_VIEWER'
       }]
     }, {
-      '_id': '5da47c2ae645ca33dc927bb3',
-      'username': 'Rishabh',
-      'status': 'Pending',
-      'reviewComments': '',
-      'projects': [{
-        'projectName': 'DTI',
-        'projectId': 'DTI_63102_DTI'
+      _id: '5da47c2ae645ca33dc927bb3',
+      username: 'Rishabh',
+      status: 'Pending',
+      reviewComments: '',
+      projects: [{
+        projectName: 'DTI',
+        projectId: 'DTI_63102_DTI'
       }],
-      'roles': [{
-        '_id': '5da03f242afa421ae416cad7',
-        'roleName': 'ROLE_PROJECT_VIEWER'
+      roles: [{
+        _id: '5da03f242afa421ae416cad7',
+        roleName: 'ROLE_PROJECT_VIEWER'
       }]
     }]
   };
 
   const fakeRolesData = {
-    'message': 'Found all roles',
-    'success': true,
-    'data': [{
-      'id': '6026576bb975135001bc3487',
-      'roleName': 'ROLE_PROJECT_VIEWER',
-      'roleDescription': 'read kpi data at project level',
-      'createdDate': 1613125483944,
-      'lastModifiedDate': 1613125483944,
-      'isDeleted': 'False',
-      'permissions': [{
-        'id': '6026576bae81aeece081fa7a',
-        'permissionName': 'View',
-        'operationName': 'Read',
-        'resourceName': 'resource4',
-        'resourceId': '6026576a4ed204e1a35f10bc',
-        'createdDate': 1613125482976,
-        'lastModifiedDate': 1613125482976,
-        'isDeleted': 'False'
+    message: 'Found all roles',
+    success: true,
+    data: [{
+      id: '6026576bb975135001bc3487',
+      roleName: 'ROLE_PROJECT_VIEWER',
+      roleDescription: 'read kpi data at project level',
+      createdDate: 1613125483944,
+      lastModifiedDate: 1613125483944,
+      isDeleted: 'False',
+      permissions: [{
+        id: '6026576bae81aeece081fa7a',
+        permissionName: 'View',
+        operationName: 'Read',
+        resourceName: 'resource4',
+        resourceId: '6026576a4ed204e1a35f10bc',
+        createdDate: 1613125482976,
+        lastModifiedDate: 1613125482976,
+        isDeleted: 'False'
       }]
     }, {
-      'id': '6026576bb975135001bc3488',
-      'roleName': 'ROLE_PROJECT_ADMIN',
-      'roleDescription': 'manage user-roles at project level',
-      'createdDate': 1613125483944,
-      'lastModifiedDate': 1613125483944,
-      'isDeleted': 'False',
-      'permissions': [{
-        'id': '6026576bae81aeece081fa7a',
-        'permissionName': 'View',
-        'operationName': 'Read',
-        'resourceName': 'resource4',
-        'resourceId': '6026576a4ed204e1a35f10bc',
-        'createdDate': 1613125482976,
-        'lastModifiedDate': 1613125482976,
-        'isDeleted': 'False'
+      id: '6026576bb975135001bc3488',
+      roleName: 'ROLE_PROJECT_ADMIN',
+      roleDescription: 'manage user-roles at project level',
+      createdDate: 1613125483944,
+      lastModifiedDate: 1613125483944,
+      isDeleted: 'False',
+      permissions: [{
+        id: '6026576bae81aeece081fa7a',
+        permissionName: 'View',
+        operationName: 'Read',
+        resourceName: 'resource4',
+        resourceId: '6026576a4ed204e1a35f10bc',
+        createdDate: 1613125482976,
+        lastModifiedDate: 1613125482976,
+        isDeleted: 'False'
       }]
     }]
-  }
+  };
 
   // const fakeAcceptRequestData = {
   //   'id': '5de631c02ab79c000990489e',
@@ -165,26 +165,26 @@ describe('ViewRequestsComponent', () => {
   // };
 
   const fakeAcceptRequestData = {
-    "id": "61cc34b463780d7cd623cc04",
-    "username": "RishabhQA",
-    "status": "Pending",
-    "reviewComments": "",
-    "role": "ROLE_PROJECT_ADMIN",
-    "accessNode": {
-      "accessLevel": "Project",
-      "accessItems": [
+    id: '61cc34b463780d7cd623cc04',
+    username: 'RishabhQA',
+    status: 'Pending',
+    reviewComments: '',
+    role: 'ROLE_PROJECT_ADMIN',
+    accessNode: {
+      accessLevel: 'Project',
+      accessItems: [
         {
-          "itemId": "61c9ba5200d5d4170ced9f74",
-          "itemName": "Jiraproj1"
+          itemId: '61c9ba5200d5d4170ced9f74',
+          itemName: 'Jiraproj1'
         },
         {
-          "itemId": "61c99113aeb8700e3a3ac1ed",
-          "itemName": "healproj"
+          itemId: '61c99113aeb8700e3a3ac1ed',
+          itemName: 'healproj'
         }
       ]
     },
-    "deleted": false
-  }
+    deleted: false
+  };
 
   // const fakeRequestResponse = {
   //   'message': 'modified access_request@5de631c02ab79c000990489e',
@@ -218,9 +218,9 @@ describe('ViewRequestsComponent', () => {
   // };
 
   const fakeRequestResponse = {
-    "message": "Granted",
-    "success": true
-  }
+    message: 'Granted',
+    success: true
+  };
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -269,43 +269,43 @@ describe('ViewRequestsComponent', () => {
   it('should load roles data on load', (done) => {
     localStorage.setItem('projectsAccess', JSON.stringify([
       {
-        "role": "ROLE_PROJECT_ADMIN",
-        "projects": [
+        role: 'ROLE_PROJECT_ADMIN',
+        projects: [
           {
-            "projectName": "Tools proj",
-            "projectId": "6332f0a468b5d05cf59c42a6",
-            "hierarchy": [
+            projectName: 'Tools proj',
+            projectId: '6332f0a468b5d05cf59c42a6',
+            hierarchy: [
               {
-                "hierarchyLevel": {
-                  "level": 1,
-                  "hierarchyLevelId": "corporate",
-                  "hierarchyLevelName": "Corporate Name"
+                hierarchyLevel: {
+                  level: 1,
+                  hierarchyLevelId: 'corporate',
+                  hierarchyLevelName: 'Corporate Name'
                 },
-                "value": "Org1"
+                value: 'Org1'
               },
               {
-                "hierarchyLevel": {
-                  "level": 2,
-                  "hierarchyLevelId": "business",
-                  "hierarchyLevelName": "Business Name"
+                hierarchyLevel: {
+                  level: 2,
+                  hierarchyLevelId: 'business',
+                  hierarchyLevelName: 'Business Name'
                 },
-                "value": "Org2"
+                value: 'Org2'
               },
               {
-                "hierarchyLevel": {
-                  "level": 3,
-                  "hierarchyLevelId": "account",
-                  "hierarchyLevelName": "Account Name"
+                hierarchyLevel: {
+                  level: 3,
+                  hierarchyLevelId: 'account',
+                  hierarchyLevelName: 'Account Name'
                 },
-                "value": "Level3"
+                value: 'Level3'
               },
               {
-                "hierarchyLevel": {
-                  "level": 4,
-                  "hierarchyLevelId": "subaccount",
-                  "hierarchyLevelName": "Subaccount"
+                hierarchyLevel: {
+                  level: 4,
+                  hierarchyLevelId: 'subaccount',
+                  hierarchyLevelName: 'Subaccount'
                 },
-                "value": "Level4"
+                value: 'Level4'
               }
             ]
           }
@@ -324,7 +324,7 @@ describe('ViewRequestsComponent', () => {
   });
 
   it('should accept access request', (done) => {
-    let requestId = "61cc34b463780d7cd623cc04";
+    const requestId = '61cc34b463780d7cd623cc04';
     component.approveRejectRequest(fakeAcceptRequestData, true);
     fixture.detectChanges();
     httpMock.match(baseUrl + '/api/accessrequests/' + requestId)[0].flush(fakeAcceptRequestData);

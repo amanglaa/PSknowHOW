@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ScriptStore } from './script-store';
 
-declare var document: any;
+declare let document: any;
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +21,7 @@ export class GoogleAnalyticsService {
 
 
   load(...scripts: string[]) {
-    var promises: any[] = [];
+    const promises: any[] = [];
     scripts.forEach((script) => promises.push(this.loadScript(script)));
     return Promise.all(promises);
   }
@@ -31,15 +31,14 @@ export class GoogleAnalyticsService {
       //resolve if already loaded
       if (this.scripts[name].loaded) {
         resolve({ script: name, loaded: true, status: 'Already Loaded' });
-      }
-      else {
+      } else {
         //load script
-        let script = document.createElement('script');
+        const script = document.createElement('script');
         script.type = 'text/javascript';
         script.src = this.scripts[name].src;
         if (script.readyState) {  //IE
           script.onreadystatechange = () => {
-            if (script.readyState === "loaded" || script.readyState === "complete") {
+            if (script.readyState === 'loaded' || script.readyState === 'complete') {
               script.onreadystatechange = null;
               this.scripts[name].loaded = true;
               resolve({ script: name, loaded: true, status: 'Loaded' });
@@ -58,22 +57,22 @@ export class GoogleAnalyticsService {
   }
 
   setPageLoad(data) {
-    let dataLayer = this.window && this.window.hasOwnProperty("dataLayer") ? this.window['dataLayer'] : [];
+    const dataLayer = this.window && this.window.hasOwnProperty('dataLayer') ? this.window['dataLayer'] : [];
 
     dataLayer.push({
-      'event': 'pageLoad',
-      'pageName': data.url,
-      'userRole': data.userRole,
-      'server': {
-        'instanceName': window.location.origin,
-        'version': data.version
+      event: 'pageLoad',
+      pageName: data.url,
+      userRole: data.userRole,
+      server: {
+        instanceName: window.location.origin,
+        version: data.version
       }
     });
   }
 
   setProjectList(data) {
-    let chunkSize = 25;
-    let dataLayer = this.window && typeof this.window['dataLayer'] !== undefined ? this.window['dataLayer'] : [];
+    const chunkSize = 25;
+    const dataLayer = this.window && typeof this.window['dataLayer'] !== undefined ? this.window['dataLayer'] : [];
     while (data.length) {
       dataLayer.push({
         event: 'productDetailView',

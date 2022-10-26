@@ -94,11 +94,11 @@
                   {{ showExecutionDate(processor.processorName) }}
               </td>
               <td class='custom-table-cell'>
-                <div *ngIf="showProcessorLastState(processor.processorName) != 'NA'" 
-                  class="status-container" [ngClass]="showProcessorLastState(processor.processorName) == 'Success' ? 'active' : 'inactive'">
+                <div *ngIf="showProcessorLastState(processor.processorName) !== 'NA'" 
+                  class="status-container" [ngClass]="showProcessorLastState(processor.processorName) === 'Success' ? 'active' : 'inactive'">
                   {{ showProcessorLastState(processor.processorName)}}
                 </div>
-                <span *ngIf="showProcessorLastState(processor.processorName) == 'NA'">NA</span>
+                <span *ngIf="showProcessorLastState(processor.processorName) === 'NA'">NA</span>
               </td>
               <td class='custom-table-cell p-d-flex p-align-center column-width'>
                 <button pButton pRipple label="Run Now" icon="pi pi-forward"

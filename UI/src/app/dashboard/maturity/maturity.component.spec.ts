@@ -48,7 +48,7 @@ describe('MaturityComponent', () => {
   const filterApplyDataWithNoFilter = {};
   const selectedTab = 'Maturity';
 
-  const dashConfigData = { 'message': 'Data found for the key', 'success': true, 'data': [{ 'kpiId': 'kpi999', 'kpiName': 'Total Defect Aging', 'isEnabled': true, 'kanban': false }, { 'kpiId': 'kpi998', 'kpiName': 'Regression Automation Coverage', 'isEnabled': true, 'kanban': true }, { 'kpiId': 'kpi997', 'kpiName': 'Total Ticket Aging', 'isEnabled': true, 'kanban': true }, { 'kpiId': 'kpi996', 'kpiName': 'Unit Testing', 'isEnabled': true, 'kanban': true }, { 'kpiId': 'kpi995', 'kpiName': 'Code Quality', 'isEnabled': true, 'kanban': true }, { 'kpiId': 'kpi994', 'kpiName': 'Sonar Violation', 'isEnabled': true, 'kanban': true }, { 'kpiId': 'kpi993', 'kpiName': 'Sonar Tech Debt', 'isEnabled': true, 'kanban': true }, { 'kpiId': 'kpi992', 'kpiName': 'Jira Tech Debt', 'isEnabled': true, 'kanban': true }, { 'kpiId': 'kpi991', 'kpiName': 'Jenkins Code Build Time', 'isEnabled': true, 'kanban': true }, { 'kpiId': 'kpi990', 'kpiName': 'Number of check-ins per day in master', 'isEnabled': true, 'kanban': true }, { 'kpiId': 'kpi989', 'kpiName': 'Kpi Maturity', 'isEnabled': true, 'kanban': true }, { 'kpiId': 'kpi988', 'kpiName': 'Engg Maturity', 'isEnabled': true, 'kanban': true }, { 'kpiId': 'kpi3', 'kpiName': 'DoR To DoD', 'isEnabled': true, 'kanban': false }, { 'kpiId': 'kpi5', 'kpiName': 'Sprint Predictability', 'isEnabled': true, 'kanban': false }, { 'kpiId': 'kpi8', 'kpiName': 'Code Build Time', 'isEnabled': true, 'kanban': false }, { 'kpiId': 'kpi11', 'kpiName': 'Number of check-ins per day in master', 'isEnabled': true, 'kanban': false }, { 'kpiId': 'kpi14', 'kpiName': 'Defects Injection Rate', 'isEnabled': true, 'kanban': false }, { 'kpiId': 'kpi15', 'kpiName': 'Code Quality', 'isEnabled': true, 'kanban': false }, { 'kpiId': 'kpi16', 'kpiName': 'In-Sprint Automation Coverage', 'isEnabled': true, 'kanban': false }, { 'kpiId': 'kpi17', 'kpiName': 'Unit Testing', 'isEnabled': true, 'kanban': false }, { 'kpiId': 'kpi26', 'kpiName': 'Jira Tech Debt', 'isEnabled': true, 'kanban': false }, { 'kpiId': 'kpi27', 'kpiName': 'Sonar Tech Debt', 'isEnabled': true, 'kanban': false }, { 'kpiId': 'kpi28', 'kpiName': 'Defect Count By Priority (tagged to Story)', 'isEnabled': true, 'kanban': false }, { 'kpiId': 'kpi34', 'kpiName': 'Defect Removal Efficiency', 'isEnabled': true, 'kanban': false }, { 'kpiId': 'kpi35', 'kpiName': 'Defect Seepage Rate', 'isEnabled': true, 'kanban': false }, { 'kpiId': 'kpi36', 'kpiName': 'Defect Count By RCA (tagged to Story)', 'isEnabled': true, 'kanban': false }, { 'kpiId': 'kpi37', 'kpiName': 'Defect Rejection Rate', 'isEnabled': true, 'kanban': false }, { 'kpiId': 'kpi38', 'kpiName': 'Sonar Violations', 'isEnabled': true, 'kanban': false }, { 'kpiId': 'kpi39', 'kpiName': 'Sprint Velocity', 'isEnabled': true, 'kanban': false }, { 'kpiId': 'kpi40', 'kpiName': 'Story Count', 'isEnabled': true, 'kanban': false }, { 'kpiId': 'kpi41', 'kpiName': 'Total Defect Count', 'isEnabled': true, 'kanban': false }, { 'kpiId': 'kpi42', 'kpiName': 'Regression Automation Coverage', 'isEnabled': true, 'kanban': false }, { 'kpiId': 'kpi43', 'kpiName': 'Crash Rate', 'isEnabled': true, 'kanban': false }, { 'kpiId': 'kpi46', 'kpiName': 'Sprint Capacity', 'isEnabled': true, 'kanban': false }, { 'kpiId': 'kpi47', 'kpiName': 'Throughput', 'isEnabled': true, 'kanban': false }, { 'kpiId': 'kpi48', 'kpiName': 'Total Ticket Count', 'isEnabled': true, 'kanban': true }, { 'kpiId': 'kpi49', 'kpiName': 'Ticket Velocity', 'isEnabled': true, 'kanban': true }, { 'kpiId': 'kpi50', 'kpiName': 'Ticket Count by Priority', 'isEnabled': true, 'kanban': true }, { 'kpiId': 'kpi51', 'kpiName': 'Ticket Count By RCA', 'isEnabled': true, 'kanban': true }, { 'kpiId': 'kpi52', 'kpiName': 'Throughput', 'isEnabled': true, 'kanban': true }, { 'kpiId': 'kpi53', 'kpiName': 'Cycle Time', 'isEnabled': true, 'kanban': true }, { 'kpiId': 'kpi54', 'kpiName': 'Ticket Open rate by Priority', 'isEnabled': true, 'kanban': true }, { 'kpiId': 'kpi55', 'kpiName': 'Ticket Re-open rate by Priority', 'isEnabled': true, 'kanban': true }, { 'kpiId': 'kpi56', 'kpiName': 'Work in Progress vs Closed', 'isEnabled': true, 'kanban': true }, { 'kpiId': 'kpi57', 'kpiName': 'Ticket Throughput', 'isEnabled': true, 'kanban': true }, { 'kpiId': 'kpi58', 'kpiName': 'Team Capacity', 'isEnabled': true, 'kanban': true }] };
+  const dashConfigData = { message: 'Data found for the key', success: true, data: [{ kpiId: 'kpi999', kpiName: 'Total Defect Aging', isEnabled: true, kanban: false }, { kpiId: 'kpi998', kpiName: 'Regression Automation Coverage', isEnabled: true, kanban: true }, { kpiId: 'kpi997', kpiName: 'Total Ticket Aging', isEnabled: true, kanban: true }, { kpiId: 'kpi996', kpiName: 'Unit Testing', isEnabled: true, kanban: true }, { kpiId: 'kpi995', kpiName: 'Code Quality', isEnabled: true, kanban: true }, { kpiId: 'kpi994', kpiName: 'Sonar Violation', isEnabled: true, kanban: true }, { kpiId: 'kpi993', kpiName: 'Sonar Tech Debt', isEnabled: true, kanban: true }, { kpiId: 'kpi992', kpiName: 'Jira Tech Debt', isEnabled: true, kanban: true }, { kpiId: 'kpi991', kpiName: 'Jenkins Code Build Time', isEnabled: true, kanban: true }, { kpiId: 'kpi990', kpiName: 'Number of check-ins per day in master', isEnabled: true, kanban: true }, { kpiId: 'kpi989', kpiName: 'Kpi Maturity', isEnabled: true, kanban: true }, { kpiId: 'kpi988', kpiName: 'Engg Maturity', isEnabled: true, kanban: true }, { kpiId: 'kpi3', kpiName: 'DoR To DoD', isEnabled: true, kanban: false }, { kpiId: 'kpi5', kpiName: 'Sprint Predictability', isEnabled: true, kanban: false }, { kpiId: 'kpi8', kpiName: 'Code Build Time', isEnabled: true, kanban: false }, { kpiId: 'kpi11', kpiName: 'Number of check-ins per day in master', isEnabled: true, kanban: false }, { kpiId: 'kpi14', kpiName: 'Defects Injection Rate', isEnabled: true, kanban: false }, { kpiId: 'kpi15', kpiName: 'Code Quality', isEnabled: true, kanban: false }, { kpiId: 'kpi16', kpiName: 'In-Sprint Automation Coverage', isEnabled: true, kanban: false }, { kpiId: 'kpi17', kpiName: 'Unit Testing', isEnabled: true, kanban: false }, { kpiId: 'kpi26', kpiName: 'Jira Tech Debt', isEnabled: true, kanban: false }, { kpiId: 'kpi27', kpiName: 'Sonar Tech Debt', isEnabled: true, kanban: false }, { kpiId: 'kpi28', kpiName: 'Defect Count By Priority (tagged to Story)', isEnabled: true, kanban: false }, { kpiId: 'kpi34', kpiName: 'Defect Removal Efficiency', isEnabled: true, kanban: false }, { kpiId: 'kpi35', kpiName: 'Defect Seepage Rate', isEnabled: true, kanban: false }, { kpiId: 'kpi36', kpiName: 'Defect Count By RCA (tagged to Story)', isEnabled: true, kanban: false }, { kpiId: 'kpi37', kpiName: 'Defect Rejection Rate', isEnabled: true, kanban: false }, { kpiId: 'kpi38', kpiName: 'Sonar Violations', isEnabled: true, kanban: false }, { kpiId: 'kpi39', kpiName: 'Sprint Velocity', isEnabled: true, kanban: false }, { kpiId: 'kpi40', kpiName: 'Story Count', isEnabled: true, kanban: false }, { kpiId: 'kpi41', kpiName: 'Total Defect Count', isEnabled: true, kanban: false }, { kpiId: 'kpi42', kpiName: 'Regression Automation Coverage', isEnabled: true, kanban: false }, { kpiId: 'kpi43', kpiName: 'Crash Rate', isEnabled: true, kanban: false }, { kpiId: 'kpi46', kpiName: 'Sprint Capacity', isEnabled: true, kanban: false }, { kpiId: 'kpi47', kpiName: 'Throughput', isEnabled: true, kanban: false }, { kpiId: 'kpi48', kpiName: 'Total Ticket Count', isEnabled: true, kanban: true }, { kpiId: 'kpi49', kpiName: 'Ticket Velocity', isEnabled: true, kanban: true }, { kpiId: 'kpi50', kpiName: 'Ticket Count by Priority', isEnabled: true, kanban: true }, { kpiId: 'kpi51', kpiName: 'Ticket Count By RCA', isEnabled: true, kanban: true }, { kpiId: 'kpi52', kpiName: 'Throughput', isEnabled: true, kanban: true }, { kpiId: 'kpi53', kpiName: 'Cycle Time', isEnabled: true, kanban: true }, { kpiId: 'kpi54', kpiName: 'Ticket Open rate by Priority', isEnabled: true, kanban: true }, { kpiId: 'kpi55', kpiName: 'Ticket Re-open rate by Priority', isEnabled: true, kanban: true }, { kpiId: 'kpi56', kpiName: 'Work in Progress vs Closed', isEnabled: true, kanban: true }, { kpiId: 'kpi57', kpiName: 'Ticket Throughput', isEnabled: true, kanban: true }, { kpiId: 'kpi58', kpiName: 'Team Capacity', isEnabled: true, kanban: true }] };
 
   let httpMock;
   let reqJira;
@@ -107,24 +107,24 @@ describe('MaturityComponent', () => {
 
 
   it('should call kpi grouping methos on receiveing data',()=>{
-    let event ={
+    const event ={
       masterData :[],
       filterData:[],
       filterApplyData :[],
-    }
-    let masterData = {
+    };
+    const masterData = {
       kpiList :[
         {
           calculateMaturity:true,
           kpiId:'kpi12'
         }
       ]
-    }
-    let spy = spyOn(service,'getSelectedTab').and.returnValue('Maturity');
-    let spyongetMasterData = spyOn(service,'getMasterData').and.returnValue(masterData);
+    };
+    const spy = spyOn(service,'getSelectedTab').and.returnValue('Maturity');
+    const spyongetMasterData = spyOn(service,'getMasterData').and.returnValue(masterData);
     // let spyDrawAreaChart =spyOn(component,'drawAreaChart');
-    let groupingMethods =['groupJenkinsKpi','groupZypherKpi','groupBitBucketKpi','groupSonarKpi','groupJiraKpi'];
-    let spyGroupingMthods =[];
+    const groupingMethods =['groupJenkinsKpi','groupZypherKpi','groupBitBucketKpi','groupSonarKpi','groupJiraKpi'];
+    const spyGroupingMthods =[];
     for(let i=0;i<groupingMethods.length;i++){
      spyGroupingMthods.push(spyOn(component,groupingMethods[i] as any));
     }
@@ -137,14 +137,14 @@ describe('MaturityComponent', () => {
   });
 
   it('should call receiveshared method on load',()=>{
-    let sharedObject ={
+    const sharedObject ={
       masterData :[],
       filterData:[],
       filterApplyData :[],
-    }
-    let spy = spyOn(service,'getSelectedType').and.returnValue('Scrum');
-    let spygetFilterObject = spyOn(service,'getFilterObject').and.returnValue(sharedObject);
-    let spyReceiveSharedData =spyOn(component,'receiveSharedData');
+    };
+    const spy = spyOn(service,'getSelectedType').and.returnValue('Scrum');
+    const spygetFilterObject = spyOn(service,'getFilterObject').and.returnValue(sharedObject);
+    const spyReceiveSharedData =spyOn(component,'receiveSharedData');
     component.ngOnInit();
     expect(spy).toHaveBeenCalled();
     expect(spygetFilterObject).toHaveBeenCalled();
@@ -154,9 +154,9 @@ describe('MaturityComponent', () => {
 
   it('should make post call when kpi available for Sonar for Scrum',()=>{
     const kpiListSonar =[{
-      "id": "6332dd4b82451128f9939a29",
-      "kpiId": "kpi17",
-      "kpiName": "Unit Test Coverage"
+      id: '6332dd4b82451128f9939a29',
+      kpiId: 'kpi17',
+      kpiName: 'Unit Test Coverage'
   }];
     const spy=spyOn(helperService,'groupKpiFromMaster').and.returnValue({kpiList : kpiListSonar});
     const spyMasterData =spyOn(service,'getMasterData').and.returnValue(['kpi17']);
@@ -167,9 +167,9 @@ describe('MaturityComponent', () => {
 
   it('should make post call when kpi available for Jenkins for Scrum',()=>{
     const kpiListJenkins =[{
-      "id": "6332dd4b82451128f9939a29",
-      "kpiId": "kpi17",
-      "kpiName": "Unit Test Coverage"
+      id: '6332dd4b82451128f9939a29',
+      kpiId: 'kpi17',
+      kpiName: 'Unit Test Coverage'
   }];
     const spy=spyOn(helperService,'groupKpiFromMaster').and.returnValue({kpiList : kpiListJenkins});
     const spyMasterData =spyOn(service,'getMasterData').and.returnValue(['kpi17']);
@@ -180,9 +180,9 @@ describe('MaturityComponent', () => {
 
   it('should make post call when kpi available for Zypher for Scrum',()=>{
     const kpiListZypher =[{
-      "id": "6332dd4b82451128f9939a29",
-      "kpiId": "kpi17",
-      "kpiName": "Unit Test Coverage"
+      id: '6332dd4b82451128f9939a29',
+      kpiId: 'kpi17',
+      kpiName: 'Unit Test Coverage'
   }];
     const spy=spyOn(helperService,'groupKpiFromMaster').and.returnValue({kpiList : kpiListZypher});
     const spyMasterData =spyOn(service,'getMasterData').and.returnValue(['kpi17']);
@@ -193,9 +193,9 @@ describe('MaturityComponent', () => {
 
   it('should make post call when kpi available for BitBucket for Scrum',()=>{
     const kpiListBitBucket =[{
-      "id": "6332dd4b82451128f9939a29",
-      "kpiId": "kpi17",
-      "kpiName": "Unit Test Coverage"
+      id: '6332dd4b82451128f9939a29',
+      kpiId: 'kpi17',
+      kpiName: 'Unit Test Coverage'
   }];
     const spy=spyOn(helperService,'groupKpiFromMaster').and.returnValue({kpiList : kpiListBitBucket});
     const spyMasterData =spyOn(service,'getMasterData').and.returnValue(['kpi17']);
@@ -206,18 +206,18 @@ describe('MaturityComponent', () => {
 
   it('should make post call when kpi available for Jira for Scrum',()=>{
     const kpiListJira =[{
-      "id": "6332dd4b82451128f9939a29",
-      "kpiId": "kpi17",
-      "kpiName": "Unit Test Coverage"
+      id: '6332dd4b82451128f9939a29',
+      kpiId: 'kpi17',
+      kpiName: 'Unit Test Coverage'
   }];
   component.masterData ={
     kpiList :[{
-      "kpiId": "kpi17",
-      "kanban":false,
-      "kpiSource":"Jira",
-      "groupId":1
+      kpiId: 'kpi17',
+      kanban:false,
+      kpiSource:'Jira',
+      groupId:1
     }]
-  }
+  };
     const spy=spyOn(helperService,'groupKpiFromMaster').and.returnValue({kpiList : kpiListJira});
     const spyMasterData =spyOn(service,'getMasterData').and.returnValue(['kpi17']);
     const postJiraSpy=spyOn(component,'postJiraKpi');
@@ -226,433 +226,433 @@ describe('MaturityComponent', () => {
   });
 
   it('should call postSonar',fakeAsync(()=>{
-    let sonarKpiData =[
+    const sonarKpiData =[
       {
-          "kpiId": "kpi17",
-          "kpiName": "Unit Test Coverage",
-          "unit": "%",
-          "maxValue": "100",
-          "chartType": "",
-          "kpiInfo": {
-              "definition": "UNIT TEST COVERAGE is a measurement of the amount of code that is run by unit tests - either lines, branches, or methods.",
-              "formula": [
+          kpiId: 'kpi17',
+          kpiName: 'Unit Test Coverage',
+          unit: '%',
+          maxValue: '100',
+          chartType: '',
+          kpiInfo: {
+              definition: 'UNIT TEST COVERAGE is a measurement of the amount of code that is run by unit tests - either lines, branches, or methods.',
+              formula: [
                   {
-                      "lhs": "The calculation is done directly in Sonarqube"
+                      lhs: 'The calculation is done directly in Sonarqube'
                   }
               ],
-              "details": [
+              details: [
                   {
-                      "type": "paragraph",
-                      "value": "It is calculated in ‘Percentage’. Higher the percentage, better is the ‘Quality’"
+                      type: 'paragraph',
+                      value: 'It is calculated in ‘Percentage’. Higher the percentage, better is the ‘Quality’'
                   },
                   {
-                      "type": "paragraph",
-                      "value": "Maturity of the KPI is calculated based on the latest value"
+                      type: 'paragraph',
+                      value: 'Maturity of the KPI is calculated based on the latest value'
                   },
                   {
-                      "type": "paragraph",
-                      "value": "A progress indicator shows trend of Unit test coverage between last 2 weeks. An upward trend is considered positive"
+                      type: 'paragraph',
+                      value: 'A progress indicator shows trend of Unit test coverage between last 2 weeks. An upward trend is considered positive'
                   }
               ],
-              "maturityLevels": [
+              maturityLevels: [
                   {
-                      "level": "M5",
-                      "bgColor": "#6cab61",
-                      "range": ">80%"
+                      level: 'M5',
+                      bgColor: '#6cab61',
+                      range: '>80%'
                   },
                   {
-                      "level": "M4",
-                      "bgColor": "#AEDB76",
-                      "range": "60-80%"
+                      level: 'M4',
+                      bgColor: '#AEDB76',
+                      range: '60-80%'
                   },
                   {
-                      "level": "M3",
-                      "bgColor": "#eff173",
-                      "range": "40-60%"
+                      level: 'M3',
+                      bgColor: '#eff173',
+                      range: '40-60%'
                   },
                   {
-                      "level": "M2",
-                      "bgColor": "#ffc35b",
-                      "range": "20-40%"
+                      level: 'M2',
+                      bgColor: '#ffc35b',
+                      range: '20-40%'
                   },
                   {
-                      "level": "M1",
-                      "bgColor": "#F06667",
-                      "range": "<20%"
+                      level: 'M1',
+                      bgColor: '#F06667',
+                      range: '<20%'
                   }
               ]
           },
-          "id": "63353ea4087f75e5147b11d0",
-          "isDeleted": "False",
-          "kpiUnit": "%",
-          "kanban": false,
-          "kpiSource": "Sonar",
-          "thresholdValue": 55,
-          "trendValueList": [],
-          "maturityRange": [
-              ">=20",
-              "20-40",
-              "40-60",
-              "60-80",
-              "80-0"
+          id: '63353ea4087f75e5147b11d0',
+          isDeleted: 'False',
+          kpiUnit: '%',
+          kanban: false,
+          kpiSource: 'Sonar',
+          thresholdValue: 55,
+          trendValueList: [],
+          maturityRange: [
+              '>=20',
+              '20-40',
+              '40-60',
+              '60-80',
+              '80-0'
           ],
-          "groupId": 1
+          groupId: 1
       }
     ];
-    let jenkinsKpiData = [
+    const jenkinsKpiData = [
       {
-        "kpiId": "kpi116",
-        "kpiName": "Change Failure Rate",
-        "unit": "%",
-        "maxValue": "100",
-        "chartType": "",
-        "kpiInfo": {
-          "definition": "CHANGE FAILURE RATE measures the proportion of builds that have failed for whatever reason over a given period of time",
-          "formula": [
+        kpiId: 'kpi116',
+        kpiName: 'Change Failure Rate',
+        unit: '%',
+        maxValue: '100',
+        chartType: '',
+        kpiInfo: {
+          definition: 'CHANGE FAILURE RATE measures the proportion of builds that have failed for whatever reason over a given period of time',
+          formula: [
             {
-              "lhs": "CHANGE FAILURE RATE",
-              "operator": "division",
-              "operands": [
-                "Total number of failed Builds",
-                "Total number of Builds"
+              lhs: 'CHANGE FAILURE RATE',
+              operator: 'division',
+              operands: [
+                'Total number of failed Builds',
+                'Total number of Builds'
               ]
             }
           ],
-          "details": [
+          details: [
             {
-              "type": "paragraph",
-              "value": "It is calculated as a ‘Percentage’. Lower the percentage, better is the ‘Quality’"
+              type: 'paragraph',
+              value: 'It is calculated as a ‘Percentage’. Lower the percentage, better is the ‘Quality’'
             },
             {
-              "type": "paragraph",
-              "value": "A progress indicator shows trend of Change Failure Rate between last 2 weeks. A downward trend is considered positive"
+              type: 'paragraph',
+              value: 'A progress indicator shows trend of Change Failure Rate between last 2 weeks. A downward trend is considered positive'
             },
             {
-              "type": "paragraph",
-              "value": "Maturity of the KPI is calculated based on the average of the last 5 weeks"
+              type: 'paragraph',
+              value: 'Maturity of the KPI is calculated based on the average of the last 5 weeks'
             },
             {
-              "type": "paragraph",
-              "value": "*If the KPI data is not available for last 5 weeks, the Maturity level will not be shown"
+              type: 'paragraph',
+              value: '*If the KPI data is not available for last 5 weeks, the Maturity level will not be shown'
             }
           ],
-          "maturityLevels": [
+          maturityLevels: [
             {
-              "level": "M5",
-              "bgColor": "#6cab61",
-              "range": "<10%"
+              level: 'M5',
+              bgColor: '#6cab61',
+              range: '<10%'
             },
             {
-              "level": "M4",
-              "bgColor": "#AEDB76",
-              "range": ">=10-20%,"
+              level: 'M4',
+              bgColor: '#AEDB76',
+              range: '>=10-20%,'
             },
             {
-              "level": "M3",
-              "bgColor": "#eff173",
-              "range": ">=20-30%"
+              level: 'M3',
+              bgColor: '#eff173',
+              range: '>=20-30%'
             },
             {
-              "level": "M2",
-              "bgColor": "#ffc35b",
-              "range": ">=30-50%"
+              level: 'M2',
+              bgColor: '#ffc35b',
+              range: '>=30-50%'
             },
             {
-              "level": "M1",
-              "bgColor": "#F06667",
-              "range": ">50%"
+              level: 'M1',
+              bgColor: '#F06667',
+              range: '>50%'
             }
           ]
         },
-        "id": "63355d7c41a0342c3790fb91",
-        "isDeleted": "False",
-        "kpiUnit": "%",
-        "kanban": false,
-        "kpiSource": "Jenkins",
-        "thresholdValue": 0,
-        "trendValueList": [],
-        "maturityRange": [
-          "-50",
-          "50-30",
-          "30-20",
-          "20-10",
-          "10-"
+        id: '63355d7c41a0342c3790fb91',
+        isDeleted: 'False',
+        kpiUnit: '%',
+        kanban: false,
+        kpiSource: 'Jenkins',
+        thresholdValue: 0,
+        trendValueList: [],
+        maturityRange: [
+          '-50',
+          '50-30',
+          '30-20',
+          '20-10',
+          '10-'
         ],
-        "groupId": 1
+        groupId: 1
       }
     ];
-    let zypherKpiData = [
+    const zypherKpiData = [
       {
-        "kpiId": "kpi42",
-        "kpiName": "Regression Automation Coverage",
-        "unit": "%",
-        "maxValue": "100",
-        "chartType": "",
-        "kpiInfo": {
-          "definition": "REGRESSION AUTOMATION COVERAGE measures progress of automation of regression test cases",
-          "formula": [
+        kpiId: 'kpi42',
+        kpiName: 'Regression Automation Coverage',
+        unit: '%',
+        maxValue: '100',
+        chartType: '',
+        kpiInfo: {
+          definition: 'REGRESSION AUTOMATION COVERAGE measures progress of automation of regression test cases',
+          formula: [
             {
-              "lhs": "Regression Automation Coverage ",
-              "operator": "division",
-              "operands": [
-                "No. of regression test cases automated",
-                "Total no. of regression test cases"
+              lhs: 'Regression Automation Coverage ',
+              operator: 'division',
+              operands: [
+                'No. of regression test cases automated',
+                'Total no. of regression test cases'
               ]
             }
           ],
-          "details": [
+          details: [
             {
-              "type": "paragraph",
-              "value": "It is calculated as a ‘Percentage’. Higher the percentage, better is the ‘Quality’"
+              type: 'paragraph',
+              value: 'It is calculated as a ‘Percentage’. Higher the percentage, better is the ‘Quality’'
             },
             {
-              "type": "paragraph",
-              "value": "A progress indicator shows trend of regression automation coverage between last 2 sprints. An upward trend is considered positive"
+              type: 'paragraph',
+              value: 'A progress indicator shows trend of regression automation coverage between last 2 sprints. An upward trend is considered positive'
             },
             {
-              "type": "paragraph",
-              "value": "Maturity of the KPI is calculated based on the latest value"
+              type: 'paragraph',
+              value: 'Maturity of the KPI is calculated based on the latest value'
             }
           ],
-          "maturityLevels": [
+          maturityLevels: [
             {
-              "level": "M5",
-              "bgColor": "#6cab61",
-              "range": ">= 80%"
+              level: 'M5',
+              bgColor: '#6cab61',
+              range: '>= 80%'
             },
             {
-              "level": "M4",
-              "bgColor": "#AEDB76",
-              "range": "60-80%"
+              level: 'M4',
+              bgColor: '#AEDB76',
+              range: '60-80%'
             },
             {
-              "level": "M3",
-              "bgColor": "#eff173",
-              "range": "40-60%"
+              level: 'M3',
+              bgColor: '#eff173',
+              range: '40-60%'
             },
             {
-              "level": "M2",
-              "bgColor": "#ffc35b",
-              "range": "20-40%"
+              level: 'M2',
+              bgColor: '#ffc35b',
+              range: '20-40%'
             },
             {
-              "level": "M1",
-              "bgColor": "#F06667",
-              "range": "< 20%"
+              level: 'M1',
+              bgColor: '#F06667',
+              range: '< 20%'
             }
           ]
         },
-        "id": "63355d7c41a0342c3790fb8c",
-        "isDeleted": "False",
-        "kpiUnit": "%",
-        "kanban": false,
-        "kpiSource": "Zypher",
-        "trendValueList": [],
-        "maturityRange": [
-          "0 - 20",
-          "20-40",
-          "40-60",
-          "60-80",
-          "80>="
+        id: '63355d7c41a0342c3790fb8c',
+        isDeleted: 'False',
+        kpiUnit: '%',
+        kanban: false,
+        kpiSource: 'Zypher',
+        trendValueList: [],
+        maturityRange: [
+          '0 - 20',
+          '20-40',
+          '40-60',
+          '60-80',
+          '80>='
         ],
-        "groupId": 1
+        groupId: 1
       }
     ];
-    let jiraKpiData = [
+    const jiraKpiData = [
       {
-        "kpiId": "kpi14",
-        "kpiName": "Defect Injection Rate",
-        "unit": "%",
-        "maxValue": "200",
-        "chartType": "",
-        "kpiInfo": {
-          "definition": "DEFECT INJECTION RATE measures the total number of defects (bugs) detected for a story",
-          "formula": [
+        kpiId: 'kpi14',
+        kpiName: 'Defect Injection Rate',
+        unit: '%',
+        maxValue: '200',
+        chartType: '',
+        kpiInfo: {
+          definition: 'DEFECT INJECTION RATE measures the total number of defects (bugs) detected for a story',
+          formula: [
             {
-              "lhs": "DIR for a sprint",
-              "operator": "division",
-              "operands": [
-                "No. of defects tagged to all stories closed in a sprint",
-                "Total no. of stories closed in the sprint"
+              lhs: 'DIR for a sprint',
+              operator: 'division',
+              operands: [
+                'No. of defects tagged to all stories closed in a sprint',
+                'Total no. of stories closed in the sprint'
               ]
             }
           ],
-          "details": [
+          details: [
             {
-              "type": "paragraph",
-              "value": "It is calculated as a ‘Percentage’. Lower the percentage, better is the ‘Quality’"
+              type: 'paragraph',
+              value: 'It is calculated as a ‘Percentage’. Lower the percentage, better is the ‘Quality’'
             },
             {
-              "type": "paragraph",
-              "value": "A progress indicator shows trend of defect injection rate between last 2 sprints. A downward trend is considered positive"
+              type: 'paragraph',
+              value: 'A progress indicator shows trend of defect injection rate between last 2 sprints. A downward trend is considered positive'
             },
             {
-              "type": "paragraph",
-              "value": "Maturity of the KPI is calculated based on the average of the last 5 sprints"
+              type: 'paragraph',
+              value: 'Maturity of the KPI is calculated based on the average of the last 5 sprints'
             },
             {
-              "type": "paragraph",
-              "value": "*If the KPI data is not available for last 5 sprints, the Maturity level will not be shown"
+              type: 'paragraph',
+              value: '*If the KPI data is not available for last 5 sprints, the Maturity level will not be shown'
             }
           ],
-          "maturityLevels": [
+          maturityLevels: [
             {
-              "level": "M5",
-              "bgColor": "#6cab61",
-              "range": "25%"
+              level: 'M5',
+              bgColor: '#6cab61',
+              range: '25%'
             },
             {
-              "level": "M4",
-              "bgColor": "#AEDB76",
-              "range": "75-25%"
+              level: 'M4',
+              bgColor: '#AEDB76',
+              range: '75-25%'
             },
             {
-              "level": "M3",
-              "bgColor": "#eff173",
-              "range": "125%-75%"
+              level: 'M3',
+              bgColor: '#eff173',
+              range: '125%-75%'
             },
             {
-              "level": "M2",
-              "bgColor": "#ffc35b",
-              "range": "175% -125%"
+              level: 'M2',
+              bgColor: '#ffc35b',
+              range: '175% -125%'
             },
             {
-              "level": "M1",
-              "bgColor": "#F06667",
-              "range": "> 175%"
+              level: 'M1',
+              bgColor: '#F06667',
+              range: '> 175%'
             }
           ]
         },
-        "id": "63355d7c41a0342c3790fb83",
-        "isDeleted": "False",
-        "kpiUnit": "%",
-        "kanban": false,
-        "kpiSource": "Jira",
-        "thresholdValue": 10,
-        "trendValueList": [],
-        "maturityRange": [
-          ">=175",
-          "175-125",
-          "125-75",
-          "75-25",
-          "25-0"
+        id: '63355d7c41a0342c3790fb83',
+        isDeleted: 'False',
+        kpiUnit: '%',
+        kanban: false,
+        kpiSource: 'Jira',
+        thresholdValue: 10,
+        trendValueList: [],
+        maturityRange: [
+          '>=175',
+          '175-125',
+          '125-75',
+          '75-25',
+          '25-0'
         ],
-        "groupId": 2
+        groupId: 2
       }
     ];
-    let bitBucketKpiData = [
+    const bitBucketKpiData = [
       {
-        "kpiId": "kpi84",
-        "kpiName": "Mean Time To Merge",
-        "unit": "Hours",
-        "maxValue": "10",
-        "chartType": "",
-        "kpiInfo": {
-          "definition": "MEAN TIME TO MERGE measures the efficiency of the code review process in a team",
-          "details": [
+        kpiId: 'kpi84',
+        kpiName: 'Mean Time To Merge',
+        unit: 'Hours',
+        maxValue: '10',
+        chartType: '',
+        kpiInfo: {
+          definition: 'MEAN TIME TO MERGE measures the efficiency of the code review process in a team',
+          details: [
             {
-              "type": "paragraph",
-              "value": "It is calculated in ‘Hours’. Fewer the Hours better is the ‘Speed’"
+              type: 'paragraph',
+              value: 'It is calculated in ‘Hours’. Fewer the Hours better is the ‘Speed’'
             },
             {
-              "type": "paragraph",
-              "value": "A progress indicator shows trend of Mean time to merge in last 2 weeks. A downward trend is considered positive"
+              type: 'paragraph',
+              value: 'A progress indicator shows trend of Mean time to merge in last 2 weeks. A downward trend is considered positive'
             },
             {
-              "type": "paragraph",
-              "value": "Maturity of the KPI is calculated based on the average of the last 5 weeks"
+              type: 'paragraph',
+              value: 'Maturity of the KPI is calculated based on the average of the last 5 weeks'
             }
           ],
-          "maturityLevels": [
+          maturityLevels: [
             {
-              "level": "M5",
-              "bgColor": "#6cab61",
-              "range": "<4 Hours"
+              level: 'M5',
+              bgColor: '#6cab61',
+              range: '<4 Hours'
             },
             {
-              "level": "M4",
-              "bgColor": "#AEDB76",
-              "range": "4-8 Hours"
+              level: 'M4',
+              bgColor: '#AEDB76',
+              range: '4-8 Hours'
             },
             {
-              "level": "M3",
-              "bgColor": "#eff173",
-              "range": "8-16 Hours"
+              level: 'M3',
+              bgColor: '#eff173',
+              range: '8-16 Hours'
             },
             {
-              "level": "M2",
-              "bgColor": "#ffc35b",
-              "range": "16-48 Hours"
+              level: 'M2',
+              bgColor: '#ffc35b',
+              range: '16-48 Hours'
             },
             {
-              "level": "M1",
-              "bgColor": "#F06667",
-              "range": ">48 Hours"
+              level: 'M1',
+              bgColor: '#F06667',
+              range: '>48 Hours'
             }
           ]
         },
-        "id": "63355d7c41a0342c3790fb98",
-        "isDeleted": "False",
-        "kpiUnit": "Hours",
-        "kanban": false,
-        "kpiSource": "BitBucket",
-        "thresholdValue": 55,
-        "trendValueList": [
+        id: '63355d7c41a0342c3790fb98',
+        isDeleted: 'False',
+        kpiUnit: 'Hours',
+        kanban: false,
+        kpiSource: 'BitBucket',
+        thresholdValue: 55,
+        trendValueList: [
           {
-            "filter": "Overall",
-            "value": [
+            filter: 'Overall',
+            value: [
               {
-                "data": "bittest",
-                "value": [
+                data: 'bittest',
+                value: [
                   {
-                    "data": "0",
-                    "value": 0,
-                    "hoverValue": {},
-                    "date": "2022-08-29 to 2022-09-04",
-                    "sprojectName": "BITBUCKET_DEMO"
+                    data: '0',
+                    value: 0,
+                    hoverValue: {},
+                    date: '2022-08-29 to 2022-09-04',
+                    sprojectName: 'BITBUCKET_DEMO'
                   },
                   {
-                    "data": "0",
-                    "value": 0,
-                    "hoverValue": {},
-                    "date": "2022-09-05 to 2022-09-11",
-                    "sprojectName": "BITBUCKET_DEMO"
+                    data: '0',
+                    value: 0,
+                    hoverValue: {},
+                    date: '2022-09-05 to 2022-09-11',
+                    sprojectName: 'BITBUCKET_DEMO'
                   },
                   {
-                    "data": "0",
-                    "value": 0,
-                    "hoverValue": {},
-                    "date": "2022-09-12 to 2022-09-18",
-                    "sprojectName": "BITBUCKET_DEMO"
+                    data: '0',
+                    value: 0,
+                    hoverValue: {},
+                    date: '2022-09-12 to 2022-09-18',
+                    sprojectName: 'BITBUCKET_DEMO'
                   },
                   {
-                    "data": "0",
-                    "value": 0,
-                    "hoverValue": {},
-                    "date": "2022-09-19 to 2022-09-25",
-                    "sprojectName": "BITBUCKET_DEMO"
+                    data: '0',
+                    value: 0,
+                    hoverValue: {},
+                    date: '2022-09-19 to 2022-09-25',
+                    sprojectName: 'BITBUCKET_DEMO'
                   },
                   {
-                    "data": "0",
-                    "value": 0,
-                    "hoverValue": {},
-                    "date": "2022-09-26 to 2022-10-02",
-                    "sprojectName": "BITBUCKET_DEMO"
+                    data: '0',
+                    value: 0,
+                    hoverValue: {},
+                    date: '2022-09-26 to 2022-10-02',
+                    sprojectName: 'BITBUCKET_DEMO'
                   }
                 ],
-                "maturity": "5"
+                maturity: '5'
               }
             ]
           }
         ],
-        "maturityRange": [
-          "-16",
-          "16-8",
-          "8-4",
-          "4-2",
-          "2-"
+        maturityRange: [
+          '-16',
+          '16-8',
+          '8-4',
+          '4-2',
+          '2-'
         ],
-        "groupId": 1
+        groupId: 1
       }
     ];
 
@@ -661,11 +661,11 @@ describe('MaturityComponent', () => {
   component.zypherKpiRequest='';
   component.sonarKpiRequest='';
   component.bitBucketKpiRequest='';
-  let spydrawAreaChart =spyOn(component,'drawAreaChart');
-  let sources =['sonar','jenkins','zypher','jira','bitbucket'];
-  let postMethods =['postSonarKpi','postJenkinsKpi','postZypherKpi','postJiraKpi','postBitBucketKpi'];
-  let fakeResponses = [fakeSonarResponse,fakeJenkinsResponse,fakeZypherResponse,fakeJiraGroupId1,fakeBitbucketResponse];
-  let fakePayloads =[fakeSonarPayload,fakeJenkinsPayload,fakeZypherPayload,fakeJiraPayload,fakeBitbucketPayload];
+  const spydrawAreaChart =spyOn(component,'drawAreaChart');
+  const sources =['sonar','jenkins','zypher','jira','bitbucket'];
+  const postMethods =['postSonarKpi','postJenkinsKpi','postZypherKpi','postJiraKpi','postBitBucketKpi'];
+  const fakeResponses = [fakeSonarResponse,fakeJenkinsResponse,fakeZypherResponse,fakeJiraGroupId1,fakeBitbucketResponse];
+  const fakePayloads =[fakeSonarPayload,fakeJenkinsPayload,fakeZypherPayload,fakeJiraPayload,fakeBitbucketPayload];
   for(let i=0; i<postMethods.length;i++ ){
    httpService.postKpi = jasmine.createSpy().and.returnValue(of(fakeResponses[i]));
     component[postMethods[i]](fakePayloads[i],sources[i]);
@@ -680,16 +680,16 @@ describe('MaturityComponent', () => {
   }));
 
   it('should receive data on passDataToDashboard',()=>{
-    let spy =spyOn(component,'receiveSharedData');
+    const spy =spyOn(component,'receiveSharedData');
     service.passDataToDashboard.emit({});
     fixture.detectChanges();
     expect(spy).toHaveBeenCalled();
   });
 
   it('should set type on TypeRefresh',()=>{
-    let spy =spyOn(service,'getSelectedType');
+    const spy =spyOn(service,'getSelectedType');
     service.onTypeRefresh.emit('Kanban');
     fixture.detectChanges();
     expect(spy).toHaveBeenCalled();
-  })
+  });
 });

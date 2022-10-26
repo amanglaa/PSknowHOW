@@ -22,7 +22,7 @@ import { HttpService } from '../../../services/http.service';
 import { MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
 
-declare var $: any;
+declare let $: any;
 
 @Component({
   selector: 'app-profile-mgmt',
@@ -48,10 +48,10 @@ export class RaiseAccessRequestComponent implements OnInit {
     this.requestData['username'] = localStorage.getItem('user_name');
     this.requestData['status'] = 'Pending';
     this.requestData['reviewComments'] = '';
-    this.requestData['role'] = "";
+    this.requestData['role'] = '';
     this.requestData['accessNode'] = {
-      "accessLevel": "",
-      "accessItems": []
+      accessLevel: '',
+      accessItems: []
     };
   }
 
@@ -95,7 +95,7 @@ export class RaiseAccessRequestComponent implements OnInit {
             this.messageService.add({ severity: 'success', summary: 'Request has been auto-approved. Please login again to start using KnowHOW', detail: '' });
             setTimeout(() => {
               this.logout();
-            }, 5000)
+            }, 5000);
           } else {
             this.messageService.add({ severity: 'success', summary: 'Request submitted.', detail: '' });
           }
@@ -112,26 +112,24 @@ export class RaiseAccessRequestComponent implements OnInit {
 
   projectSelectedEvent(accessItem): void {
     if (accessItem && accessItem.value && accessItem.value.length) {
-      this.roleList.filter((role) => role.roleName === "ROLE_SUPERADMIN")[0].disabled = true;
+      this.roleList.filter((role) => role.roleName === 'ROLE_SUPERADMIN')[0].disabled = true;
       this.roleList.forEach(element => {
         element.active = false;
       });
       this.roleSelected = false;
       this.requestData['role'] = '';
-      this.requestData["accessNode"] = {
-        "accessLevel": accessItem.accessType
-      }
-      
-        this.requestData["accessNode"]["accessItems"] = accessItem.value.map((item) => {
-          return {
-            "itemId": item.itemId,
-            "itemName": item.itemName
-          }
-        });
-      
+      this.requestData['accessNode'] = {
+        accessLevel: accessItem.accessType
+      };
+
+        this.requestData['accessNode']['accessItems'] = accessItem.value.map((item) => ({
+            itemId: item.itemId,
+            itemName: item.itemName
+          }));
+
     } else {
       this.requestData['accessNode'] = {};
-      this.roleList.filter((role) => role.roleName === "ROLE_SUPERADMIN")[0].disabled = false;
+      this.roleList.filter((role) => role.roleName === 'ROLE_SUPERADMIN')[0].disabled = false;
     }
   }
 

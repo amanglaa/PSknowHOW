@@ -47,18 +47,18 @@ describe('LoginComponent', () => {
   let encryption;
   let aesEncryption;
   const fakeLogin = {
-    "instance_owner": "kbakshi@sapient.com",
-    "user_email": "test@gmail.com",
-    "projectsAccess": [],
-    "user_name": "SUPERADMIN",
-    "account_name": "XYZ",
-    "X-Authentication-Token": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJTVVBFUkFETUlOIiwiZGV0YWlscyI6IlNUQU5EQVJEIiwicm9sZXMiOlsiUk9MRV9TVVBFUkFETUlOIl0sImV4cCI6MTY2NTE2ODU2MH0.Oi-U3qdd5OuZUazy9OBOSAjWh7trjGDkZiMMJ51qmig8Jy59aB4N5tAPWEbVSrZn2Z4hNgKkLzR6BG2pAudhvA",
-    "project_name": "XYZ",
-    "authorities": [
-      "ROLE_SUPERADMIN"
+    instance_owner: 'kbakshi@sapient.com',
+    user_email: 'test@gmail.com',
+    projectsAccess: [],
+    user_name: 'SUPERADMIN',
+    account_name: 'XYZ',
+    'X-Authentication-Token': 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJTVVBFUkFETUlOIiwiZGV0YWlscyI6IlNUQU5EQVJEIiwicm9sZXMiOlsiUk9MRV9TVVBFUkFETUlOIl0sImV4cCI6MTY2NTE2ODU2MH0.Oi-U3qdd5OuZUazy9OBOSAjWh7trjGDkZiMMJ51qmig8Jy59aB4N5tAPWEbVSrZn2Z4hNgKkLzR6BG2pAudhvA',
+    project_name: 'XYZ',
+    authorities: [
+      'ROLE_SUPERADMIN'
     ]
-  }
-  const fakeInvalidLogin = { 'timestamp': 1567511436517, 'status': 401, 'error': 'Unauthorized', 'message': 'Authentication Failed: Login Failed: The username or password entered is incorrect', 'path': '/api/login' };
+  };
+  const fakeInvalidLogin = { timestamp: 1567511436517, status: 401, error: 'Unauthorized', message: 'Authentication Failed: Login Failed: The username or password entered is incorrect', path: '/api/login' };
 
   beforeEach(waitForAsync(() => {
 

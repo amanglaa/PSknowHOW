@@ -27,21 +27,21 @@ import { HttpService } from '../../services/http.service';
 import { first } from 'rxjs/operators';
 import { GetAuthorizationService } from '../../services/get-authorization.service';
 import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
-declare var $: any;
+declare let $: any;
 
 interface CapacitySubmissionReq {
-    projectNodeId: string,
-    projectName: string,
-    sprintNodeId?: string,
-    capacity?: string,
-    startDate?: string,
-    endDate?: string,
-    totalTestCases?: string,
-    executedTestCase?: string,
-    passedTestCase?: string,
-    sprintId?: string,
-    sprintName?: string,
-    executionDate?: string,
+    projectNodeId: string;
+    projectName: string;
+    sprintNodeId?: string;
+    capacity?: string;
+    startDate?: string;
+    endDate?: string;
+    totalTestCases?: string;
+    executedTestCase?: string;
+    passedTestCase?: string;
+    sprintId?: string;
+    sprintName?: string;
+    executionDate?: string;
     kanban: boolean;
 }
 
@@ -77,15 +77,15 @@ export class UploadComponent implements OnInit {
     endDate: any;
     executionDate: any;
     reqObj: CapacitySubmissionReq;
-    isCapacitySaveDisabled: boolean = true;
-    isTestExecutionSaveDisabled: boolean = true;
-    capacityErrorMessage: string = '';
-    testExecutionErrorMessage: string = '';
+    isCapacitySaveDisabled = true;
+    isTestExecutionSaveDisabled = true;
+    capacityErrorMessage = '';
+    testExecutionErrorMessage = '';
     isCheckBoxChecked: boolean;
     todayDate: any;
-    loader: boolean = false;
+    loader = false;
     executionDateGroup: any;
-    isSuperAdmin: boolean = false;
+    isSuperAdmin = false;
     filterForm: UntypedFormGroup;
     projectListArr: Array<object> = [];
     sprintListArr: Array<object> = [];
@@ -108,11 +108,11 @@ export class UploadComponent implements OnInit {
     };
     cols: any;
     sprintsData: any;
-    tabHeaders = ["Scrum", "Kanban"];
-    tabContentHeaders = {'upload_tep':'Test Execution Percentage Table', 'upload_Sprint_Capacity':'Capacity Table'};
+    tabHeaders = ['Scrum', 'Kanban'];
+    tabContentHeaders = {upload_tep:'Test Execution Percentage Table', upload_Sprint_Capacity:'Capacity Table'};
     selectedHeader: string;
-    showPopuup:boolean = false;
-    noData:boolean = false;
+    showPopuup = false;
+    noData = false;
     capacityScrumData: any;
     capacityKanbanData: any;
     testExecutionScrumData: any;
@@ -120,7 +120,7 @@ export class UploadComponent implements OnInit {
     selectedSprintDetails: any;
     selectedSprintId: any;
     selectedSprintName: any;
-    tableLoader: boolean = true;
+    tableLoader = true;
     currentDate = new Date();
     constructor(private http_service: HttpService, private messageService: MessageService, private getAuth: GetAuthService, private sharedService: SharedService, private sanitizer: DomSanitizer, private getAuthorisation: GetAuthorizationService) {
     }
@@ -130,69 +130,69 @@ export class UploadComponent implements OnInit {
             testExecutionScrumKeys: [
                 {
                     header: 'Sprint Name',
-                    field: "sprintName"
+                    field: 'sprintName'
                 },
                 {
                     header: 'Sprint Status',
-                    field: "sprintState"
+                    field: 'sprintState'
                 },
                 {
                     header: 'Total Test Cases',
-                    field: "totalTestCases"
+                    field: 'totalTestCases'
                 },
                 {
                     header: 'Executed Test Cases',
-                    field: "executedTestCase"
+                    field: 'executedTestCase'
                 },
                 {
                     header: 'Passed Test Case',
-                    field: "passedTestCase"
+                    field: 'passedTestCase'
                 }
             ],
             testExecutionKanbanKeys: [
                 {
                     header: 'Execution Date',
-                    field: "executionDate"
+                    field: 'executionDate'
                 },
                 {
                     header: 'Total Test Cases',
-                    field: "totalTestCases"
+                    field: 'totalTestCases'
                 },
                 {
                     header: 'Executed Test Cases',
-                    field: "executedTestCase"
+                    field: 'executedTestCase'
                 },
                 {
                     header: 'Passed Test Case',
-                    field: "passedTestCase"
+                    field: 'passedTestCase'
                 }
             ],
             capacityScrumKeys: [
                 {
                     header: 'Sprint Name',
-                    field: "sprintName"
+                    field: 'sprintName'
                 },
                 {
                     header: 'Sprint Status',
-                    field: "sprintState"
+                    field: 'sprintState'
                 },
                 {
                     header: 'Team Capacity (in Hrs)',
-                    field: "capacity"
+                    field: 'capacity'
                 }
             ],
             capacityKanbanKeys: [
                 {
                     header: 'Start Date',
-                    field: "startDate"
+                    field: 'startDate'
                 },
                 {
                     header: 'End Date',
-                    field: "endDate"
+                    field: 'endDate'
                 },
                 {
                     header: 'Team Capacity (in Hrs)',
-                    field: "capacity"
+                    field: 'capacity'
                 }
             ]
             };
@@ -368,7 +368,7 @@ export class UploadComponent implements OnInit {
                     };
                 };
             }
-            
+
         });
     }
 
@@ -407,8 +407,8 @@ export class UploadComponent implements OnInit {
             return;
         }
         /*conversion of image to byte array */
-        let isImageFit = await this.onSelectImage(event);
-        
+        const isImageFit = await this.onSelectImage(event);
+
         /*call service to upload */
         if(isImageFit){
             this.http_service.uploadImage(this.uploadedFile).pipe(first())
@@ -419,7 +419,7 @@ export class UploadComponent implements OnInit {
                         } else {
                             this.message = data['message'];
                             this.sharedService.setLogoImage(this.uploadedFile);
-    
+
                         }
                     });
         }
@@ -444,8 +444,8 @@ export class UploadComponent implements OnInit {
 
     // called when user switches the "Scrum/Kanban" switch
     kanbanActivation(type) {
-        let scrumTarget = document.querySelector('.horizontal-tabs .btn-tab.pi-scrum-button');
-        let kanbanTarget = document.querySelector('.horizontal-tabs .btn-tab.pi-kanban-button');
+        const scrumTarget = document.querySelector('.horizontal-tabs .btn-tab.pi-scrum-button');
+        const kanbanTarget = document.querySelector('.horizontal-tabs .btn-tab.pi-kanban-button');
         if(type === 'scrum') {
             scrumTarget?.classList?.add('btn-active');
             kanbanTarget?.classList?.remove('btn-active');
@@ -500,7 +500,7 @@ export class UploadComponent implements OnInit {
                     if(this.filterData && this.filterData.length > 0){
                         this.projectListArr = this.sortAlphabetically(this.filterData.filter(x => x.labelName.toLowerCase() == 'project'));
                         this.projectListArr = this.makeUniqueArrayList(this.projectListArr);
-                        let defaultSelection = this.selectedProjectBaseConfigId ? false : true;
+                        const defaultSelection = this.selectedProjectBaseConfigId ? false : true;
                         this.checkDefaultFilterSelection(defaultSelection);
                         if (Object.keys(filterData).length !== 0) {
                             // this.getMasterData();
@@ -657,7 +657,7 @@ export class UploadComponent implements OnInit {
             });
         }
         if (this.reqObj) {
-            for (let capReqField in this.reqObj) {
+            for (const capReqField in this.reqObj) {
                 this.reqObj[capReqField] = '';
             }
         }
@@ -673,7 +673,7 @@ export class UploadComponent implements OnInit {
             projectNodeId: data?.projectNodeId,
             projectName: data?.projectName,
             kanban: this.kanban
-        }
+        };
         if (!this.kanban) {
             if(this.selectedView === 'upload_tep') {
                 this.reqObj['sprintId'] = this.selectedSprintId;
@@ -698,10 +698,10 @@ export class UploadComponent implements OnInit {
             this.popupForm = new UntypedFormGroup({
                 capacity: new UntypedFormControl(data?.capacity ? data?.capacity : '')
             });
-            this.reqObj["capacity"] = data?.capacity ? data?.capacity : '';;
+            this.reqObj['capacity'] = data?.capacity ? data?.capacity : '';;
             if(this.kanban) {
-                this.reqObj["startDate"] = data?.startDate;
-                this.reqObj["endDate"] = data?.endDate;
+                this.reqObj['startDate'] = data?.startDate;
+                this.reqObj['endDate'] = data?.endDate;
             }
         }
         this.enableDisableSubmitButton();
@@ -843,13 +843,9 @@ export class UploadComponent implements OnInit {
     }
     getFirstOrLatestSprint(sprints, type) {
         if(type === 'latest') {
-            return sprints?.reduce((a, b) => {
-                return new Date(a.sprintStartDate) > new Date(b.sprintStartDate) ? a : b;
-            });
+            return sprints?.reduce((a, b) => new Date(a.sprintStartDate) > new Date(b.sprintStartDate) ? a : b);
         } else {
-            return sprints?.reduce((a, b) => {
-                return new Date(a.sprintStartDate) < new Date(b.sprintStartDate) ? a : b;
-            });
+            return sprints?.reduce((a, b) => new Date(a.sprintStartDate) < new Date(b.sprintStartDate) ? a : b);
         };
     }
     handleIterationFilters(level) {
@@ -862,7 +858,7 @@ export class UploadComponent implements OnInit {
             this.capacityScrumData = [];
             this.capacityKanbanData = [];
             if (level?.toLowerCase() == 'project') {
-                let selectedProject = this.filterForm?.get('selectedProjectValue')?.value;
+                const selectedProject = this.filterForm?.get('selectedProjectValue')?.value;
                 this.projectDetails = { ...this.trendLineValueList.find(i => i.nodeId === selectedProject) };
                 this.selectedProjectBaseConfigId = this.projectDetails?.basicProjectConfigId;
                 this.getProjectBasedData();
@@ -881,7 +877,7 @@ export class UploadComponent implements OnInit {
     makeUniqueArrayList(arr) {
         let uniqueArray = [];
         for (let i = 0; i < arr?.length; i++) {
-            let idx = uniqueArray?.findIndex(x => x.nodeId == arr[i]?.nodeId);
+            const idx = uniqueArray?.findIndex(x => x.nodeId == arr[i]?.nodeId);
             if (idx == -1) {
                 uniqueArray = [...uniqueArray, arr[i]];
                 uniqueArray[uniqueArray?.length - 1]['path'] = [uniqueArray[uniqueArray?.length - 1]['path']];

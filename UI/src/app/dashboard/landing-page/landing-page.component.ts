@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { UntypedFormGroup, UntypedFormControl, Validators } from '@angular/forms';
 import { HttpService } from 'src/app/services/http.service';
 
-declare var require: any
+declare let require: any;
 
 @Component({
   selector: 'app-landing-page',
@@ -11,7 +11,7 @@ declare var require: any
 })
 
 export class LandingPageComponent implements OnInit {
-  selectedValue: string = '';
+  selectedValue = '';
   overallSummary: any;
   area;
   landingInfo;
@@ -20,22 +20,22 @@ export class LandingPageComponent implements OnInit {
     category: new UntypedFormControl('', Validators.required),
     feedback: new UntypedFormControl('', {validators:[Validators.required, Validators.maxLength(600)]})
   });
-  isFeedbackSubmitted: boolean = false;
-  formMessage: string = '';
+  isFeedbackSubmitted = false;
+  formMessage = '';
   verticalArray: Array<string> = [];
   summaryItems: any = [];
   tableHeadingArr: any = [];
   totalsArray: any = [];
   totalProjects: any = 0;
   totalProjects30Days: any = 0;
-  totalUsers:any = 0;
-  newUsers:any = 0;
+  totalUsers: any = 0;
+  newUsers: any = 0;
   isProducer: Boolean = false;
 
   constructor(private httpService: HttpService) { }
 
   ngOnInit(): void {
-    
+
     // this.getRoles();
     this.getImpInfo();
     this.getCategory();
@@ -58,11 +58,11 @@ export class LandingPageComponent implements OnInit {
       }
     }, error => {
       this.landingInfo = require('../../../test/resource/fakeLandingInfo.json').data;
-    })
+    });
   }
 
   save() {
-    let postObj = this.voiceForm.value;
+    const postObj = this.voiceForm.value;
     postObj['username'] = localStorage.getItem('user_name');
     this.httpService.submitFeedbackData(postObj).subscribe((response) => {
       if(response.message){
@@ -79,7 +79,7 @@ export class LandingPageComponent implements OnInit {
       setTimeout(() => {
         this.formMessage = '';
       }, 3000);
-    })
+    });
   }
 
   getCategory() {
@@ -89,7 +89,7 @@ export class LandingPageComponent implements OnInit {
       }
     }, error => {
       console.log(error);
-    })
+    });
   }
 
   getTotalUsersCount(){
@@ -100,7 +100,7 @@ export class LandingPageComponent implements OnInit {
       }
     }, error=>{
       console.log(error);
-    })
+    });
   }
 
 }
