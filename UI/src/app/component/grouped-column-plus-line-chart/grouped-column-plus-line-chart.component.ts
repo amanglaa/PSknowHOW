@@ -355,7 +355,7 @@ export class GroupedColumnPlusLineChartComponent implements OnInit, OnChanges {
       .attr('class', 'bar')
       .on('mouseover', function (d, i) { })
       .on('mouseout', function (d) {
-        d3.select(this).style('fill', color(d.rate));
+        // d3.select(this).style('fill', color(d.rate));
       });
 
     slice
