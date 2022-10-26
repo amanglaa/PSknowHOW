@@ -149,7 +149,7 @@ export class AdSettingsComponent implements OnInit {
       submitData['authTypeStatus'][item.name] = true;
     });
 
-    if (this.selectedTypes.map((type) => 'adLogin').length) {
+    if (this.selectedTypes.filter((type) => type.name === 'adLogin').length) {
       // return if form is invalid
       if (this.adSettingsForm.invalid) {
         return;
