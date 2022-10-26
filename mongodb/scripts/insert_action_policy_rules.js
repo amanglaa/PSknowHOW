@@ -268,5 +268,16 @@ db.getCollection('action_policy_rule').insert([
             "createdDate": new Date(),
             "lastModifiedDate": new Date(),
             "isDeleted": false
+        },
+        {
+            "name": "Login type Configuration",
+            "roleAllowed": "",
+            "description": "SUPERADMIN can enable/disable a login type",
+            "roleActionCheck" : "action == 'CONFIGURE_LOGIN_TYPE' || action == 'GET_LOGIN_TYPES_CONFIG' ",
+            "condition": "subject.authorities.contains('ROLE_SUPERADMIN')",
+            "createdDate": new Date(),
+            "lastModifiedDate": new Date(),
+            "isDeleted": false
         }
+
     ]);
