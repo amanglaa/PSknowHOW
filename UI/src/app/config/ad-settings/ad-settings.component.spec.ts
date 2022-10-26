@@ -16,15 +16,22 @@ describe('AdSettingsComponent', () => {
   const baseUrl = environment.baseUrl;
   let httpMock;
 
-  const fakeADSettings = {
-    message: 'Sucessfully fetch the active directory user ',
+  const fakeLoginSettings = {
+    message: 'types of authentication config',
     success: true,
     data: {
-      username: 'test-username',
-      host: 'test-host-name',
-      port: 639,
-      rootDn: 'test-root',
-      domain: 'testdomain.net'
+      authTypeStatus: {
+        standardLogin: false,
+        adLogin: true
+      },
+      adServerDetail: {
+        username: 'svc-glbl-khADintgrt',
+        password: '',
+        host: 'lladldap.hk.publicisgroupe.net',
+        port: 639,
+        rootDn: 'DC=global,DC=publicisgroupe,DC=net',
+        domain: 'publicisgroupe.net'
+      }
     }
   };
   beforeEach(async () => {
@@ -57,20 +64,20 @@ describe('AdSettingsComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should get AD config on load', () => {
+  it('should get Login config on load', () => {
     component.ngOnInit();
     fixture.detectChanges();
-    httpMock.match(baseUrl + '/api/activedirectory')[0].flush(fakeADSettings);
-    expect(component.adSettingsForm.controls['domain'].value).toEqual(fakeADSettings['data']['domain']);
+    httpMock.match(baseUrl + '/api/auth-types')[0].flush(fakeLoginSettings);
+    expect(component.adSettingsForm.controls['domain'].value).toEqual(fakeLoginSettings['data']['adServerDetail']['domain']);
   });
 
   it('should submit AD config', () => {
     component.ngOnInit();
     fixture.detectChanges();
-    for (const obj in fakeADSettings['data']) {
+    for (const obj in fakeLoginSettings['data']['adServerDetail']) {
       if (obj !== 'password') {
         if (component.adSettingsForm && component.adSettingsForm.controls[obj]) {
-          component.adSettingsForm.controls[obj].setValue(fakeADSettings['data'][obj]);
+          component.adSettingsForm.controls[obj].setValue(fakeLoginSettings['data']['adServerDetail'][obj]);
         }
       }
     }
@@ -89,6 +96,6 @@ describe('AdSettingsComponent', () => {
       }
     };
     component.submit();
-    httpMock.match(baseUrl + '/api/activedirectory')[0].flush(fakeSubmitResponse);
+    httpMock.match(baseUrl + '/api/auth-types')[0].flush(fakeSubmitResponse);
   });
 });
