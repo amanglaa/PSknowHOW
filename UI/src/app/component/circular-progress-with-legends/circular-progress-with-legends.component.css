@@ -56,7 +56,7 @@
     z-index: 1000;
   }
 
-  *>>>.projectNameTooltip {
+  ::ng-deep .projectNameTooltip {
     position: absolute;                      
     width: 200px;                  
     height: auto;                 

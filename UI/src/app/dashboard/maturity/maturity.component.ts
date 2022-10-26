@@ -320,7 +320,7 @@ export class MaturityComponent implements OnInit, OnDestroy {
 
     drawAreaChart(totalDefectCount, sprintVelocity) {
         d3.select('svg').remove();
-        d3.select('.tooltip').remove();
+        d3.select('.tooltip_').remove();
         const self = this;
 
         const startRotation = this.loaderMaturity;
@@ -516,7 +516,7 @@ export class MaturityComponent implements OnInit, OnDestroy {
 
 
         const div = d3.select('.chart123').append('div')
-            .attr('class', 'tooltip')
+            .attr('class', 'tooltip_')
             .style('opacity', 1)
             .style('display', 'inline-block');
 
