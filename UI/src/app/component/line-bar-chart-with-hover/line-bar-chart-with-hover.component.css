@@ -29,23 +29,23 @@
   right: 0;
   z-index: 0;
 }
-*>>>.axis.axis--y line {
+::ng-deep .axis.axis--y line {
   stroke: #dedede;
   z-index: -10
 }
 
-*>>>.axis.axis--y .domain {
+::ng-deep .axis.axis--y .domain {
   display: none;
 }
-*>>>.dot {
+::ng-deep .dot {
   fill: var(--color-black);
 }
 
-*>>>.tick text {
+::ng-deep .tick text {
   font-size: 9px;
 }
 
-*>>>.tooltip {
+::ng-deep .tooltip {
   min-height: 50px;
   min-width: 100px;
   position: absolute;
@@ -57,7 +57,7 @@
   color: var(--color-white);
   border-radius: 2px;
 }
-*>>>.toolTipValue {
+::ng-deep .toolTipValue {
   color: #fff7a5;
   font-size: 12px;
   font-weight: bold;

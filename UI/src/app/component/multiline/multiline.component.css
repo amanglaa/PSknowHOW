@@ -21,26 +21,26 @@
   position: relative;
 }
 
-*>>>.y.axis line {
+::ng-deep .y.axis line {
   stroke: #dedede;
   z-index: 2;
 }
 
-*>>>.y.axis .domain {
+::ng-deep .y.axis .domain {
   display: none;
 }
 
-*>>>.thresholdlinetext {
+::ng-deep .thresholdlinetext {
   stroke: #333333;
   font-size: 12px;
   font-weight: 400;
 }
 
-*>>>.thresholdline {
+::ng-deep .thresholdline {
   stroke-dasharray: (3, 3);
 }
 
-*>>>div.tooltip {
+::ng-deep div.tooltip {
   position: absolute;
   text-align: center;
   max-width: 220px;
@@ -53,54 +53,54 @@
   z-index: 1;
 }
 
-*>>>div.tooltip p {
+::ng-deep div.tooltip p {
   margin-bottom: 0;
 }
 
-*>>>.toolTipValue {
+::ng-deep .toolTipValue {
   font-weight: bold;
 }
 
-*>>>.legend {
+::ng-deep .legend {
   overflow-x: auto;
 }
 
-*>>>.legend,
-*>>>.legendsPriority {
+::ng-deep .legend,
+::ng-deep .legendsPriority {
   width: 430px;
   overflow-x: auto;
   margin-left: 2px;
 }
 
-*>>>#yAxisG path {
+::ng-deep #yAxisG path {
   display: none;
 }
 
-*>>>#yAxisG line {
+::ng-deep #yAxisG line {
   stroke: #dedede;
 }
-*>>>.bstimeslider {
+::ng-deep .bstimeslider {
 
   width: 435px;
   height: 30px;
   position: relative;
 }
-*>>>.bktibx {
+::ng-deep .bktibx {
   float: left;
   font-size: 18px;
   display: block;
   color: #000;
 }
 
-*>>>#tslshow {
+::ng-deep #tslshow {
   position: absolute;
   left: 0;
 }
 
-*>>>#tslshow text {
+::ng-deep #tslshow text {
   font-size: 13px;
 }
-*>>>#leftArrow {
+::ng-deep #leftArrow {
   width: 30px;
   height: 30px;
   position: absolute;
@@ -113,7 +113,7 @@
   cursor: default;
 }
 
-*>>>#leftArrow span {
+::ng-deep #leftArrow span {
   color: var(--color-white);
   font-size: 24px;
   vertical-align: top;
@@ -122,7 +122,7 @@
   padding: 0px 7px;
 }
 
-*>>>#rightArrow span {
+::ng-deep #rightArrow span {
   color: var(--color-white);
   font-size: 24px;
   vertical-align: top;
@@ -131,7 +131,7 @@
   padding: 0 7px;
 }
 
-*>>>#rightArrow {
+::ng-deep #rightArrow {
   width: 30px;
   height: 30px;
   position: absolute;
@@ -143,15 +143,15 @@
   cursor: default;
 }
 
-*>>>#leftArrow:hover {
+::ng-deep #leftArrow:hover {
   opacity: 0.6;
 }
 
-*>>>#rightArrow:hover {
+::ng-deep #rightArrow:hover {
   opacity: 0.6;
 }
 
-*>>>#viewContainer {
+::ng-deep #viewContainer {
   width: 360px;
   height: 100%;
   position: absolute;
@@ -159,7 +159,7 @@
   margin-left: -180px;
   overflow: hidden;
 }
-*>>>.x.axis .domain { display: none; }
+::ng-deep .x.axis .domain { display: none; }
 
 #xCaptionContainer {
   text-align: center;
