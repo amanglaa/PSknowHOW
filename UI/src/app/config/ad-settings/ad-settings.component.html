@@ -22,7 +22,8 @@
     <div class="checkbox-options-container border-top p-mt-3" *ngIf="selectedTypes.length">
         <div *ngFor="let option of loginSettingsTypes;let i=index" class="checkbox-option p-pl-3 p-pr-3">
             <p-checkbox name="group" value="option" [value]="option" [(ngModel)]="selectedTypes"
-                [inputId]="option.name" (click)="checkValues()"></p-checkbox>
+                [inputId]="option.name" (onChange)="checkValues()"
+                [readonly]="option.name === 'standardLogin' && typeNotSelected('adLogin')"></p-checkbox>
             <label [for]="option.name" class="p-ml-3">{{option.label}}</label>
         </div>
         <span>* Select atleast 1 Authentication type</span>
