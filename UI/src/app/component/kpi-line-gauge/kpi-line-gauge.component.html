@@ -38,16 +38,16 @@
         </span>
         <div class="formdesc">The trend is of last 15 sprints.</div>
         <div *ngIf="tooltip && tooltip.kpiWiseAggregationType">
-          <div class="formdesc" *ngIf="tooltip.kpiWiseAggregationType[kpi] == 'percentile'">
+          <div class="formdesc" *ngIf="tooltip.kpiWiseAggregationType[kpi] === 'percentile'">
             Aggregation strategy is {{ tooltip.percentile }} criteria. Example:
           </div>
-          <div class="formdesc" *ngIf="tooltip.kpiWiseAggregationType[kpi] == 'sum'">
+          <div class="formdesc" *ngIf="tooltip.kpiWiseAggregationType[kpi] === 'sum'">
             Aggregation strategy is summation. Example:
           </div>
-          <div class="formdesc" *ngIf="tooltip.kpiWiseAggregationType[kpi] == 'median'">
+          <div class="formdesc" *ngIf="tooltip.kpiWiseAggregationType[kpi] === 'median'">
             Aggregation strategy is Median criteria. Example:
           </div>
-          <div class="formdesc" *ngIf="tooltip.kpiWiseAggregationType[kpi] == 'average'">
+          <div class="formdesc" *ngIf="tooltip.kpiWiseAggregationType[kpi] === 'average'">
             Aggregation strategy is Average criteria. Example:
           </div>
         </div>
@@ -145,7 +145,7 @@
       <app-gaugechart [value]="jiraKpiData[kpiID].value" [maxValue]="jiraKpiData[kpiID].maxValue" [type]="'DIR'" *ngIf="
           jiraKpiData &&
             jiraKpiData[kpiID] &&
-            jiraKpiData[kpiID].value != 'undefined';
+            jiraKpiData[kpiID].value !== 'undefined'
           else noData
         ">
       </app-gaugechart>

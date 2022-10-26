@@ -65,12 +65,12 @@ export class AdSettingsComponent implements OnInit {
 
   initializeFields() {
     this.adSettingsFormObj = {
-      'username': ['', Validators.required],
-      'password': ['', Validators.required],
-      'host': ['', Validators.required],
-      'port': [null, Validators.required],
-      'rootDn': ['', Validators.required],
-      'domain': ['', Validators.required]
+      username: ['', Validators.required],
+      password: ['', Validators.required],
+      host: ['', Validators.required],
+      port: [null, Validators.required],
+      rootDn: ['', Validators.required],
+      domain: ['', Validators.required]
     };
   }
 

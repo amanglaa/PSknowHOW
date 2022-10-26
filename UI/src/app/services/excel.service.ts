@@ -17,7 +17,7 @@
  ******************************************************************************/
 
 import { Injectable } from '@angular/core';
-import * as Excel from "exceljs";
+import * as Excel from 'exceljs';
 import * as fs from 'file-saver';
 import { DatePipe } from '../../../node_modules/@angular/common';
 
@@ -173,11 +173,11 @@ export class ExcelService {
                         worksheet.getColumn(i + 1).width = 25;
                     }
 
-                    worksheet.eachRow(function (row, rowNumber) {
+                    worksheet.eachRow(function(row, rowNumber) {
                         if (rowNumber === 1) {
                             row.eachCell({
                                 includeEmpty: true
-                            }, function (cell) {
+                            }, function(cell) {
 
                                 cell.font = {
                                     name: 'Arial Rounded MT Bold'
@@ -198,7 +198,7 @@ export class ExcelService {
                         }
                         row.eachCell({
                             includeEmpty: true
-                        }, function (cell) {
+                        }, function(cell) {
 
                             cell.border = {
                                 top: {
@@ -359,11 +359,11 @@ export class ExcelService {
                     worksheet.getColumn(i + 1).width = 25;
                 }
 
-                worksheet.eachRow(function (row, rowNumber) {
+                worksheet.eachRow(function(row, rowNumber) {
                     if (rowNumber === 1) {
                         row.eachCell({
                             includeEmpty: true
-                        }, function (cell) {
+                        }, function(cell) {
 
                             cell.font = {
                                 name: 'Arial Rounded MT Bold'
@@ -384,7 +384,7 @@ export class ExcelService {
                     }
                     row.eachCell({
                         includeEmpty: true
-                    }, function (cell) {
+                    }, function(cell) {
 
                         cell.border = {
                             top: {
@@ -403,14 +403,14 @@ export class ExcelService {
                     });
                 });
             }
-        
+
 
         worksheet.addRow([]);
         // Iterate over all cells in a all row (including empty cells)
-        worksheet.eachRow(function (row) {
+        worksheet.eachRow(function(row) {
             row.eachCell({
                 includeEmpty: true
-            }, function (cell) {
+            }, function(cell) {
                 cell.alignment = {
                     vertical: 'middle',
                     horizontal: 'left',

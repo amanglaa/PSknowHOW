@@ -46,7 +46,7 @@ export class RequestStatusComponent implements OnInit {
         this.dataLoading = false;
         this.requestStatusData = requests;
         if (this.requestStatusData['success']) {
-          this.requestStatusList = this.requestStatusData['data'].sort(function (a, b) {
+          this.requestStatusList = this.requestStatusData['data'].sort(function(a, b) {
             return +(new Date(b.createdDate)) - +(new Date(a.createdDate));
           });
         } else {

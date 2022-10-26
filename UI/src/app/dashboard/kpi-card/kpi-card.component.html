@@ -29,7 +29,7 @@
                             (change)="handleChange('multi')" [placeholder]="filter?.filterType"
                             (clear)="handleClearAll('filter'+(k+1))" class="p-pb-0 kpi-dropdown"
                             [ngClass]="{'p-mr-3': k != (dropdownArr?.length-1)}"
-                            [multiple]="kpiData?.kpiDetail?.kpiFilter?.toLowerCase() == 'multiselectdropdown'"
+                            [multiple]="kpiData?.kpiDetail?.kpiFilter?.toLowerCase() === 'multiselectdropdown'"
                             [closeOnSelect]="false">
                             <ng-container *ngFor="let item of filter?.options; index as i">
                                 <ng-option [value]="item">
@@ -37,7 +37,7 @@
                                 </ng-option>
                             </ng-container>
                             <ng-template ng-multi-label-tmp let-items="filter?.options" let-clear="clear"
-                                *ngIf="kpiData?.kpiDetail?.kpiFilter?.toLowerCase() == 'multiselectdropdown'">
+                                *ngIf="kpiData?.kpiDetail?.kpiFilter?.toLowerCase() === 'multiselectdropdown'">
                                 <div class="ng-value border-0"
                                     *ngIf="filterOptions['filter'+(k+1)]?.length > 0 && !filterOptions['filter'+(k+1)].includes('Overall')">
                                     <span class="ng-value-label pointer"

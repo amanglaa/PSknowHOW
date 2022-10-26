@@ -75,7 +75,7 @@ const routes: Routes = [
   providers: [
     AuthGuard,
     Logged,
-    AccessGuard, 
+    AccessGuard,
     GuestGuard
   ]
 })

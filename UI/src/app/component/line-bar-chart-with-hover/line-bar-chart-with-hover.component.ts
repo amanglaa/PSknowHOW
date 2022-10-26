@@ -48,7 +48,7 @@ export class LineBarChartWithHowerComponent implements OnChanges, AfterViewInit 
 	@Input() yCaption?: any;
 	@Input() xCaption?: any;
 	@Input() xLabelTransform: any;
-	@Input() isKanban: boolean = false;
+	@Input() isKanban = false;
 	elem;
 	filteredData: any;
 
@@ -107,10 +107,10 @@ export class LineBarChartWithHowerComponent implements OnChanges, AfterViewInit 
 				tempArray.push(data[obj1].count);
 				tempArray.push(data[obj1].howerValue);
 				if (data[obj1].barCount) {
-					tempArray.push({ 'barCount': data[obj1].barCount });
+					tempArray.push({ barCount: data[obj1].barCount });
 				}
 				if (data[obj1].barNo) {
-					tempArray.push({ 'barNo': data[obj1].barNo });
+					tempArray.push({ barNo: data[obj1].barNo });
 				}
 
 				newFormat.push(tempArray);
@@ -118,7 +118,7 @@ export class LineBarChartWithHowerComponent implements OnChanges, AfterViewInit 
 
 			data = newFormat;
 
-			const max = d3.max(data, function (d) {
+			const max = d3.max(data, function(d) {
 				return d[1];
 			});
 
@@ -138,8 +138,8 @@ export class LineBarChartWithHowerComponent implements OnChanges, AfterViewInit 
 				right: 15,
 				bottom: 5,
 				left: 15 + marginOnBasisOfMax,
-			},
-				width = this.width;
+			};
+				const width = this.width;
 			let height = 200 - 25 - 25;
 
 			// if (this.lineChart === 'true' && this.barChart === 'true') {
@@ -152,7 +152,7 @@ export class LineBarChartWithHowerComponent implements OnChanges, AfterViewInit 
 				.rangeRound([0, width - margin.left - margin.right])
 				.padding(0.6)
 				.domain(
-					data.map(function (d) {
+					data.map(function(d) {
 						return d[0];
 					})
 				);
@@ -163,7 +163,7 @@ export class LineBarChartWithHowerComponent implements OnChanges, AfterViewInit 
 				.domain([
 					0, this.maxValue && this.maxValue > 0
 						? this.maxValue
-						: d3.max(data, function (d) {
+						: d3.max(data, function(d) {
 							return parseInt(d[1]);
 						}),
 				]);
@@ -184,10 +184,10 @@ export class LineBarChartWithHowerComponent implements OnChanges, AfterViewInit 
 				.data(colors)
 				.enter()
 				.append('stop')
-				.style('stop-color', function (d) {
+				.style('stop-color', function(d) {
 					return d;
 				})
-				.attr('offset', function (d, i) {
+				.attr('offset', function(d, i) {
 					return 100 * (i / (colors.length - 1)) + '%';
 				});
 
@@ -197,7 +197,7 @@ export class LineBarChartWithHowerComponent implements OnChanges, AfterViewInit 
 				.attr('width', width + 'px')
 				.attr('height', '220px');
 
-			let translateX = height + 40;
+			const translateX = height + 40;
 			// x-axis
 			const XCaption = svg
 				.append('g')
@@ -265,11 +265,11 @@ export class LineBarChartWithHowerComponent implements OnChanges, AfterViewInit 
 
 				// bar chart
 				const tooltip = d3.select(this.elem).select('.lineWithBar').append('div').attr('class', 'tooltip').style('display', 'none');
-				let self = this;
+				const self = this;
 
 				bar
 					.append('rect')
-					.attr('x', function (d) {
+					.attr('x', function(d) {
 						let xScaleValue = xScale(d[0]);
 						if (d[3].barCount == 2 && d[4].barNo == 1) {
 							xScaleValue = xScale(d[0]) - xScale.bandwidth() / 2;
@@ -280,10 +280,10 @@ export class LineBarChartWithHowerComponent implements OnChanges, AfterViewInit 
 						return xScaleValue;
 					})
 					.attr('width', xScale.bandwidth())
-					.attr('y', function (d) {
+					.attr('y', function(d) {
 						return height;
 					})
-					.style('fill', function (d) {
+					.style('fill', function(d) {
 						let barColor = fillColor;
 						if (d[3].barCount == 2 && d[4].barNo == 1) {
 							barColor = fillColor;
@@ -293,7 +293,7 @@ export class LineBarChartWithHowerComponent implements OnChanges, AfterViewInit 
 						}
 						return barColor;
 					})
-					.on('mouseover', function (event,d) {
+					.on('mouseover', function(event,d) {
 						if (d[2] && d[2][d[0]]) {
 							tooltip.transition().duration(200).style('display', 'block').style('opacity', 0.9);
 							tooltip
@@ -302,15 +302,15 @@ export class LineBarChartWithHowerComponent implements OnChanges, AfterViewInit 
 								.style('top', event.layerY + 10 + 'px');
 						}
 					})
-					.on('mouseout', function (d) {
+					.on('mouseout', function(d) {
 						tooltip.transition().duration(500).style('display', 'none').style('opacity', 0);
 					})
 					.transition()
 					.duration(1000)
-					.attr('y', function (d) {
+					.attr('y', function(d) {
 						return yScale(d[1]);
 					})
-					.attr('height', function (d) {
+					.attr('height', function(d) {
 						if (d[1] === 0) {
 							return 0;
 						} else {
@@ -323,7 +323,7 @@ export class LineBarChartWithHowerComponent implements OnChanges, AfterViewInit 
 				bar
 					.append('text')
 					.attr('dy', '1.3em')
-					.attr('x', function (d) {
+					.attr('x', function(d) {
 						let xScaleValue = xScale(d[0]) + xScale.bandwidth() / 2;
 						if (d[3].barCount == 2 && d[4].barNo == 1 && d[1] > 0) {
 							xScaleValue = xScale(d[0]) - xScale.bandwidth() / 2 + 15;
@@ -333,14 +333,14 @@ export class LineBarChartWithHowerComponent implements OnChanges, AfterViewInit 
 						}
 						return xScaleValue;
 					})
-					.attr('y', function (d) {
+					.attr('y', function(d) {
 						return yScale(d[1]) - 22;
 					})
 					.attr('text-anchor', 'middle')
 					.attr('font-family', 'sans-serif')
 					.attr('font-size', '11px')
 					.attr('fill', 'black')
-					.text(function (d) {
+					.text(function(d) {
 						if (d[0] && (d[0] + '').indexOf('*') > -1) {
 							return 'No Data';
 						} else {
@@ -361,15 +361,15 @@ export class LineBarChartWithHowerComponent implements OnChanges, AfterViewInit 
 						.attr('stroke-dasharray', '4,4');
 				}
 
-				var color = ['#44739f', '#00a13c'];
+				const color = ['#44739f', '#00a13c'];
 
-				var legend = svg
+				const legend = svg
 					.selectAll('.legend')
 					.data(['Commit', 'MR']) //hard coding the labels as the datset may have or may not have but legend should be complete.
 					.enter()
 					.append('g')
 					.attr('class', 'legend')
-					.attr('transform', function (d, i) {
+					.attr('transform', function(d, i) {
 						return 'translate(0,' + i * 20 + ')';
 					});
 
@@ -381,7 +381,7 @@ export class LineBarChartWithHowerComponent implements OnChanges, AfterViewInit 
 						.attr('y', 22)
 						.attr('width', 18)
 						.attr('height', 18)
-						.style('fill', function (d, i) {
+						.style('fill', function(d, i) {
 							return color[i];
 						});
 
@@ -392,7 +392,7 @@ export class LineBarChartWithHowerComponent implements OnChanges, AfterViewInit 
 						.attr('y', 30)
 						.attr('dy', '.35em')
 						.style('text-anchor', 'end')
-						.text(function (d) {
+						.text(function(d) {
 							return d;
 						});
 				}
@@ -402,10 +402,10 @@ export class LineBarChartWithHowerComponent implements OnChanges, AfterViewInit 
 				// line chart
 				const line = d3
 					.line()
-					.x(function (d, i) {
+					.x(function(d, i) {
 						return xScale(d[0]) + xScale.bandwidth() / 2;
 					})
-					.y(function (d) {
+					.y(function(d) {
 						return yScale(d[1]);
 					});
 
@@ -420,19 +420,19 @@ export class LineBarChartWithHowerComponent implements OnChanges, AfterViewInit 
 
 				const tooltip = d3.select(this.elem).select('.lineWithBar').append('div').attr('class', 'tooltip').style('display', 'none');
 
-				let self = this;
+				const self = this;
 				if (!this.isKanban) {
 					bar
 						.append('circle') // Uses the enter().append() method
 						.attr('class', 'dot') // Assign a class for styling
-						.attr('cx', function (d, i) {
+						.attr('cx', function(d, i) {
 							return xScale(d[0]) + xScale.bandwidth() / 2;
 						})
-						.attr('cy', function (d) {
+						.attr('cy', function(d) {
 							return yScale(d[1]);
 						})
 						.attr('r', 5)
-						.on('mouseover', function (event,d) {
+						.on('mouseover', function(event,d) {
 							if (d[2] && d[2][d[0]]) {
 								tooltip.transition().duration(200).style('display', 'block').style('opacity', 0.9);
 								tooltip
@@ -441,7 +441,7 @@ export class LineBarChartWithHowerComponent implements OnChanges, AfterViewInit 
 									.style('top', event.layerY + 10 + 'px');
 							}
 						})
-						.on('mouseout', function (d) {
+						.on('mouseout', function(d) {
 							tooltip.transition().duration(500).style('display', 'none').style('opacity', 0);
 						});
 				}
@@ -449,17 +449,17 @@ export class LineBarChartWithHowerComponent implements OnChanges, AfterViewInit 
 					bar
 						.append('text')
 						.attr('dy', '-0.5em')
-						.attr('x', function (d) {
+						.attr('x', function(d) {
 							return xScale(d[0]) + xScale.bandwidth() / 2;
 						})
-						.attr('y', function (d) {
+						.attr('y', function(d) {
 							return yScale(d[1]);
 						})
 						.attr('text-anchor', 'middle')
 						.attr('font-family', 'sans-serif')
 						.attr('font-size', '11px')
 						.attr('fill', 'black')
-						.text(function (d) {
+						.text(function(d) {
 							return d[1];
 						});
 				}

@@ -49,7 +49,7 @@ export class BarchartComponent implements OnChanges {
         if (this.data) {
             let data = this.data;
             // sort bars based on value
-            data = data.sort(function (a, b) {
+            data = data.sort(function(a, b) {
                 return d3.ascending(a.count, b.count);
             });
             // set up svg using margin conventions - we'll need plenty of room on the left for labels
@@ -60,8 +60,8 @@ export class BarchartComponent implements OnChanges {
                 left: 60
             };
 
-            const width = 80,
-                height = 100;
+            const width = 80;
+                const height = 100;
 
             if (status !== 'new') {
                 d3.select(this.elem).select('svg').remove();
@@ -74,12 +74,12 @@ export class BarchartComponent implements OnChanges {
 
             const x = d3.scaleLinear()
                 .range([0, width - 20])
-                .domain([0, d3.max(data, function (d) {
+                .domain([0, d3.max(data, function(d) {
                     return parseInt(d.count);
                 })]);
             const y = d3.scaleBand()
                 .rangeRound([height, 0], .1)
-                .domain(data.map(function (d) {
+                .domain(data.map(function(d) {
                     return d.data;
                 }));
 
@@ -98,14 +98,16 @@ export class BarchartComponent implements OnChanges {
             // append rects
             bars.append('rect')
                 .attr('class', 'bar')
-                .attr('y', function (d) {
+                .attr('y', function(d) {
 
                     return y(d.data) + 8;
                 })
                 .attr('height', 10)
                 .attr('x', 2)
-                .style('fill', function (d, i) { return '#ffc001'; })
-                .attr('width', function (d) {
+                .style('fill', function(d, i) {
+ return '#ffc001';
+})
+                .attr('width', function(d) {
 
                     return (x(d.count));
                 });
@@ -114,14 +116,14 @@ export class BarchartComponent implements OnChanges {
             bars.append('text')
                 .attr('class', 'label')
                 // y position of the label is halfway down the bar
-                .attr('y', function (d) {
+                .attr('y', function(d) {
                     return y(d.data) + y.bandwidth() / 2 + 6;
                 })
                 // x position is 3 pixels to the right of the bar
-                .attr('x', function (d) {
+                .attr('x', function(d) {
                     return width - 15;
                 })
-                .text(function (d) {
+                .text(function(d) {
                     return d.count;
                 })
                 .style('color', '#7d7d7d')

@@ -126,25 +126,21 @@ export class AdvancedSettingsComponent implements OnInit {
 
   // used to fetch projects
   getProjects() {
-    let that = this;
+    const that = this;
     this.httpService.getUserProjects()
       .subscribe(response => {
         if (response[0] !== 'error' && !response.error) {
           if (this.getAuthorizationService.checkIfSuperUser()) {
-            that.userProjects = response.data.map((proj) => {
-              return {
+            that.userProjects = response.data.map((proj) => ({
                 name: proj.projectName,
                 id: proj.id
-              };
-            });
+              }));
           } else if (this.getAuthorizationService.checkIfProjectAdmin()) {
             that.userProjects = response.data.filter(proj => !this.getAuthorizationService.checkIfViewer(proj))
-              .map((filteredProj) => {
-                return {
+              .map((filteredProj) => ({
                   name: filteredProj.projectName,
                   id: filteredProj.id
-                };
-              });
+                }));
           }
         } else {
           this.messageService.add({ severity: 'error', summary: 'User needs to be assigned a project for the access to work on dashboards.' });
@@ -195,7 +191,7 @@ export class AdvancedSettingsComponent implements OnInit {
 
   updateProjectSelection(projectSelectionEvent) {
     //console.log(JSON.stringify(projectSelectionEvent));
-    let currentSelection = projectSelectionEvent.value;
+    const currentSelection = projectSelectionEvent.value;
     if (currentSelection) {
       this.selectedProject = currentSelection;
     }
@@ -212,16 +208,16 @@ export class AdvancedSettingsComponent implements OnInit {
   }
 
   showExecutionDate(processorName) {
-    let traceLog = this.findTraceLogForTool(processorName);
-    return (traceLog == undefined || traceLog == null) ? "NA" : new DatePipe('en-US').transform(traceLog.executionEndedAt, 'dd/MM/yyyy (EEE) - hh:mmaaa');
+    const traceLog = this.findTraceLogForTool(processorName);
+    return (traceLog == undefined || traceLog == null) ? 'NA' : new DatePipe('en-US').transform(traceLog.executionEndedAt, 'dd/MM/yyyy (EEE) - hh:mmaaa');
   }
 
   showProcessorLastState(processorName) {
-    let traceLog = this.findTraceLogForTool(processorName);
+    const traceLog = this.findTraceLogForTool(processorName);
     if (traceLog == undefined || traceLog == null) {
-      return "NA";
+      return 'NA';
     } else {
-      return traceLog.executionSuccess ? "Success" : "Failure";
+      return traceLog.executionSuccess ? 'Success' : 'Failure';
     }
   }
 
@@ -288,8 +284,8 @@ export class AdvancedSettingsComponent implements OnInit {
   }
 
   deleteProcessorDataReq(processorDetails, selectedProject) {
-    let toolDetails = this.getToolDetailsForProcessor(processorDetails.processorName);
-    let toolDetailSubscription = [];
+    const toolDetails = this.getToolDetailsForProcessor(processorDetails.processorName);
+    const toolDetailSubscription = [];
     if (toolDetails?.length > 0) {
       toolDetails.forEach(toolDetail => {
         toolDetailSubscription.push(this.httpService.deleteProcessorData(toolDetail?.id, selectedProject?.id));

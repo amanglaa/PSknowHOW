@@ -49,151 +49,151 @@ describe('BasicConfigComponent', () => {
 
   const hierarchyData = [
     {
-      "level": 1,
-      "hierarchyLevelId": "country",
-      "hierarchyLevelName": "Country",
-      "suggestions": [
+      level: 1,
+      hierarchyLevelId: 'country',
+      hierarchyLevelName: 'Country',
+      suggestions: [
         {
-          "name": "Canada",
-          "code": "Canada"
+          name: 'Canada',
+          code: 'Canada'
         },
         {
-          "name": "India",
-          "code": "India"
+          name: 'India',
+          code: 'India'
         },
         {
-          "name": "USA",
-          "code": "USA"
+          name: 'USA',
+          code: 'USA'
         }
       ],
-      "value": "",
-      "required": true
+      value: '',
+      required: true
     },
     {
-      "level": 2,
-      "hierarchyLevelId": "state",
-      "hierarchyLevelName": "State",
-      "suggestions": [
+      level: 2,
+      hierarchyLevelId: 'state',
+      hierarchyLevelName: 'State',
+      suggestions: [
         {
-          "name": "Haryana",
-          "code": "Haryana"
+          name: 'Haryana',
+          code: 'Haryana'
         },
         {
-          "name": "Karnataka",
-          "code": "Karnataka"
+          name: 'Karnataka',
+          code: 'Karnataka'
         },
         {
-          "name": "Ontario",
-          "code": "Ontario"
+          name: 'Ontario',
+          code: 'Ontario'
         },
         {
-          "name": "Texas",
-          "code": "Texas"
+          name: 'Texas',
+          code: 'Texas'
         },
         {
-          "name": "Washinton",
-          "code": "Washinton"
+          name: 'Washinton',
+          code: 'Washinton'
         }
       ],
-      "value": "",
-      "required": true
+      value: '',
+      required: true
     },
     {
-      "level": 3,
-      "hierarchyLevelId": "city",
-      "hierarchyLevelName": "City",
-      "suggestions": [
+      level: 3,
+      hierarchyLevelId: 'city',
+      hierarchyLevelName: 'City',
+      suggestions: [
         {
-          "name": "Bangalore",
-          "code": "Bangalore"
+          name: 'Bangalore',
+          code: 'Bangalore'
         },
         {
-          "name": "Gurgaon",
-          "code": "Gurgaon"
+          name: 'Gurgaon',
+          code: 'Gurgaon'
         },
         {
-          "name": "Houston",
-          "code": "Houston"
+          name: 'Houston',
+          code: 'Houston'
         },
         {
-          "name": "Kurukshetra",
-          "code": "Kurukshetra"
+          name: 'Kurukshetra',
+          code: 'Kurukshetra'
         },
         {
-          "name": "Ottawa",
-          "code": "Ottawa"
+          name: 'Ottawa',
+          code: 'Ottawa'
         },
         {
-          "name": "Remond",
-          "code": "Remond"
+          name: 'Remond',
+          code: 'Remond'
         },
         {
-          "name": "Seattle",
-          "code": "Seattle"
+          name: 'Seattle',
+          code: 'Seattle'
         }
       ],
-      "value": "",
-      "required": true
+      value: '',
+      required: true
     }
   ];
 
   const formValue = {
-    "kanban": false,
-    "country": {
-      "name": "Canada",
-      "code": "Canada"
+    kanban: false,
+    country: {
+      name: 'Canada',
+      code: 'Canada'
     },
-    "state": {
-      "name": "Ontario",
-      "code": "Ontario"
+    state: {
+      name: 'Ontario',
+      code: 'Ontario'
     },
-    "city": {
-      "name": "Ottawa",
-      "code": "Ottawa"
+    city: {
+      name: 'Ottawa',
+      code: 'Ottawa'
     },
-    "projectName": "Test44"
+    projectName: 'Test44'
   };
 
   const successResponse = {
-    "serviceResponse": {
-        "message": "Added Successfully.",
-        "success": true,
-        "data": {
-            "id": "6335497f67af3f41656b7b42",
-            "projectName": "Test44",
-            "createdAt": "2022-09-29T13:00:07",
-            "kanban": false,
-            "hierarchy": [
+    serviceResponse: {
+        message: 'Added Successfully.',
+        success: true,
+        data: {
+            id: '6335497f67af3f41656b7b42',
+            projectName: 'Test44',
+            createdAt: '2022-09-29T13:00:07',
+            kanban: false,
+            hierarchy: [
                 {
-                    "hierarchyLevel": {
-                        "level": 1,
-                        "hierarchyLevelId": "country",
-                        "hierarchyLevelName": "Country"
+                    hierarchyLevel: {
+                        level: 1,
+                        hierarchyLevelId: 'country',
+                        hierarchyLevelName: 'Country'
                     },
-                    "value": "Canada"
+                    value: 'Canada'
                 },
                 {
-                    "hierarchyLevel": {
-                        "level": 2,
-                        "hierarchyLevelId": "state",
-                        "hierarchyLevelName": "State"
+                    hierarchyLevel: {
+                        level: 2,
+                        hierarchyLevelId: 'state',
+                        hierarchyLevelName: 'State'
                     },
-                    "value": "Ontario"
+                    value: 'Ontario'
                 },
                 {
-                    "hierarchyLevel": {
-                        "level": 3,
-                        "hierarchyLevelId": "city",
-                        "hierarchyLevelName": "City"
+                    hierarchyLevel: {
+                        level: 3,
+                        hierarchyLevelId: 'city',
+                        hierarchyLevelName: 'City'
                     },
-                    "value": "Ottawa"
+                    value: 'Ottawa'
                 }
             ],
-            "isKanban": false
+            isKanban: false
         }
     },
-    "projectsAccess": []
-}
+    projectsAccess: []
+};
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -273,45 +273,45 @@ describe('BasicConfigComponent', () => {
   });
 
   it('should filter out and display suggestions', () => {
-    let event = {
-      "originalEvent": {
-        "isTrusted": true
+    const event = {
+      originalEvent: {
+        isTrusted: true
       },
-      "query": "ca"
+      query: 'ca'
     };
-    let field = {
-      "level": 1,
-      "hierarchyLevelId": "country",
-      "hierarchyLevelName": "Country",
-      "suggestions": [
+    const field = {
+      level: 1,
+      hierarchyLevelId: 'country',
+      hierarchyLevelName: 'Country',
+      suggestions: [
         {
-          "name": "Canada",
-          "code": "Canada"
+          name: 'Canada',
+          code: 'Canada'
         },
         {
-          "name": "India",
-          "code": "India"
+          name: 'India',
+          code: 'India'
         },
         {
-          "name": "USA",
-          "code": "USA"
+          name: 'USA',
+          code: 'USA'
         }
       ],
-      "value": "",
-      "required": true,
-      "filteredSuggestions": [
+      value: '',
+      required: true,
+      filteredSuggestions: [
         {
-          "name": "Canada",
-          "code": "Canada"
+          name: 'Canada',
+          code: 'Canada'
         }
       ]
     };
     component.search(event, field);
     fixture.detectChanges();
-    let filteredSuggestions = [
+    const filteredSuggestions = [
       {
-        "name": "Canada",
-        "code": "Canada"
+        name: 'Canada',
+        code: 'Canada'
       }
     ];
     expect(field.filteredSuggestions).toEqual(filteredSuggestions);

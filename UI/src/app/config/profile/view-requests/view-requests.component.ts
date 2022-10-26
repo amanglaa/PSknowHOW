@@ -63,12 +63,10 @@ export class ViewRequestsComponent implements OnInit {
       .subscribe(roles => {
         this.rolesData = roles;
         if (this.rolesData['success']) {
-          this.roleList = roles.data.map((role) => {
-            return {
+          this.roleList = roles.data.map((role) => ({
               label: role.roleName,
               value: role.roleName
-            };
-          });
+            }));
           if(this.authService.checkIfProjectAdmin()) {
             this.roleList = this.roleList.filter((role) => role.value !== 'ROLE_SUPERADMIN');
           }
@@ -81,7 +79,7 @@ export class ViewRequestsComponent implements OnInit {
   }
 
   approveRejectRequest(requestData, approved) {
-    let obj = {};
+    const obj = {};
     approved ? obj['status'] = 'Approved' : obj['status'] = 'Rejected';
     obj['role'] = requestData.role;
     obj['message'] = requestData.reviewComments;

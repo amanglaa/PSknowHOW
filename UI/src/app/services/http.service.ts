@@ -116,12 +116,12 @@ import { UserAccessApprovalResponseDTO, UserAccessReqPayload } from '../model/us
     private sonarVersionURL = this.baseUrl + '/api/sonar/version';
     private projectKeyRequestUrl = this.baseUrl + '/api/sonar/project';
     private branchListRequestUrl = this.baseUrl + '/api/sonar/branch';
-    private processorTraceLogsUrl = this.baseUrl + '/api/processor/tracelog'
+    private processorTraceLogsUrl = this.baseUrl + '/api/processor/tracelog';
     private zephyrCloudUrl = this.baseUrl + '/api/globalconfigurations/zephyrcloudurl';
     private bambooPlanUrl = this.baseUrl + '/api/bamboo/plans';
     private bambooBranchUrl = this.baseUrl + '/api/bamboo/branches';
     private bambooDeploymentProjectsUrl = this.baseUrl + '/api/bamboo/deploy';
-    private jenkinsJobNameUrl = this.baseUrl + '/api/jenkins/jobName'
+    private jenkinsJobNameUrl = this.baseUrl + '/api/jenkins/jobName';
     private azurePipelineUrl = this.baseUrl + '/api/azure/pipeline';
     private azureReleasePipelineUrl = this.baseUrl + '/api/azure/release';
     private allHierachyLevelsUrl = this.baseUrl + '/api/filters';
@@ -229,7 +229,7 @@ import { UserAccessApprovalResponseDTO, UserAccessReqPayload } from '../model/us
      * @deprecated since 4.0.0
      * delete non-JIRA tools
      *
-    */
+     */
     deleteTool(requestUrl): Observable<any> {
         return this.http.delete<object>(this.configUrl + requestUrl)
             .pipe(tap(getData => { }));
@@ -261,11 +261,11 @@ import { UserAccessApprovalResponseDTO, UserAccessReqPayload } from '../model/us
         const loginUrl = this.getRouteUrl(provider);
         // set resquest header
         const httpOptions = {
-            headers: headers,
+            headers,
             observe: 'response' as 'response'
         };
         // encode the username and password
-        const data = { 'username': username, 'password': password };
+        const data = { username, password };
         const str = [];
         for (const p in data) {
             str.push(encodeURIComponent(p) + '=' + encodeURIComponent(data[p]));
@@ -284,7 +284,7 @@ import { UserAccessApprovalResponseDTO, UserAccessReqPayload } from '../model/us
 
     /** POST: Register the user with username,password and email */
     register(username, password, email): Observable<object> {
-        const postData = { 'username': username, 'password': password, 'email': email };
+        const postData = { username, password, email };
         /* Send request to server and store token and username in localstore for authentication */
         return this.http.post<any>(this.registrationUrl, postData)
             .pipe(tap(res => {
@@ -305,7 +305,7 @@ import { UserAccessApprovalResponseDTO, UserAccessReqPayload } from '../model/us
     /**POST forgot password  request */
     forgotPassword(email): Observable<object> {
 
-        const postData = { 'email': email };
+        const postData = { email };
         return this.http.post(this.forgotPasswordEmailUrl, postData).pipe(tap(res => {
 
         }));
@@ -313,21 +313,21 @@ import { UserAccessApprovalResponseDTO, UserAccessReqPayload } from '../model/us
 
     /** POST: Change the password for loggedin user*/
     changePassword(oldpassword, password): Observable<any> {
-        const postData = { 'oldPassword': oldpassword, 'password': password, 'email': localStorage.getItem('user_email'), 'user': localStorage.getItem('user_name') };
+        const postData = { oldPassword: oldpassword, password, email: localStorage.getItem('user_email'), user: localStorage.getItem('user_name') };
         return this.http.post(this.changePasswordUrl, postData).pipe(tap(res => {
         }));
     }
 
     /**POST update password */
     updatePassword(password, resetToken) {
-        const postData = { 'password': password, 'resetToken': resetToken };
+        const postData = { password, resetToken };
         return this.http.post(this.resetPasswordUrl, postData).pipe(tap(res => {
         }));
     }
 
     /**PUT set email */
     changeEmail(email, username) {
-        const postData = { 'email': email };
+        const postData = { email };
         return this.http.put(this.changeEmailUrl + username + '/updateEmail', postData);
     }
 
@@ -396,71 +396,57 @@ import { UserAccessApprovalResponseDTO, UserAccessReqPayload } from '../model/us
     /** fetch all the project from account id */
     getAllProjectsOfAnAccount(accountID): Observable<object> {
         return this.http.get<any>(this.enggMaturityChildByParentUrl)
-            .pipe(tap(projects => {
-                return projects.map((project) => new Account({ id: project.id, name: project.nodeName }));
-            }));
+            .pipe(tap(projects => projects.map((project) => new Account({ id: project.id, name: project.nodeName }))));
     }
 
     /** fetch all the project from account ids */
     getAllProjectsOfAnAccounts(accountID, levelName): Observable<Account[]> {
         return this.http.get<any>(this.enggMaturityChildByParentUrl + '/' + accountID + '/' + levelName)
-            .pipe(map(projects => {
-                return projects.map((project) => new Account({ id: project.id, name: project.nodeName }));
-            }));
+            .pipe(map(projects => projects.map((project) => new Account({ id: project.id, name: project.nodeName }))));
 
     }
     /** fetch all the kpi master data according to project id */
     getProjectEnggMaturityScoreCards(projectID): Observable<any[]> {
         return this.http
             .get<any>(this.enggMaturitykpiScoreMasterUrl + '/' + projectID)
-            .pipe(map(scoreCards => {
-                return scoreCards.map((scoreCard) => new ScoreCard({
+            .pipe(map(scoreCards => scoreCards.map((scoreCard) => new ScoreCard({
                     id: scoreCard.id,
                     projectID: scoreCard.accountHierarchyId,
                     created: scoreCard.created,
                     lastUpdated: scoreCard.lastUpdated
-                }));
-            }));
+                }))));
     }
 
     /** fetch the kpi score by scorecard master id */
     getProjectEnggMaturityKPIScores(scoreCardID): Observable<object> {
         return this.http
             .get<any>(this.enggMaturityKpiScoreUrl + '/' + scoreCardID)
-            .pipe(map(KPIScores => {
-                return KPIScores.map((kpiScore) => new KPIScore({
+            .pipe(map(KPIScores => KPIScores.map((kpiScore) => new KPIScore({
                     id: kpiScore.id,
                     scoreCardID: kpiScore.accountHierarchyKpiScoreMasterId,
                     kpiID: kpiScore.kpiId,
                     kpiScore: kpiScore.score,
                     kpiMaturity: kpiScore.maturity
-                }));
-            }));
+                }))));
     }
 
     /** Save and update the enggmaturity data */
     addEnggMaturityKPIScoreForProject(projectKPIScoreData: {}): Observable<object> {
         return this.http.post<any>(this.enggMaturitySavekpisUrl, projectKPIScoreData)
-            .pipe(tap(response => {
-                return response;
-            }));
+            .pipe(tap(response => response));
     }
 
     /** get all kpi data */
     getAllEnggMaturityKpi() {
         return this.http.get<any>(this.enggMaturityAllKpisUrl)
-            .pipe(map(projects => {
-                return projects;
-            }));
+            .pipe(map(projects => projects));
 
     }
 
     /** get all roles for RBAC */
     getRolesList() {
         return this.http.get<any>(this.getRolesUrl)
-            .pipe(map(roles => {
-                return roles;
-            }));
+            .pipe(map(roles => roles));
     }
 
     /** get all projects for RBAC */
@@ -482,17 +468,13 @@ import { UserAccessApprovalResponseDTO, UserAccessReqPayload } from '../model/us
     /** get all requests for access (RBAC) */
     getAccessRequests(status) {
         return this.http.get<any>(this.getAccessRequestsUrl + '/' + status)
-            .pipe(map(requests => {
-                return requests;
-            }));
+            .pipe(map(requests => requests));
     }
 
     /** get pending request notifications */
     getAccessRequestsNotifications() {
         return this.http.get<NotificationResponseDTO>(this.getAccessRequestNotificationsUrl)
-            .pipe(map(requests => {
-                return requests;
-            }));
+            .pipe(map(requests => requests));
     }
 
     /** Save access request (RBAC) */
@@ -518,9 +500,7 @@ import { UserAccessApprovalResponseDTO, UserAccessReqPayload } from '../model/us
     /** Fetch current user's access requests */
     getUserAccessRequests(userName) {
         return this.http.get<any>(this.getUserAccessRequestsUrl + '/' + userName)
-            .pipe(map(requests => {
-                return requests;
-            }));
+            .pipe(map(requests => requests));
     }
 
     /** Fetch data automation scenarios */
@@ -790,10 +770,10 @@ import { UserAccessApprovalResponseDTO, UserAccessReqPayload } from '../model/us
     }
 
     getProcessorsTraceLogsForProject(basicProjectConfigId){
-        let params = "";
+        let params = '';
 
         if(basicProjectConfigId){
-            params = "?basicProjectConfigId=" + basicProjectConfigId;
+            params = '?basicProjectConfigId=' + basicProjectConfigId;
         }
 
         const url = params ? this.processorTraceLogsUrl + params : this.processorTraceLogsUrl;

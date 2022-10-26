@@ -13,11 +13,11 @@ export class KpiCardComponent implements OnInit, OnDestroy {
   @Input() dropdownArr: any;
   @Output() optionSelected = new EventEmitter<any>();
   faShareSquare = faShareSquare;
-  isTooltip: boolean = false;
-  filterTooltip: boolean = false;
+  isTooltip = false;
+  filterTooltip = false;
   @Input() trendBoxColorObj: any;
   subscriptions: any[] = [];
-  filterOption: string = 'Overall';
+  filterOption = 'Overall';
   filterOptions: object = {};
   radioOption: string;
   filterMultiSelectOptionsData: object = {};
@@ -26,8 +26,8 @@ export class KpiCardComponent implements OnInit, OnDestroy {
   rhs: any = '';
   @Input() isShow?: any;
   @Input() showExport: boolean;
-  @Input() showTrendIndicator: boolean =true;
-  @Input() showChartView: boolean = true;
+  @Input() showTrendIndicator =true;
+  @Input() showChartView = true;
 
   constructor(private service: SharedService) {
   }
@@ -35,7 +35,7 @@ export class KpiCardComponent implements OnInit, OnDestroy {
     this.subscriptions.push(this.service.selectedFilterOptionObs.subscribe((x) => {
       if (Object.keys(x)?.length > 0) {
         this.kpiSelectedFilterObj = JSON.parse(JSON.stringify(x));
-        for (let key in x[this.kpiData?.kpiId]) {
+        for (const key in x[this.kpiData?.kpiId]) {
           if (x[this.kpiData?.kpiId][key]?.includes('Overall')) {
             this.filterOptions = {};
             this.filterOption = 'Overall';
@@ -45,7 +45,7 @@ export class KpiCardComponent implements OnInit, OnDestroy {
         }
         if (this.kpiData?.kpiDetail?.hasOwnProperty('kpiFilter') && this.kpiData?.kpiDetail?.kpiFilter?.toLowerCase() == 'radiobutton') {
           if (this.kpiSelectedFilterObj[this.kpiData?.kpiId]) {
-            this.radioOption = this.kpiSelectedFilterObj[this.kpiData?.kpiId][0]
+            this.radioOption = this.kpiSelectedFilterObj[this.kpiData?.kpiId][0];
           }
         }
       }
@@ -59,7 +59,7 @@ export class KpiCardComponent implements OnInit, OnDestroy {
   }
 
   exportToExcel() {
-    this.downloadExcel.emit(true)
+    this.downloadExcel.emit(true);
   }
 
   checkMaturity(item) {
@@ -68,8 +68,8 @@ export class KpiCardComponent implements OnInit, OnDestroy {
       return undefined;
     }
     if (item.value.length >= 5) {
-      let last5ArrItems = item.value.slice(item.value.length - 5, item.value.length);
-      let tempArr = last5ArrItems.filter(x => x.data != 0);
+      const last5ArrItems = item.value.slice(item.value.length - 5, item.value.length);
+      const tempArr = last5ArrItems.filter(x => x.data != 0);
       if (tempArr.length == 0) {
         maturity = 0;
       }
@@ -87,9 +87,9 @@ export class KpiCardComponent implements OnInit, OnDestroy {
     if (value && type?.toLowerCase() == 'radio') {
       this.optionSelected.emit(value);
     } else if (type?.toLowerCase() == 'single') {
-      let obj = {
-        'filter1': []
-      }
+      const obj = {
+        filter1: []
+      };
       obj['filter1'].push(this.filterOption);
       this.optionSelected.emit(obj);
     } else {
@@ -103,7 +103,7 @@ export class KpiCardComponent implements OnInit, OnDestroy {
   }
   getColor(nodeName) {
     let color = '';
-    for (let key in this.trendBoxColorObj) {
+    for (const key in this.trendBoxColorObj) {
       if (this.trendBoxColorObj[key]?.nodeName == nodeName) {
         color = this.trendBoxColorObj[key]?.color;
       }
@@ -111,7 +111,7 @@ export class KpiCardComponent implements OnInit, OnDestroy {
     return color;
   }
   handleClearAll(event) {
-    for (let key in this.filterOptions) {
+    for (const key in this.filterOptions) {
       if (key?.toLowerCase() == event?.toLowerCase()) {
         delete this.filterOptions[key];
       }
@@ -126,10 +126,10 @@ export class KpiCardComponent implements OnInit, OnDestroy {
 
         this.filterMultiSelectOptionsData['details'][filterNo]?.push(
           {
-            type: "paragraph",
+            type: 'paragraph',
             value: this.filterOptions[filterNo][i]
           }
-        )
+        );
       }
 
     } else {

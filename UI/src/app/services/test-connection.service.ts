@@ -32,10 +32,10 @@ export class TestConnectionService {
   /** get: test JIRA connection */
   testJira(baseUrl, apiEndPoint, username, password, vault): Observable<any> {
     const postData = {
-      baseUrl: baseUrl,
-      username: username,
+      baseUrl,
+      username,
       password: password ? this.rsa.encrypt(password) : '',
-      vault: vault
+      vault
     };
     let headers: HttpHeaders = new HttpHeaders();
     headers = headers.append('requestArea', 'thirdParty');
@@ -46,13 +46,13 @@ export class TestConnectionService {
 
   testZephyr(baseUrl, username, password, apiEndPoint, accessToken, cloudEnv, vault): Observable<any> {
     const postData = {
-      baseUrl: baseUrl,
-      username: username,
+      baseUrl,
+      username,
       password: password ? this.rsa.encrypt(password) : '',
-      apiEndPoint: apiEndPoint,
-      accessToken: accessToken,
-      cloudEnv: cloudEnv,
-      vault: vault
+      apiEndPoint,
+      accessToken,
+      cloudEnv,
+      vault
     };
     let headers: HttpHeaders = new HttpHeaders();
     headers = headers.append('requestArea', 'thirdParty');
@@ -63,10 +63,10 @@ export class TestConnectionService {
 
   testAzureBoards(baseUrl, username, pat, vault): Observable<any> {
     const postData = {
-      baseUrl: baseUrl,
-      username: username,
+      baseUrl,
+      username,
       password: pat ? this.rsa.encrypt(pat) : '',
-      vault: vault
+      vault
     };
     let headers: HttpHeaders = new HttpHeaders();
     headers = headers.append('requestArea', 'thirdParty');
@@ -77,9 +77,9 @@ export class TestConnectionService {
 
     testGitLab(baseUrl, accessToken, vault): Observable<any> {
       const postData = {
-        baseUrl: baseUrl,
+        baseUrl,
         accessToken: accessToken ? this.rsa.encrypt(accessToken) : '',
-        vault: vault
+        vault
       };
       let headers: HttpHeaders = new HttpHeaders();
       headers = headers.append('requestArea', 'thirdParty');
@@ -90,12 +90,12 @@ export class TestConnectionService {
 
   testBitbucket(baseUrl, username, password, apiEndPoint, cloudEnv, vault): Observable<any> {
     const postData = {
-      baseUrl: baseUrl,
-      username: username,
+      baseUrl,
+      username,
       password: password ? this.rsa.encrypt(password) : '',
-      apiEndPoint: apiEndPoint,
-      cloudEnv: cloudEnv,
-      vault: vault
+      apiEndPoint,
+      cloudEnv,
+      vault
     };
     let headers: HttpHeaders = new HttpHeaders();
     headers = headers.append('requestArea', 'thirdParty');
@@ -111,18 +111,18 @@ export class TestConnectionService {
     if (cloudEnv) {
 
       postData = {
-        baseUrl: baseUrl,
+        baseUrl,
         accessToken: accesstoken ? this.rsa.encrypt(accesstoken) : '',
         cloudEnv: true,
-        vault: vault
+        vault
       };
     } else {
       postData = {
-        baseUrl: baseUrl,
-        username: username,
+        baseUrl,
+        username,
         password: password ? this.rsa.encrypt(password) : '',
         cloudEnv: false,
-        vault: vault
+        vault
       };
     }
 
@@ -135,10 +135,10 @@ export class TestConnectionService {
 
   testJenkins(baseUrl, username, apiKey, vault): Observable<any> {
     const postData = {
-      baseUrl: baseUrl,
-      username: username,
+      baseUrl,
+      username,
       apiKey: apiKey ? this.rsa.encrypt(apiKey) : '',
-      vault: vault
+      vault
     };
     let headers: HttpHeaders = new HttpHeaders();
     headers = headers.append('requestArea', 'thirdParty');
@@ -158,10 +158,10 @@ export class TestConnectionService {
 
   testBamboo(baseUrl, username, password, vault): Observable<any> {
     const postData = {
-      baseUrl: baseUrl,
-      username: username,
+      baseUrl,
+      username,
       password: password ? this.rsa.encrypt(password) : '',
-      vault: vault
+      vault
     };
     let headers: HttpHeaders = new HttpHeaders();
     headers = headers.append('requestArea', 'thirdParty');
@@ -172,10 +172,10 @@ export class TestConnectionService {
 
   testTeamCity(baseUrl, username, password, vault): Observable<any> {
     const postData = {
-      baseUrl: baseUrl,
-      username: username,
+      baseUrl,
+      username,
       password: password ? this.rsa.encrypt(password) : '',
-      vault: vault
+      vault
     };
     let headers: HttpHeaders = new HttpHeaders();
     headers = headers.append('requestArea', 'thirdParty');
@@ -186,10 +186,10 @@ export class TestConnectionService {
 
   testAzurePipeline(baseUrl, username, pat, vault): Observable<any> {
     const postData = {
-      baseUrl: baseUrl,
-      username: username,
+      baseUrl,
+      username,
       password: pat ? this.rsa.encrypt(pat) : '',
-      vault: vault
+      vault
     };
     let headers: HttpHeaders = new HttpHeaders();
     headers = headers.append('requestArea', 'thirdParty');
@@ -200,10 +200,10 @@ export class TestConnectionService {
 
   testAzureRepository(baseUrl, username, pat, vault): Observable<any> {
     const postData = {
-      baseUrl: baseUrl,
-      username: username,
+      baseUrl,
+      username,
       password: pat ? this.rsa.encrypt(pat) : '',
-      vault: vault
+      vault
     };
     let headers: HttpHeaders = new HttpHeaders();
     headers = headers.append('requestArea', 'thirdParty');
@@ -215,10 +215,10 @@ export class TestConnectionService {
 
   testGithub(baseUrl, username, accessToken, vault): Observable<any> {
     const postData = {
-      baseUrl: baseUrl,
-      username: username,
+      baseUrl,
+      username,
       accessToken: accessToken ? this.rsa.encrypt(accessToken) : '',
-      vault: vault
+      vault
     };
     let headers: HttpHeaders = new HttpHeaders();
     headers = headers.append('requestArea', 'thirdParty');

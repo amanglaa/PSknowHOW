@@ -64,7 +64,9 @@ export class ResetPasswordComponent implements OnInit {
     }
 
     // convenience getter for easy access to form fields
-    get f() { return this.resetPasswordForm.controls; }
+    get f() {
+ return this.resetPasswordForm.controls;
+}
 
     onSubmit() {
         this.error = '';

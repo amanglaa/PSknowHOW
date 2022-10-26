@@ -49,9 +49,9 @@ export class JiraConfigComponent implements OnInit {
   formTemplate: any;
   urlParam = '';
   configuredTools: any[];
-  isEdit: boolean = false;
-  loading: boolean = false;
-  disableSave: boolean = false;
+  isEdit = false;
+  loading = false;
+  disableSave = false;
   versionList: any[] = [];
   sonarVersionFinalList: any[] = [];
   sonarVersionList: any[] = [];
@@ -63,14 +63,14 @@ export class JiraConfigComponent implements OnInit {
   projectKeyList: any[] = [];
   selectedProjectKey: any;
   selectedBranch: any;
-  disableBranchDropDown: boolean = false;
+  disableBranchDropDown = false;
   bambooProjectDataFromAPI: any[] = [];
   bambooBranchDataFromAPI: any[] = [];
   bambooBranchList: any[] = [];
   bambooPlanList: any[] = [];
-  bambooPlanKeyForSelectedPlan: string = '';
+  bambooPlanKeyForSelectedPlan = '';
   selectedBambooBranchKey: string;
-  disableOrganizationKey: boolean = false;
+  disableOrganizationKey = false;
   singleToolAllowed: any[] = ['Jira', 'Zephyr', 'Azure'];
   jenkinsJobNameList: any[] = [];
   azurePipelineList: any[] = [];
@@ -82,10 +82,10 @@ export class JiraConfigComponent implements OnInit {
     name: 'Deploy',
     code: 'Deploy'
   }];
-  showControls: boolean = true;
+  showControls = true;
   deploymentProjectList: any[] = [];
   selectedDeploymentProject: any;
-  azurePipelineApiVersion: string = '6.0';
+  azurePipelineApiVersion = '6.0';
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -178,18 +178,16 @@ export class JiraConfigComponent implements OnInit {
             this.bambooPlanList = [...this.bambooProjectDataFromAPI].map(
               (item) => ({ planName: item.projectAndPlanName }),
             );
-            this.bambooPlanList = this.bambooPlanList.map(element => {
-              return {
+            this.bambooPlanList = this.bambooPlanList.map(element => ({
                 name: element.planName,
                 code: element.planName
-              };
-            });
+              }));
             console.log(this.bambooPlanList);
             this.hideLoadingOnFormElement('planName');
           } else {
             this.bambooPlanList = [];
-            this.toolForm.controls["planKey"].setValue('');
-            this.toolForm.controls["branchKey"].setValue('');
+            this.toolForm.controls['planKey'].setValue('');
+            this.toolForm.controls['branchKey'].setValue('');
             this.bambooBranchList = [];
             this.hideLoadingOnFormElement('planName');
             if (this.toolForm.controls['jobType'].value.name === 'Build') {
@@ -202,8 +200,8 @@ export class JiraConfigComponent implements OnInit {
           }
         } catch (error) {
           this.bambooPlanList = [];
-          this.toolForm.controls["planKey"].setValue('');
-          this.toolForm.controls["branchKey"].setValue('');
+          this.toolForm.controls['planKey'].setValue('');
+          this.toolForm.controls['branchKey'].setValue('');
           this.bambooBranchList = [];
           this.hideLoadingOnFormElement('planName');
           if (this.toolForm.controls['jobType'].value === 'Build') {
@@ -228,12 +226,10 @@ export class JiraConfigComponent implements OnInit {
       this.http.getDeploymentProjectsForBamboo(connectionId).subscribe((response) => {
         try {
           if (response.success) {
-            self.deploymentProjectList = response.data.map(element => {
-              return {
+            self.deploymentProjectList = response.data.map(element => ({
                 name: element.deploymentProjectName,
                 code: element.deploymentProjectId
-              };
-            });
+              }));
 
           } else {
             self.deploymentProjectList = [];
@@ -293,7 +289,7 @@ export class JiraConfigComponent implements OnInit {
   }
 
   onConnectionSelect(connection: any) {
-    let connectionId = connection.id;
+    const connectionId = connection.id;
     if (this.urlParam === 'Bamboo') {
       this.getPlansForBamboo(connectionId);
       this.getDeploymentProjects(connectionId);
@@ -340,7 +336,7 @@ export class JiraConfigComponent implements OnInit {
 
   updateSonarConnectionTypeAndVersionList(cloudEnv) {
     if (cloudEnv) {
-      this.selectedConnectionType = "Sonar Cloud";
+      this.selectedConnectionType = 'Sonar Cloud';
       this.sonarVersionFinalList = [];
       this.sonarCloudVersionList.forEach(element => {
         this.sonarVersionFinalList.push({
@@ -349,7 +345,7 @@ export class JiraConfigComponent implements OnInit {
         });
       });
     } else {
-      this.selectedConnectionType = "Sonar Server";
+      this.selectedConnectionType = 'Sonar Server';
       this.sonarVersionFinalList = [];
       this.sonarVersionList.forEach(element => {
         this.sonarVersionFinalList.push({
@@ -433,12 +429,10 @@ export class JiraConfigComponent implements OnInit {
       this.http.getAzurePipelineList(connection.id, this.azurePipelineApiVersion).subscribe(data => {
         try {
           if (data.success) {
-            this.azurePipelineResponseList = data.data.map(element => {
-              return {
+            this.azurePipelineResponseList = data.data.map(element => ({
                 name: element.pipelineName,
                 code: element.definitions
-              };
-            });
+              }));
             this.azurePipelineList = [...this.azurePipelineResponseList];
           } else {
             this.azurePipelineList = [];
@@ -469,13 +463,11 @@ export class JiraConfigComponent implements OnInit {
       this.http.getAzureReleasePipelines(connnection.id, this.azurePipelineApiVersion).subscribe(data => {
         try {
           if (data.success) {
-            this.azurePipelineResponseList = data.data.map(element => {
-              return {
+            this.azurePipelineResponseList = data.data.map(element => ({
                 name: element.pipelineName,
                 code: element.definitions
-              };
-            });
-            this.azurePipelineList = [...this.azurePipelineResponseList]
+              }));
+            this.azurePipelineList = [...this.azurePipelineResponseList];
             // .map(el => el.name);
 
           } else {
@@ -506,14 +498,14 @@ export class JiraConfigComponent implements OnInit {
     console.log(value);
     if (value) {
       const selectedJobNameDefinition = this.azurePipelineResponseList.filter(data => data.name === value.name)[0].code;
-      this.toolForm.controls["jobName"].setValue(selectedJobNameDefinition);
+      this.toolForm.controls['jobName'].setValue(selectedJobNameDefinition);
     }
   };
 
   jobTypeChangeHandler = (value: string) => {
     value = value['name'];
     switch (this.urlParam) {
-      case "Bamboo":
+      case 'Bamboo':
         if (value.toLowerCase() === 'build') {
           this.hideFormElements(['deploymentProject',]);
           this.showFormElements(['planName', 'planKey', 'branchName', 'branchKey']);
@@ -522,7 +514,7 @@ export class JiraConfigComponent implements OnInit {
           this.hideFormElements(['planName', 'planKey', 'branchName', 'branchKey']);
         }
         break;
-      case "AzurePipeline":
+      case 'AzurePipeline':
 
         if (value.toLowerCase() === 'build') {
           this.getAzureBuildPipelines(this.selectedConnection);
@@ -531,7 +523,7 @@ export class JiraConfigComponent implements OnInit {
         }
 
         break;
-      case "Jenkins":
+      case 'Jenkins':
 
         if (value.toLowerCase() === 'build') {
           this.hideFormElements(['parameterNameForEnvironment']);
@@ -700,7 +692,7 @@ export class JiraConfigComponent implements OnInit {
   };
 
   bambooDeploymentPjojectSelectionHandler = (value: any) => {
-    console.log("deployment project selected called");
+    console.log('deployment project selected called');
     console.log(value);
     this.selectedDeploymentProject = value;
 
@@ -712,19 +704,17 @@ export class JiraConfigComponent implements OnInit {
     this.showLoadingOnFormElement('branchName');
     this.bambooPlanKeyForSelectedPlan = [...this.bambooProjectDataFromAPI]
       .filter((item) => item.projectAndPlanName === value.name)[0]?.jobNameKey;
-    this.toolForm.controls["planKey"].setValue(this.bambooPlanKeyForSelectedPlan);
+    this.toolForm.controls['planKey'].setValue(this.bambooPlanKeyForSelectedPlan);
     if (this.bambooPlanKeyForSelectedPlan) {
       try {
         this.http.getBranchesForProject(this.selectedConnection.id, this.bambooPlanKeyForSelectedPlan)
           .subscribe(data => {
             if (data.success) {
               this.bambooBranchDataFromAPI = [...data.data];
-              this.bambooBranchList = [...this.bambooBranchDataFromAPI].map(item => item.branchName).map(element => {
-                return {
+              this.bambooBranchList = [...this.bambooBranchDataFromAPI].map(item => item.branchName).map(element => ({
                   name: element,
                   code: element
-                };
-              });
+                }));
               this.hideLoadingOnFormElement('branchName');
             } else {
               this.bambooBranchList = [];
@@ -749,7 +739,7 @@ export class JiraConfigComponent implements OnInit {
   bambooBranchSelectHandler = (value: any) => {
     this.selectedBambooBranchKey = [...this.bambooBranchDataFromAPI]
       .filter(item => item.branchName === value.name)[0]?.jobBranchKey;
-    this.toolForm.controls["branchKey"].setValue(this.selectedBambooBranchKey);
+    this.toolForm.controls['branchKey'].setValue(this.selectedBambooBranchKey);
   };
 
   initializeFields(toolName) {
@@ -1117,8 +1107,8 @@ export class JiraConfigComponent implements OnInit {
                 validators: ['required'],
                 containerClass: 'p-col-6',
                 optionsList: this.projectKeyList,
-                filterValue: "true",
-                filterByName: "name",
+                filterValue: 'true',
+                filterByName: 'name',
                 changeHandler: this.projectKeyClickHandler,
                 model: this.selectedProjectKey,
                 show: true,
@@ -1135,8 +1125,8 @@ export class JiraConfigComponent implements OnInit {
                 validators: [],
                 containerClass: 'p-col-6',
                 show: true,
-                filterValue: "true",
-                filterByName: "name",
+                filterValue: 'true',
+                filterByName: 'name',
                 optionsList: this.branchList,
                 changeHandler: this.branchSelectHandler,
                 model: this.selectedBranch,
@@ -1189,8 +1179,8 @@ export class JiraConfigComponent implements OnInit {
                 id: 'jobName',
                 validators: ['required'],
                 containerClass: 'p-col-6',
-                filterValue: "true",
-                filterByName: "name",
+                filterValue: 'true',
+                filterByName: 'name',
                 optionsList: this.jenkinsJobNameList,
                 changeHandler: () => true,
                 show: true,
@@ -1297,9 +1287,9 @@ export class JiraConfigComponent implements OnInit {
                 containerClass: 'p-col-6',
                 optionsList: this.deploymentProjectList,
                 changeHandler: this.bambooDeploymentPjojectSelectionHandler,
-                filterValue: "true",
-                filterByName: "name",
-                optionLabel: "name",
+                filterValue: 'true',
+                filterByName: 'name',
+                optionLabel: 'name',
                 show: false,
                 isLoading: false
 
@@ -1312,9 +1302,9 @@ export class JiraConfigComponent implements OnInit {
                 containerClass: 'p-col-6',
                 optionsList: this.bambooPlanList,
                 changeHandler: this.bambooPlanSelectHandler,
-                filterValue: "true",
-                filterByName: "name",
-                optionLabel: "name",
+                filterValue: 'true',
+                filterByName: 'name',
+                optionLabel: 'name',
                 show: false,
                 isLoading: false
               },
@@ -1334,8 +1324,8 @@ export class JiraConfigComponent implements OnInit {
                 validators: [],
                 containerClass: 'p-col-6',
                 optionsList: this.bambooBranchList,
-                filterValue: "true",
-                filterByName: "name",
+                filterValue: 'true',
+                filterByName: 'name',
                 changeHandler: this.bambooBranchSelectHandler,
                 show: false,
                 isLoading: false
@@ -1801,7 +1791,7 @@ export class JiraConfigComponent implements OnInit {
       }
 
     } else {
-      for (let obj in this.tool) {
+      for (const obj in this.tool) {
 
         if (this.isInputFieldTypeArray(obj) && this.tool[obj].value === '') {
           submitData[obj] = [];
@@ -1832,7 +1822,7 @@ export class JiraConfigComponent implements OnInit {
 
     if (!this.isEdit) {
 
-      for (let obj in submitData) {
+      for (const obj in submitData) {
         if (submitData[obj]?.hasOwnProperty('name') && submitData[obj]?.hasOwnProperty('code')) {
           submitData[obj] = submitData[obj].name;
         }
@@ -1874,7 +1864,7 @@ export class JiraConfigComponent implements OnInit {
         });
     } else {
 
-      for (let obj in submitData) {
+      for (const obj in submitData) {
         if (submitData[obj].hasOwnProperty('name') && submitData[obj].hasOwnProperty('code')) {
           submitData[obj] = submitData[obj].name;
         }
@@ -1969,7 +1959,7 @@ export class JiraConfigComponent implements OnInit {
   }
 
   confirmDeteleTool(tool) {
-    let context = this;
+    const context = this;
     this.confirmationService.confirm({
       message: 'Are you sure that you want to delete this tool?',
       header: 'Delete Confirmation',
@@ -2014,7 +2004,5 @@ export class JiraConfigComponent implements OnInit {
   }
 
   // Preserve original property order
-  originalOrder = (a: KeyValue<number,string>, b: KeyValue<number,string>): number => {
-    return 0;
-  }
+  originalOrder = (a: KeyValue<number,string>, b: KeyValue<number,string>): number => 0;
 }

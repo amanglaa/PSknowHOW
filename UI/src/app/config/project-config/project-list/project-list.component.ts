@@ -37,7 +37,7 @@ export class ProjectListComponent implements OnInit {
   loading: boolean;
   projectConfirm: boolean;
   roleAccess: any = {};
-  isAdminOrSuperAdmin: boolean = false;
+  isAdminOrSuperAdmin = false;
   selectedDateFilter = null;
   dateFilterList: any = [
     {
@@ -70,7 +70,7 @@ export class ProjectListComponent implements OnInit {
   /* Assign role along with project Id */
   roleAccessAssign() {
     const projectsAccess = !!localStorage.getItem('projectsAccess') && localStorage.getItem('projectsAccess') !== 'undefined' && localStorage.getItem('projectsAccess') !== 'null' ? JSON.parse(localStorage.getItem('projectsAccess')) : [];
-    let decryptedText = this.aesEncryption.convertText(localStorage.getItem('authorities'), 'decrypt');
+    const decryptedText = this.aesEncryption.convertText(localStorage.getItem('authorities'), 'decrypt');
     this.authorities = !!decryptedText && decryptedText !== 'undefined' && decryptedText !== 'null' ? JSON.parse(decryptedText) : [];
     if (projectsAccess.length) {
       projectsAccess.forEach(projectAccess => {
@@ -112,32 +112,32 @@ export class ProjectListComponent implements OnInit {
         // this.allProjectList = this.projectList;
         if (this.projectList?.length > 0) {
           for (let i = this.projectList[0]?.hierarchy?.length - 1; i >= 0; i--) {
-            let obj = {
-              "id": this.projectList[0]?.hierarchy[i]?.hierarchyLevel['hierarchyLevelId'],
-              "heading": this.projectList[0]?.hierarchy[i]?.hierarchyLevel['hierarchyLevelName']
-            }
+            const obj = {
+              id: this.projectList[0]?.hierarchy[i]?.hierarchyLevel['hierarchyLevelId'],
+              heading: this.projectList[0]?.hierarchy[i]?.hierarchyLevel['hierarchyLevelName']
+            };
             this.cols?.push(obj);
           }
-          let projectObj = {
-            "id": "name",
-            "heading": "Project"
-          }
+          const projectObj = {
+            id: 'name',
+            heading: 'Project'
+          };
           this.cols?.unshift(projectObj);
-          let typeObj = {
-            "id": "type",
-            "heading": "Type"
-          }
+          const typeObj = {
+            id: 'type',
+            heading: 'Type'
+          };
           this.cols?.push(typeObj);
           for (let i = 0; i < this.cols?.length; i++) {
             this.globalSearchFilter?.push(this.cols[i]?.id);
           }
 
           for (let i = 0; i < this.projectList?.length; i++) {
-            let obj = {
-              "id": this.projectList[i]?.id,
-              "name": this.projectList[i]?.projectName,
-              "type": this.projectList[i]?.kanban ? 'Kanban' : 'Scrum'
-            }
+            const obj = {
+              id: this.projectList[i]?.id,
+              name: this.projectList[i]?.projectName,
+              type: this.projectList[i]?.kanban ? 'Kanban' : 'Scrum'
+            };
             for (let j = 0; j < this.projectList[i]?.hierarchy?.length; j++) {
               obj[this.projectList[i]?.hierarchy[j]?.hierarchyLevel['hierarchyLevelId']] = this.projectList[i]?.hierarchy[j]?.value;
             }
@@ -236,7 +236,7 @@ export class ProjectListComponent implements OnInit {
   // }
 
   editConfiguration(project) {
-    let newProjectObj = {};
+    const newProjectObj = {};
     Object.keys(project).forEach((key) => {
       if (key !== 'id') {
         newProjectObj[this.cols.filter((col) => col.id === key)[0].heading] = project[key];
@@ -252,12 +252,10 @@ export class ProjectListComponent implements OnInit {
     this.http.getHierarchyLevels().subscribe(formFieldData => {
       formFieldData.forEach(element => {
         if (element.suggestions && element.suggestions.length) {
-          element.suggestions = element.suggestions.map(suggestion => {
-            return {
+          element.suggestions = element.suggestions.map(suggestion => ({
               name: suggestion,
               code: suggestion
-            }
-          });
+            }));
         }
         element.value = '';
         element.required = true;

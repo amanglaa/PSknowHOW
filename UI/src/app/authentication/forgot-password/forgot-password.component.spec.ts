@@ -38,9 +38,9 @@ describe('ForgotPasswordComponent', () => {
   const baseUrl = environment.baseUrl;
   let httpMock;
   let httpService;
-  const fakeError = { 'message': 'logError', 'success': false };
-  const fakeSuccess = { 'message': 'success', 'success': true };
-  const fakeHttp0 = { 'status' : 0};
+  const fakeError = { message: 'logError', success: false };
+  const fakeSuccess = { message: 'success', success: true };
+  const fakeHttp0 = { status : 0};
 
   beforeEach(waitForAsync(() => {
     const routes: Routes = [

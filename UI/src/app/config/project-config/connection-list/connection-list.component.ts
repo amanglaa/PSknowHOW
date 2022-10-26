@@ -342,21 +342,21 @@ export class ConnectionListComponent implements OnInit {
 
   testingConnection: boolean;
 
-  isNewlyConfigAdded: boolean = false;
+  isNewlyConfigAdded = false;
 
   fieldsObj = {};
 
-  disableConnectionTypeDropDown: boolean = false;
+  disableConnectionTypeDropDown = false;
 
   roleAccess: any = {};
 
-  isConnectionAddEditAccess: boolean = false;
+  isConnectionAddEditAccess = false;
 
-  testConnectionMsg: string = '';
-  testConnectionValid: boolean = true;
-  isRoleViewer: boolean = false;
-  currentUser: string = '';
-  zephyrUrl: string = '';
+  testConnectionMsg = '';
+  testConnectionValid = true;
+  isRoleViewer = false;
+  currentUser = '';
+  zephyrUrl = '';
 
   constructor(private httpService: HttpService, private formBuilder: UntypedFormBuilder, private rsa: RsaEncryptionService, private confirmationService: ConfirmationService, private testConnectionService: TestConnectionService
     , private authorization: GetAuthorizationService) { }
@@ -423,8 +423,8 @@ export class ConnectionListComponent implements OnInit {
           }
         });
       }
-    });   
-    this.basicConnectionForm = this.formBuilder.group(this.fieldsObj);   
+    });
+    this.basicConnectionForm = this.formBuilder.group(this.fieldsObj);
     this.basicConnectionForm.controls['baseUrl'].setValue('');
   }
 
@@ -619,9 +619,9 @@ export class ConnectionListComponent implements OnInit {
     if (!response.success && !!response.message) {
       this.confirmationService.confirm({
         message: response.message,
-        header: header,
+        header,
         icon: 'fa fa-times-circle text-danger',
-        key: "connectionStatus",
+        key: 'connectionStatus',
         accept: () => {
         },
         reject: () => {
@@ -643,7 +643,7 @@ export class ConnectionListComponent implements OnInit {
     this.defaultEnableDisableSwitch();
     this.disableEnableCheckBox();
     if (connection.type.toLowerCase() == 'bitbucket' && connection.cloudEnv == true) {
-      this.checkBitbucketValue(true, "cloudEnv", connection.type.toLowerCase())
+      this.checkBitbucketValue(true, 'cloudEnv', connection.type.toLowerCase());
     } else if (connection.type.toLowerCase() == 'zephyr') {
       this.checkZephyr();
     }
@@ -830,7 +830,7 @@ export class ConnectionListComponent implements OnInit {
     }
     this.testConnectionMsg = '';
     this.testConnectionValid = true;
-    
+
     switch (this.connection.type) {
       case 'Jira':
         this.testConnectionService.testJira(reqData['baseUrl'], reqData['apiEndPoint'], reqData['username'], reqData['password'], reqData['vault']).subscribe(next => {
@@ -1039,10 +1039,10 @@ export class ConnectionListComponent implements OnInit {
   showInfo(type, field) {
     let tooltipText = '';
     if (type == 'github' && field == 'baseUrl') {
-      tooltipText = 'Url i.e : for public github this url will be https://api.github.com.'
+      tooltipText = 'Url i.e : for public github this url will be https://api.github.com.';
     }
     if (type == 'github' && field == 'username') {
-      tooltipText = 'The name appended before your repository name (i.e. ownerName/repositoryName).'
+      tooltipText = 'The name appended before your repository name (i.e. ownerName/repositoryName).';
     }
     return tooltipText;
   }
@@ -1050,14 +1050,14 @@ export class ConnectionListComponent implements OnInit {
   checkBitbucketValue(event, field, type) {
     /** to add information besides username and password labels for bitbucket when isCloudEnv = true */
     if(type == 'bitbucket'){
-      let tempArr = [...this.addEditConnectionFieldsNlabels];
-      let bitbucketObj = tempArr.filter((item) => item.connectionLabel.toLowerCase() == 'bitbucket')[0];
+      const tempArr = [...this.addEditConnectionFieldsNlabels];
+      const bitbucketObj = tempArr.filter((item) => item.connectionLabel.toLowerCase() == 'bitbucket')[0];
       if(this.basicConnectionForm.controls['cloudEnv'].value){
         bitbucketObj.labels = ['Connection Type', 'Connection Name', 'Is Cloud Environment', 'Base Url', 'Username (Profile Username)', 'Use vault password', 'Password (App Password)', 'API End Point', 'Is Connection Private'];
       }else{
         bitbucketObj.labels = ['Connection Type', 'Connection Name', 'Is Cloud Environment', 'Base Url', 'Username', 'Use vault password','Password', 'API End Point', 'Is Connection Private'];
       }
-      let index = tempArr.findIndex((item) => item.connectionLabel.toLowerCase() == 'bitbucket');
+      const index = tempArr.findIndex((item) => item.connectionLabel.toLowerCase() == 'bitbucket');
       tempArr[index] = bitbucketObj;
       this.addEditConnectionFieldsNlabels = [...tempArr];
     }
