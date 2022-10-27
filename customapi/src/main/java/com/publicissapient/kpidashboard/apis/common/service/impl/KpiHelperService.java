@@ -1178,16 +1178,16 @@ public class KpiHelperService { // NOPMD
 		return fieldWiseIssuesLatestMap;
 	}
 
-	public static void getDroppedDefectsFilters(Map<String, Map<String,List<String>>> droppedDefects,
-															  ObjectId basicProjectConfigId, FieldMapping fieldMapping) {
-		Map<String,List<String>> filtersMap = new HashMap<>();
+	public static void getDroppedDefectsFilters(Map<String, Map<String, List<String>>> droppedDefects,
+												ObjectId basicProjectConfigId, FieldMapping fieldMapping) {
+		Map<String, List<String>> filtersMap = new HashMap<>();
 		if (CollectionUtils.isNotEmpty(fieldMapping.getResolutionTypeForRejection())) {
 			filtersMap.put(Constant.RESOLUTION_TYPE_FOR_REJECTION, fieldMapping.getResolutionTypeForRejection());
 		}
 		if (StringUtils.isNotEmpty(fieldMapping.getJiraDefectRejectionStatus())) {
 			filtersMap.put(Constant.DEFECT_REJECTION_STATUS, Arrays.asList(fieldMapping.getJiraDefectRejectionStatus()));
 		}
-			droppedDefects.put(basicProjectConfigId.toString(), filtersMap);
+		droppedDefects.put(basicProjectConfigId.toString(), filtersMap);
 	}
 
 	public static void getDefectsWithoutDrop(Map<String, Map<String,List<String>>> droppedDefects, List<JiraIssue> defectDataList,
@@ -1204,7 +1204,7 @@ public class KpiHelperService { // NOPMD
 	private static void getDefectsWoDrop(Map<String, Map<String,List<String>>> droppedDefects, Set<JiraIssue> defectListWoDropSet, JiraIssue jiraIssue) {
 		if (!StringUtils.isBlank(jiraIssue.getStatus())) {
 			Map<String,List<String>> defectStatus = droppedDefects.get(jiraIssue.getBasicProjectConfigId());
-			if (!defectStatus.isEmpty()) {
+			if (null != defectStatus && !defectStatus.isEmpty()) {
 				if (CollectionUtils.isNotEmpty(defectStatus.get(Constant.DEFECT_REJECTION_STATUS))
 						&& CollectionUtils.isNotEmpty(defectStatus.get(Constant.RESOLUTION_TYPE_FOR_REJECTION))) {
 					if (StringUtils.isNotEmpty(jiraIssue.getStatus()) &&
