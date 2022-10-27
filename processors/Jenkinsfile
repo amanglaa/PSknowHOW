@@ -99,7 +99,7 @@ pipeline {
                                 docker login -u ${REGISTRY_USERNAME} -p ${REGISTRY_PASSWORD} ${env.select_docker_registry}
                                 docker tag jira-processor:${env.version} ${env.select_docker_registry}/speedy/jira-processor:${env.version}
                                 docker push ${env.select_docker_registry}/speedy/jira-processor:${env.version}
-                                echo -e "${env.select_docker_registry}/speedy/jira-processor:${env.version}" ${WORKSPACE}/processors/jira/Dockerfile > processor_images
+                                echo -e '"${env.select_docker_registry}/speedy/jira-processor:${env.version}" ${WORKSPACE}/processors/jira/Dockerfile' > processor_images
                                 docker logout ${env.select_docker_registry}
                             """
                   }
@@ -133,7 +133,7 @@ pipeline {
                                                docker login -u ${REGISTRY_USERNAME} -p ${REGISTRY_PASSWORD} ${env.select_docker_registry}
                                                docker tag nonjira-processor:${env.version} ${env.select_docker_registry}/speedy/nonjira-processor:${env.version}
                                                docker push ${env.select_docker_registry}/speedy/nonjira-processor:${env.version}
-                                               echo -e "${env.select_docker_registry}/speedy/nonjira-processor:${env.version}" ${WORKSPACE}/Dockerfile > processor_images
+                                               echo -e '"${env.select_docker_registry}/speedy/nonjira-processor:${env.version}" ${WORKSPACE}/Dockerfile' > processor_images
                                                docker logout ${env.select_docker_registry}
                                            """
                       }
