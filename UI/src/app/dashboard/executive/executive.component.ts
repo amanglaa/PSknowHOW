@@ -977,7 +977,7 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
                     };
                     data.push(rowData);
                 }
-
+                
                 this.kpiChartData[kpiId].data = data;
             }
             this.showKpiTrendIndicator[kpiId] = false;
