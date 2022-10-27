@@ -12,7 +12,6 @@ export class TrendIndicatorComponent implements OnInit {
   @Input() kpiData: object;
   @Input() noOfBox: number;
   @Input() cols?: Array<object> = [];
-  @Input() name?: string = '';
   isTrendObject: boolean = false;
   lastValue: any;
 
