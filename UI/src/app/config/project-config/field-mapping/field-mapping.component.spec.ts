@@ -189,6 +189,9 @@ const fakeSelectedFieldMapping = {
   "jiraTechDebtCustomField": "",
   "jiraTechDebtValue": [],
   "jiraDefectRejectionStatus": "Closed",
+  "issueStatusExcluMissingWork":  [
+    "Open",
+  ],
   "jiraBugRaisedByIdentification": "",
   "jiraBugRaisedByValue": [],
   "jiraDefectSeepageIssueType": [
@@ -336,6 +339,7 @@ const successResponse = {
       "Ready for Delivery"
     ],
     "jiraDefectCreatedStatus": "Open",
+    "issueStatusExcluMissingWork": ["Open"],
     "jiraTechDebtIssueType": [
       "Story",
       "Enabler Story",
@@ -471,6 +475,7 @@ const fakeSelectedFieldMappingWithAdditionalFilters = {
     "Closed",
     "Ready for Delivery"
   ],
+  "issueStatusExcluMissingWork": ["Open"],
   "resolutionTypeForRejection": [
     "Invalid",
     "Duplicate",

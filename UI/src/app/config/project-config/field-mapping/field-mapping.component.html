@@ -125,13 +125,15 @@
                         <div class="p-mb-3">
                             <label class="field-title">Issue status to be excluded from Missing Worklogs</label>
                             <div class="p-inputgroup">
-                                <input type="text" pInputText id="excludedMissingWorklogStatus"
-                                    formControlName="excludedMissingWorklogStatus"
-                                    placeholder="Enter Issue status to be excluded from Missing Worklogs" [style]="{'width':'500px'}" pTooltip='<span class="tooltiptext">
-                                      Statuses selected depict all created status of issue types included in the Project.
-                                  </span>' tooltipPosition="top" tooltipEvent="hover" [escape]="false">
+                                <p-chips [style]="{'max-width':'500px','width':'500px'}"
+                                    [inputStyle]="{'width':'464px','max-width':'464px', 'border-bottom-right-radius':'0'}"
+                                    inputId="issueStatusExcluMissingWork" formControlName="issueStatusExcluMissingWork"
+                                    placeholder="Enter Issue status to be excluded from Missing Worklogs" addOnBlur="true" pTooltip='<span class="tooltiptext">
+                                        Statuses selected depict all created status of issue types included in the Project.
+                                        </span>' tooltipPosition="top" tooltipEvent="hover" [escape]="false">
+                                </p-chips>
                                 <button type="button" pButton pRipple icon="pi pi-search"
-                                    (click)="showDialogToAddValue(true, 'excludedMissingWorklogStatus', 'workflow')"></button>
+                                    (click)="showDialogToAddValue(false, 'issueStatusExcluMissingWork', 'workflow')"></button>
                             </div>
                         </div>
                         
