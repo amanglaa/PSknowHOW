@@ -145,6 +145,7 @@ public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom {// NO
 		query.fields().include("status");
 		query.fields().include(CONFIG_ID);
 		query.fields().include("labels");
+		query.fields().include("resolution");
 		return operations.find(query, JiraIssue.class);
 
 	}

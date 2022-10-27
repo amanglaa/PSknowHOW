@@ -46,129 +46,129 @@ describe('AdvancedSettingsComponent', () => {
   // };
 
   const fakeProcessorData = {
-    'message': '',
-    'success': true,
-    'data': [{
-      'id': '5e624a04e4b098dbca2aff3c',
-      'processorName': 'Jira',
-      'processorType': 'AgileTool',
-      'errors': [],
-      'updatedTime': 1583499780045,
-      'active': true,
-      'online': true
+    message: '',
+    success: true,
+    data: [{
+      id: '5e624a04e4b098dbca2aff3c',
+      processorName: 'Jira',
+      processorType: 'AgileTool',
+      errors: [],
+      updatedTime: 1583499780045,
+      active: true,
+      online: true
     }, {
-      'id': '5e624a7ce4b0d02e2e9938f0',
-      'processorName': 'Atm',
-      'processorType': 'AgileTool',
-      'errors': [],
-      'updatedTime': 1583731433007,
-      'active': true,
-      'online': true
+      id: '5e624a7ce4b0d02e2e9938f0',
+      processorName: 'Atm',
+      processorType: 'AgileTool',
+      errors: [],
+      updatedTime: 1583731433007,
+      active: true,
+      online: true
     }, {
-      'id': '5e624a7ce4b0e00531062788',
-      'processorName': 'Excel',
-      'processorType': 'Excel',
-      'errors': [],
-      'updatedTime': 1583731500244,
-      'active': true,
-      'online': true
+      id: '5e624a7ce4b0e00531062788',
+      processorName: 'Excel',
+      processorType: 'Excel',
+      errors: [],
+      updatedTime: 1583731500244,
+      active: true,
+      online: true
     }, {
-      'id': '5e625760e4b04faa250e493c',
-      'processorName': 'Bitbucket',
-      'processorType': 'Scm',
-      'errors': [],
-      'updatedTime': 1583730003541,
-      'active': true,
-      'online': true
+      id: '5e625760e4b04faa250e493c',
+      processorName: 'Bitbucket',
+      processorType: 'Scm',
+      errors: [],
+      updatedTime: 1583730003541,
+      active: true,
+      online: true
     }, {
-      'id': '5e62e403e4b0a47e0405900c',
-      'processorName': 'Precalculated',
-      'processorType': 'Central',
-      'errors': [],
-      'updatedTime': 1583712007726,
-      'active': true,
-      'online': true
+      id: '5e62e403e4b0a47e0405900c',
+      processorName: 'Precalculated',
+      processorType: 'Central',
+      errors: [],
+      updatedTime: 1583712007726,
+      active: true,
+      online: true
     }, {
-      'id': '5e62e405e4b034f67720d19b',
-      'processorName': 'Sonar',
-      'processorType': 'SonarDetails',
-      'errors': [],
-      'updatedTime': 1583715542758,
-      'active': true,
-      'online': true
+      id: '5e62e405e4b034f67720d19b',
+      processorName: 'Sonar',
+      processorType: 'SonarDetails',
+      errors: [],
+      updatedTime: 1583715542758,
+      active: true,
+      online: true
     }, {
-      'id': '5e62e406e4b0baec876653b7',
-      'processorName': 'Newrelic',
-      'processorType': 'NewRelic',
-      'errors': [],
-      'updatedTime': 1583712003138,
-      'active': true,
-      'online': true
+      id: '5e62e406e4b0baec876653b7',
+      processorName: 'Newrelic',
+      processorType: 'NewRelic',
+      errors: [],
+      updatedTime: 1583712003138,
+      active: true,
+      online: true
     }, {
-      'id': '5e62f217e4b0123940f939c2',
-      'processorName': 'CentralProducer',
-      'processorType': 'Central',
-      'errors': [],
-      'updatedTime': 1583715625877,
-      'active': true,
-      'online': true
+      id: '5e62f217e4b0123940f939c2',
+      processorName: 'CentralProducer',
+      processorType: 'Central',
+      errors: [],
+      updatedTime: 1583715625877,
+      active: true,
+      online: true
     },
     {
-      "id": "61ef81046c1a0b242cdb188b",
-      "processorName": "GitHub",
-      "processorType": "Scm",
-      "errors": [],
-      "updatedTime": 1643094625006,
-      "active": true,
-      "online": false,
-      "lastSuccess": true
+      id: '61ef81046c1a0b242cdb188b',
+      processorName: 'GitHub',
+      processorType: 'Scm',
+      errors: [],
+      updatedTime: 1643094625006,
+      active: true,
+      online: false,
+      lastSuccess: true
     }]
   };
 
   const switchViewEventProcessor = {
-    'originalEvent': {
-      'isTrusted': true
+    originalEvent: {
+      isTrusted: true
     },
-    'item': {
-      'label': 'Processor State',
-      'icon': 'pi pi-fw pi-cog',
-      'expanded': true
+    item: {
+      label: 'Processor State',
+      icon: 'pi pi-fw pi-cog',
+      expanded: true
     }
   };
 
   const switchViewEventServerRole = {
-    'originalEvent': {
-      'isTrusted': true
+    originalEvent: {
+      isTrusted: true
     },
-    'item': {
-      'label': 'Server Role',
-      'icon': 'pi pi-fw pi-cog',
-      'expanded': true
+    item: {
+      label: 'Server Role',
+      icon: 'pi pi-fw pi-cog',
+      expanded: true
     }
   };
 
   const fakeServerRole = {
-    'message': 'Data found for the key',
-    'success': true,
-    'data': {
-      'centralProducer': true
+    message: 'Data found for the key',
+    success: true,
+    data: {
+      centralProducer: true
     }
   };
 
   const fakeSetRoleResponse = {
-    'message': 'Data saved for the key',
-    'success': true,
-    'data': {
-      'isCentralProducer': true
+    message: 'Data saved for the key',
+    success: true,
+    data: {
+      isCentralProducer: true
     }
   };
 
   const fakePreCalculatedConfig = {
-    "message": "Success",
-    "success": true,
-    "data": {
-      "showPreCalculatedDataForScrum": true,
-      "showPreCalculatedDataForKanban": false
+    message: 'Success',
+    success: true,
+    data: {
+      showPreCalculatedDataForScrum: true,
+      showPreCalculatedDataForKanban: false
     }
   };
 
@@ -229,9 +229,9 @@ describe('AdvancedSettingsComponent', () => {
   });
 
   it('should fetch all user projects', () => {
-    let getAuthorizationService = TestBed.inject(GetAuthorizationService);
-    let getProjectsResponse = { "message": "Fetched successfully", "success": true, "data": [{ "id": "601bca9569515b0001d68182", "projectName": "TestRIshabh", "createdAt": "2021-02-04T10:21:09", "isKanban": false }] };
-    component.selectedView = 'processor_state';    
+    const getAuthorizationService = TestBed.inject(GetAuthorizationService);
+    const getProjectsResponse = { message: 'Fetched successfully', success: true, data: [{ id: '601bca9569515b0001d68182', projectName: 'TestRIshabh', createdAt: '2021-02-04T10:21:09', isKanban: false }] };
+    component.selectedView = 'processor_state';
     localStorage.setItem('projectsAccess', '[{"role":"ROLE_PROJECT_ADMIN","projects":[{"projectName":"TestRIshabh","projectId":"601bca9569515b0001d68182"}]}]');
     component.getProjects();
     fixture.detectChanges();
@@ -240,24 +240,24 @@ describe('AdvancedSettingsComponent', () => {
   });
 
   it('should allow user to select project', () => {
-    let selectedProjects = { "originalEvent": { "isTrusted": true }, "value": {"id": "601bca9569515b0001d68182", "name": "test"}, "itemValue": "601bca9569515b0001d68182" };
-    let processorName = 'Jira';
+    const selectedProjects = { originalEvent: { isTrusted: true }, value: {id: '601bca9569515b0001d68182', name: 'test'}, itemValue: '601bca9569515b0001d68182' };
+    const processorName = 'Jira';
     component.updateProjectSelection(selectedProjects);
     fixture.detectChanges();
-    expect(component.selectedProject).toEqual({"id": "601bca9569515b0001d68182", "name": "test"});
+    expect(component.selectedProject).toEqual({id: '601bca9569515b0001d68182', name: 'test'});
   });
 
   it('should run Jira Processor for the selected projects', () => {
-    component.selectedProject = {"id": "601bca9569515b0001d68182", "name": "test"};
+    component.selectedProject = {id: '601bca9569515b0001d68182', name: 'test'};
     component.runProcessor('Jira');
     fixture.detectChanges();
-    httpMock.match(baseUrl + '/api/processor/trigger/Jira')[0].flush({ "message": "Got HTTP response: 200 on url: http://jira_processor:50008/processor/run", "success": true });
+    httpMock.match(baseUrl + '/api/processor/trigger/Jira')[0].flush({ message: 'Got HTTP response: 200 on url: http://jira_processor:50008/processor/run', success: true });
   });
 
   it('should run Github Processor for the selected projects', () => {
-    component.selectedProject = {"id": "601bca9569515b0001d68182", "name": "test"};
+    component.selectedProject = {id: '601bca9569515b0001d68182', name: 'test'};
     component.runProcessor('Github');
     fixture.detectChanges();
-    httpMock.match(baseUrl + '/api/processor/trigger/Github')[0].flush({ "message": "Got HTTP response: 200 on url: http://nonjira-processor:50008/processor/run", "success": true });
+    httpMock.match(baseUrl + '/api/processor/trigger/Github')[0].flush({ message: 'Got HTTP response: 200 on url: http://nonjira-processor:50008/processor/run', success: true });
   });
 });

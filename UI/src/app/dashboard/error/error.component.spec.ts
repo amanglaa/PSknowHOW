@@ -58,12 +58,12 @@ describe('ErrorComponent', () => {
 
   });
 
-  const error0 = { 'status': 0, 'message': 'Internal Server Error' };
-  const error401 = { 'status': 401, 'message': 'Session Expired' };
-  const error403 = { 'status': 403, 'message': 'Unauthorised' };
-  const error404 = { 'status': 404, 'message': 'Not found' };
-  const error500 = { 'status': 500, 'message': 'Internal Server Error' };
-  const error405 = { 'status': 405, 'message': 'Method not allowed' };
+  const error0 = { status: 0, message: 'Internal Server Error' };
+  const error401 = { status: 401, message: 'Session Expired' };
+  const error403 = { status: 403, message: 'Unauthorised' };
+  const error404 = { status: 404, message: 'Not found' };
+  const error500 = { status: 500, message: 'Internal Server Error' };
+  const error405 = { status: 405, message: 'Method not allowed' };
 
   it('should create', () => {
     expect(component).toBeTruthy();

@@ -77,7 +77,7 @@ public class FileStorageControllerTest {
 
 	@Test
 	public void testUploadFile() throws Exception {
-		MockMultipartFile file = new MockMultipartFile("file", "default.gif", MediaType.TEXT_PLAIN_VALUE,
+		MockMultipartFile file = new MockMultipartFile("file", "PsKnowHowLogo.png", MediaType.TEXT_PLAIN_VALUE,
 				"Hello, World!".getBytes());
 
 		when(fileStorageService.upload(Mockito.any())).thenReturn(new BaseResponse());

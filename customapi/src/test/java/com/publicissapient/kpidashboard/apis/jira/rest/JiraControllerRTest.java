@@ -26,6 +26,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.ArrayList;
 import java.util.List;
 
+import com.publicissapient.kpidashboard.apis.jira.model.BoardDetailsDTO;
+import com.publicissapient.kpidashboard.apis.jira.service.JiraToolConfigServiceImpl;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -70,6 +72,9 @@ public class JiraControllerRTest {
 
 	@InjectMocks
 	private JiraController jiraController;
+
+	@Mock
+	private JiraToolConfigServiceImpl jiraToolConfigService;
 
 	@Before
 	public void before() {
@@ -181,6 +186,47 @@ public class JiraControllerRTest {
 				"  ],\n" +
 				"  \"kpiList\": []\n" +
 				"}";
+
+		mockMvc.perform(post("/jirakanban/kpi").contentType(MediaType.APPLICATION_JSON_UTF8).content(request))
+				.andDo(print()).andExpect(status().isBadRequest());
+
+	}
+
+	@Test
+	public void getJiraBoardDetailsListReturnValue() throws Exception {
+		//@formatter:off
+		String request = "{\n"
+				+ "    \"connectionId\" : \"6324559257413703ba3bf4ed\",\n"
+				+ "    \"projectKey\" : \"TestKey\",\n"
+				+ "    \"boardType\" : \"scrum\"\n"
+				+ "}";
+		//@formatter:on
+
+		List<BoardDetailsDTO> boardDetailsList = new ArrayList<>();
+
+		BoardDetailsDTO boardDetailsDTO1 = new BoardDetailsDTO();
+		boardDetailsDTO1.setBoardId(1110L);
+		boardDetailsDTO1.setBoardName("Scrum Test Board1");
+		BoardDetailsDTO boardDetailsDTO2 = new BoardDetailsDTO();
+		boardDetailsDTO2.setBoardId(1111L);
+		boardDetailsDTO2.setBoardName("Scrum Test Board2");
+		boardDetailsList.add(boardDetailsDTO1);
+		boardDetailsList.add(boardDetailsDTO2);
+		when(jiraToolConfigService.getJiraBoardDetailsList(Mockito.any())).thenReturn(boardDetailsList);
+		mockMvc.perform(post("/jira/board").contentType(MediaType.APPLICATION_JSON_UTF8).content(request))
+				.andExpect(status().is2xxSuccessful());
+
+	}
+
+	@Test
+	public void getJiraBoardDetailsListReturn400() throws Exception {
+		//@formatter:off
+		String request = "{\n"
+				+ "    \"connectionId\" : \"6324559257413703ba3bf4ed\",\n"
+				+ "    \"projectKey\" : \"TestKey\",\n"
+				+ "    \"boardType\" : \"scrum\"\n"
+				+ "}";
+		//@formatter:on
 
 		mockMvc.perform(post("/jirakanban/kpi").contentType(MediaType.APPLICATION_JSON_UTF8).content(request))
 				.andDo(print()).andExpect(status().isBadRequest());

@@ -195,7 +195,7 @@ public class RCAServiceImpl extends JiraKPIService<Long, List<Object>, Map<Strin
 		List<String> defectType = new ArrayList<>();
 
 		Map<String, Map<String, Object>> uniqueProjectMap = new HashMap<>();
-		Map<String, List<String>> droppedDefects = new HashMap<>();
+		Map<String, Map<String,List<String>>> droppedDefects = new HashMap<>();
 		leafNodeList.forEach(leaf -> {
 			ObjectId basicProjectConfigId = leaf.getProjectFilter().getBasicProjectConfigId();
 			sprintList.add(leaf.getSprintFilter().getId());
@@ -459,7 +459,7 @@ public class RCAServiceImpl extends JiraKPIService<Long, List<Object>, Map<Strin
 	}
 
 	private void addJiraIssueTodefectListWoDrop(List<JiraIssue> defectLinkedWithStory, List<JiraIssue> defectListWoDrop,
-			Map<String, List<String>> droppedDefects) {
+												Map<String, Map<String,List<String>>> droppedDefects) {
 		KpiHelperService.getDefectsWithoutDrop(droppedDefects, defectLinkedWithStory, defectListWoDrop);
 
 	}

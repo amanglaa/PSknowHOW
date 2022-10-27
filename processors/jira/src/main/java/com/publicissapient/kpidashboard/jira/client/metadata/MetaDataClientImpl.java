@@ -274,9 +274,9 @@ public class MetaDataClientImpl implements MetadataClient {
 		fieldMapping.setJiraDod(workflowMap.get(CommonConstant.DOD));
 		fieldMapping.setJiraTechDebtIssueType(issueTypeMap.get(CommonConstant.STORY));
 		List<String> rejectionList = workflowMap.get(CommonConstant.REJECTION);
-		if (CollectionUtils.isNotEmpty(rejectionList)) {
+		/*if (CollectionUtils.isNotEmpty(rejectionList)) {
 			fieldMapping.setJiraDefectRejectionStatus(rejectionList.get(0));
-		}
+		}*/
 
 		fieldMapping.setJiraDefectSeepageIssueType(
 				issueTypeMap.getOrDefault(CommonConstant.STORY, new ArrayList<>()));

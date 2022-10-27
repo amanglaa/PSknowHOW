@@ -194,7 +194,7 @@ public class DRRServiceImplTest {
 		Map<String, Object> defectDataListMap = dRRServiceImpl.fetchKPIDataFromDb(leafNodeList, startDate, endDate,
 				kpiRequest);
 		assertThat("Rejects Defects value :", ((List<JiraIssue>) defectDataListMap.get(REJECTED_DEFECT_PRTA)).size(),
-				equalTo(16));
+				equalTo(17));
 		assertThat("Total Defects value :", ((List<JiraIssue>) defectDataListMap.get(TOTAL_DEFECT_PRTA)).size(),
 				equalTo(17));
 	}

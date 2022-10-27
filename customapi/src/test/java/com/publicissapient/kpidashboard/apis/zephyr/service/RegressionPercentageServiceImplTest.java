@@ -133,7 +133,7 @@ public class RegressionPercentageServiceImplTest {
 		maturityRangeMap.put("automationPercentage", Arrays.asList("-20", "20-40", "40-60", "60-79", "80-"));
 
 		when(configHelperService.calculateMaturity()).thenReturn(maturityRangeMap);
-		when(testCaseDetailsRepository.findTestCases(any(), any())).thenReturn(testCaseDetailsList);
+		when(testCaseDetailsRepository.findTestDetails(any(),any(), any())).thenReturn(testCaseDetailsList);
 
 		when(configHelperService.getFieldMappingMap()).thenReturn(fieldMappingMap);
 		String kpiRequestTrackerId = "Excel-Zephyr-5be544de025de212549176a9";
@@ -159,7 +159,7 @@ public class RegressionPercentageServiceImplTest {
 			}
 		});
 		when(configHelperService.getFieldMappingMap()).thenReturn(fieldMappingMap);
-		when(testCaseDetailsRepository.findTestCases(any(), any())).thenReturn(testCaseDetailsList);
+		when(testCaseDetailsRepository.findTestDetails(any(), any(), any())).thenReturn(testCaseDetailsList);
 		Map<String, Object> map = regressionPercentageServiceImpl.fetchKPIDataFromDb(leafNodeList, null, null,
 				kpiRequest);
 		Map<String, List<TestCaseDetails>> testCaseData = testCaseDetailsList.stream()

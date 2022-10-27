@@ -55,7 +55,7 @@ export class AccessMgmtComponent implements OnInit {
 	left = <string>'';
 	showToolTip = <boolean>false;
 	allProjectsData = <any>[];
-	enableAddBtn: boolean = false;
+	enableAddBtn = false;
 	accessConfirm: boolean;
 
 	constructor(private service: SharedService, private httpService: HttpService, private messageService: MessageService, private confirmationService: ConfirmationService) { }
@@ -89,11 +89,11 @@ export class AccessMgmtComponent implements OnInit {
 
 	mouseEnter(event, item, node) {
 		// console.log(event, item, accessLevel);
-		let accessLevel = node.accessLevel
+		const accessLevel = node.accessLevel;
 		if (this.allProjectsData && this.allProjectsData.length) {
 			// console.log(this.allProjectsData);
 			if (accessLevel.toLowerCase() === 'project') {
-				let tooltipProject = this.allProjectsData.filter((proj) => proj.id === item.itemId);
+				const tooltipProject = this.allProjectsData.filter((proj) => proj.id === item.itemId);
 				this.toolTipHtml = `<span>Project: ${tooltipProject[0].projectName}</span><br/>`;
 				tooltipProject[0].hierarchy.forEach(hier => {
 					this.toolTipHtml += `<span>${hier.hierarchyLevel.hierarchyLevelName}: ${hier.value}</span><br/>`;
@@ -110,9 +110,7 @@ export class AccessMgmtComponent implements OnInit {
 					return true;
 				});
 
-				let hierarchyArray = selectedHierarchy.map((elem) => {
-					return elem.hierarchyLevel.hierarchyLevelId;
-				});
+				const hierarchyArray = selectedHierarchy.map((elem) => elem.hierarchyLevel.hierarchyLevelId);
 				this.toolTipHtml = ``;
 				selectedHierarchy.forEach(hier => {
 					if (hierarchyArray.indexOf(hier.hierarchyLevel.hierarchyLevelId) <= hierarchyArray.indexOf(accessLevel)) {
@@ -152,12 +150,10 @@ export class AccessMgmtComponent implements OnInit {
 		this.rolesRequest = this.httpService.getRolesList().subscribe((roles) => {
 			this.rolesData = roles;
 			if (this.rolesData['success']) {
-				this.roleList = roles.data.map((role) => {
-					return {
+				this.roleList = roles.data.map((role) => ({
 						label: role.roleName,
 						value: role.roleName,
-					};
-				});
+					}));
 
 				this.searchRoleList = [
 					{
@@ -219,14 +215,14 @@ export class AccessMgmtComponent implements OnInit {
 		if (this.selectedProjects && this.selectedProjects.length) {
 			this.selectedProjects = this.selectedProjects.concat(this.addedProjectsOrNodes);
 		} else {
-			this.selectedProjects = this.addedProjectsOrNodes
+			this.selectedProjects = this.addedProjectsOrNodes;
 		}
 
 		// remove duplicates
 		this.selectedProjects.forEach(element => {
 			element.accessItems = Array.from(
 				new Set(element.accessItems.map((object) => JSON.stringify(object)))
-			).map((str: any) => JSON.parse(str))
+			).map((str: any) => JSON.parse(str));
 		});
 
 		this.selectedProjectAccess[this.selectedProjectAccessIndex].accessNodes = [...this.selectedProjects];
@@ -236,8 +232,8 @@ export class AccessMgmtComponent implements OnInit {
 	addRow(projectsAccess) {
 		if (projectsAccess) {
 			projectsAccess.push({
-				'role': 'ROLE_PROJECT_VIEWER',
-				'accessNodes': [],
+				role: 'ROLE_PROJECT_VIEWER',
+				accessNodes: [],
 			});
 		}
 	}
@@ -301,34 +297,30 @@ export class AccessMgmtComponent implements OnInit {
 
 	projectSelectedEvent(accessItem: any): void {
 		if (accessItem && accessItem?.value?.length && !Object.keys(accessItem.valueRemoved)?.length && accessItem.accessType !== 'project') {
-			let accessIndex = this.addedProjectsOrNodes.findIndex((x) => x.accessLevel === accessItem.accessType);
+			const accessIndex = this.addedProjectsOrNodes.findIndex((x) => x.accessLevel === accessItem.accessType);
 			if (accessIndex != -1) {
 				this.addedProjectsOrNodes[accessIndex].accessItems = [...this.addedProjectsOrNodes[accessIndex].accessItems, ...accessItem.value];
 			} else {
-				this.addedProjectsOrNodes = accessItem.value.map((item) => {
-					return {
+				this.addedProjectsOrNodes = accessItem.value.map((item) => ({
 						accessLevel: accessItem.accessType,
 						accessItems: [...accessItem.value]
-					};
-				});
+					}));
 			}
 		} else if (accessItem.accessType === 'project') {
-			let accessIndex = this.addedProjectsOrNodes.findIndex((x) => x.accessLevel === accessItem.accessType);
+			const accessIndex = this.addedProjectsOrNodes.findIndex((x) => x.accessLevel === accessItem.accessType);
 			if (accessIndex != -1) {
 				this.addedProjectsOrNodes[accessIndex].accessItems = [...accessItem.value];
 			} else {
-				this.addedProjectsOrNodes = accessItem.value.map((item) => {
-					return {
+				this.addedProjectsOrNodes = accessItem.value.map((item) => ({
 						accessLevel: accessItem.accessType,
 						accessItems: [...accessItem.value]
-					};
-				});
+					}));
 			}
 		} else if (accessItem.valueRemoved.val.length === 1) {
 			this.addedProjectsOrNodes = this.addedProjectsOrNodes.filter((items) => (items.accessItems = items.accessItems.filter((item, index, self) => index === self.findIndex((t) => t.itemId !== accessItem.valueRemoved.val[0].code))));
 		} else {
 			// clear filters clicked
-			console.log("clear filters clicked");
+			console.log('clear filters clicked');
 			this.addedProjectsOrNodes = [];
 		}
 
@@ -338,7 +330,7 @@ export class AccessMgmtComponent implements OnInit {
 	}
 
 	onRoleChange(event, index, access) {
-		let idx = access.findIndex((x) => x.role === event.value);
+		const idx = access.findIndex((x) => x.role === event.value);
 		if (idx != -1 && idx != index) {
 			this.submitValidationMessage = `A row for ${event.value} already exists, please add accesses there.`;
 			this.displayDuplicateProject = true;
@@ -354,7 +346,7 @@ export class AccessMgmtComponent implements OnInit {
 				if (role === 'ROLE_SUPERADMIN') {
 					isSuperAdmin = true;
 				}
-			})
+			});
 		}
 		this.confirmationService.confirm({
 			message: 'User and related access will be deleted forever, are you sure you want to delete it?',
@@ -386,20 +378,18 @@ export class AccessMgmtComponent implements OnInit {
 			message = data.message;
 			icon = 'fa fa-check-circle alert-success';
 			this.getUsers();
-		}
-		else if (!data.success && isSuperAdmin) {
+		} else if (!data.success && isSuperAdmin) {
 			message = 'SUPERADMIN cannot be deleted';
-			icon = "fa fa-times-circle alert-danger";
-		}
-		else {
+			icon = 'fa fa-times-circle alert-danger';
+		} else {
 			message = 'Something went wrong. Please try again after sometime.';
 			icon = 'fa fa-times-circle alert-danger';
 		}
 
 		this.confirmationService.confirm({
-			message: message,
+			message,
 			header: 'Access Deletion Status',
-			icon: icon,
+			icon,
 			accept: () => {
 			},
 			reject: () => {

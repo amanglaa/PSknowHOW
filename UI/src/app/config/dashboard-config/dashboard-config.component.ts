@@ -17,7 +17,7 @@
  ******************************************************************************/
 
  import { Component, OnInit } from '@angular/core';
- import { FormControl, FormGroup } from '@angular/forms';
+ import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
  import { HttpService } from '../../services/http.service';
  import { MessageService } from 'primeng/api';
  import { SharedService } from '../../services/shared.service';
@@ -31,8 +31,8 @@
     kpiListData: any = {};
     tabListContent: Object = {};
     tabHeaders: any = [];
-    kpiForm: FormGroup = new FormGroup({});
-    kpiList:any;
+    kpiForm: UntypedFormGroup = new UntypedFormGroup({});
+    kpiList: any;
     selectedTab = 'scrum';
     kpiData: any;
     kpiChangesObj = {};
@@ -54,8 +54,8 @@
             if (response.success === true) {
               this.kpiListData = response.data;
               this.setFormControlData();
-              let kpiObjects = Object.keys(this.kpiListData);
-              for(let i of kpiObjects) {
+              const kpiObjects = Object.keys(this.kpiListData);
+              for(const i of kpiObjects) {
                   if (typeof this.kpiListData[i] === 'object') {
                       this.tabListContent[i] =  this.kpiListData[i];
                       this.tabHeaders.push(i);
@@ -70,8 +70,8 @@
         return Object.keys(value).length === 0 && value.constructor === Object;
      }
      setFormControlData() {
-        let kpiObj = {};
-        let boardNames = {};
+        const kpiObj = {};
+        const boardNames = {};
        let list = [];
        this.kpiData = [...this.kpiListData[this.selectedTab]];
         this.kpiData.forEach(function(item) {
@@ -79,26 +79,26 @@
           let allShownFlag = false;
             if ((item?.boardName && item?.kpis) ) {
                 list = item.kpis.map(function(kpi) {
-                    kpiObj[kpi.kpiId] = new FormControl(kpi.shown);
+                    kpiObj[kpi.kpiId] = new UntypedFormControl(kpi.shown);
                     trueShowCount =  kpi.shown ? ++trueShowCount : trueShowCount;
                     return kpiObj;
                 });
                 if (trueShowCount ===  item?.kpis?.length) {
                   allShownFlag = true;
                 }
-                boardNames[item.boardName] = new FormControl(allShownFlag);
+                boardNames[item.boardName] = new UntypedFormControl(allShownFlag);
             }
         });
-        this.kpiForm = new FormGroup({
-          kpiCategories: new FormGroup(boardNames),
-          kpis: new FormGroup(kpiObj)
+        this.kpiForm = new UntypedFormGroup({
+          kpiCategories: new UntypedFormGroup(boardNames),
+          kpis: new UntypedFormGroup(kpiObj)
         });
      }
 
      handleTabChange(event) {
         this.selectedTab = this.tabHeaders[event.index];
         this.setFormControlData();
-        this.kpiChangesObj = {}
+        this.kpiChangesObj = {};
      }
      get kpiFormValue() {
          return this.kpiForm.controls;
@@ -106,14 +106,14 @@
      // once user clicking save, get all the kpi changes form this.kpiChangesObj and sending to api
      save() {
          // getting the updated kpicategories
-         let modifiedCategories = Object.keys(this.kpiChangesObj);
-         let obj = this.kpiChangesObj;
+         const modifiedCategories = Object.keys(this.kpiChangesObj);
+         const obj = this.kpiChangesObj;
          modifiedCategories.forEach(category => {
            // find each and every updated kpicategoryIndex
-           let index = this.kpiData.findIndex(item => item.boardName === category);
+           const index = this.kpiData.findIndex(item => item.boardName === category);
            // updating kpi based on kpicategory
            obj[category].forEach(kpi => {
-             let ind = this.kpiData[index].kpis.findIndex(item => item.kpiId === kpi.kpiId);
+             const ind = this.kpiData[index].kpis.findIndex(item => item.kpiId === kpi.kpiId);
              this.kpiData[index].kpis.splice(ind,1,kpi);
            });
          });
@@ -148,9 +148,11 @@
      }
      // onchanges getting kpi shown flag changes and maping its kpicategory with updated shown flag
      handleKpiChange(event, kpi, boardName, kpis) {
-       let kpiObj = {...kpi};
+       const kpiObj = {...kpi};
        kpiObj.shown = event.checked;
-       let kpiIds = kpis.map(function(item){return item.kpiId});
+       const kpiIds = kpis.map(function(item){
+return item.kpiId;
+});
        let showCount = 0;
        if (!event.checked) {
          this.kpiFormValue.kpiCategories['controls'][boardName].setValue(false);
@@ -172,9 +174,9 @@
      }
      // on kpicategory flag change,  setting all of its kpi flag
      handleKpiCategoryChange(event, boardData) {
-       let modifiedObj = {...boardData};
+       const modifiedObj = {...boardData};
        let targetObj = {};
-       let targetSelector = event.originalEvent?.target?.closest('.kpi-category-header')?.querySelector('.kpis-list');
+       const targetSelector = event.originalEvent?.target?.closest('.kpi-category-header')?.querySelector('.kpis-list');
        if (event.checked) {
         if(targetSelector.classList.contains('hide-kpisList')) {
           targetSelector.classList.remove('hide-kpisList');

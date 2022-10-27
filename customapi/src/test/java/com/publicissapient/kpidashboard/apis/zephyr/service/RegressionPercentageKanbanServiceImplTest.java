@@ -174,7 +174,7 @@ public class RegressionPercentageKanbanServiceImplTest {
 				leafNodeList.addAll(v);
 			}
 		});
-		when(testCaseDetailsRepository.findTestCases(any(), any())).thenReturn(testCaseDetailsList);
+		when(testCaseDetailsRepository.findTestDetails(any(), any(), any())).thenReturn(testCaseDetailsList);
 		when(configHelperService.getFieldMappingMap()).thenReturn(fieldMappingMap);
 		String kpiRequestTrackerId = "Excel-Zephyr-5be544de025de212549176a9";
 		when(cacheService
@@ -207,7 +207,7 @@ public class RegressionPercentageKanbanServiceImplTest {
 			}
 		});
 		when(configHelperService.getFieldMappingMap()).thenReturn(fieldMappingMap);
-		when(testCaseDetailsRepository.findTestCases(any(), any())).thenReturn(testCaseDetailsList);
+		when(testCaseDetailsRepository.findTestDetails(any(),any(), any())).thenReturn(testCaseDetailsList);
 		Map<String, Object> defectDataListMap = regressionPercentageKanbanServiceImpl.fetchKPIDataFromDb(leafNodeList,
 				null, null, kpiRequest);
 		assertThat("Total Test Case value :",  (Arrays.asList(defectDataListMap.get(TESTCASEKEY)).size()),

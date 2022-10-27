@@ -214,7 +214,7 @@
                     <table class="p-datatable">
                       <tr *ngFor="let item of project.projects; let isLast = last" class="" [ngClass]="{'border-bottom': !isLast}">
                         <td *ngFor="let col of dynamicCols" class="p-p-3 border-right">
-                          <span [ngClass]="{'info-block':col.id == 'projectName'}">{{item[col.id]}}</span>
+                          <span [ngClass]="{'info-block':col.id === 'projectName'}">{{item[col.id]}}</span>
                         </td>
                       </tr>
                     </table>

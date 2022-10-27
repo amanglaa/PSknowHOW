@@ -5,6 +5,7 @@ import com.publicissapient.kpidashboard.common.constant.CommonConstant;
 import com.publicissapient.kpidashboard.common.constant.ProcessorType;
 import com.publicissapient.kpidashboard.common.model.application.ProjectToolConfig;
 import com.publicissapient.kpidashboard.common.repository.application.ProjectToolConfigRepository;
+import com.publicissapient.kpidashboard.common.repository.tracelog.ProcessorExecutionTraceLogRepository;
 import com.publicissapient.kpidashboard.common.repository.zephyr.TestCaseDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,10 +22,16 @@ public class ZephyrDataCleanUpService implements ToolDataCleanUpService {
     @Autowired
     private CacheService cacheService;
 
+    @Autowired
+    private ProcessorExecutionTraceLogRepository processorExecutionTraceLogRepository;
+
     @Override
     public void clean(String projectToolConfigId) {
         ProjectToolConfig tool = projectToolConfigRepository.findById(projectToolConfigId);
         deleteTestCaseDetails(tool);
+        // delete processors trace logs
+        processorExecutionTraceLogRepository.deleteByBasicProjectConfigIdAndProcessorName(tool.getBasicProjectConfigId().toHexString(),
+                tool.getToolName());
         clearCache();
     }
 

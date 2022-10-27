@@ -30,4 +30,5 @@ import lombok.NoArgsConstructor;
 public class BoardDetails {
     private String boardId;
     private String boardName;
+    private String projectKey;
 }

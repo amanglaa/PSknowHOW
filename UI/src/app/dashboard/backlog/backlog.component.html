@@ -1,11 +1,11 @@
 <div *ngIf="!noKpis else noKpiTemplate" class="backlog-screen">
   <div id="message"></div>
   <ng-container *ngIf="!noSprints else noSprintsTemplate">
-    <div *ngIf="selectedtype == 'Scrum'">
+    <div *ngIf="selectedtype === 'Scrum'">
       <div class="clearfix"></div>
       <div class="right-container col">
         <div class="p-grid justify-content-start p-pt-3 p-ml-0 p-mr-0">
-          <ng-container *ngIf="(updatedConfigGlobalData | json) != '{}' && updatedConfigGlobalData != undefined">
+          <ng-container *ngIf="(updatedConfigGlobalData | json) !== '{}' && updatedConfigGlobalData != undefined">
             <ng-container *ngFor="let kpi of updatedConfigGlobalData; let i = index;">
               <div class="p-sm-6 backlog-chart" [ngClass]="{'backlog-dashboard' : kpi?.kpiDetail?.chartType ==='progress-bar'}">
                 <app-kpi-card [trendBoxColorObj]="trendBoxColorObj" [kpiData]="kpi"
@@ -17,7 +17,7 @@
                   [isShow]="true"
                   [showTrendIndicator]="showKpiTrendIndicator[kpi?.kpiId] ==false ? showKpiTrendIndicator[kpi?.kpiId] : true">
                   <ng-container *ngIf="!noTabAccess else noDataAccess">
-                    <ng-container *ngIf="(kpiChartData | json) != '{}' && kpiChartData != undefined;else noData">
+                    <ng-container *ngIf="(kpiChartData | json) !== '{}' && kpiChartData != undefined;else noData">
                       <div class="p-pl-3 p-pr-3 w-100" [ngSwitch]="kpi?.kpiDetail?.chartType"
                         *ngIf="ifKpiExist(kpi.kpiId) != -1; else loader">
                         <ng-container

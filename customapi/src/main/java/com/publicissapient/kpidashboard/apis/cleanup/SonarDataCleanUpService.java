@@ -21,6 +21,7 @@ package com.publicissapient.kpidashboard.apis.cleanup;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.publicissapient.kpidashboard.common.repository.tracelog.ProcessorExecutionTraceLogRepository;
 import org.apache.commons.collections4.CollectionUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +58,9 @@ public class SonarDataCleanUpService implements ToolDataCleanUpService {
 	@Autowired
 	private CacheService cacheService;
 
+	@Autowired
+	private ProcessorExecutionTraceLogRepository processorExecutionTraceLogRepository;
+
 	private List<ObjectId> getProcessorItemsIds(ProjectToolConfig tool) {
 		List<ProcessorItem> items = processorItemRepository.findByToolConfigId(tool.getId());
 
@@ -78,6 +82,11 @@ public class SonarDataCleanUpService implements ToolDataCleanUpService {
 			sonarDetailsRepository.deleteByProcessorItemIdIn(itemsIds);
 			sonarHistoryRepository.deleteByProcessorItemIdIn(itemsIds);
 			processorItemRepository.deleteByToolConfigId(tool.getId());
+
+			// delete processors trace logs
+			processorExecutionTraceLogRepository.deleteByBasicProjectConfigIdAndProcessorName(tool.getBasicProjectConfigId().toHexString(),
+					tool.getToolName());
+
 			cacheService.clearCache(CommonConstant.CACHE_TOOL_CONFIG_MAP);
 			cacheService.clearCache(CommonConstant.SONAR_KPI_CACHE);
 		}

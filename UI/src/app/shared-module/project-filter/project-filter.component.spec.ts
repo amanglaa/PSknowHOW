@@ -12,62 +12,62 @@ import { environment } from 'src/environments/environment';
 const allProjectsData = require('../../../test/resource/projectFilterAllProjects.json');
 const filteredData = [
   {
-      "id": "6335363749794a18e8a4479b",
-      "projectName": "Scrum Project",
-      "hierarchy": [
+      id: '6335363749794a18e8a4479b',
+      projectName: 'Scrum Project',
+      hierarchy: [
           {
-              "hierarchyLevel": {
-                  "level": 1,
-                  "hierarchyLevelId": "hierarchyLevelOne",
-                  "hierarchyLevelName": "Level One"
+              hierarchyLevel: {
+                  level: 1,
+                  hierarchyLevelId: 'hierarchyLevelOne',
+                  hierarchyLevelName: 'Level One'
               },
-              "value": "Sample One"
+              value: 'Sample One'
           },
           {
-              "hierarchyLevel": {
-                  "level": 2,
-                  "hierarchyLevelId": "hierarchyLevelTwo",
-                  "hierarchyLevelName": "Level Two"
+              hierarchyLevel: {
+                  level: 2,
+                  hierarchyLevelId: 'hierarchyLevelTwo',
+                  hierarchyLevelName: 'Level Two'
               },
-              "value": "Sample Two"
+              value: 'Sample Two'
           },
           {
-              "hierarchyLevel": {
-                  "level": 3,
-                  "hierarchyLevelId": "hierarchyLevelThree",
-                  "hierarchyLevelName": "Level Three"
+              hierarchyLevel: {
+                  level: 3,
+                  hierarchyLevelId: 'hierarchyLevelThree',
+                  hierarchyLevelName: 'Level Three'
               },
-              "value": "Sample Three"
+              value: 'Sample Three'
           }
       ]
   },
   {
-      "id": "6335368249794a18e8a4479f",
-      "projectName": "Kanban Project",
-      "hierarchy": [
+      id: '6335368249794a18e8a4479f',
+      projectName: 'Kanban Project',
+      hierarchy: [
           {
-              "hierarchyLevel": {
-                  "level": 1,
-                  "hierarchyLevelId": "hierarchyLevelOne",
-                  "hierarchyLevelName": "Level One"
+              hierarchyLevel: {
+                  level: 1,
+                  hierarchyLevelId: 'hierarchyLevelOne',
+                  hierarchyLevelName: 'Level One'
               },
-              "value": "Sample One"
+              value: 'Sample One'
           },
           {
-              "hierarchyLevel": {
-                  "level": 2,
-                  "hierarchyLevelId": "hierarchyLevelTwo",
-                  "hierarchyLevelName": "Level Two"
+              hierarchyLevel: {
+                  level: 2,
+                  hierarchyLevelId: 'hierarchyLevelTwo',
+                  hierarchyLevelName: 'Level Two'
               },
-              "value": "Sample Two"
+              value: 'Sample Two'
           },
           {
-              "hierarchyLevel": {
-                  "level": 3,
-                  "hierarchyLevelId": "hierarchyLevelThree",
-                  "hierarchyLevelName": "Level Three"
+              hierarchyLevel: {
+                  level: 3,
+                  hierarchyLevelId: 'hierarchyLevelThree',
+                  hierarchyLevelName: 'Level Three'
               },
-              "value": "Sample Three"
+              value: 'Sample Three'
           }
       ]
   }
@@ -135,19 +135,19 @@ describe('ProjectFilterComponent', () => {
     component.selectedVal = {};
     component.valueRemoved ={};
     fixture.detectChanges();
-    let fType = 'hierarchyLevelOne';
-    let fValue = 'Sample One';
-    let event = {
-      "isTrusted": true,
-      "stopPropagation": () => {}
+    const fType = 'hierarchyLevelOne';
+    const fValue = 'Sample One';
+    const event = {
+      isTrusted: true,
+      stopPropagation: () => {}
   };
     component.filterData(event, fType, fValue);
     fixture.detectChanges();
     expect(component.selectedVal).toEqual({
-      'hierarchyLevelOne': [
+      hierarchyLevelOne: [
         {
-          'name': 'Sample One',
-          'code': 'Sample One'
+          name: 'Sample One',
+          code: 'Sample One'
         }
       ]
     });
