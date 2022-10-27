@@ -389,41 +389,46 @@ public class ConnectionServiceImpl implements ConnectionService {
 			boolean sameUrlcheck) {
 		if (!inputConn.isVault()) {
 			boolean accessTokenSimilarity;
-			switch (inputConn.getType()) {
-			case TOOL_SONAR:
-				String accessToken = rsaEncryptionService.decrypt(inputConn.getAccessToken(),
-						customApiConfig.getRsaPrivateKey());
-				String accessTokenExistsSonar = aesEncryptionService.decrypt(currConn.getAccessToken(),
-						customApiConfig.getAesEncryptionKey());
-				accessTokenSimilarity = accessToken.equals(accessTokenExistsSonar);
-				break;
-			case TOOL_ZEPHYR:
-				String accessTokenExistsZephyr = aesEncryptionService.decrypt(currConn.getAccessToken(),
-						customApiConfig.getAesEncryptionKey());
-				accessTokenSimilarity = inputConn.getAccessToken().equals(accessTokenExistsZephyr);
-				break;
-			case TOOL_GITLAB:
-				String gitAccessToken = rsaEncryptionService.decrypt(inputConn.getAccessToken(),
-						customApiConfig.getRsaPrivateKey());
-				String accessTokenExists = aesEncryptionService.decrypt(currConn.getAccessToken(),
-						customApiConfig.getAesEncryptionKey());
-				accessTokenSimilarity = gitAccessToken.equals(accessTokenExists);
-				break;
-			case TOOL_AZUREREPO:
-				String pat = rsaEncryptionService.decrypt(inputConn.getPat(), customApiConfig.getRsaPrivateKey());
-				String patExists = aesEncryptionService.decrypt(currConn.getPat(),
-						customApiConfig.getAesEncryptionKey());
-				accessTokenSimilarity = pat.equals(patExists);
-				break;
-			case TOOL_JENKINS:
-				String apiKey = rsaEncryptionService.decrypt(inputConn.getApiKey(), customApiConfig.getRsaPrivateKey());
-				String apiKeyExists = aesEncryptionService.decrypt(currConn.getApiKey(),
-						customApiConfig.getAesEncryptionKey());
-				accessTokenSimilarity = apiKey.equals(apiKeyExists);
-				break;
-			default:
+			try {
+				switch (inputConn.getType()) {
+				case TOOL_SONAR:
+					String accessToken = rsaEncryptionService.decrypt(inputConn.getAccessToken(),
+							customApiConfig.getRsaPrivateKey());
+					String accessTokenExistsSonar = aesEncryptionService.decrypt(currConn.getAccessToken(),
+							customApiConfig.getAesEncryptionKey());
+					accessTokenSimilarity = accessToken.equals(accessTokenExistsSonar);
+					break;
+				case TOOL_ZEPHYR:
+					String accessTokenExistsZephyr = aesEncryptionService.decrypt(currConn.getAccessToken(),
+							customApiConfig.getAesEncryptionKey());
+					accessTokenSimilarity = inputConn.getAccessToken().equals(accessTokenExistsZephyr);
+					break;
+				case TOOL_GITLAB:
+					String gitAccessToken = rsaEncryptionService.decrypt(inputConn.getAccessToken(),
+							customApiConfig.getRsaPrivateKey());
+					String accessTokenExists = aesEncryptionService.decrypt(currConn.getAccessToken(),
+							customApiConfig.getAesEncryptionKey());
+					accessTokenSimilarity = gitAccessToken.equals(accessTokenExists);
+					break;
+				case TOOL_AZUREREPO:
+					String pat = rsaEncryptionService.decrypt(inputConn.getPat(), customApiConfig.getRsaPrivateKey());
+					String patExists = aesEncryptionService.decrypt(currConn.getPat(),
+							customApiConfig.getAesEncryptionKey());
+					accessTokenSimilarity = pat.equals(patExists);
+					break;
+				case TOOL_JENKINS:
+					String apiKey = rsaEncryptionService.decrypt(inputConn.getApiKey(),
+							customApiConfig.getRsaPrivateKey());
+					String apiKeyExists = aesEncryptionService.decrypt(currConn.getApiKey(),
+							customApiConfig.getAesEncryptionKey());
+					accessTokenSimilarity = apiKey.equals(apiKeyExists);
+					break;
+				default:
+					accessTokenSimilarity = false;
+					break;
+				}
+			} catch (Exception exception) {
 				accessTokenSimilarity = false;
-				break;
 			}
 			if (sameUrlcheck && accessTokenSimilarity) {
 				existingConnection = currConn;
