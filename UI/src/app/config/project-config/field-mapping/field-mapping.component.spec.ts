@@ -142,156 +142,160 @@ const fakeProject = {
 };
 
 const fakeSelectedFieldMapping = {
-  id: '63282cbaf5c740241aff32a1',
-  projectToolConfigId: '63282ca6487eff1e8b70b1bb',
-  basicProjectConfigId: '63282c82487eff1e8b70b1b9',
-  sprintName: 'customfield_12700',
-  jiradefecttype: [
-    'Defect'
+  "id": "63282cbaf5c740241aff32a1",
+  "projectToolConfigId": "63282ca6487eff1e8b70b1bb",
+  "basicProjectConfigId": "63282c82487eff1e8b70b1b9",
+  "sprintName": "customfield_12700",
+  "jiradefecttype": [
+    "Defect"
   ],
-  defectPriority: [],
-  jiraIssueTypeNames: [
-    'Story',
-    'Enabler Story',
-    'Change request',
-    'Defect',
-    'Epic'
+  "defectPriority": [],
+  "jiraIssueTypeNames": [
+    "Story",
+    "Enabler Story",
+    "Change request",
+    "Defect",
+    "Epic"
   ],
-  storyFirstStatus: 'Open',
-  rootCause: 'customfield_19121',
-  jiraStatusForDevelopment: [
-    'Implementing',
-    'In Development',
-    'In Analysis'
+  "storyFirstStatus": "Open",
+  "rootCause": "customfield_19121",
+  "jiraStatusForDevelopment": [
+    "Implementing",
+    "In Development",
+    "In Analysis"
   ],
-  jiraIssueEpicType: [
-    'Epic'
+  "jiraIssueEpicType": [
+    "Epic"
   ],
-  jiraStatusForQa: [
-    'In Testing'
+  "jiraStatusForQa": [
+    "In Testing"
   ],
-  jiraDefectInjectionIssueType: [
-    'Story',
-    'Enabler Story',
-    'Change request'
+  "jiraDefectInjectionIssueType": [
+    "Story",
+    "Enabler Story",
+    "Change request"
   ],
-  jiraDod: [
-    'Closed',
-    'Ready for Delivery'
+  "jiraDod": [
+    "Closed",
+    "Ready for Delivery"
   ],
-  jiraDefectCreatedStatus: 'Open',
-  jiraTechDebtIssueType: [
-    'Story',
-    'Enabler Story',
-    'Change request'
+  "jiraDefectCreatedStatus": "Open",
+  "jiraTechDebtIssueType": [
+    "Story",
+    "Enabler Story",
+    "Change request"
   ],
-  jiraTechDebtIdentification: '',
-  jiraTechDebtCustomField: '',
-  jiraTechDebtValue: [],
-  jiraDefectRejectionStatus: 'Closed',
-  jiraBugRaisedByIdentification: '',
-  jiraBugRaisedByValue: [],
-  jiraDefectSeepageIssueType: [
-    'Story',
-    'Enabler Story',
-    'Change request'
+  "jiraTechDebtIdentification": "",
+  "jiraTechDebtCustomField": "",
+  "jiraTechDebtValue": [],
+  "jiraDefectRejectionStatus": "Closed",
+  "issueStatusExcluMissingWork":  [
+    "Open",
   ],
-  jiraBugRaisedByCustomField: '',
-  jiraDefectRemovalStatus: [
-    'Closed',
-    'Ready for Delivery'
+  "jiraBugRaisedByIdentification": "",
+  "jiraBugRaisedByValue": [],
+  "jiraDefectSeepageIssueType": [
+    "Story",
+    "Enabler Story",
+    "Change request"
   ],
-  jiraDefectRemovalIssueType: [
-    'Story',
-    'Enabler Story',
-    'Change request'
+  "jiraBugRaisedByCustomField": "",
+  "jiraDefectRemovalStatus": [
+    "Closed",
+    "Ready for Delivery"
   ],
-  jiraStoryPointsCustomField: 'customfield_20803',
-  jiraTestAutomationIssueType: [
-    'Story',
-    'Enabler Story',
-    'Change request'
+  "jiraDefectRemovalIssueType": [
+    "Story",
+    "Enabler Story",
+    "Change request"
   ],
-  jiraCanNotAutomatedTestValue: [],
-  jiraSprintVelocityIssueType: [
-    'Story',
-    'Enabler Story',
-    'Change request'
+  "jiraStoryPointsCustomField": "customfield_20803",
+  "jiraTestAutomationIssueType": [
+    "Story",
+    "Enabler Story",
+    "Change request"
   ],
-  jiraSprintCapacityIssueType: [
-    'Story',
-    'Enabler Story',
-    'Change request'
+  "jiraCanNotAutomatedTestValue": [],
+  "jiraSprintVelocityIssueType": [
+    "Story",
+    "Enabler Story",
+    "Change request"
   ],
-  jiraDefectRejectionlIssueType: [
-    'Story',
-    'Enabler Story',
-    'Change request'
+  "jiraSprintCapacityIssueType": [
+    "Story",
+    "Enabler Story",
+    "Change request"
   ],
-  jiraDefectCountlIssueType: [
-    'Story',
-    'Enabler Story',
-    'Change request'
+  "jiraDefectRejectionlIssueType": [
+    "Story",
+    "Enabler Story",
+    "Change request"
   ],
-  jiraIssueDeliverdStatus: [
-    'Closed',
-    'Resolved'
+  "jiraDefectCountlIssueType": [
+    "Story",
+    "Enabler Story",
+    "Change request"
   ],
-  jiraDor: 'Ready for Sprint Planning',
-  jiraIntakeToDorIssueType: [
-    'Story',
-    'Enabler Story',
-    'Change request'
+  "jiraIssueDeliverdStatus": [
+    "Closed",
+    "Resolved"
   ],
-  jiraStoryIdentification: [
-    'Story',
-    'Enabler Story',
-    'Change request'
+  "jiraDor": "Ready for Sprint Planning",
+  "jiraIntakeToDorIssueType": [
+    "Story",
+    "Enabler Story",
+    "Change request"
   ],
-  jiraLiveStatus: '',
-  regressionAutomationLabels: [],
-  rootCauseValue: [
-    'Coding'
+  "jiraStoryIdentification": [
+    "Story",
+    "Enabler Story",
+    "Change request"
   ],
-  excludeRCAFromFTPR: [],
-  resolutionTypeForRejection: [
-    'Invalid',
-    'Duplicate',
-    'Unrequired'
+  "jiraLiveStatus": "",
+  "regressionAutomationLabels": [],
+  "rootCauseValue": [
+    "Coding"
   ],
-  jiraQADefectDensityIssueType: [
-    'Story',
-    'Enabler Story',
-    'Change request'
+  "excludeRCAFromFTPR": [],
+  "resolutionTypeForRejection": [
+    "Invalid",
+    "Duplicate",
+    "Unrequired"
   ],
-  jiraBugRaisedByQACustomField: '',
-  jiraBugRaisedByQAIdentification: '',
-  jiraBugRaisedByQAValue: [],
-  jiraDefectDroppedStatus: [],
-  epicCostOfDelay: 'customfield_58102',
-  epicRiskReduction: 'customfield_58101',
-  epicUserBusinessValue: 'customfield_58100',
-  epicWsjf: 'customfield_58104',
-  epicTimeCriticality: 'customfield_51002',
-  epicJobSize: 'customfield_61041',
-  productionDefectCustomField: '',
-  productionDefectIdentifier: '',
-  productionDefectValue: [],
-  productionDefectComponentValue: '',
-  jiraTestCaseType: [],
-  testAutomatedIdentification: '',
-  testAutomationCompletedIdentification: '',
-  testRegressionIdentification: '',
-  testAutomated: '',
-  testAutomationCompletedByCustomField: '',
-  testRegressionByCustomField: '',
-  jiraAutomatedTestValue: [],
-  jiraRegressionTestValue: [],
-  jiraCanBeAutomatedTestValue: [],
-  estimationCriteria: 'Story Point',
-  storyPointToHourMapping: 8,
-  workingHoursDayCPT: 6,
-  additionalFilterConfig: [
+  "jiraQADefectDensityIssueType": [
+    "Story",
+    "Enabler Story",
+    "Change request"
+  ],
+  "jiraBugRaisedByQACustomField": "",
+  "jiraBugRaisedByQAIdentification": "",
+  "jiraBugRaisedByQAValue": [],
+  "jiraDefectDroppedStatus": [],
+  "epicCostOfDelay": "customfield_58102",
+  "epicRiskReduction": "customfield_58101",
+  "epicUserBusinessValue": "customfield_58100",
+  "epicWsjf": "customfield_58104",
+  "epicTimeCriticality": "customfield_51002",
+  "epicJobSize": "customfield_61041",
+  "productionDefectCustomField": "",
+  "productionDefectIdentifier": "",
+  "productionDefectValue": [],
+  "productionDefectComponentValue": "",
+  "jiraTestCaseType": [],
+  "testAutomatedIdentification": "",
+  "testAutomationCompletedIdentification": "",
+  "testRegressionIdentification": "",
+  "testAutomated": "",
+  "testAutomationCompletedByCustomField": "",
+  "testRegressionByCustomField": "",
+  "jiraAutomatedTestValue": [],
+  "jiraRegressionTestValue": [],
+  "jiraCanBeAutomatedTestValue": [],
+  "estimationCriteria": "Story Point",
+  "storyPointToHourMapping": 8,
+  "workingHoursDayCPT": 6,
+  "additionalFilterConfig": [
+
   ]
 };
 const successResponse = {
@@ -335,11 +339,12 @@ const successResponse = {
       'Closed',
       'Ready for Delivery'
     ],
-    jiraDefectCreatedStatus: 'Open',
-    jiraTechDebtIssueType: [
-      'Story',
-      'Enabler Story',
-      'Change request'
+    "jiraDefectCreatedStatus": "Open",
+    "issueStatusExcluMissingWork": ["Open"],
+    "jiraTechDebtIssueType": [
+      "Story",
+      "Enabler Story",
+      "Change request"
     ],
     jiraTechDebtIdentification: '',
     jiraTechDebtCustomField: '',
@@ -453,154 +458,155 @@ const successResponse = {
 };
 
 const fakeSelectedFieldMappingWithAdditionalFilters = {
-  storyFirstStatus: 'Open',
-  jiraDefectCreatedStatus: 'Open',
-  jiraDefectDroppedStatus: [],
-  jiraLiveStatus: '',
-  jiraDor: 'Ready for Sprint Planning',
-  jiraDefectRejectionStatus: 'Closed',
-  jiraDod: [
-    'Closed',
-    'Ready for Delivery'
+  "storyFirstStatus": "Open",
+  "jiraDefectCreatedStatus": "Open",
+  "jiraDefectDroppedStatus": [],
+  "jiraLiveStatus": "",
+  "jiraDor": "Ready for Sprint Planning",
+  "jiraDefectRejectionStatus": "Closed",
+  "jiraDod": [
+    "Closed",
+    "Ready for Delivery"
   ],
-  jiraIssueDeliverdStatus: [
-    'Closed',
-    'Ready for Delivery'
+  "jiraIssueDeliverdStatus": [
+    "Closed",
+    "Ready for Delivery"
   ],
-  jiraDefectRemovalStatus: [
-    'Closed',
-    'Ready for Delivery'
+  "jiraDefectRemovalStatus": [
+    "Closed",
+    "Ready for Delivery"
   ],
-  resolutionTypeForRejection: [
-    'Invalid',
-    'Duplicate',
-    'Unrequired'
+  "issueStatusExcluMissingWork": ["Open"],
+  "resolutionTypeForRejection": [
+    "Invalid",
+    "Duplicate",
+    "Unrequired"
   ],
-  jiraStatusForDevelopment: [
-    'Implementing',
-    'In Development',
-    'In Analysis'
+  "jiraStatusForDevelopment": [
+    "Implementing",
+    "In Development",
+    "In Analysis"
   ],
-  jiraStatusForQa: [
-    'In Testing'
+  "jiraStatusForQa": [
+    "In Testing"
   ],
-  jiraIssueTypeNames: [
-    'Story',
-    'Enabler Story',
-    'Change request',
-    'Defect',
-    'Epic'
+  "jiraIssueTypeNames": [
+    "Story",
+    "Enabler Story",
+    "Change request",
+    "Defect",
+    "Epic"
   ],
-  jiraDefectSeepageIssueType: [
-    'Story',
-    'Enabler Story',
-    'Change request'
+  "jiraDefectSeepageIssueType": [
+    "Story",
+    "Enabler Story",
+    "Change request"
   ],
-  jiraQADefectDensityIssueType: [
-    'Story',
-    'Enabler Story',
-    'Change request'
+  "jiraQADefectDensityIssueType": [
+    "Story",
+    "Enabler Story",
+    "Change request"
   ],
-  jiraDefectCountlIssueType: [
-    'Story',
-    'Enabler Story',
-    'Change request'
+  "jiraDefectCountlIssueType": [
+    "Story",
+    "Enabler Story",
+    "Change request"
   ],
-  jiraSprintVelocityIssueType: [
-    'Story',
-    'Enabler Story',
-    'Change request'
+  "jiraSprintVelocityIssueType": [
+    "Story",
+    "Enabler Story",
+    "Change request"
   ],
-  jiraDefectRemovalIssueType: [
-    'Story',
-    'Enabler Story',
-    'Change request'
+  "jiraDefectRemovalIssueType": [
+    "Story",
+    "Enabler Story",
+    "Change request"
   ],
-  jiraDefectRejectionlIssueType: [
-    'Story',
-    'Enabler Story',
-    'Change request'
+  "jiraDefectRejectionlIssueType": [
+    "Story",
+    "Enabler Story",
+    "Change request"
   ],
-  jiraDefectInjectionIssueType: [
-    'Story',
-    'Enabler Story',
-    'Change request'
+  "jiraDefectInjectionIssueType": [
+    "Story",
+    "Enabler Story",
+    "Change request"
   ],
-  jiraTestAutomationIssueType: [
-    'Story',
-    'Enabler Story',
-    'Change request'
+  "jiraTestAutomationIssueType": [
+    "Story",
+    "Enabler Story",
+    "Change request"
   ],
-  jiraIntakeToDorIssueType: [
-    'Story',
-    'Enabler Story',
-    'Change request'
+  "jiraIntakeToDorIssueType": [
+    "Story",
+    "Enabler Story",
+    "Change request"
   ],
-  jiraTechDebtIssueType: [
-    'Story',
-    'Enabler Story',
-    'Change request'
+  "jiraTechDebtIssueType": [
+    "Story",
+    "Enabler Story",
+    "Change request"
   ],
-  jiraStoryIdentification: [
-    'Story',
-    'Enabler Story',
-    'Change request'
+  "jiraStoryIdentification": [
+    "Story",
+    "Enabler Story",
+    "Change request"
   ],
-  jiraSprintCapacityIssueType: [
-    'Story',
-    'Enabler Story',
-    'Change request'
+  "jiraSprintCapacityIssueType": [
+    "Story",
+    "Enabler Story",
+    "Change request"
   ],
-  jiraIssueEpicType: [
-    'Epic'
+  "jiraIssueEpicType": [
+    "Epic"
   ],
-  jiraTechDebtIdentification: '',
-  jiraTechDebtValue: [],
-  jiraTechDebtCustomField: '',
-  sprintName: 'customfield_12700',
-  rootCause: 'customfield_19121',
-  jiraStoryPointsCustomField: 'customfield_20803',
-  estimationCriteria: 'Story Point',
-  storyPointToHourMapping: 8,
-  epicCostOfDelay: 'customfield_58102',
-  epicRiskReduction: 'customfield_58101',
-  epicUserBusinessValue: 'customfield_58100',
-  epicWsjf: 'customfield_58104',
-  epicTimeCriticality: 'customfield_51002',
-  epicJobSize: 'customfield_61041',
-  workingHoursDayCPT: 6,
-  jiradefecttype: [
-    'Defect'
+  "jiraTechDebtIdentification": "",
+  "jiraTechDebtValue": [],
+  "jiraTechDebtCustomField": "",
+  "sprintName": "customfield_12700",
+  "rootCause": "customfield_19121",
+  "jiraStoryPointsCustomField": "customfield_20803",
+  "estimationCriteria": "Story Point",
+  "storyPointToHourMapping": 8,
+  "epicCostOfDelay": "customfield_58102",
+  "epicRiskReduction": "customfield_58101",
+  "epicUserBusinessValue": "customfield_58100",
+  "epicWsjf": "customfield_58104",
+  "epicTimeCriticality": "customfield_51002",
+  "epicJobSize": "customfield_61041",
+  "workingHoursDayCPT": 6,
+  "jiradefecttype": [
+    "Defect"
   ],
-  defectPriority: [],
-  jiraBugRaisedByIdentification: '',
-  jiraBugRaisedByCustomField: '',
-  jiraBugRaisedByValue: [],
-  jiraBugRaisedByQAIdentification: '',
-  jiraBugRaisedByQACustomField: '',
-  jiraBugRaisedByQAValue: [],
-  productionDefectCustomField: '',
-  productionDefectIdentifier: '',
-  productionDefectComponentValue: '',
-  productionDefectValue: [],
-  rootCauseValue: [
-    'Coding'
+  "defectPriority": [],
+  "jiraBugRaisedByIdentification": "",
+  "jiraBugRaisedByCustomField": "",
+  "jiraBugRaisedByValue": [],
+  "jiraBugRaisedByQAIdentification": "",
+  "jiraBugRaisedByQACustomField": "",
+  "jiraBugRaisedByQAValue": [],
+  "productionDefectCustomField": "",
+  "productionDefectIdentifier": "",
+  "productionDefectComponentValue": "",
+  "productionDefectValue": [],
+  "rootCauseValue": [
+    "Coding"
   ],
-  testAutomatedIdentification: '',
-  testAutomationCompletedIdentification: '',
-  testRegressionIdentification: '',
-  testAutomated: '',
-  testAutomationCompletedByCustomField: '',
-  testRegressionByCustomField: '',
-  jiraCanBeAutomatedTestValue: [],
-  jiraRegressionTestValue: [],
-  jiraCanNotAutomatedTestValue: [],
-  jiraAutomatedTestValue: [],
-  jiraTestCaseType: [],
-  regressionAutomationLabels: [],
-  excludeRCAFromFTPR: [],
-  basicProjectConfigId: '63282c82487eff1e8b70b1b9',
-  additionalFilterConfig: [
+  "testAutomatedIdentification": "",
+  "testAutomationCompletedIdentification": "",
+  "testRegressionIdentification": "",
+  "testAutomated": "",
+  "testAutomationCompletedByCustomField": "",
+  "testRegressionByCustomField": "",
+  "jiraCanBeAutomatedTestValue": [],
+  "jiraRegressionTestValue": [],
+  "jiraCanNotAutomatedTestValue": [],
+  "jiraAutomatedTestValue": [],
+  "jiraTestCaseType": [],
+  "regressionAutomationLabels": [],
+  "excludeRCAFromFTPR": [],
+  "basicProjectConfigId": "63282c82487eff1e8b70b1b9",
+  "additionalFilterConfig": [
     {
       filterId: 'sqd',
       identifyFrom: 'Labels',
