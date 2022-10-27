@@ -37,7 +37,7 @@
                 </app-kpi-card>
               </div>
 
-              <ng-container *ngIf="(updatedConfigGlobalData | json) != '{}' && updatedConfigGlobalData != undefined">
+              <ng-container *ngIf="(updatedConfigGlobalData | json) !== '{}' && updatedConfigGlobalData != undefined">
                 <ng-container *ngFor="let kpi of updatedConfigGlobalData">
                   <ng-container [ngSwitch]="kpi?.kpiDetail?.boxType">
                     <!--1_column-->
@@ -46,7 +46,7 @@
                         [isShow]="true">
                         <ng-container *ngIf="!noTabAccess else noDataAccess">
                           <div class="p-d-flex p-justify-center p-align-center w-100"
-                            *ngIf="(kpiChartData | json) != '{}' && kpiChartData != undefined && kpiChartData[kpi?.kpiId]?.length > 0;else noData">
+                            *ngIf="(kpiChartData | json) !== '{}' && kpiChartData != undefined && kpiChartData[kpi?.kpiId]?.length > 0;else noData">
                             <div class="p-4 p-text-center" *ngFor="let item of kpiChartData[kpi?.kpiId]">
                               <p class="text-data">{{item?.value != -99 ? item?.value : '-'}}
                                 <span class="unit">{{item?.value
@@ -69,7 +69,7 @@
                         [showExport]="false" [isShow]="true">
                         <ng-container *ngIf="!noTabAccess else noDataAccess">
                           <div class="p-d-flex p-justify-around p-align-center w-100"
-                            *ngIf="(kpiChartData | json) != '{}' && kpiChartData != undefined && kpiChartData[kpi?.kpiId]?.length > 0;else noData">
+                            *ngIf="(kpiChartData | json) !== '{}' && kpiChartData != undefined && kpiChartData[kpi?.kpiId]?.length > 0;else noData">
                             <ng-container *ngFor="let item of kpiChartData[kpi?.kpiId]">
                               <div *ngFor="let x of item.data; let i = index" class="p-3 p-text-center">
                                 <h3 class="text-label">{{x?.label}}
@@ -80,7 +80,7 @@
                                 <p *ngIf="x?.labelInfo" class="p-m-0">{{x?.labelInfo}}</p>
                                 <p class="text-data">{{x?.value != -99 ?
                                   convertToHoursIfTime(x?.value,x?.unit) : '-'}}
-                                  <span *ngIf="x?.value != -99 && x?.unit && x?.unit?.toLowerCase() != 'hours'">
+                                  <span *ngIf="x?.value != -99 && x?.unit && x?.unit?.toLowerCase() !== 'hours'">
                                     {{ x?.value != -99 ? x?.unit : ''}}
                                   </span>
                                 </p>
@@ -98,7 +98,7 @@
                         [showExport]="false" [isShow]="true">
                         <ng-container *ngIf="!noTabAccess else noDataAccess">
                           <div class="p-d-flex p-justify-around p-align-center w-100"
-                            *ngIf="(kpiChartData | json) != '{}' && kpiChartData != undefined && kpiChartData[kpi?.kpiId]?.length > 0;else noData">
+                            *ngIf="(kpiChartData | json) !== '{}' && kpiChartData != undefined && kpiChartData[kpi?.kpiId]?.length > 0;else noData">
                             <ng-container class="p-3 p-text-center" *ngFor="let item of kpiChartData[kpi?.kpiId]">
                               <div *ngFor="let x of item?.data; let i = index" class="p-3 p-text-center">
                                 <h3 class="text-label">{{x?.label}}
@@ -109,7 +109,7 @@
                                 <p *ngIf="x?.labelInfo" class="p-m-0">{{x?.labelInfo}}</p>
                                 <p class="text-data">{{x?.value != -99 ?
                                   convertToHoursIfTime(x?.value,x?.unit) : '-'}}
-                                  <span *ngIf="x?.value != -99 && x?.unit && x?.unit?.toLowerCase() != 'hours'">
+                                  <span *ngIf="x?.value != -99 && x?.unit && x?.unit?.toLowerCase() !== 'hours'">
                                     {{ x?.value != -99 ? x?.unit : ''}}
                                   </span>
                                 </p>
@@ -129,7 +129,7 @@
                         [showExport]="false" [isShow]="true">
                         <ng-container *ngIf="!noTabAccess else noDataAccess">
                           <div
-                            *ngIf="(kpiChartData | json) != '{}' && kpiChartData != undefined && kpiChartData[kpi?.kpiId]?.length > 0;else noData"
+                            *ngIf="(kpiChartData | json) !== '{}' && kpiChartData != undefined && kpiChartData[kpi?.kpiId]?.length > 0;else noData"
                             class="p-d-flex p-justify-around p-align-center w-100">
                             <ng-container class="p-3 p-text-center" *ngFor="let item of kpiChartData[kpi?.kpiId]">
                               <div *ngFor="let x of item?.data; let i = index" class="p-3 p-text-center">
@@ -145,7 +145,7 @@
                                   <span *ngIf="x?.value1 && x?.value1 != -99 && x?.value1 != undefined" 
                                   [ngClass]="{'text-red': x?.label?.toLowerCase() === 'scope added'}">{{'/' +
                                     x?.value1}}</span>
-                                  <span *ngIf="x?.value != -99 && x?.unit && x?.unit?.toLowerCase() != 'hours'">
+                                  <span *ngIf="x?.value != -99 && x?.unit && x?.unit?.toLowerCase() !== 'hours'">
                                     {{ x?.value != -99 ? x?.unit : ''}}
                                   </span>
                                 </p>
@@ -164,7 +164,7 @@
                         [dropdownArr]="kpiDropdowns[kpi?.kpiId]" (optionSelected)="handleSelectedOption($event, kpi)"
                         [showExport]="false" [isShow]="true">
                         <ng-container *ngIf="!noTabAccess else noDataAccess">
-                          <ng-container *ngIf="(kpiChartData | json) != '{}' && kpiChartData != undefined;else noData">
+                          <ng-container *ngIf="(kpiChartData | json) !== '{}' && kpiChartData != undefined;else noData">
                             <div class="p-pl-3 p-pr-3 w-100 position-relative" [ngSwitch]="kpi?.kpiDetail?.chartType"
                               *ngIf="ifKpiExist(kpi.kpiId) != -1; else loader">
                               <ng-container

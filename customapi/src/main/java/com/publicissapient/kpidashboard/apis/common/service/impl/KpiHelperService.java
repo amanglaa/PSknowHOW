@@ -21,17 +21,7 @@ package com.publicissapient.kpidashboard.apis.common.service.impl;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -236,7 +226,7 @@ public class KpiHelperService { // NOPMD
 		List<String> basicProjectConfigIds = new ArrayList<>();
 		Map<String, Map<String, Object>> uniqueProjectMapFH = new HashMap<>();
 		Map<String, Map<String, Object>> uniqueProjectMap = new HashMap<>();
-		Map<String, List<String>> droppedDefects = new HashMap<>();
+		Map<String, Map<String,List<String>>> droppedDefects = new HashMap<>();
 		leafNodeList.forEach(leaf -> {
 			Map<String, Object> mapOfProjectFiltersFH = new LinkedHashMap<>();
 			Map<String, Object> mapOfProjectFilters = new LinkedHashMap<>();
@@ -310,7 +300,7 @@ public class KpiHelperService { // NOPMD
 		List<String> basicProjectConfigIds = new ArrayList<>();
 		Map<String, Map<String, Object>> uniqueProjectMapFH = new HashMap<>();
 		Map<String, Map<String, Object>> uniqueProjectMap = new HashMap<>();
-		Map<String, List<String>> droppedDefects = new HashMap<>();
+		Map<String, Map<String,List<String>>> droppedDefects = new HashMap<>();
 		leafNodeList.forEach(leaf -> {
 			Map<String, Object> mapOfProjectFiltersFH = new LinkedHashMap<>();
 			Map<String, Object> mapOfProjectFilters = new LinkedHashMap<>();
@@ -1188,35 +1178,61 @@ public class KpiHelperService { // NOPMD
 		return fieldWiseIssuesLatestMap;
 	}
 
-	public static void getDroppedDefectsFilters(Map<String, List<String>> droppedDefects,
-															  ObjectId basicProjectConfigId, FieldMapping fieldMapping) {
-		List<String> filtersList = new ArrayList<>();
+	public static void getDroppedDefectsFilters(Map<String, Map<String, List<String>>> droppedDefects,
+												ObjectId basicProjectConfigId, FieldMapping fieldMapping) {
+		Map<String, List<String>> filtersMap = new HashMap<>();
 		if (CollectionUtils.isNotEmpty(fieldMapping.getResolutionTypeForRejection())) {
-			filtersList.addAll(fieldMapping.getResolutionTypeForRejection());
+			filtersMap.put(Constant.RESOLUTION_TYPE_FOR_REJECTION, fieldMapping.getResolutionTypeForRejection());
 		}
 		if (StringUtils.isNotEmpty(fieldMapping.getJiraDefectRejectionStatus())) {
-			filtersList.add(fieldMapping.getJiraDefectRejectionStatus());
+			filtersMap.put(Constant.DEFECT_REJECTION_STATUS, Arrays.asList(fieldMapping.getJiraDefectRejectionStatus()));
 		}
-		if(CollectionUtils.isNotEmpty(filtersList)) {
-			droppedDefects.put(basicProjectConfigId.toString(), filtersList);
+		droppedDefects.put(basicProjectConfigId.toString(), filtersMap);
+	}
+
+	public static void getDefectsWithoutDrop(Map<String, Map<String,List<String>>> droppedDefects, List<JiraIssue> defectDataList,
+											 List<JiraIssue> defectListWoDrop) {
+		if (CollectionUtils.isNotEmpty(defectDataList)) {
+			Set<JiraIssue> defectListWoDropSet = new HashSet<>();
+			defectDataList.forEach(jiraIssue -> {
+				getDefectsWoDrop(droppedDefects, defectListWoDropSet, jiraIssue);
+			});
+			defectListWoDrop.addAll(defectListWoDropSet);
 		}
 	}
 
-	public static void getDefectsWithoutDrop(Map<String, List<String>> droppedDefects, List<JiraIssue> defectDataList,
-											 List<JiraIssue> defectListWoDrop) {
-		if (CollectionUtils.isNotEmpty(defectDataList)) {
-			defectDataList.forEach(jiraIssue -> {
-				if (!StringUtils.isBlank(jiraIssue.getStatus())) {
-					List<String> defectStatus = droppedDefects.get(jiraIssue.getBasicProjectConfigId());
-					if (CollectionUtils.isNotEmpty(defectStatus)) {
-						if (!defectStatus.contains(jiraIssue.getStatus())) {
-							defectListWoDrop.add(jiraIssue);
+	private static void getDefectsWoDrop(Map<String, Map<String,List<String>>> droppedDefects, Set<JiraIssue> defectListWoDropSet, JiraIssue jiraIssue) {
+		if (!StringUtils.isBlank(jiraIssue.getStatus())) {
+			Map<String,List<String>> defectStatus = droppedDefects.get(jiraIssue.getBasicProjectConfigId());
+			if (null != defectStatus && !defectStatus.isEmpty()) {
+				if (CollectionUtils.isNotEmpty(defectStatus.get(Constant.DEFECT_REJECTION_STATUS))
+						&& CollectionUtils.isNotEmpty(defectStatus.get(Constant.RESOLUTION_TYPE_FOR_REJECTION))) {
+					if (StringUtils.isNotEmpty(jiraIssue.getStatus()) &&
+							!defectStatus.get(Constant.DEFECT_REJECTION_STATUS).contains(jiraIssue.getStatus())) {
+						if (StringUtils.isNotEmpty(jiraIssue.getResolution()) &&
+								!defectStatus.get(Constant.RESOLUTION_TYPE_FOR_REJECTION).contains(jiraIssue.getResolution())) {
+							defectListWoDropSet.add(jiraIssue);
 						}
-					} else {
-						defectListWoDrop.add(jiraIssue);
 					}
+					if (StringUtils.isNotEmpty(jiraIssue.getResolution()) &&
+							!defectStatus.get(Constant.RESOLUTION_TYPE_FOR_REJECTION).contains(jiraIssue.getResolution())) {
+						if (StringUtils.isNotEmpty(jiraIssue.getStatus()) &&
+								!defectStatus.get(Constant.DEFECT_REJECTION_STATUS).contains(jiraIssue.getStatus())) {
+							defectListWoDropSet.add(jiraIssue);
+						}
+					}
+				} else if (CollectionUtils.isEmpty(defectStatus.get(Constant.DEFECT_REJECTION_STATUS)) &&
+						CollectionUtils.isNotEmpty(defectStatus.get(Constant.RESOLUTION_TYPE_FOR_REJECTION)) &&
+						!defectStatus.get(Constant.RESOLUTION_TYPE_FOR_REJECTION).contains(jiraIssue.getResolution())) {
+					defectListWoDropSet.add(jiraIssue);
+				} else if (CollectionUtils.isEmpty(defectStatus.get(Constant.RESOLUTION_TYPE_FOR_REJECTION)) &&
+						CollectionUtils.isNotEmpty(defectStatus.get(Constant.DEFECT_REJECTION_STATUS)) &&
+						!defectStatus.get(Constant.DEFECT_REJECTION_STATUS).contains(jiraIssue.getStatus())) {
+					defectListWoDropSet.add(jiraIssue);
 				}
-			});
+			} else {
+				defectListWoDropSet.add(jiraIssue);
+			}
 		}
 	}
 

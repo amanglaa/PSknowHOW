@@ -24,6 +24,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BadRequestException;
 
+import com.publicissapient.kpidashboard.apis.auth.exceptions.InvalidAuthTypeConfigException;
 import com.publicissapient.kpidashboard.apis.errors.ProjectNotFoundException;
 import com.publicissapient.kpidashboard.apis.errors.ToolNotFoundException;
 import org.apache.commons.lang3.NotImplementedException;
@@ -291,6 +292,14 @@ public class RestApiExceptionHandler extends ResponseEntityExceptionHandler {
 				HttpStatus.ACCEPTED.getReasonPhrase(), exception.getMessage());
 
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(errorResponse);
+	}
+
+	@ExceptionHandler(InvalidAuthTypeConfigException.class)
+	public ResponseEntity<Object> handleInvalidAuthTypeConfigException(InvalidAuthTypeConfigException invalidAuthTypeConfigException) {
+
+		ErrorResponse errorResponse = createErrorResponse(HttpStatus.BAD_REQUEST.value(),
+				HttpStatus.BAD_REQUEST.getReasonPhrase(), invalidAuthTypeConfigException.getMessage());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
 	}
 
 	private ErrorResponse createErrorResponse(int code, String error, String message) {

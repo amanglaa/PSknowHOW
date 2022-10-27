@@ -50,7 +50,7 @@ export class MultilineComponent implements OnChanges {
         // used to make chart independent from previous made chart
         this.elem = this.viewContainerRef.element.nativeElement;
     }
-    
+
     // Runs when property "data" changed
     ngOnChanges(changes: SimpleChanges) {
         if (this.selectedtype?.toLowerCase() === 'kanban') {
@@ -79,7 +79,7 @@ export class MultilineComponent implements OnChanges {
         d3.select(this.elem).select('#xCaptionContainer').select('text').remove();
 
         const data = this.data;
-        let thresholdValue = this.thresholdValue;
+        const thresholdValue = this.thresholdValue;
         const elem = this.elem;
         let width = 450;
         const height = 190;
@@ -99,9 +99,9 @@ export class MultilineComponent implements OnChanges {
         const color = this.color;
         const name = this.name;
         const id = this.kpiId;
-        let showPercent = false;
-        let showWeek = false;
-        let showUnit = this.unit;
+        const showPercent = false;
+        const showWeek = false;
+        const showUnit = this.unit;
 
         // width = $('#multiLineChart').width();
         width = data[0].value.length <= 5 ? document.getElementById('multiLineChart').offsetWidth - 70 : data[0].value.length * 20 * 8;
@@ -136,8 +136,8 @@ export class MultilineComponent implements OnChanges {
         }
 
         /* Format Data */
-        data.forEach(function (d) {
-            d.value.forEach(function (dataObj: { value: number; }) {
+        data.forEach(function(d) {
+            d.value.forEach(function(dataObj: { value: number }) {
                 dataObj.value = +dataObj.value;
             });
         });
@@ -146,7 +146,7 @@ export class MultilineComponent implements OnChanges {
         const xScale = d3.scaleBand()
             .rangeRound([0, width - margin])
             .padding(0)
-            .domain(data[maxObjectNo].value.map(function (d, i) {
+            .domain(data[maxObjectNo].value.map(function(d, i) {
                 return i + 1;
             }));
 
@@ -160,16 +160,17 @@ export class MultilineComponent implements OnChanges {
         }
         divisor = Math.pow(10, power > 1 ? power - 1 : 1);
 
-        if (maxYValue > 0 && maxYValue <= 50)
-            maxYValue = 50
-        else if (maxYValue > 50 && maxYValue <= 100)
-            maxYValue = 100
-        else if (maxYValue > 100 && maxYValue <= 200)
-            maxYValue = 200
-        else if (maxYValue > 200 && maxYValue <= 500)
-            maxYValue = 500
-        else if (maxYValue > 500)
-            maxYValue += divisor;
+        if (maxYValue > 0 && maxYValue <= 50) {
+maxYValue = 50;
+} else if (maxYValue > 50 && maxYValue <= 100) {
+maxYValue = 100;
+} else if (maxYValue > 100 && maxYValue <= 200) {
+maxYValue = 200;
+} else if (maxYValue > 200 && maxYValue <= 500) {
+maxYValue = 500;
+} else if (maxYValue > 500) {
+maxYValue += divisor;
+}
 
         const yScale = d3.scaleLinear()
             .domain([0, maxYValue])
@@ -240,7 +241,7 @@ export class MultilineComponent implements OnChanges {
             .attr('y', -30)
             .attr('transform', 'rotate(-90)')
             .attr('fill', '#437495')
-            .attr('font-size', "12px");
+            .attr('font-size', '12px');
 
         // adding yaxis caption
 
@@ -271,12 +272,16 @@ export class MultilineComponent implements OnChanges {
         }
 
         // gridlines
-        svgX.selectAll("line.gridline").data(yScale.ticks(5)).enter()
-            .append("svg:line")
+        svgX.selectAll('line.gridline').data(yScale.ticks(5)).enter()
+            .append('svg:line')
             .attr('x1', 0)
             .attr('x2', width)
-            .attr('y1', function (d) { return yScale(d); })
-            .attr('y2', function (d) { return yScale(d); })
+            .attr('y1', function(d) {
+ return yScale(d);
+})
+            .attr('y2', function(d) {
+ return yScale(d);
+})
             .style('stroke', '#dedede')
             .style('fill', 'none')
             .attr('class', 'gridline');
@@ -474,23 +479,27 @@ export class MultilineComponent implements OnChanges {
             .attr('class', 'lines');
 
             function tweenDash() {
-                const l = this.getTotalLength(),
-                    i = d3.interpolateString("0," + l, l + "," + l);
-                return function(t) { return i(t) };
+                const l = this.getTotalLength();
+                    const i = d3.interpolateString('0,' + l, l + ',' + l);
+                return function(t) {
+ return i(t);
+};
               }
 
             function transition(path) {
                 path.transition()
                     .duration(1500)
-                    .attrTween("stroke-dasharray", tweenDash)
-                    .on("end", () => { d3.select(this).call(transition); });
+                    .attrTween('stroke-dasharray', tweenDash)
+                    .on('end', () => {
+ d3.select(this).call(transition);
+});
               }
 
         lines.selectAll('.line-group')
             .data(data).enter()
             .append('g')
             .attr('class', 'line-group')
-            .on('mouseover', function (d, i) {
+            .on('mouseover', function(d, i) {
                 svgX.append('text')
                     .attr('class', 'title-text')
                     .style('fill', color[i])
@@ -499,11 +508,11 @@ export class MultilineComponent implements OnChanges {
                     .attr('x', (width - margin) / 2)
                     .attr('y', -10);
             })
-            .on('mouseout', function (d) {
+            .on('mouseout', function(d) {
                 svgX.select('.title-text').remove();
             })
             .append('path')
-            .attr('class', function (d, i) {
+            .attr('class', function(d, i) {
                 const className = 'line' + i;
                 return 'line ' + className;
             })
@@ -511,14 +520,14 @@ export class MultilineComponent implements OnChanges {
             .call(transition)
             .style('stroke', (d, i) => color[i])
             .style('opacity', lineOpacity)
-            .style('stroke-dasharray', function (d, i) {
+            .style('stroke-dasharray', function(d, i) {
                 // if ((d.data).includes('LogTime') && name === 'Sprint Capacity') {
                 //     return '4, 4';
                 // }
             })
             .style('fill', 'none')
             .style('stroke-width', '2')
-            .on('mouseover', function (d) {
+            .on('mouseover', function(d) {
                 d3.select(elem).selectAll('.line')
                     .style('opacity', otherLinesOpacityHover);
                 d3.select(elem).selectAll('.circle')
@@ -528,7 +537,7 @@ export class MultilineComponent implements OnChanges {
                     .style('stroke-width', lineStrokeHover)
                     .style('cursor', 'pointer');
             })
-            .on('mouseout', function (d) {
+            .on('mouseout', function(d) {
                 d3.selectAll('.line')
                     .style('opacity', lineOpacity);
                 d3.selectAll('.circle')
@@ -543,19 +552,17 @@ export class MultilineComponent implements OnChanges {
         lines.selectAll('circle-group')
             .data(data).enter()
             .append('g')
-            .attr('class', function (d, i) {
+            .attr('class', function(d, i) {
                 return 'circlegroup' + i;
             })
             .style('fill', (d, i) => color[i])
             .style('stroke', (d, i) => color[i])
             .selectAll('circle')
-            .data(d => {
-                return d.value;
-            }).enter()
+            .data(d => d.value).enter()
             .append('g')
             .attr('class', 'circle')
-            .on('mouseover', function (d) {
-                let topValue = 80;
+            .on('mouseover', function(event,d) {
+                const topValue = 80;
                 if (d.hoverValue) {
                     div.transition()
                         .duration(200)
@@ -563,13 +570,13 @@ export class MultilineComponent implements OnChanges {
                         .style('position', 'fixed')
                         .style('opacity', .9);
 
-                    const circle = d3.event.target;
-                    let {
+                    const circle = event.target;
+                    const {
                         top: yPosition,
                         left: xPosition
                     } = circle.getBoundingClientRect();
 
-                    div.html(`${d.date || d.sSprintName}` + ' : ' + '<span class=\'toolTipValue\'> ' + `${ (Math.round(d.value * 100) / 100) + " " + showUnit}` + '</span>')
+                    div.html(`${d.date || d.sSprintName}` + ' : ' + '<span class=\'toolTipValue\'> ' + `${ (Math.round(d.value * 100) / 100) + ' ' + showUnit}` + '</span>')
                         .style('left', xPosition + 20 + 'px')
                         // .style('top', yScale(d.value) - topValue + 'px');
                         .style('top', yPosition + 20 + 'px');
@@ -578,7 +585,7 @@ export class MultilineComponent implements OnChanges {
                     }
                 }
             })
-            .on('mouseout', function (d) {
+            .on('mouseout', function(d) {
                 div.transition()
                     .duration(500)
                     .style('display', 'none')
@@ -586,20 +593,20 @@ export class MultilineComponent implements OnChanges {
 
             })
             .append('circle')
-            .attr('cx', function (d, i) {
+            .attr('cx', function(d, i) {
                 return xScale(i + 1);
             })
             .attr('cy', d => yScale(d.value))
             .attr('r', circleRadius)
             .style('stroke-width', 1)
             .style('opacity', circleOpacity)
-            .on('mouseover', function (d) {
+            .on('mouseover', function(d) {
                 d3.select(this)
                     .transition()
                     .duration(duration)
                     .attr('r', circleRadiusHover);
             })
-            .on('mouseout', function (d) {
+            .on('mouseout', function(d) {
                 d3.select(this)
                     .transition()
                     .duration(duration)
@@ -608,10 +615,10 @@ export class MultilineComponent implements OnChanges {
 
 
         // used to allign data on x axis ticks
-        svgX.select('.x').selectAll('.tick').each(function (dataObj) {
+        svgX.select('.x').selectAll('.tick').each(function(dataObj) {
             const tick = d3.select(this);
             if (data[0]?.value[0] && data[0]?.value[0]?.xAxisTick) {
-                let textElement = this.getElementsByTagName("text");
+                const textElement = this.getElementsByTagName('text');
                 textElement[0].textContent = data[0].value[dataObj - 1]?.xAxisTick;
             }
             const string = tick.attr('transform');

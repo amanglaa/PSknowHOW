@@ -17,7 +17,7 @@
  ******************************************************************************/
 
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, Validators, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, Validators, UntypedFormBuilder } from '@angular/forms';
 import { GetAuthorizationService } from '../../../services/get-authorization.service';
 import { HttpService } from '../../../services/http.service';
 import { ProfileComponent } from '../profile.component';
@@ -32,10 +32,10 @@ export class MyprofileComponent implements OnInit {
   isProjectAdmin = false;
   emailSubmitted = false;
   emailConfigured = false;
-  userEmailForm: FormGroup;
+  userEmailForm: UntypedFormGroup;
   userName = localStorage.getItem('user_name') ? localStorage.getItem('user_name') : '--';
   authorities = this.aesEncryption.convertText(localStorage.getItem('authorities'), 'decrypt');
-  
+
 
   userRole = this.authorities && JSON.parse(this.authorities).length ? JSON.parse(this.authorities).join(',') : '--';
   userEmail = localStorage.getItem('user_email') ? localStorage.getItem('user_email') : '--';
@@ -46,7 +46,7 @@ export class MyprofileComponent implements OnInit {
   roleBasedProjectList = [];
   adLogin = false;
   dynamicCols: Array<any> = [];
-  constructor(private formBuilder: FormBuilder, private getAuthorizationService: GetAuthorizationService, private http: HttpService, private profile: ProfileComponent, private aesEncryption: TextEncryptionService) { }
+  constructor(private formBuilder: UntypedFormBuilder, private getAuthorizationService: GetAuthorizationService, private http: HttpService, private profile: ProfileComponent, private aesEncryption: TextEncryptionService) { }
 
   ngOnInit() {
     if (this.getAuthorizationService.checkIfSuperUser()) {
@@ -67,10 +67,10 @@ export class MyprofileComponent implements OnInit {
     }
 
     if (!!localStorage.projectsAccess && JSON.parse(localStorage.projectsAccess).length) {
-      let accessList = JSON.parse(localStorage.projectsAccess);
-      
+      const accessList = JSON.parse(localStorage.projectsAccess);
+
       this.groupProjects(accessList);
-      this.getTableHeadings()
+      this.getTableHeadings();
     }
 
 
@@ -80,50 +80,52 @@ export class MyprofileComponent implements OnInit {
     }, { validator: this.checkConfirmEmail });
 
     this.adLogin = localStorage.loginType === 'AD';
-    console.log("adLogin: " + this.adLogin);
+    console.log('adLogin: ' + this.adLogin);
 
 
   }
 
   getTableHeadings(){
-    let cols = JSON.parse(localStorage.getItem('hierarchyData'));
+    const cols = JSON.parse(localStorage.getItem('hierarchyData'));
     cols.forEach((x) => {
-      let obj = {
-        'id': x.hierarchyLevelId,
-        'name': x.hierarchyLevelName
-      }
+      const obj = {
+        id: x.hierarchyLevelId,
+        name: x.hierarchyLevelName
+      };
       this.dynamicCols?.push(obj);
-    })
-    this.dynamicCols.push({'id':'projectName', 'name': 'Projects'});
+    });
+    this.dynamicCols.push({id:'projectName', name: 'Projects'});
   }
 
   groupProjects(inArr) {
     for(let k = 0; k<inArr?.length;k++){
-      let projectsArr = [];
+      const projectsArr = [];
       for(let i = 0; i < inArr[k]?.projects?.length; i++){
-        let obj = {
-          'projectName': inArr[k]?.projects[i]?.projectName,
-          'projectId': inArr[k]?.projects[i]?.projectId
-        }
-        let hierarchyArr = inArr[k]?.projects[i]?.hierarchy;
+        const obj = {
+          projectName: inArr[k]?.projects[i]?.projectName,
+          projectId: inArr[k]?.projects[i]?.projectId
+        };
+        const hierarchyArr = inArr[k]?.projects[i]?.hierarchy;
         for(let j = 0; j < hierarchyArr?.length; j++){
           obj[hierarchyArr[j].hierarchyLevel.hierarchyLevelId] = hierarchyArr[j]?.value;
         }
         projectsArr?.push(obj);
       }
-      this.roleBasedProjectList.push({'role':inArr[k].role, 'projects': projectsArr})
+      this.roleBasedProjectList.push({role:inArr[k].role, projects: projectsArr});
     }
   }
 
   // Validation for confirm-email
-  checkConfirmEmail(group: FormGroup) {
+  checkConfirmEmail(group: UntypedFormGroup) {
     const email = group.controls.email.value;
     const confirmEmail = group.controls.confirmEmail.value;
     return email === confirmEmail ? null : { notSame: true };
   }
 
   // convenience getter for easy access to form fields
-  get getEmailForm() { return this.userEmailForm.controls; }
+  get getEmailForm() {
+ return this.userEmailForm.controls;
+}
 
   setEmail() {
     this.emailSubmitted = true;

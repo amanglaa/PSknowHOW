@@ -134,7 +134,7 @@ public class DSRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 		List<String> basicProjectConfigIds = new ArrayList<>();
 		Map<String, Map<String, Object>> uniqueProjectMap = new HashMap<>();
 		Map<String, FieldMapping> projFieldMapping = new HashMap<>();
-		Map<String, List<String>> droppedDefects = new HashMap<>();
+		Map<String, Map<String,List<String>>> droppedDefects = new HashMap<>();
 		leafNodeList.forEach(leaf -> {
 			ObjectId basicProjectConfigId = leaf.getProjectFilter().getBasicProjectConfigId();
 			Map<String, Object> mapOfProjectFilters = new LinkedHashMap<>();

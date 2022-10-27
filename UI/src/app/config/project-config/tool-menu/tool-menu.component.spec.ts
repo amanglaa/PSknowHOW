@@ -43,12 +43,12 @@ describe('ToolMenuComponent', () => {
   const toolsData = require('../../../../test/resource/fakeToolsData.json');
   const mappingData = require('../../../../test/resource/fakeToolMappings.json');
   const fakeProject = {
-    "id": "6335363749794a18e8a4479b",
-    "name": "Scrum Project",
-    "type": "Scrum",
-    "hierarchyLevelOne": "Sample One",
-    "hierarchyLevelTwo": "Sample Two",
-    "hierarchyLevelThree": "Sample Three"
+    id: '6335363749794a18e8a4479b',
+    name: 'Scrum Project',
+    type: 'Scrum',
+    hierarchyLevelOne: 'Sample One',
+    hierarchyLevelTwo: 'Sample Two',
+    hierarchyLevelThree: 'Sample Three'
   };
 
   beforeEach(async () => {

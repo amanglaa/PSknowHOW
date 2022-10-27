@@ -36,603 +36,603 @@ describe('MyprofileComponent', () => {
   let httpMock;
   let aesEncryption;
   const baseUrl = environment.baseUrl;
-  const successResponse = { 'message': 'Email updated successfully', 'success': true, 'data': { 'username': 'SUPERADMIN', 'authorities': ['ROLE_SUPERADMIN'], 'authType': 'STANDARD', 'emailAddress': 'rishabh.shukla@publicissapient.com' } };
+  const successResponse = { message: 'Email updated successfully', success: true, data: { username: 'SUPERADMIN', authorities: ['ROLE_SUPERADMIN'], authType: 'STANDARD', emailAddress: 'rishabh.shukla@publicissapient.com' } };
   const hierarchyData = [
     {
-      "level": 1,
-      "hierarchyLevelId": "corporate",
-      "hierarchyLevelName": "Corporate Name",
-      "suggestions": [
+      level: 1,
+      hierarchyLevelId: 'corporate',
+      hierarchyLevelName: 'Corporate Name',
+      suggestions: [
         {
-          "name": "C1",
-          "code": "C1"
+          name: 'C1',
+          code: 'C1'
         },
         {
-          "name": "Corpate1",
-          "code": "Corpate1"
+          name: 'Corpate1',
+          code: 'Corpate1'
         },
         {
-          "name": "Leve1",
-          "code": "Leve1"
+          name: 'Leve1',
+          code: 'Leve1'
         },
         {
-          "name": "Org1",
-          "code": "Org1"
+          name: 'Org1',
+          code: 'Org1'
         },
         {
-          "name": "Orgc",
-          "code": "Orgc"
+          name: 'Orgc',
+          code: 'Orgc'
         },
         {
-          "name": "TESTS",
-          "code": "TESTS"
+          name: 'TESTS',
+          code: 'TESTS'
         },
         {
-          "name": "Test1",
-          "code": "Test1"
+          name: 'Test1',
+          code: 'Test1'
         },
         {
-          "name": "TestC",
-          "code": "TestC"
+          name: 'TestC',
+          code: 'TestC'
         },
         {
-          "name": "TestCorp",
-          "code": "TestCorp"
+          name: 'TestCorp',
+          code: 'TestCorp'
         },
         {
-          "name": "abcv",
-          "code": "abcv"
+          name: 'abcv',
+          code: 'abcv'
         },
         {
-          "name": "bittest",
-          "code": "bittest"
+          name: 'bittest',
+          code: 'bittest'
         },
         {
-          "name": "dfdsg",
-          "code": "dfdsg"
+          name: 'dfdsg',
+          code: 'dfdsg'
         },
         {
-          "name": "dgdfhfgjgh",
-          "code": "dgdfhfgjgh"
+          name: 'dgdfhfgjgh',
+          code: 'dgdfhfgjgh'
         },
         {
-          "name": "dgfdh",
-          "code": "dgfdh"
+          name: 'dgfdh',
+          code: 'dgfdh'
         },
         {
-          "name": "dgfg",
-          "code": "dgfg"
+          name: 'dgfg',
+          code: 'dgfg'
         },
         {
-          "name": "dghhjjh",
-          "code": "dghhjjh"
+          name: 'dghhjjh',
+          code: 'dghhjjh'
         },
         {
-          "name": "djfyyyyyyyyyyyyyyy",
-          "code": "djfyyyyyyyyyyyyyyy"
+          name: 'djfyyyyyyyyyyyyyyy',
+          code: 'djfyyyyyyyyyyyyyyy'
         },
         {
-          "name": "dsgfdj",
-          "code": "dsgfdj"
+          name: 'dsgfdj',
+          code: 'dsgfdj'
         },
         {
-          "name": "fghhhj",
-          "code": "fghhhj"
+          name: 'fghhhj',
+          code: 'fghhhj'
         },
         {
-          "name": "fhgkl",
-          "code": "fhgkl"
+          name: 'fhgkl',
+          code: 'fhgkl'
         },
         {
-          "name": "fhjjjjjj",
-          "code": "fhjjjjjj"
+          name: 'fhjjjjjj',
+          code: 'fhjjjjjj'
         },
         {
-          "name": "gfhygjhk",
-          "code": "gfhygjhk"
+          name: 'gfhygjhk',
+          code: 'gfhygjhk'
         },
         {
-          "name": "ghhjhkjl",
-          "code": "ghhjhkjl"
+          name: 'ghhjhkjl',
+          code: 'ghhjhkjl'
         },
         {
-          "name": "ghjk",
-          "code": "ghjk"
+          name: 'ghjk',
+          code: 'ghjk'
         },
         {
-          "name": "gjhfkjhkj",
-          "code": "gjhfkjhkj"
+          name: 'gjhfkjhkj',
+          code: 'gjhfkjhkj'
         },
         {
-          "name": "gjhjkk",
-          "code": "gjhjkk"
+          name: 'gjhjkk',
+          code: 'gjhjkk'
         },
         {
-          "name": "gjkjllf",
-          "code": "gjkjllf"
+          name: 'gjkjllf',
+          code: 'gjkjllf'
         },
         {
-          "name": "gjtykghk",
-          "code": "gjtykghk"
+          name: 'gjtykghk',
+          code: 'gjtykghk'
         },
         {
-          "name": "hgjhgjk",
-          "code": "hgjhgjk"
+          name: 'hgjhgjk',
+          code: 'hgjhgjk'
         },
         {
-          "name": "hjkk",
-          "code": "hjkk"
+          name: 'hjkk',
+          code: 'hjkk'
         },
         {
-          "name": "rduuuuuuuuu",
-          "code": "rduuuuuuuuu"
+          name: 'rduuuuuuuuu',
+          code: 'rduuuuuuuuu'
         },
         {
-          "name": "trrrrrrrrrrrrrrrrrrr",
-          "code": "trrrrrrrrrrrrrrrrrrr"
+          name: 'trrrrrrrrrrrrrrrrrrr',
+          code: 'trrrrrrrrrrrrrrrrrrr'
         },
         {
-          "name": "trt",
-          "code": "trt"
+          name: 'trt',
+          code: 'trt'
         },
         {
-          "name": "wdddddd",
-          "code": "wdddddd"
+          name: 'wdddddd',
+          code: 'wdddddd'
         },
         {
-          "name": "ytttttttttttt",
-          "code": "ytttttttttttt"
+          name: 'ytttttttttttt',
+          code: 'ytttttttttttt'
         }
       ],
-      "value": "",
-      "required": true
+      value: '',
+      required: true
     },
     {
-      "level": 2,
-      "hierarchyLevelId": "business",
-      "hierarchyLevelName": "Business Name",
-      "suggestions": [
+      level: 2,
+      hierarchyLevelId: 'business',
+      hierarchyLevelName: 'Business Name',
+      suggestions: [
         {
-          "name": "B1",
-          "code": "B1"
+          name: 'B1',
+          code: 'B1'
         },
         {
-          "name": "Bus1",
-          "code": "Bus1"
+          name: 'Bus1',
+          code: 'Bus1'
         },
         {
-          "name": "Leve2",
-          "code": "Leve2"
+          name: 'Leve2',
+          code: 'Leve2'
         },
         {
-          "name": "Org2",
-          "code": "Org2"
+          name: 'Org2',
+          code: 'Org2'
         },
         {
-          "name": "Orgb",
-          "code": "Orgb"
+          name: 'Orgb',
+          code: 'Orgb'
         },
         {
-          "name": "Test2",
-          "code": "Test2"
+          name: 'Test2',
+          code: 'Test2'
         },
         {
-          "name": "TestB",
-          "code": "TestB"
+          name: 'TestB',
+          code: 'TestB'
         },
         {
-          "name": "TestBus",
-          "code": "TestBus"
+          name: 'TestBus',
+          code: 'TestBus'
         },
         {
-          "name": "asfd",
-          "code": "asfd"
+          name: 'asfd',
+          code: 'asfd'
         },
         {
-          "name": "dcccccccccc",
-          "code": "dcccccccccc"
+          name: 'dcccccccccc',
+          code: 'dcccccccccc'
         },
         {
-          "name": "ddddddddddddd",
-          "code": "ddddddddddddd"
+          name: 'ddddddddddddd',
+          code: 'ddddddddddddd'
         },
         {
-          "name": "dfhhhhhhh",
-          "code": "dfhhhhhhh"
+          name: 'dfhhhhhhh',
+          code: 'dfhhhhhhh'
         },
         {
-          "name": "erhjjkkjkl",
-          "code": "erhjjkkjkl"
+          name: 'erhjjkkjkl',
+          code: 'erhjjkkjkl'
         },
         {
-          "name": "fbcncvn",
-          "code": "fbcncvn"
+          name: 'fbcncvn',
+          code: 'fbcncvn'
         },
         {
-          "name": "fdjfjk",
-          "code": "fdjfjk"
+          name: 'fdjfjk',
+          code: 'fdjfjk'
         },
         {
-          "name": "fgdsfgdh",
-          "code": "fgdsfgdh"
+          name: 'fgdsfgdh',
+          code: 'fgdsfgdh'
         },
         {
-          "name": "fhgjhkjk",
-          "code": "fhgjhkjk"
+          name: 'fhgjhkjk',
+          code: 'fhgjhkjk'
         },
         {
-          "name": "ggggggg",
-          "code": "ggggggg"
+          name: 'ggggggg',
+          code: 'ggggggg'
         },
         {
-          "name": "ghjjk",
-          "code": "ghjjk"
+          name: 'ghjjk',
+          code: 'ghjjk'
         },
         {
-          "name": "hjjhjk",
-          "code": "hjjhjk"
+          name: 'hjjhjk',
+          code: 'hjjhjk'
         },
         {
-          "name": "hjuy",
-          "code": "hjuy"
+          name: 'hjuy',
+          code: 'hjuy'
         },
         {
-          "name": "jhbjnk",
-          "code": "jhbjnk"
+          name: 'jhbjnk',
+          code: 'jhbjnk'
         },
         {
-          "name": "jhkjljkll",
-          "code": "jhkjljkll"
+          name: 'jhkjljkll',
+          code: 'jhkjljkll'
         },
         {
-          "name": "jhlkl",
-          "code": "jhlkl"
+          name: 'jhlkl',
+          code: 'jhlkl'
         },
         {
-          "name": "jnkmlkm",
-          "code": "jnkmlkm"
+          name: 'jnkmlkm',
+          code: 'jnkmlkm'
         },
         {
-          "name": "knj,n,m m,",
-          "code": "knj,n,m m,"
+          name: 'knj,n,m m,',
+          code: 'knj,n,m m,'
         },
         {
-          "name": "rrrrrrrrr",
-          "code": "rrrrrrrrr"
+          name: 'rrrrrrrrr',
+          code: 'rrrrrrrrr'
         },
         {
-          "name": "rrrrrrrrre",
-          "code": "rrrrrrrrre"
+          name: 'rrrrrrrrre',
+          code: 'rrrrrrrrre'
         },
         {
-          "name": "rytrujjjk",
-          "code": "rytrujjjk"
+          name: 'rytrujjjk',
+          code: 'rytrujjjk'
         },
         {
-          "name": "ryyhtfjghk",
-          "code": "ryyhtfjghk"
+          name: 'ryyhtfjghk',
+          code: 'ryyhtfjghk'
         },
         {
-          "name": "sdddddddddddd",
-          "code": "sdddddddddddd"
+          name: 'sdddddddddddd',
+          code: 'sdddddddddddd'
         },
         {
-          "name": "sgdgf",
-          "code": "sgdgf"
+          name: 'sgdgf',
+          code: 'sgdgf'
         },
         {
-          "name": "t1",
-          "code": "t1"
+          name: 't1',
+          code: 't1'
         },
         {
-          "name": "ttttttuiiiiiiii",
-          "code": "ttttttuiiiiiiii"
+          name: 'ttttttuiiiiiiii',
+          code: 'ttttttuiiiiiiii'
         },
         {
-          "name": "wAAAAAAAAAA",
-          "code": "wAAAAAAAAAA"
+          name: 'wAAAAAAAAAA',
+          code: 'wAAAAAAAAAA'
         }
       ],
-      "value": "",
-      "required": true
+      value: '',
+      required: true
     },
     {
-      "level": 3,
-      "hierarchyLevelId": "account",
-      "hierarchyLevelName": "Account Name",
-      "suggestions": [
+      level: 3,
+      hierarchyLevelId: 'account',
+      hierarchyLevelName: 'Account Name',
+      suggestions: [
         {
-          "name": "A1",
-          "code": "A1"
+          name: 'A1',
+          code: 'A1'
         },
         {
-          "name": "Acc1",
-          "code": "Acc1"
+          name: 'Acc1',
+          code: 'Acc1'
         },
         {
-          "name": "Level3",
-          "code": "Level3"
+          name: 'Level3',
+          code: 'Level3'
         },
         {
-          "name": "Org3",
-          "code": "Org3"
+          name: 'Org3',
+          code: 'Org3'
         },
         {
-          "name": "Orga",
-          "code": "Orga"
+          name: 'Orga',
+          code: 'Orga'
         },
         {
-          "name": "Test3",
-          "code": "Test3"
+          name: 'Test3',
+          code: 'Test3'
         },
         {
-          "name": "TestAcc",
-          "code": "TestAcc"
+          name: 'TestAcc',
+          code: 'TestAcc'
         },
         {
-          "name": "TestC",
-          "code": "TestC"
+          name: 'TestC',
+          code: 'TestC'
         },
         {
-          "name": "WRRRRRRRRR",
-          "code": "WRRRRRRRRR"
+          name: 'WRRRRRRRRR',
+          code: 'WRRRRRRRRR'
         },
         {
-          "name": "bxccnbcvn",
-          "code": "bxccnbcvn"
+          name: 'bxccnbcvn',
+          code: 'bxccnbcvn'
         },
         {
-          "name": "ddddddddddddddddd",
-          "code": "ddddddddddddddddd"
+          name: 'ddddddddddddddddd',
+          code: 'ddddddddddddddddd'
         },
         {
-          "name": "dddst",
-          "code": "dddst"
+          name: 'dddst',
+          code: 'dddst'
         },
         {
-          "name": "dfdgfdh",
-          "code": "dfdgfdh"
+          name: 'dfdgfdh',
+          code: 'dfdgfdh'
         },
         {
-          "name": "dfsgdf",
-          "code": "dfsgdf"
+          name: 'dfsgdf',
+          code: 'dfsgdf'
         },
         {
-          "name": "eeeee",
-          "code": "eeeee"
+          name: 'eeeee',
+          code: 'eeeee'
         },
         {
-          "name": "erttyyuui",
-          "code": "erttyyuui"
+          name: 'erttyyuui',
+          code: 'erttyyuui'
         },
         {
-          "name": "fdddddddddddddddd",
-          "code": "fdddddddddddddddd"
+          name: 'fdddddddddddddddd',
+          code: 'fdddddddddddddddd'
         },
         {
-          "name": "gjhkjjl",
-          "code": "gjhkjjl"
+          name: 'gjhkjjl',
+          code: 'gjhkjjl'
         },
         {
-          "name": "gsdddddddddddg",
-          "code": "gsdddddddddddg"
+          name: 'gsdddddddddddg',
+          code: 'gsdddddddddddg'
         },
         {
-          "name": "hjl",
-          "code": "hjl"
+          name: 'hjl',
+          code: 'hjl'
         },
         {
-          "name": "hkjkjlkl",
-          "code": "hkjkjlkl"
+          name: 'hkjkjlkl',
+          code: 'hkjkjlkl'
         },
         {
-          "name": "hyjykjl",
-          "code": "hyjykjl"
+          name: 'hyjykjl',
+          code: 'hyjykjl'
         },
         {
-          "name": "jhjkhkk",
-          "code": "jhjkhkk"
+          name: 'jhjkhkk',
+          code: 'jhjkhkk'
         },
         {
-          "name": "jj,ddddw",
-          "code": "jj,ddddw"
+          name: 'jj,ddddw',
+          code: 'jj,ddddw'
         },
         {
-          "name": "jjkjkjhk",
-          "code": "jjkjkjhk"
+          name: 'jjkjkjhk',
+          code: 'jjkjkjhk'
         },
         {
-          "name": "kmmmk",
-          "code": "kmmmk"
+          name: 'kmmmk',
+          code: 'kmmmk'
         },
         {
-          "name": "mn",
-          "code": "mn"
+          name: 'mn',
+          code: 'mn'
         },
         {
-          "name": "shhhhhhhhh",
-          "code": "shhhhhhhhh"
+          name: 'shhhhhhhhh',
+          code: 'shhhhhhhhh'
         },
         {
-          "name": "sss",
-          "code": "sss"
+          name: 'sss',
+          code: 'sss'
         },
         {
-          "name": "ssssssssssss",
-          "code": "ssssssssssss"
+          name: 'ssssssssssss',
+          code: 'ssssssssssss'
         },
         {
-          "name": "t2",
-          "code": "t2"
+          name: 't2',
+          code: 't2'
         },
         {
-          "name": "tyui",
-          "code": "tyui"
+          name: 'tyui',
+          code: 'tyui'
         },
         {
-          "name": "wwgt",
-          "code": "wwgt"
+          name: 'wwgt',
+          code: 'wwgt'
         },
         {
-          "name": "xfnnnnnnnnn",
-          "code": "xfnnnnnnnnn"
+          name: 'xfnnnnnnnnn',
+          code: 'xfnnnnnnnnn'
         },
         {
-          "name": "yutruityi",
-          "code": "yutruityi"
+          name: 'yutruityi',
+          code: 'yutruityi'
         }
       ],
-      "value": "",
-      "required": true
+      value: '',
+      required: true
     },
     {
-      "level": 4,
-      "hierarchyLevelId": "subaccount",
-      "hierarchyLevelName": "Subaccount",
-      "suggestions": [
+      level: 4,
+      hierarchyLevelId: 'subaccount',
+      hierarchyLevelName: 'Subaccount',
+      suggestions: [
         {
-          "name": "Level4",
-          "code": "Level4"
+          name: 'Level4',
+          code: 'Level4'
         },
         {
-          "name": "Org4",
-          "code": "Org4"
+          name: 'Org4',
+          code: 'Org4'
         },
         {
-          "name": "Orgs",
-          "code": "Orgs"
+          name: 'Orgs',
+          code: 'Orgs'
         },
         {
-          "name": "S1",
-          "code": "S1"
+          name: 'S1',
+          code: 'S1'
         },
         {
-          "name": "Sub1",
-          "code": "Sub1"
+          name: 'Sub1',
+          code: 'Sub1'
         },
         {
-          "name": "Test4",
-          "code": "Test4"
+          name: 'Test4',
+          code: 'Test4'
         },
         {
-          "name": "TestS",
-          "code": "TestS"
+          name: 'TestS',
+          code: 'TestS'
         },
         {
-          "name": "Testsub",
-          "code": "Testsub"
+          name: 'Testsub',
+          code: 'Testsub'
         },
         {
-          "name": "aaaaaaaaaaaaaaaaa",
-          "code": "aaaaaaaaaaaaaaaaa"
+          name: 'aaaaaaaaaaaaaaaaa',
+          code: 'aaaaaaaaaaaaaaaaa'
         },
         {
-          "name": "asc",
-          "code": "asc"
+          name: 'asc',
+          code: 'asc'
         },
         {
-          "name": "cbvcxcncvn",
-          "code": "cbvcxcncvn"
+          name: 'cbvcxcncvn',
+          code: 'cbvcxcncvn'
         },
         {
-          "name": "eeeeeeeeee",
-          "code": "eeeeeeeeee"
+          name: 'eeeeeeeeee',
+          code: 'eeeeeeeeee'
         },
         {
-          "name": "eeeeeeeeeeee",
-          "code": "eeeeeeeeeeee"
+          name: 'eeeeeeeeeeee',
+          code: 'eeeeeeeeeeee'
         },
         {
-          "name": "erweteryu",
-          "code": "erweteryu"
+          name: 'erweteryu',
+          code: 'erweteryu'
         },
         {
-          "name": "ffff",
-          "code": "ffff"
+          name: 'ffff',
+          code: 'ffff'
         },
         {
-          "name": "fhfd",
-          "code": "fhfd"
+          name: 'fhfd',
+          code: 'fhfd'
         },
         {
-          "name": "fhgjhk",
-          "code": "fhgjhk"
+          name: 'fhgjhk',
+          code: 'fhgjhk'
         },
         {
-          "name": "fhjkk",
-          "code": "fhjkk"
+          name: 'fhjkk',
+          code: 'fhjkk'
         },
         {
-          "name": "ghthhhhhhhhhht",
-          "code": "ghthhhhhhhhhht"
+          name: 'ghthhhhhhhhhht',
+          code: 'ghthhhhhhhhhht'
         },
         {
-          "name": "hjkhkjk",
-          "code": "hjkhkjk"
+          name: 'hjkhkjk',
+          code: 'hjkhkjk'
         },
         {
-          "name": "hkkkkkk",
-          "code": "hkkkkkk"
+          name: 'hkkkkkk',
+          code: 'hkkkkkk'
         },
         {
-          "name": "jhhjkjhkj",
-          "code": "jhhjkjhkj"
+          name: 'jhhjkjhkj',
+          code: 'jhhjkjhkj'
         },
         {
-          "name": "jhhvgvggv",
-          "code": "jhhvgvggv"
+          name: 'jhhvgvggv',
+          code: 'jhhvgvggv'
         },
         {
-          "name": "jkjkllk;k;",
-          "code": "jkjkllk;k;"
+          name: 'jkjkllk;k;',
+          code: 'jkjkllk;k;'
         },
         {
-          "name": "kmkkkk",
-          "code": "kmkkkk"
+          name: 'kmkkkk',
+          code: 'kmkkkk'
         },
         {
-          "name": "saaaaaaaaaaaaa",
-          "code": "saaaaaaaaaaaaa"
+          name: 'saaaaaaaaaaaaa',
+          code: 'saaaaaaaaaaaaa'
         },
         {
-          "name": "sasdfdgfgf",
-          "code": "sasdfdgfgf"
+          name: 'sasdfdgfgf',
+          code: 'sasdfdgfgf'
         },
         {
-          "name": "sdf",
-          "code": "sdf"
+          name: 'sdf',
+          code: 'sdf'
         },
         {
-          "name": "sdgggggggg",
-          "code": "sdgggggggg"
+          name: 'sdgggggggg',
+          code: 'sdgggggggg'
         },
         {
-          "name": "seeeeee",
-          "code": "seeeeee"
+          name: 'seeeeee',
+          code: 'seeeeee'
         },
         {
-          "name": "sytttu",
-          "code": "sytttu"
+          name: 'sytttu',
+          code: 'sytttu'
         },
         {
-          "name": "t3",
-          "code": "t3"
+          name: 't3',
+          code: 't3'
         },
         {
-          "name": "xgggggggggg",
-          "code": "xgggggggggg"
+          name: 'xgggggggggg',
+          code: 'xgggggggggg'
         },
         {
-          "name": "zfghg",
-          "code": "zfghg"
+          name: 'zfghg',
+          code: 'zfghg'
         },
         {
-          "name": "zzzzzzzzzzzzzzzzzzf",
-          "code": "zzzzzzzzzzzzzzzzzzf"
+          name: 'zzzzzzzzzzzzzzzzzzf',
+          code: 'zzzzzzzzzzzzzzzzzzf'
         }
       ],
-      "value": "",
-      "required": true
+      value: '',
+      required: true
     }
   ];
 

@@ -129,12 +129,14 @@ public class ZephyrServiceTest {
 	@Test
 	public void TestProcess() throws Exception {
 		when(filterHelperService.getHierarachyLevelId(kpiRequest.getLevel(), false)).thenReturn("project");
+/*
 		when(filterHelperService.getFilteredBuilds(kpiRequest, "Regression")).thenReturn(accountHierarchyDataList);
 		when(cacheService.getFromApplicationCache(projectKey, KPISource.ZEPHYR.name(),
 				kpiRequest.getKpiList().get(0).getGroupId(), kpiRequest.getSprintIncluded())).thenReturn(null);
 		when(authorizedProjectsService.getProjectKey(accountHierarchyDataList, kpiRequest)).thenReturn(projectKey);
 		when(authorizedProjectsService.getProjectNodesForRequest(accountHierarchyDataList)).thenReturn(projects);
 		when(authorizedProjectsService.filterProjects(accountHierarchyDataList)).thenReturn(accountHierarchyDataList);
+*/
 		List<KpiElement> resultList = zephyrService.process(kpiRequest);
 		resultList.forEach(k -> {
 			KPICode kpi = KPICode.getKPI(k.getKpiId());

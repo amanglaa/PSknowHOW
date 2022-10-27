@@ -33,7 +33,7 @@
                   [showExport]="true" [showChartView]="showChart"
                   [isShow]="(kpi?.kpiDetail?.additionalFilterSupport && iSAdditionalFilterSelected && kpiLoader === false) || (!iSAdditionalFilterSelected && kpiLoader === false) && (ifKpiExist(kpi.kpiId) != -1) ? true : false">
                   <ng-container *ngIf="!noTabAccess else noDataAccess">
-                    <ng-container *ngIf="(kpiChartData | json) != '{}' && kpiChartData != undefined;else noData">
+                    <ng-container *ngIf="(kpiChartData | json) !== '{}' && kpiChartData != undefined;else noData">
                       <div class="p-pl-3 p-pr-3" [ngSwitch]="kpi?.kpiDetail?.chartType"
                         *ngIf="ifKpiExist(kpi.kpiId) != -1; else loader">
                         <ng-container

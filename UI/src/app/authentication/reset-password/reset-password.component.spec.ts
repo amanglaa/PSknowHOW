@@ -39,8 +39,8 @@ describe('ResetPasswordComponent', () => {
   const baseUrl = environment.baseUrl;
   let httpMock;
   let httpService;
-  const fakeError = { 'message': 'logError', 'success': false };
-  const fakeSuccess = { 'message': 'success', 'success': true };
+  const fakeError = { message: 'logError', success: false };
+  const fakeSuccess = { message: 'success', success: true };
 
   beforeEach(waitForAsync(() => {
     const routes: Routes = [

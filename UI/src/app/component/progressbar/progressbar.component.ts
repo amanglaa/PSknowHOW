@@ -31,7 +31,7 @@ export class ProgressbarComponent implements OnChanges,OnInit {
     @Input() value: string;
     @Input() maxValue: string;
     elem;
-    percentage:number;
+    percentage: number;
 
     constructor(private viewContainerRef: ViewContainerRef) { }
 
@@ -39,13 +39,13 @@ export class ProgressbarComponent implements OnChanges,OnInit {
         if(+this.value ==0 && +this.maxValue ==0){
             this.percentage=0;
         }else{
-            this.percentage =(+this.value / +this.maxValue) *100; 
+            this.percentage =(+this.value / +this.maxValue) *100;
         }
     }
 
     ngOnChanges(changes: SimpleChanges) {
-        // only run when property "data" changed   
-     
+        // only run when property "data" changed
+
         if (changes['value']) {
             this.percentage = (+this.value / +this.maxValue) *100;
             this.elem = this.viewContainerRef.element.nativeElement;
@@ -72,7 +72,7 @@ export class ProgressbarComponent implements OnChanges,OnInit {
                 .style('border-radius', '10px');
 
             const red = '#F06667';
-            let fillColor=red;
+            const fillColor=red;
 
             svg.append('rect')
                 .attr('class', 'bg-rect')
@@ -90,24 +90,24 @@ export class ProgressbarComponent implements OnChanges,OnInit {
                 .attr('width', 0)
                 .attr('x', 0);
 
-            progress.on('mouseover', function (d) {
+            progress.on('mouseover', function(d) {
                 d3.select(this).style('opacity', 1);
             });
 
-            progress.on('mousemove', function (d) {
+            progress.on('mousemove', function(d) {
             });
 
-            progress.on('mouseout', function () {
+            progress.on('mouseout', function() {
                 d3.select(this).style('opacity', 1);
             });
-            progress.on('mouseenter', function (d) {
+            progress.on('mouseenter', function(d) {
                 d3.select(this)
                     .attr('stroke', 'white')
                     .transition()
                     .duration(1000)
                     .attr('stroke-width', 2);
             });
-            progress.on('mouseleave', function (d) {
+            progress.on('mouseleave', function(d) {
                 d3.select(this).transition()
                     .attr('stroke', 'none');
             });

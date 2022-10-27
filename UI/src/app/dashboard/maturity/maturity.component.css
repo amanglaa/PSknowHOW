@@ -16,7 +16,7 @@
  *
  ******************************************************************************/
 
-*>>>svg {
+::ng-deep svg {
 	font: 10px sans-serif;
 	display: inline-block;
 }
@@ -30,79 +30,79 @@
 .min-ht .err{
 	top: 0;
 }
-*>>> .tooltip{
+::ng-deep  .tooltip_{
 	margin:40px;
 }
-*>>>.maturity-level-header {
+::ng-deep .maturity-level-header {
 	margin: 0;
 }
 
-*>>>.maturity-level-column {
+::ng-deep .maturity-level-column {
 	padding: 0;
 }
 
-*>>>.group-1-off {
+::ng-deep .group-1-off {
 	fill: #E2E2E2;
 }
 
-*>>>.group-1-on {
+::ng-deep .group-1-on {
 	fill: #18519d;
 }
 
-*>>>.group-2-off {
+::ng-deep .group-2-off {
 	fill: #E2E2E2;
 }
 
-*>>>.group-2-on {
+::ng-deep .group-2-on {
 	fill: #ff953b;
 }
 
-*>>>.group-3-off {
+::ng-deep .group-3-off {
 	fill: #E2E2E2;
 }
 
-*>>>.group-3-on {
+::ng-deep .group-3-on {
 	fill: #d74f14;
 }
 
-*>>>.group-4-off {
+::ng-deep .group-4-off {
 	fill: #E2E2E2;
 }
 
-*>>>.group-4-on {
+::ng-deep .group-4-on {
 	fill: #31a354;
 }
 
-*>>>.labelText {
+::ng-deep .labelText {
 	font-size: 10px;
 	fill: #000;
 }
 
-*>>>.labelTextBackground {
+::ng-deep .labelTextBackground {
 	fill: #B6B6B6;
 }
 
-*>>>.highlight {
+::ng-deep .highlight {
 	fill: white;
 }
 
 
 
-*>>>.outerLabelText {
+::ng-deep .outerLabelText {
 	font-size: 1.5em;
 	fill: var(--color-white);
 }
 
-*>>>.nodesBorder {
+::ng-deep .nodesBorder {
 	stroke: var(--color-white);
 }
 
-*>>>.outerCircleBorder {
+::ng-deep .outerCircleBorder {
 	stroke: var(--color-white);
 	stroke-width: 2px;
 }
 
-*>>>.centerLabelText {
+::ng-deep .centerLabelText {
 	font-size: 2em;
 	fill: #000;
 }

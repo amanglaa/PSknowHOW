@@ -33,6 +33,7 @@ import javax.validation.constraints.NotNull;
 
 import com.publicissapient.kpidashboard.apis.common.service.impl.KpiHelperService;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
@@ -258,7 +259,9 @@ public class FirstTimePassRateServiceImpl extends JiraKPIService<Double, List<Ob
 		Map<String, Pair<String, String>> sprintWithDateMap = new HashMap<>();
 		Map<String, Map<String, Object>> uniqueProjectMap = new HashMap<>();
 
-		Map<String, List<String>> statusConfigsOfRejectedStoriesByProject = new HashMap<>();
+		Map<String,List<String>> statusConfigsOfResolutionTypeForRejection = new HashMap<>();
+		Map<String,List<String>> statusConfigsOfDefectRejectionStatus = new HashMap<>();
+		Map<String, Map<String,List<String>>> statusConfigsOfRejectedStoriesByProject = new HashMap<>();
 		Map<String, List<String>> projectWisePriority = new HashMap<>();
 		Map<String, List<String>> configPriority = customApiConfig.getPriority();
 		Map<String, Set<String>> projectWiseRCA = new HashMap<>();
@@ -275,12 +278,19 @@ public class FirstTimePassRateServiceImpl extends JiraKPIService<Double, List<Ob
 			addPriorityProjectWise(projectWisePriority, configPriority, leaf, fieldMapping);
 			addRCAProjectWise(projectWiseRCA, leaf, fieldMapping);
 
-			KpiHelperService.getDroppedDefectsFilters(statusConfigsOfRejectedStoriesByProject, basicProjectConfigId, fieldMapping);
+			statusConfigsOfResolutionTypeForRejection.put(basicProjectConfigId.toString(),
+					fieldMapping.getResolutionTypeForRejection() == null ? new ArrayList<>()
+							: fieldMapping.getResolutionTypeForRejection().stream().map(String::toLowerCase)
+							.collect(Collectors.toList()));
+
+			statusConfigsOfDefectRejectionStatus.put(basicProjectConfigId.toString(),
+					Arrays.asList(fieldMapping.getJiraDefectRejectionStatus()));
 
 			mapOfProjectFilters.put(JiraFeature.ISSUE_TYPE.getFieldValueInFeature(),
 					CommonUtils.convertToPatternList(fieldMapping.getJiraStoryIdentification()));
 			mapOfProjectFilters.put(JiraFeature.JIRA_ISSUE_STATUS.getFieldValueInFeature(),
 					fieldMapping.getJiraIssueDeliverdStatus());
+			KpiHelperService.getDroppedDefectsFilters(statusConfigsOfRejectedStoriesByProject, basicProjectConfigId, fieldMapping);
 
 			uniqueProjectMap.put(basicProjectConfigId.toString(), mapOfProjectFilters);
 
@@ -302,20 +312,20 @@ public class FirstTimePassRateServiceImpl extends JiraKPIService<Double, List<Ob
 				uniqueProjectMap);
 
 		// do not change the order of remove methods
+		List<JiraIssue> defectListWoDrop = new ArrayList<>();
+		KpiHelperService.getDefectsWithoutDrop(statusConfigsOfRejectedStoriesByProject, issuesBySprintAndType, defectListWoDrop);
 
-		removeRejectedStories(issuesBySprintAndType, statusConfigsOfRejectedStoriesByProject);
+		removeRejectedStoriesFromSprint(sprintWiseStories, defectListWoDrop);
 
-		removeRejectedStoriesFromSprint(sprintWiseStories, issuesBySprintAndType);
+		removeStoriesWithDefect(defectListWoDrop, projectWisePriority, projectWiseRCA,statusConfigsOfRejectedStoriesByProject);
 
-		removeStoriesWithDefect(issuesBySprintAndType, projectWisePriority, projectWiseRCA);
-
-		List<String> storyIds = getIssueIds(issuesBySprintAndType);
+		List<String> storyIds = getIssueIds(defectListWoDrop);
 		List<JiraIssueCustomHistory> storiesHistory = jiraIssueCustomHistoryRepository.findByStoryIDIn(storyIds);
 
-		removeStoriesWithReturnTransaction(issuesBySprintAndType, storiesHistory);
+		removeStoriesWithReturnTransaction(defectListWoDrop, storiesHistory);
 
 		resultListMap.put(SPRINT_WISE_CLOSED_STORIES, sprintWiseStories);
-		resultListMap.put(FIRST_TIME_PASS_STORIES, issuesBySprintAndType);
+		resultListMap.put(FIRST_TIME_PASS_STORIES, defectListWoDrop);
 		return resultListMap;
 	}
 
@@ -365,20 +375,6 @@ public class FirstTimePassRateServiceImpl extends JiraKPIService<Double, List<Ob
 				.removeIf(storyId -> !acceptedStoryIds.contains(storyId)));
 	}
 
-	private void removeRejectedStories(List<JiraIssue> issuesBySprintAndType,
-			Map<String, List<String>> statusConfigsOfRejectedStoriesByProject) {
-		issuesBySprintAndType.removeIf(issue -> {
-			String resolution = issue.getResolution();
-			List<String> statusListOfRejectedStory = statusConfigsOfRejectedStoriesByProject
-					.get(issue.getBasicProjectConfigId());
-			if (resolution != null && statusListOfRejectedStory != null) {
-				return statusListOfRejectedStory.contains(resolution.toLowerCase());
-			}
-
-			return false;
-
-		});
-	}
 
 	@NotNull
 	private List<String> getIssueIds(List<JiraIssue> issuesBySprintAndType) {
@@ -393,11 +389,14 @@ public class FirstTimePassRateServiceImpl extends JiraKPIService<Double, List<Ob
 	 * @param projectWiseRCA
 	 */
 	private void removeStoriesWithDefect(List<JiraIssue> issuesBySprintAndType,
-			Map<String, List<String>> projectWisePriority, Map<String, Set<String>> projectWiseRCA) {
+			Map<String, List<String>> projectWisePriority, Map<String, Set<String>> projectWiseRCA,
+										 Map<String, Map<String,List<String>>> statusConfigsOfRejectedStoriesByProject) {
 		List<JiraIssue> allDefects = jiraIssueRepository.findByTypeNameAndDefectStoryIDIn(
 				NormalizedJira.DEFECT_TYPE.getValue(), getIssueIds(issuesBySprintAndType));
 		Set<JiraIssue> defects = new HashSet<>();
-		allDefects.stream().forEach(d -> issuesBySprintAndType.stream().forEach(i -> {
+		List<JiraIssue> defectListWoDrop = new ArrayList<>();
+		KpiHelperService.getDefectsWithoutDrop(statusConfigsOfRejectedStoriesByProject, allDefects, defectListWoDrop);
+		defectListWoDrop.stream().forEach(d -> issuesBySprintAndType.stream().forEach(i -> {
 			if (i.getProjectName().equalsIgnoreCase(d.getProjectName())) {
 				defects.add(d);
 			}

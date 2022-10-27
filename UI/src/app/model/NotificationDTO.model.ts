@@ -19,7 +19,7 @@
 export interface NotificationResponseDTO {
     message: string;
     success: boolean;
-    data: NotificationDTO[]
+    data: NotificationDTO[];
 }
 
 export interface NotificationDTO {

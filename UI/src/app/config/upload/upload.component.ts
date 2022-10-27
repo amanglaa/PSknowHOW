@@ -26,22 +26,22 @@ import { MessageService } from 'primeng/api';
 import { HttpService } from '../../services/http.service';
 import { first } from 'rxjs/operators';
 import { GetAuthorizationService } from '../../services/get-authorization.service';
-import { FormControl, FormGroup } from '@angular/forms';
-declare var $: any;
+import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
+declare let $: any;
 
 interface CapacitySubmissionReq {
-    projectNodeId: string,
-    projectName: string,
-    sprintNodeId?: string,
-    capacity?: string,
-    startDate?: string,
-    endDate?: string,
-    totalTestCases?: string,
-    executedTestCase?: string,
-    passedTestCase?: string,
-    sprintId?: string,
-    sprintName?: string,
-    executionDate?: string,
+    projectNodeId: string;
+    projectName: string;
+    sprintNodeId?: string;
+    capacity?: string;
+    startDate?: string;
+    endDate?: string;
+    totalTestCases?: string;
+    executedTestCase?: string;
+    passedTestCase?: string;
+    sprintId?: string;
+    sprintName?: string;
+    executionDate?: string;
     kanban: boolean;
 }
 
@@ -54,7 +54,6 @@ export class UploadComponent implements OnInit {
 
     error = '';
     message = '';
-    warning = '';
     uploadedFile: File;
     logoImage: any;
     invalid: boolean;
@@ -78,16 +77,16 @@ export class UploadComponent implements OnInit {
     endDate: any;
     executionDate: any;
     reqObj: CapacitySubmissionReq;
-    isCapacitySaveDisabled: boolean = true;
-    isTestExecutionSaveDisabled: boolean = true;
-    capacityErrorMessage: string = '';
-    testExecutionErrorMessage: string = '';
+    isCapacitySaveDisabled = true;
+    isTestExecutionSaveDisabled = true;
+    capacityErrorMessage = '';
+    testExecutionErrorMessage = '';
     isCheckBoxChecked: boolean;
     todayDate: any;
-    loader: boolean = false;
+    loader = false;
     executionDateGroup: any;
-    isSuperAdmin: boolean = false;
-    filterForm: FormGroup;
+    isSuperAdmin = false;
+    filterForm: UntypedFormGroup;
     projectListArr: Array<object> = [];
     sprintListArr: Array<object> = [];
     selectedFilterArray: Array<any> = [];
@@ -96,7 +95,7 @@ export class UploadComponent implements OnInit {
     sprintDetails: any;
     projectDetails: any;
     selectedProjectBaseConfigId: string;
-    popupForm: FormGroup;
+    popupForm: UntypedFormGroup;
 
     statusMessage = {
         200: 'Data Saved Successfully!!',
@@ -109,11 +108,11 @@ export class UploadComponent implements OnInit {
     };
     cols: any;
     sprintsData: any;
-    tabHeaders = ["Scrum", "Kanban"];
-    tabContentHeaders = {'upload_tep':'Test Execution Percentage Table', 'upload_Sprint_Capacity':'Capacity Table'};
+    tabHeaders = ['Scrum', 'Kanban'];
+    tabContentHeaders = {upload_tep:'Test Execution Percentage Table', upload_Sprint_Capacity:'Capacity Table'};
     selectedHeader: string;
-    showPopuup:boolean = false;
-    noData:boolean = false;
+    showPopuup = false;
+    noData = false;
     capacityScrumData: any;
     capacityKanbanData: any;
     testExecutionScrumData: any;
@@ -121,7 +120,7 @@ export class UploadComponent implements OnInit {
     selectedSprintDetails: any;
     selectedSprintId: any;
     selectedSprintName: any;
-    tableLoader: boolean = true;
+    tableLoader = true;
     currentDate = new Date();
     constructor(private http_service: HttpService, private messageService: MessageService, private getAuth: GetAuthService, private sharedService: SharedService, private sanitizer: DomSanitizer, private getAuthorisation: GetAuthorizationService) {
     }
@@ -131,69 +130,69 @@ export class UploadComponent implements OnInit {
             testExecutionScrumKeys: [
                 {
                     header: 'Sprint Name',
-                    field: "sprintName"
+                    field: 'sprintName'
                 },
                 {
                     header: 'Sprint Status',
-                    field: "sprintState"
+                    field: 'sprintState'
                 },
                 {
                     header: 'Total Test Cases',
-                    field: "totalTestCases"
+                    field: 'totalTestCases'
                 },
                 {
                     header: 'Executed Test Cases',
-                    field: "executedTestCase"
+                    field: 'executedTestCase'
                 },
                 {
                     header: 'Passed Test Case',
-                    field: "passedTestCase"
+                    field: 'passedTestCase'
                 }
             ],
             testExecutionKanbanKeys: [
                 {
                     header: 'Execution Date',
-                    field: "executionDate"
+                    field: 'executionDate'
                 },
                 {
                     header: 'Total Test Cases',
-                    field: "totalTestCases"
+                    field: 'totalTestCases'
                 },
                 {
                     header: 'Executed Test Cases',
-                    field: "executedTestCase"
+                    field: 'executedTestCase'
                 },
                 {
                     header: 'Passed Test Case',
-                    field: "passedTestCase"
+                    field: 'passedTestCase'
                 }
             ],
             capacityScrumKeys: [
                 {
                     header: 'Sprint Name',
-                    field: "sprintName"
+                    field: 'sprintName'
                 },
                 {
                     header: 'Sprint Status',
-                    field: "sprintState"
+                    field: 'sprintState'
                 },
                 {
                     header: 'Team Capacity (in Hrs)',
-                    field: "capacity"
+                    field: 'capacity'
                 }
             ],
             capacityKanbanKeys: [
                 {
                     header: 'Start Date',
-                    field: "startDate"
+                    field: 'startDate'
                 },
                 {
                     header: 'End Date',
-                    field: "endDate"
+                    field: 'endDate'
                 },
                 {
                     header: 'Team Capacity (in Hrs)',
-                    field: "capacity"
+                    field: 'capacity'
                 }
             ]
             };
@@ -252,27 +251,27 @@ export class UploadComponent implements OnInit {
         this.setFormControlValues();
     }
     setFormControlValues() {
-        this.filterForm = new FormGroup({
-            selectedProjectValue: new FormControl()
+        this.filterForm = new UntypedFormGroup({
+            selectedProjectValue: new UntypedFormControl()
         });
         if (this.selectedView === 'upload_tep') {
             if (this.kanban) {
-                this.popupForm = new FormGroup({
-                    executionDate: new FormControl(),
-                    totalTestCases: new FormControl(),
-                    executedTestCase: new FormControl(),
-                    passedTestCase: new FormControl()
+                this.popupForm = new UntypedFormGroup({
+                    executionDate: new UntypedFormControl(),
+                    totalTestCases: new UntypedFormControl(),
+                    executedTestCase: new UntypedFormControl(),
+                    passedTestCase: new UntypedFormControl()
                 });
             } else {
-                this.popupForm = new FormGroup({
-                    totalTestCases: new FormControl(),
-                    executedTestCase: new FormControl(),
-                    passedTestCase: new FormControl()
+                this.popupForm = new UntypedFormGroup({
+                    totalTestCases: new UntypedFormControl(),
+                    executedTestCase: new UntypedFormControl(),
+                    passedTestCase: new UntypedFormControl()
                 });
             }
         } else if (this.selectedView === 'upload_Sprint_Capacity') {
-            this.popupForm = new FormGroup({
-                capacity: new FormControl()
+            this.popupForm = new UntypedFormGroup({
+                capacity: new UntypedFormControl()
             });
         }
     }
@@ -316,11 +315,11 @@ export class UploadComponent implements OnInit {
                 this.loader = true;
                 this.selectedProjectBaseConfigId = '';
                 if (this.selectedView === 'upload_Sprint_Capacity') {
-                    this.filterForm = new FormGroup({
-                        selectedProjectValue: new FormControl()
+                    this.filterForm = new UntypedFormGroup({
+                        selectedProjectValue: new UntypedFormControl()
                     });
-                    this.popupForm = new FormGroup({
-                        capacity: new FormControl()
+                    this.popupForm = new UntypedFormGroup({
+                        capacity: new UntypedFormControl()
                     });
                 }
                 this.getFilterDataOnLoad();
@@ -349,7 +348,7 @@ export class UploadComponent implements OnInit {
     onSelectImage(event) {
         return new Promise((resolve) => {
             let isImageFit = true;
-            this.warning = undefined;
+            this.error = undefined;
             /*convert image to  byte array*/
             if (event.target.files[0]) {
                 const reader = new FileReader();
@@ -360,7 +359,7 @@ export class UploadComponent implements OnInit {
                     img.src = this.logoImage;
                     img.onload = () => {
                         if (img.width > 250 || img.height > 100) {
-                            this.warning = 'Image is too big(' + img.width + ' x ' + img.height + '). The maximum dimensions are 250 x 100 pixels';
+                            this.error = 'Image is too big(' + img.width + ' x ' + img.height + '). The maximum dimensions are 250 x 100 pixels';
                             isImageFit = false;
                             resolve(isImageFit);
                         }else{
@@ -369,7 +368,7 @@ export class UploadComponent implements OnInit {
                     };
                 };
             }
-            
+
         });
     }
 
@@ -408,8 +407,8 @@ export class UploadComponent implements OnInit {
             return;
         }
         /*conversion of image to byte array */
-        let isImageFit = await this.onSelectImage(event);
-        
+        const isImageFit = await this.onSelectImage(event);
+
         /*call service to upload */
         if(isImageFit){
             this.http_service.uploadImage(this.uploadedFile).pipe(first())
@@ -420,7 +419,7 @@ export class UploadComponent implements OnInit {
                         } else {
                             this.message = data['message'];
                             this.sharedService.setLogoImage(this.uploadedFile);
-    
+
                         }
                     });
         }
@@ -435,9 +434,8 @@ export class UploadComponent implements OnInit {
                 data => {
                     this.isUploadFile = true;
                     if (data) {
-                        this.message = 'File delete successfully';
+                        this.message = 'File deleted successfully';
                         this.logoImage = undefined;
-                        this.warning = undefined;
                         this.error = undefined;
                         this.sharedService.setLogoImage(undefined);
                     }
@@ -446,8 +444,8 @@ export class UploadComponent implements OnInit {
 
     // called when user switches the "Scrum/Kanban" switch
     kanbanActivation(type) {
-        let scrumTarget = document.querySelector('.horizontal-tabs .btn-tab.pi-scrum-button');
-        let kanbanTarget = document.querySelector('.horizontal-tabs .btn-tab.pi-kanban-button');
+        const scrumTarget = document.querySelector('.horizontal-tabs .btn-tab.pi-scrum-button');
+        const kanbanTarget = document.querySelector('.horizontal-tabs .btn-tab.pi-kanban-button');
         if(type === 'scrum') {
             scrumTarget?.classList?.add('btn-active');
             kanbanTarget?.classList?.remove('btn-active');
@@ -502,7 +500,7 @@ export class UploadComponent implements OnInit {
                     if(this.filterData && this.filterData.length > 0){
                         this.projectListArr = this.sortAlphabetically(this.filterData.filter(x => x.labelName.toLowerCase() == 'project'));
                         this.projectListArr = this.makeUniqueArrayList(this.projectListArr);
-                        let defaultSelection = this.selectedProjectBaseConfigId ? false : true;
+                        const defaultSelection = this.selectedProjectBaseConfigId ? false : true;
                         this.checkDefaultFilterSelection(defaultSelection);
                         if (Object.keys(filterData).length !== 0) {
                             // this.getMasterData();
@@ -659,7 +657,7 @@ export class UploadComponent implements OnInit {
             });
         }
         if (this.reqObj) {
-            for (let capReqField in this.reqObj) {
+            for (const capReqField in this.reqObj) {
                 this.reqObj[capReqField] = '';
             }
         }
@@ -675,7 +673,7 @@ export class UploadComponent implements OnInit {
             projectNodeId: data?.projectNodeId,
             projectName: data?.projectName,
             kanban: this.kanban
-        }
+        };
         if (!this.kanban) {
             if(this.selectedView === 'upload_tep') {
                 this.reqObj['sprintId'] = this.selectedSprintId;
@@ -686,10 +684,10 @@ export class UploadComponent implements OnInit {
             this.selectedView === 'upload_tep' ? this.reqObj['executionDate'] = this.executionDate : '';
         }
         if (this.selectedView === 'upload_tep') {
-            this.popupForm = new FormGroup({
-                totalTestCases: new FormControl(data?.totalTestCases ? data?.totalTestCases : ''),
-                executedTestCase: new FormControl(data?.executedTestCase ? data?.executedTestCase : ''),
-                passedTestCase: new FormControl(data?.passedTestCase ? data?.passedTestCase : '')
+            this.popupForm = new UntypedFormGroup({
+                totalTestCases: new UntypedFormControl(data?.totalTestCases ? data?.totalTestCases : ''),
+                executedTestCase: new UntypedFormControl(data?.executedTestCase ? data?.executedTestCase : ''),
+                passedTestCase: new UntypedFormControl(data?.passedTestCase ? data?.passedTestCase : '')
             });
 
             this.reqObj['totalTestCases'] = data?.totalTestCases;
@@ -697,13 +695,13 @@ export class UploadComponent implements OnInit {
             this.reqObj['passedTestCase'] = data?.passedTestCase;
 
         } else if (this.selectedView === 'upload_Sprint_Capacity') {
-            this.popupForm = new FormGroup({
-                capacity: new FormControl(data?.capacity ? data?.capacity : '')
+            this.popupForm = new UntypedFormGroup({
+                capacity: new UntypedFormControl(data?.capacity ? data?.capacity : '')
             });
-            this.reqObj["capacity"] = data?.capacity ? data?.capacity : '';;
+            this.reqObj['capacity'] = data?.capacity ? data?.capacity : '';;
             if(this.kanban) {
-                this.reqObj["startDate"] = data?.startDate;
-                this.reqObj["endDate"] = data?.endDate;
+                this.reqObj['startDate'] = data?.startDate;
+                this.reqObj['endDate'] = data?.endDate;
             }
         }
         this.enableDisableSubmitButton();
@@ -845,13 +843,9 @@ export class UploadComponent implements OnInit {
     }
     getFirstOrLatestSprint(sprints, type) {
         if(type === 'latest') {
-            return sprints?.reduce((a, b) => {
-                return new Date(a.sprintStartDate) > new Date(b.sprintStartDate) ? a : b;
-            });
+            return sprints?.reduce((a, b) => new Date(a.sprintStartDate) > new Date(b.sprintStartDate) ? a : b);
         } else {
-            return sprints?.reduce((a, b) => {
-                return new Date(a.sprintStartDate) < new Date(b.sprintStartDate) ? a : b;
-            });
+            return sprints?.reduce((a, b) => new Date(a.sprintStartDate) < new Date(b.sprintStartDate) ? a : b);
         };
     }
     handleIterationFilters(level) {
@@ -864,7 +858,7 @@ export class UploadComponent implements OnInit {
             this.capacityScrumData = [];
             this.capacityKanbanData = [];
             if (level?.toLowerCase() == 'project') {
-                let selectedProject = this.filterForm?.get('selectedProjectValue')?.value;
+                const selectedProject = this.filterForm?.get('selectedProjectValue')?.value;
                 this.projectDetails = { ...this.trendLineValueList.find(i => i.nodeId === selectedProject) };
                 this.selectedProjectBaseConfigId = this.projectDetails?.basicProjectConfigId;
                 this.getProjectBasedData();
@@ -883,7 +877,7 @@ export class UploadComponent implements OnInit {
     makeUniqueArrayList(arr) {
         let uniqueArray = [];
         for (let i = 0; i < arr?.length; i++) {
-            let idx = uniqueArray?.findIndex(x => x.nodeId == arr[i]?.nodeId);
+            const idx = uniqueArray?.findIndex(x => x.nodeId == arr[i]?.nodeId);
             if (idx == -1) {
                 uniqueArray = [...uniqueArray, arr[i]];
                 uniqueArray[uniqueArray?.length - 1]['path'] = [uniqueArray[uniqueArray?.length - 1]['path']];

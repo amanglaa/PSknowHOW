@@ -41,46 +41,46 @@ describe('RequestStatusComponent', () => {
   const baseUrl = environment.baseUrl;
 
   const fakeRequestsData = {
-    'message': 'Found access_requests under username Rishabh',
-    'success': true,
-    'data': [{
-      '_id': '5da46ff3e645ca33dc927b83',
-      'username': 'Rishabh',
-      'status': 'Pending',
-      'reviewComments': '',
-      'projects': [{
-        'projectName': 'Test1',
-        'projectId': 'Test1_68500_Test1'
+    message: 'Found access_requests under username Rishabh',
+    success: true,
+    data: [{
+      _id: '5da46ff3e645ca33dc927b83',
+      username: 'Rishabh',
+      status: 'Pending',
+      reviewComments: '',
+      projects: [{
+        projectName: 'Test1',
+        projectId: 'Test1_68500_Test1'
       }],
-      'roles': [{
-        '_id': '5da46000e645ca33dc927b4a',
-        'roleName': 'ROLE_PROJECT_VIEWER'
+      roles: [{
+        _id: '5da46000e645ca33dc927b4a',
+        roleName: 'ROLE_PROJECT_VIEWER'
       }]
     }, {
-      '_id': '5da47bdde645ca33dc927ba8',
-      'username': 'Rishabh',
-      'status': 'Pending',
-      'reviewComments': '',
-      'projects': [{
-        'projectName': 'Test1',
-        'projectId': 'Test1_68500_Test1'
+      _id: '5da47bdde645ca33dc927ba8',
+      username: 'Rishabh',
+      status: 'Pending',
+      reviewComments: '',
+      projects: [{
+        projectName: 'Test1',
+        projectId: 'Test1_68500_Test1'
       }],
-      'roles': [{
-        '_id': '5da03f242afa421ae416cad7',
-        'roleName': 'ROLE_PROJECT_VIEWER'
+      roles: [{
+        _id: '5da03f242afa421ae416cad7',
+        roleName: 'ROLE_PROJECT_VIEWER'
       }]
     }, {
-      '_id': '5da47c2ae645ca33dc927bb3',
-      'username': 'Rishabh',
-      'status': 'Pending',
-      'reviewComments': '',
-      'projects': [{
-        'projectName': 'Test2',
-        'projectId': 'Test2_63102_Test2'
+      _id: '5da47c2ae645ca33dc927bb3',
+      username: 'Rishabh',
+      status: 'Pending',
+      reviewComments: '',
+      projects: [{
+        projectName: 'Test2',
+        projectId: 'Test2_63102_Test2'
       }],
-      'roles': [{
-        '_id': '5da03f242afa421ae416cad7',
-        'roleName': 'ROLE_PROJECT_VIEWER'
+      roles: [{
+        _id: '5da03f242afa421ae416cad7',
+        roleName: 'ROLE_PROJECT_VIEWER'
       }]
     }]
   };
@@ -135,9 +135,9 @@ describe('RequestStatusComponent', () => {
   });
 
   it('should delete request', () => {
-    let requestId = '6063052eab1d4700013e5aff';
-    let fakeEvent = { "isTrusted": true };
-    let recallResponse = { "message": "Sucessfully deleted.", "success": true, "data": "6063052eab1d4700013e5aff" };
+    const requestId = '6063052eab1d4700013e5aff';
+    const fakeEvent = { isTrusted: true };
+    const recallResponse = { message: 'Sucessfully deleted.', success: true, data: '6063052eab1d4700013e5aff' };
     const confirmationService = TestBed.inject(ConfirmationService);
     spyOn<any>(confirmationService, 'confirm').and.callFake((params: any) => {
       params.accept();

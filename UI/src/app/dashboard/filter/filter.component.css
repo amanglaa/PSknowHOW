@@ -160,7 +160,7 @@
 }
 
 .filter-nav .checkbox-modified {
-  display: flex;
+  display: block;
   align-items: center;
   position: relative;
   margin-bottom: 12px;
