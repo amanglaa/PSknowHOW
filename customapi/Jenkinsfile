@@ -118,7 +118,7 @@ pipeline {
          }
          steps {
               script{
-                anchore engineCredentialsId: 'Anchore-Cred', engineurl: 'http://10.148.240.59:8228/v1', name: '${env.select_docker_registry}/speedy/customapi:${env.version}'
+                anchore engineCredentialsId: 'Anchore-Cred', engineurl: 'http://10.148.240.59:8228/v1', name: 'setup-speedy.tools.publicis.sapient.com/speedy/customapi:5.2.0-SNAPSHOT'
               }
           }
       }
