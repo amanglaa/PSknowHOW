@@ -40,7 +40,7 @@ export class LoginComponent implements OnInit {
     sessionMsg = '';
     rememberMeCheckbox = false;
     adLogin = true;
-
+    loginConfig = {};
 
 
 
@@ -48,7 +48,7 @@ export class LoginComponent implements OnInit {
     }
 
     ngOnInit() {
-
+        this.getLoginConfig();
         this.adLogin = !localStorage.getItem('loginType') || localStorage.getItem('loginType') === 'AD';
 
 
@@ -75,6 +75,19 @@ export class LoginComponent implements OnInit {
         this.rememberMe();
         /* get return url from route parameters or default to '/' */
         this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+    }
+
+    getLoginConfig() {
+        this.httpService.getLoginConfig().subscribe(response => {
+            if(response.success) {
+               this.loginConfig = response.data;
+            } else {
+                this.loginConfig = {
+                    standardLogin: true,
+                    adLogin: false
+                };
+            }
+        });
     }
 
     /* convenience getter for easy access to form fields*/

@@ -26,30 +26,71 @@ import { RsaEncryptionService } from '../../services/rsa.encryption.service';
 @Component({
   selector: 'app-ad-settings',
   templateUrl: './ad-settings.component.html',
-  styleUrls: []
+  styleUrls: ['./ad-settings.component.css']
 })
 export class AdSettingsComponent implements OnInit {
   adSettingsForm: UntypedFormGroup;
   adSettingsFormObj: any;
+  // standardLoginForm: UntypedFormGroup;
+  // standardLoginFormObj: any;
+  // pingAuthenticationForm: UntypedFormGroup;
+  // pingAuthenticationFormObj: any;
   submitted = false;
+  loginSettingsTypes = [{
+    name: 'standardLogin',
+    label: 'KnowHOW Local Authentication'
+  },
+  {
+    name: 'adLogin',
+    label: 'AD Authentication'
+  }];
+
+  selectedTypes: any[] = [{
+    name: 'standardLogin',
+    label: 'KnowHOW Local Authentication'
+  }];
+  disableSave = false;
 
   constructor(private formBuilder: UntypedFormBuilder, private http: HttpService, private messenger: MessageService, private rsa: RsaEncryptionService) { }
 
   ngOnInit(): void {
-    this.getADConfig();
+    this.getAuthSettings();
   }
 
   // get AD configuration
-  getADConfig() {
+  getAuthSettings() {
     this.initializeFields();
     this.adSettingsForm = this.formBuilder.group(this.adSettingsFormObj);
-    this.http.getADConfig().subscribe(Response => {
-      if (Response && Response.success) {
-        if (Response.data) {
-          for (const obj in Response.data) {
+    // this.standardLoginForm = this.formBuilder.group(this.standardLoginFormObj);
+    // this.pingAuthenticationForm = this.formBuilder.group(this.pingAuthenticationFormObj);
+    this.http.getAuthConfig().subscribe(response => {
+      if (response && response.success) {
+        if (response && response.data && response.data.authTypeStatus) {
+          this.selectedTypes = [];
+          if (response.data.authTypeStatus.standardLogin) {
+            this.selectedTypes.push({
+              name: 'standardLogin',
+              label: 'KnowHOW Local Authentication'
+            });
+          }
+
+          if (response.data.authTypeStatus.adLogin) {
+            this.selectedTypes.push({
+              name: 'adLogin',
+              label: 'AD Authentication'
+            });
+          }
+        } else {
+          this.selectedTypes.push({
+            name: 'standardLogin',
+            label: 'KnowHOW Local Authentication'
+          });
+        }
+        if (response.success && response.data && response.data.adServerDetail) {
+          for (const obj in response.data.adServerDetail) {
             if (obj !== 'password') {
               if (this.adSettingsForm && this.adSettingsForm.controls[obj]) {
-                this.adSettingsForm.controls[obj].setValue(Response.data[obj]);
+                this.adSettingsForm.controls[obj].setValue(response.data.adServerDetail[obj]);
               }
             }
           }
@@ -58,10 +99,42 @@ export class AdSettingsComponent implements OnInit {
     });
   }
 
+  typeNotSelected(formName) {
+    if (!this.selectedTypes.map((type) => type.name).includes(formName)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  checkValues() {
+    if (!this.selectedTypes.length) {
+      this.selectedTypes = [{
+        name: 'standardLogin',
+        label: 'KnowHOW Local Authentication'
+      }];
+    }
+
+    // if (!this.selectedTypes.length) {
+    //   this.disableSave = true;
+    // } else {
+    //   this.disableSave = false;
+    // }
+  }
+
   // convenience getter for easy access to form fields
   get adForm() {
     return this.adSettingsForm.controls;
   }
+
+  // get standardLogin() {
+  //   return this.standardLoginForm.controls;
+  // }
+
+  // get pingForm() {
+  //   return this.pingForm.controls;
+  // }
+
 
   initializeFields() {
     this.adSettingsFormObj = {
@@ -72,25 +145,43 @@ export class AdSettingsComponent implements OnInit {
       rootDn: ['', Validators.required],
       domain: ['', Validators.required]
     };
+
+    // this.standardLoginFormObj = {
+    //   username: ['', Validators.required],
+    //   password: ['', Validators.required]
+    // };
+
+    // this.pingAuthenticationFormObj = {
+    //   field1: ['', Validators.required],
+    //   field2: ['', Validators.required]
+    // };
   }
 
   submit() {
     this.submitted = true;
-    // return if form is invalid
-    if (this.adSettingsForm.invalid) {
-      return;
-    }
-
     const submitData = {};
-    for (const obj in this.adForm) {
-      if (obj === 'password') {
-        submitData[obj] = this.rsa.encrypt(this.adForm[obj].value);
+    submitData['authTypeStatus'] = {};
+    this.selectedTypes.forEach((item) => {
+      submitData['authTypeStatus'][item.name] = true;
+    });
+
+    if (this.selectedTypes.filter((type) => type.name === 'adLogin').length) {
+      // return if form is invalid
+      if (this.adSettingsForm.invalid) {
+        return;
       } else {
-        submitData[obj] = this.adForm[obj].value;
+        submitData['adServerDetail'] = {};
+        for (const obj in this.adForm) {
+          if (obj === 'password') {
+            submitData['adServerDetail'][obj] = this.rsa.encrypt(this.adForm[obj].value);
+          } else {
+            submitData['adServerDetail'][obj] = this.adForm[obj].value;
+          }
+        }
       }
     }
 
-    this.http.setADConfig(submitData).subscribe(response => {
+    this.http.setAuthConfig(submitData).subscribe(response => {
       if (response && response['success']) {
         this.messenger.add({
           severity: 'success',
@@ -100,9 +191,14 @@ export class AdSettingsComponent implements OnInit {
       } else {
         this.messenger.add({
           severity: 'error',
-          summary: 'Some error occurred. Please try again later.'
+          summary: 'Some error occurred!'
         });
       }
+    }, err => {
+      this.messenger.add({
+        severity: 'error',
+        summary: err.error.message
+      });
     });
   }
 }

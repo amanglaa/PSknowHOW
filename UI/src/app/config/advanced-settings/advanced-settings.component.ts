@@ -61,7 +61,7 @@ export class AdvancedSettingsComponent implements OnInit {
 
     if (this.getAuthorizationService.checkIfSuperUser()) {
       this.items.push({
-        label: 'AD Settings',
+        label: 'Authentication Type',
         icon: 'pi pi-book',
         command: (event) => {
           this.switchView(event);
@@ -86,7 +86,7 @@ export class AdvancedSettingsComponent implements OnInit {
         this.getProjects();
       }
         break;
-      case 'AD Settings': {
+      case 'Authentication Type': {
         this.selectedView = 'ad_settings';
       }
         break;

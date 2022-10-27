@@ -32,7 +32,7 @@
            <div *ngIf="error" class="alert alert-danger w-100 p-mb-0">{{error}}</div>
             <p-tabView class="title w-100" [activeIndex]="adLogin ? 0 : 1">
               
-              <p-tabPanel header="Active Directory Login">
+              <p-tabPanel header="Active Directory Login" *ngIf="loginConfig['adLogin']">
                 <form class="w-100" [formGroup]="adLoginForm" (ngSubmit)="onSubmit('AD')" autocomplete="off">
                   <div class="group">
                     <input autocomplete="new-username" type="text" name="username" id="Layout-UserName"
@@ -72,7 +72,7 @@
                 </form>
               </p-tabPanel>
       
-              <p-tabPanel header="KnowHOW Login">
+              <p-tabPanel header="KnowHOW Login" *ngIf="loginConfig['standardLogin']">
                 <form class="w-100" [formGroup]="loginForm" (ngSubmit)="onSubmit('standard')">
                   <div class="group">
                     <input autocomplete="off" type="text" name="username" id="Layout-UserName" formControlName="username"
