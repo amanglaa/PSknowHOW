@@ -107,7 +107,7 @@ pipeline {
                     docker login -u ${REGISTRY_USERNAME} -p ${REGISTRY_PASSWORD} ${env.select_docker_registry}
                     docker tag customapi:${env.version} ${env.select_docker_registry}/speedy/customapi:${env.version}
                     docker push ${env.select_docker_registry}/speedy/customapi:${env.version}
-                    echo "${env.select_docker_registry}/speedy/customapi:${env.version}" ${WORKSPACE}/customapi/Dockerfile > anchore_images
+                    echo "${env.select_docker_registry}/speedy/customapi:${env.version}" ${WORKSPACE}/customapi/Dockerfile > customapi_images
                     docker logout ${env.select_docker_registry}
                 """
               }
@@ -119,7 +119,7 @@ pipeline {
          }
          steps {
               script{
-                anchore engineCredentialsId: 'Anchore-Cred', engineurl: 'http://172.19.0.6:8228/v1', forceAnalyze: true, name: 'anchore_images'
+                anchore bailOnFail: false, bailOnPluginFail: false, engineCredentialsId: 'Anchore-Cred', engineurl: 'http://172.19.0.6:8228/v1', forceAnalyze: true, name: 'customapi_images'
               }
           }
       }
