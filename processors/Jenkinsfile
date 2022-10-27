@@ -39,23 +39,6 @@ pipeline {
                       }
             }
         }
-        stage('Select Processor to deploy') {
-            when {
-                 expression { env.DEPLOY_SINGLE_SERVICE == 'true' }
-            }
-            steps {
-                script {
-                                def PROCESSORS = []
-                                PROCESSORS.add("nonJira_Processor")
-                                PROCESSORS.add("Jira_Processor")
-								PROCESSORS.add("Azure_Processor")
-								PROCESSORS.add("nonAzureBoards_Processor")
-                                env.SERVICE = input  message: 'Select Processor ',ok : 'Proceed',id :'tag_id',
-                                parameters:[choice(choices: PROCESSORS, description: 'Select Processor', name: 'env')]
-                                echo "Deploying ${env.SERVICE}."
-                }
-            }
-        }
         stage('Checkout') {
           steps {
             checkout scm: [$class: 'GitSCM', userRemoteConfigs: [[url: 'https://github.com/PublicisSapient/PSknowHOW.git',credentialsId: 'githubcred']], branches: [[name: '${SBRANCH}']]], poll: false
@@ -99,7 +82,7 @@ pipeline {
                                 docker login -u ${REGISTRY_USERNAME} -p ${REGISTRY_PASSWORD} ${env.select_docker_registry}
                                 docker tag jira-processor:${env.version} ${env.select_docker_registry}/speedy/jira-processor:${env.version}
                                 docker push ${env.select_docker_registry}/speedy/jira-processor:${env.version}
-                                echo -e '"${env.select_docker_registry}/speedy/jira-processor:${env.version}" ${WORKSPACE}/processors/jira/Dockerfile' > processor_images
+                                echo -e ""${env.select_docker_registry}/speedy/jira-processor:${env.version}" ${WORKSPACE}/processors/jira/Dockerfile" > processor_images
                                 docker logout ${env.select_docker_registry}
                             """
                   }
