@@ -14,6 +14,7 @@ pipeline {
            booleanParam(name: 'SKIP_UNIT_TEST', defaultValue: 'false', description: 'SKIP UNIT TEST Cases')
            booleanParam(name: 'SONAR', defaultValue: 'true', description: 'SONAR')
            booleanParam(name: 'PUSH_REGISTRY', defaultValue: 'false', description: 'PUSH_REGISTRY')
+           booleanParam(name:'SCAN_DOCKER_IMAGE', defaultValue: 'false', description: 'SCAN-Docker-image')
            choice(name: 'DEPLOY', choices: ['', 'OPENSOURCE', 'PS-INTERNAL'], description: '')
       	   string(name: 'DNS_NAME', defaultValue: '', description: 'enter DNS name if present')
    }
@@ -106,8 +107,19 @@ pipeline {
                     docker login -u ${REGISTRY_USERNAME} -p ${REGISTRY_PASSWORD} ${env.select_docker_registry}
                     docker tag customapi:${env.version} ${env.select_docker_registry}/speedy/customapi:${env.version}
                     docker push ${env.select_docker_registry}/speedy/customapi:${env.version}
+                    echo "${env.select_docker_registry}/speedy/customapi:${env.version}" ${WORKSPACE}/customapi/Dockerfile > customapi_images
                     docker logout ${env.select_docker_registry}
                 """
+              }
+          }
+      }
+      stage('Scanning Docker image') {
+        when{
+            expression { env.SCAN_DOCKER_IMAGE == 'true' }
+         }
+         steps {
+              script{
+                anchore bailOnFail: false, bailOnPluginFail: false, engineCredentialsId: 'Anchore-Cred', engineurl: 'http://172.19.0.6:8228/v1', forceAnalyze: true, name: 'customapi_images'
               }
           }
       }
