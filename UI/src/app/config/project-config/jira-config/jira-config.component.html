@@ -157,7 +157,8 @@
                                     pTooltip="<span class='tooltiptext'>
                                         {{form_elem.tooltip}}
                                       </span>" tooltipPosition="top" tooltipEvent="hover" [escape]="false"
-                                    (onUnselect)="form_elem.unselectEventHandler($event)" (onSelect)="form_elem.selectEventHandler($event)"></p-autoComplete>
+                                    (onUnselect)="form_elem.unselectEventHandler($event)" (onSelect)="form_elem.selectEventHandler($event)"
+                                    [disabled]="form_elem.disabled()"></p-autoComplete>
                             </div>
                         </div>
                         <div *ngSwitchCase="'array'" class="p-field p-p-0">

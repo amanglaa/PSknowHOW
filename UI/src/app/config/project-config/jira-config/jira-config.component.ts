@@ -384,6 +384,7 @@ export class JiraConfigComponent implements OnInit {
   }
   getConnectionList(toolName) {
     this.loading = true;
+    this.isLoading = true;
     this.http.getAllConnectionTypeBased(toolName).subscribe((response) => {
       this.loading = false;
       if (response && response['success']) {
@@ -435,6 +436,13 @@ export class JiraConfigComponent implements OnInit {
     return true;
   };
 
+  checkBoards = () => {
+    if (this.isLoading || !this.boardsData || !this.boardsData.length) {
+      return true;
+    }
+    return false;
+  };
+
   fetchBoards = () => {
     if (this.selectedConnection && this.selectedConnection.id) {
       const postData = {};
@@ -444,18 +452,29 @@ export class JiraConfigComponent implements OnInit {
       postData['projectKey'] = this.toolForm.controls['projectKey'].value;
       postData['boardType'] = this.selectedProject['Type'];
       this.http.getAllBoards(postData).subscribe((response) => {
-        this.hideLoadingOnFormElement('boards');
-        this.isLoading = false;
-        this.boardsData = response['data'];
-        this.boardsData.forEach((board) => {
-          board['projectKey'] = this.toolForm.controls['projectKey'].value;
-        });
-        // if boards already has value
-        this.toolForm.controls['boards'].value.forEach((val) => {
-          this.boardsData = this.boardsData.filter((data) => (data.boardId + '') !== (val.boardId + ''));
-        });
-        this.isLoading = false;
+        if (response && response['data']) {
+          this.boardsData = response['data'];
+          this.boardsData.forEach((board) => {
+            board['projectKey'] = this.toolForm.controls['projectKey'].value;
+          });
+          // if boards already has value
+          this.toolForm.controls['boards'].value.forEach((val) => {
+            this.boardsData = this.boardsData.filter((data) => (data.boardId + '') !== (val.boardId + ''));
+          });
+          this.isLoading = false;
+        } else {
+          this.messenger.add({
+            severity: 'error',
+            summary:
+              'No boards found for the selected Project Key.',
+          });
+          this.hideLoadingOnFormElement('boards');
+          this.isLoading = false;
+          this.boardsData = [];
+          this.toolForm.controls['boards'].setValue([]);
+        }
       });
+
     } else {
       this.messenger.add({
         severity: 'error',
@@ -866,7 +885,8 @@ export class JiraConfigComponent implements OnInit {
                 selectEventHandler: this.onBoardSelect,
                 unselectEventHandler: this.onBoardUnselect,
                 show: true,
-                isLoading: false
+                isLoading: false,
+                disabled: this.checkBoards
               }
             ],
           };
