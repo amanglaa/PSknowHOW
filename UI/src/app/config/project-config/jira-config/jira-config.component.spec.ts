@@ -34,6 +34,7 @@ import { ChipsModule } from 'primeng/chips';
 import { ToastModule } from 'primeng/toast';
 import { TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
+import { AutoCompleteModule } from 'primeng/autocomplete';
 
 import { environment } from 'src/environments/environment';
 import { Observable } from 'rxjs';
@@ -114,6 +115,7 @@ describe('JiraConfigComponent', () => {
         HttpClientTestingModule,
         InputSwitchModule,
         ChipsModule,
+        AutoCompleteModule,
         ToastModule,
         TableModule,
         TooltipModule,
@@ -174,8 +176,13 @@ describe('JiraConfigComponent', () => {
   it('should save form', () => {
     component.ngOnInit();
     component.toolForm.controls['projectKey'].setValue('1212');
-    component.toolForm.controls['boardQuery'].setValue('Test_Query');
-    component.toolForm.controls['queryEnabled'].setValue(true);
+    component.toolForm.controls['boards'].setValue([
+      {
+        boardId: '123123',
+        boardName: 'Copy of ABC Kanban',
+        projectKey: 'ABC'
+      }
+    ]);
     component.isEdit = false;
     component.selectedConnection = selectedConnection;
 
@@ -187,8 +194,13 @@ describe('JiraConfigComponent', () => {
   it('should submit edit form', () => {
     component.ngOnInit();
     component.toolForm.controls['projectKey'].setValue('1212');
-    component.toolForm.controls['boardQuery'].setValue('Test_Query');
-    component.toolForm.controls['queryEnabled'].setValue(true);
+    component.toolForm.controls['boards'].setValue([
+      {
+        boardId: '123123',
+        boardName: 'Copy of ABC Kanban',
+        projectKey: 'ABC'
+      }
+    ]);
     component.isEdit = true;
     component.selectedConnection = selectedConnection;
 
