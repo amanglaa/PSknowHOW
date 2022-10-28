@@ -316,7 +316,7 @@ public class AverageResolutionTimeServiceImpl extends JiraKPIService<Double, Lis
 
 		Map<String, Pair<String, String>> sprintWithDateMap = new HashMap<>();
 		Map<String, Map<String, Object>> uniqueProjectMap = new HashMap<>();
-		Map<String, List<String>> statusConfigsOfRejectedStoriesByProject = new HashMap<>();
+		Map<String, Map<String,List<String>>> statusConfigsOfRejectedStoriesByProject = new HashMap<>();
 		Map<String, FieldMapping> projectFieldMapping = new HashMap<>();
 
 		leafNodeList.forEach(leaf -> {
@@ -356,30 +356,19 @@ public class AverageResolutionTimeServiceImpl extends JiraKPIService<Double, Lis
 				uniqueProjectMap);
 
 		// do not change the order of remove methods
-		removeRejectedIssues(jiraIssuesBySprintAndType, statusConfigsOfRejectedStoriesByProject);
+		List<JiraIssue> defectListWoDrop = new ArrayList<>();
+		KpiHelperService.getDefectsWithoutDrop(statusConfigsOfRejectedStoriesByProject, jiraIssuesBySprintAndType, defectListWoDrop);
 
-		List<String> storyIds = getIssueIds(jiraIssuesBySprintAndType);
+		List<String> storyIds = getIssueIds(defectListWoDrop);
 
 		List<JiraIssueCustomHistory> storiesHistory = jiraIssueCustomHistoryRepository
 				.findByStoryIDInAndBasicProjectConfigIdIn(storyIds, basicProjectConfigIds);
 
 		resultListMap.put(STORY_HISTORY_DATA, storiesHistory);
 		resultListMap.put(STORY_LIST, storyIds);
-		resultListMap.put(JIRA_ISSUE_LIST, jiraIssuesBySprintAndType);
+		resultListMap.put(JIRA_ISSUE_LIST, defectListWoDrop);
 		resultListMap.put(PROJECT_FIELDMAPPING, projectFieldMapping);
 		return resultListMap;
-	}
-
-	private void removeRejectedIssues(List<JiraIssue> issuesBySprintAndType,
-			Map<String, List<String>> statusConfigsOfRejectedStoriesByProject) {
-		issuesBySprintAndType.removeIf(issue -> {
-			String resolution = issue.getResolution();
-			List<String> statusListOfRejectedStory = statusConfigsOfRejectedStoriesByProject.get(issue.getBasicProjectConfigId());
-			if (StringUtils.isNotBlank(resolution) && CollectionUtils.isNotEmpty(statusListOfRejectedStory)) {
-				return statusListOfRejectedStory.contains(resolution.toLowerCase());
-			}
-			return false;
-		});
 	}
 
 	@NotNull

@@ -173,7 +173,7 @@ public class DCServiceImpl extends JiraKPIService<Long, List<Object>, Map<String
 		List<String> basicProjectConfigIds = new ArrayList<>();
 
 		final Map<String, Map<String, Object>> uniqueProjectMap = new HashMap<>();
-		final Map<String, List<String>> droppedDefects = new HashMap<>();
+		final Map<String, Map<String,List<String>>> droppedDefects = new HashMap<>();
 		final List<String> defectType = new ArrayList<>();
 
 		leafNodeList.forEach(leaf -> {
@@ -236,7 +236,7 @@ public class DCServiceImpl extends JiraKPIService<Long, List<Object>, Map<String
 	 * @return
 	 */
 	private List<JiraIssue> getDefectListWoDrop(List<JiraIssue> defectLinkedWithStory,
-			Map<String, List<String>> droppedDefects) {
+												Map<String, Map<String,List<String>>> droppedDefects) {
 		List<JiraIssue> defectListWoDrop = new ArrayList<>();
 		KpiHelperService.getDefectsWithoutDrop(droppedDefects, defectLinkedWithStory, defectListWoDrop);
 

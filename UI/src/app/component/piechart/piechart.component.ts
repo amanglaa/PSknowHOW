@@ -68,11 +68,11 @@ export class PiechartComponent implements OnChanges {
 
 
     const data = [{
-      'label': 'Actual',
-      'value': parseInt(this.value, 10)
+      label: 'Actual',
+      value: parseInt(this.value, 10)
     }, {
-      'label': 'remaining',
-      'value': 100 - parseInt(this.value, 10)
+      label: 'remaining',
+      value: 100 - parseInt(this.value, 10)
     }];
 
     const colors = ['#81d0e0', '#2d7196'];
@@ -81,7 +81,7 @@ export class PiechartComponent implements OnChanges {
 
     const arc = d3.arc()
       .innerRadius(0)
-      .outerRadius(function (d, i) {
+      .outerRadius(function(d, i) {
         if (d.data.value <= 50) {
           return 45;
         } else {
@@ -95,7 +95,7 @@ export class PiechartComponent implements OnChanges {
       .outerRadius(60);
 
     const pie = d3.pie()
-      .value(function (d) {
+      .value(function(d) {
         return d.value;
       });
 
@@ -111,10 +111,10 @@ export class PiechartComponent implements OnChanges {
     renderarcs.append('path')
 
       .attr('d', arc)
-      .attr('fill', function (d, i) {
+      .attr('fill', function(d, i) {
         return colors[i];
       })
-      .on('mouseover', function (d) {
+      .on('mouseover', function(d) {
         const currentEl = d3.select(this);
         currentEl.attr('style', 'fill-opacity:1;');
         currentEl.attr('stroke', 'white')
@@ -122,7 +122,7 @@ export class PiechartComponent implements OnChanges {
           .duration(1000)
           .attr('stroke-width', 2);
       })
-      .on('mouseout', function (d) {
+      .on('mouseout', function(d) {
         const currentEl = d3.select(this);
         currentEl.transition()
           .attr('stroke', 'none');
@@ -130,7 +130,7 @@ export class PiechartComponent implements OnChanges {
 
     renderarcs.append('text')
       .style('font-size', '13px')
-      .attr('transform', function (d) {
+      .attr('transform', function(d) {
         const c = arc.centroid(d);
         if (d.value === 100) {
           return 'translate(' + (c[0] - 15) + ',' + 0 + ')';
@@ -138,7 +138,7 @@ export class PiechartComponent implements OnChanges {
           return 'translate(' + (c[0] - 15) + ',' + c[1] + ')';
         }
       })
-      .text(function (d) {
+      .text(function(d) {
         if (d.value !== 0) {
           return d.value + '%';
 
@@ -158,8 +158,12 @@ export class PiechartComponent implements OnChanges {
 
 
     legend.append('circle')
-      .style('fill', function (d, i) { return colors[i]; })
-      .style('stroke', function (d, i) { return colors[i]; })
+      .style('fill', function(d, i) {
+ return colors[i];
+})
+      .style('stroke', function(d, i) {
+ return colors[i];
+})
       .attr('r', 5);
 
     legend.append('text')
@@ -172,9 +176,13 @@ export class PiechartComponent implements OnChanges {
 
     // Now space the groups out after they have been appended:
     const padding = 10;
-    legend.attr('transform', function (d, i) {
-      return 'translate(' + (d3.sum(legendData, function (e, j) {
-        if (j < i) { return legend.nodes()[j].getBBox().width; } else { return 0; }
+    legend.attr('transform', function(d, i) {
+      return 'translate(' + (d3.sum(legendData, function(e, j) {
+        if (j < i) {
+ return legend.nodes()[j].getBBox().width;
+} else {
+ return 0;
+}
       }) + padding * i) + ',0)';
     });
 

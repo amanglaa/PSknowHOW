@@ -287,7 +287,7 @@ public abstract class ZephyrKPIService<R, S, T> extends ToolsKPIService<R, S> im
 			}
 
 			if (CollectionUtils.isNotEmpty(fieldMapping.getTestCaseStatus())) {
-				mapOfProjectFiltersNotIn.put(JiraFeature.STATUS.getFieldValueInFeature(),
+				mapOfProjectFiltersNotIn.put(JiraFeature.TEST_CASE_STATUS.getFieldValueInFeature(),
 						CommonUtils.convertTestFolderToPatternList(fieldMapping.getTestCaseStatus()));
 			}
 
@@ -303,7 +303,7 @@ public abstract class ZephyrKPIService<R, S, T> extends ToolsKPIService<R, S> im
 		mapOfFilters.put(JiraFeature.ISSUE_TYPE.getFieldValueInFeature(),
 				Arrays.asList(NormalizedJira.TEST_TYPE.getValue()));
 
-		//List<TestCaseDetails> testCasesList = testCaseDetailsRepository.findTestCases(mapOfFilters, uniqueProjectMap);
+
 		List<TestCaseDetails> testCasesList = testCaseDetailsRepository.findTestDetails(mapOfFilters, uniqueProjectMap,uniqueProjectMapNotIn);
 
 		Map<String, List<TestCaseDetails>> towerWiseTotalMap = testCasesList.stream()

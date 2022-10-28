@@ -35,15 +35,15 @@ import { environment } from 'src/environments/environment';
 describe('RegisterComponent', () => {
   let component: RegisterComponent;
   let fixture: ComponentFixture<RegisterComponent>;
-  const fakeRegister = JSON.stringify({ 'X-Authentication-Token': 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0MTIiLCJkZXRhaWxzIjoiU1RBTkRBUkQiLCJyb2xlcyI6WyJST0xFX1VTRVIiXSwiZXhwIjoxNTcxNDAwMjI2fQ.1R7hBgf4YuXO4CHsvuKq4oWOHaRvl3KKhhy4wd_BDVocz6PV7i9XJngZGd-ZJI_c0x5ZFa1xZ1eOpix_WObxTw', 'Success': 'Success' });
+  const fakeRegister = JSON.stringify({ 'X-Authentication-Token': 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0MTIiLCJkZXRhaWxzIjoiU1RBTkRBUkQiLCJyb2xlcyI6WyJST0xFX1VTRVIiXSwiZXhwIjoxNTcxNDAwMjI2fQ.1R7hBgf4YuXO4CHsvuKq4oWOHaRvl3KKhhy4wd_BDVocz6PV7i9XJngZGd-ZJI_c0x5ZFa1xZ1eOpix_WObxTw', Success: 'Success' });
   let httpMock;
   let httpreq;
   let httpService;
   // const errorMsz = 'Cannot complete the registration process, Try with different email';
   const errorMsz = {
-    "message":"Cannot complete the registration process, Try with different email",
-    "success":false
-  }
+    message:'Cannot complete the registration process, Try with different email',
+    success:false
+  };
   const baseUrl = environment.baseUrl;
 
   beforeEach(waitForAsync(() => {

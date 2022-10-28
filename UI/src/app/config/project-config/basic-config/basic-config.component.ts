@@ -17,7 +17,7 @@
  ******************************************************************************/
 
 import { ChangeDetectionStrategy, Component, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, AbstractControl, FormControl } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators, AbstractControl, FormControl } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { HttpService } from '../../../services/http.service';
 import { SharedService } from '../../../services/shared.service';
@@ -39,16 +39,16 @@ export class BasicConfigComponent implements OnInit {
   submitted = false;
   selectedType = false;
   selectedProject: any;
-  disableSave: boolean = false;
-  ifSuperUser: boolean = false;
+  disableSave = false;
+  ifSuperUser = false;
   configuredTools: any = [];
-  loading: boolean = false;
+  loading = false;
   formData: any;
   getFieldsResponse: any;
-  public form: FormGroup = this.formBuilder.group({});
-  blocked: boolean = true;
+  public form: UntypedFormGroup = this.formBuilder.group({});
+  blocked = true;
 
-  constructor(private formBuilder: FormBuilder, private sharedService: SharedService, private http: HttpService, private messenger: MessageService, private getAuthorizationService: GetAuthorizationService, private aesEncryption: TextEncryptionService) {
+  constructor(private formBuilder: UntypedFormBuilder, private sharedService: SharedService, private http: HttpService, private messenger: MessageService, private getAuthorizationService: GetAuthorizationService, private aesEncryption: TextEncryptionService) {
     this.projectTypeOptions = [
       { name: 'Scrum', value: false },
       { name: 'Kanban', value: true }
@@ -65,27 +65,27 @@ export class BasicConfigComponent implements OnInit {
   getFields() {
     // api call to get formData
     this.blocked = true;
-    let formFieldData = JSON.parse(localStorage.getItem('hierarchyData'));
+    const formFieldData = JSON.parse(localStorage.getItem('hierarchyData'));
     this.formData = JSON.parse(JSON.stringify(formFieldData));
     this.getFieldsResponse = JSON.parse(JSON.stringify(formFieldData));
     this.formData.unshift(
       {
-        'level': 0,
-        'hierarchyLevelId': 'kanban',
-        'hierarchyLevelName': 'Project Methodology',
-        'inputType': 'switch',
-        'value': false,
-        'required': true
+        level: 0,
+        hierarchyLevelId: 'kanban',
+        hierarchyLevelName: 'Project Methodology',
+        inputType: 'switch',
+        value: false,
+        required: true
       });
 
     this.formData.push(
       {
-        'level': this.formData.length,
-        'hierarchyLevelId': 'projectName',
-        'hierarchyLevelName': 'Project Name',
-        'inputType': 'text',
-        'value': '',
-        'required': true
+        level: this.formData.length,
+        hierarchyLevelId: 'projectName',
+        hierarchyLevelName: 'Project Name',
+        inputType: 'text',
+        value: '',
+        required: true
       }
     );
 
@@ -100,10 +100,10 @@ export class BasicConfigComponent implements OnInit {
   }
 
   search(event, field) {
-    let filtered: any[] = [];
-    let query = event.query;
+    const filtered: any[] = [];
+    const query = event.query;
     for (let i = 0; i < field.suggestions.length; i++) {
-      let country = field.suggestions[i];
+      const country = field.suggestions[i];
       if (country.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
         filtered.push(country);
       }
@@ -113,8 +113,8 @@ export class BasicConfigComponent implements OnInit {
   }
 
   onSubmit() {
-    let formValue = this.form.getRawValue();
-    let submitData = {};
+    const formValue = this.form.getRawValue();
+    const submitData = {};
     submitData['projectName'] = formValue['projectName'];
     submitData['kanban'] = formValue['kanban'];
     submitData['hierarchy'] = [];
@@ -169,7 +169,7 @@ export class BasicConfigComponent implements OnInit {
 
   stringValidator(control: AbstractControl): { [key: string]: boolean } | null {
     if ((typeof control.value === 'string' || control.value instanceof String) && control.value !== null && (control.value && (control.value.indexOf('###') !== -1 || control.value.indexOf('~') !== -1 || control.value.indexOf('`') !== -1 || control.value.indexOf('!') !== -1))) {
-      return { 'stringValidator': true }
+      return { stringValidator: true };
     }
     return null;
   }

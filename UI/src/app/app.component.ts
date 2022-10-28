@@ -68,11 +68,11 @@ export class AppComponent implements OnInit {
 
       // insert page in dataLayer
       if (event instanceof NavigationEnd) {
-        let data = {
+        const data = {
           url: event.urlAfterRedirects + '/' + (this.service.getSelectedType() ? this.service.getSelectedType() : 'Scrum'),
           userRole: this.authorisation.getRole(),
           version: this.httpService.currentVersion
-        }
+        };
         this.ga.setPageLoad(data);
       }
 

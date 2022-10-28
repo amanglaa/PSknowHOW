@@ -34,6 +34,7 @@ import {RadioButtonModule} from 'primeng/radiobutton';
 import {InputTextareaModule} from 'primeng/inputtextarea';
 import {AccordionModule} from 'primeng/accordion';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { DatePipe } from '@angular/common';
 /******************************************************/
 
 /******************* components   ***********************/
@@ -63,7 +64,6 @@ import { TabViewModule } from 'primeng/tabview';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { TabMenuModule } from 'primeng/tabmenu';
-import { MenuItem } from 'primeng/api';
 
 
 /******************************************************/
@@ -75,7 +75,6 @@ import { ExcelService } from './services/excel.service';
 import { SharedService } from './services/shared.service';
 import { GetAuthService } from './services/getauth.service';
 import { APP_CONFIG, AppConfig } from './services/app.config';
-import { DatePipe } from '../../node_modules/@angular/common';
 
 import { HelperService } from './services/helper.service';
 import { GetAuthorizationService } from './services/get-authorization.service';
@@ -95,7 +94,6 @@ import { TrendIndicatorComponent } from './dashboard/trend-indicator/trend-indic
 import { NoAccessComponent } from './component/no-access/no-access.component';
 import { TooltipComponent } from './component/tooltip/tooltip.component';
 import { GroupedColumnPlusLineChartComponent } from './component/grouped-column-plus-line-chart/grouped-column-plus-line-chart.component';
-import { StackBarChartComponent } from './component/stack-bar-chart/stack-bar-chart.component';
 import { BacklogComponent } from './dashboard/backlog/backlog.component';
 import { TableComponent } from './component/table/table.component';
 
@@ -103,85 +101,83 @@ import { TableComponent } from './component/table/table.component';
 
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    NavComponent,
-    CircularProgressComponent,
-    ProgressbarComponent,
-    CircularchartComponent,
-    NumberchartComponent,
-    BarchartComponent,
-    LineBarChartComponent,
-    LineBarChartWithHowerComponent,
-    GaugechartComponent,
-    MultilineComponent,
-    ExecutiveComponent,
-    MaturityComponent,
-    FilterComponent,
-    DashboardComponent,
-    GroupstackchartComponent,
-    PiechartComponent,
-    KpiComponent,
-    ErrorComponent,
-    // FooterComponent,
-    IterationComponent,
-    OverlappedProgressbarComponent,
-    HorizontalStackProgressbarComponent,
-    CircularProgressWithLegendsComponent,
-    ExternalUrlDirective,
-    LandingPageComponent,
-    KpiCardComponent,
-    TrendIndicatorComponent,
-    TooltipComponent,
-    NoAccessComponent,
-    GroupedColumnPlusLineChartComponent,
-    StackBarChartComponent,
-    BacklogComponent,
-    TableComponent
-  ],
-  imports: [
-    DropdownModule,
-    BrowserModule,
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    HttpClientModule,
-    InterceptorModule,
-    AppRoutingModule,
-    // NgSelectModule,
-    MultiSelectModule,
-    BrowserAnimationsModule,
-    SharedModuleModule,
-    InputSwitchModule,
-    RippleModule,
-    BadgeModule,
-    TabViewModule,
-    TableModule,
-    ButtonModule,
-    TabMenuModule,
-    ToastModule, 
-    RadioButtonModule,
-    InputTextareaModule,
-    AccordionModule,
-    DialogModule,
-    FontAwesomeModule
-  ],
-  providers: [
-    ExcelService,
-    DatePipe,
-    SharedService,
-    GetAuthService,
-    ExecutiveComponent,
-    HelperService,
-    GetAuthorizationService,
-    JsonExportImportService,
-    RsaEncryptionService,
-    MessageService,
-    TextEncryptionService,
-    { provide: APP_CONFIG, useValue: AppConfig }
-  ],
-  entryComponents: [LineBarChartComponent],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent,
+        NavComponent,
+        CircularProgressComponent,
+        ProgressbarComponent,
+        CircularchartComponent,
+        NumberchartComponent,
+        BarchartComponent,
+        LineBarChartComponent,
+        LineBarChartWithHowerComponent,
+        GaugechartComponent,
+        MultilineComponent,
+        ExecutiveComponent,
+        MaturityComponent,
+        FilterComponent,
+        DashboardComponent,
+        GroupstackchartComponent,
+        PiechartComponent,
+        KpiComponent,
+        ErrorComponent,
+        // FooterComponent,
+        IterationComponent,
+        OverlappedProgressbarComponent,
+        HorizontalStackProgressbarComponent,
+        CircularProgressWithLegendsComponent,
+        ExternalUrlDirective,
+        LandingPageComponent,
+        KpiCardComponent,
+        TrendIndicatorComponent,
+        TooltipComponent,
+        NoAccessComponent,
+        GroupedColumnPlusLineChartComponent,
+        BacklogComponent,
+        TableComponent
+    ],
+    imports: [
+        DropdownModule,
+        BrowserModule,
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        HttpClientModule,
+        InterceptorModule,
+        AppRoutingModule,
+        // NgSelectModule,
+        MultiSelectModule,
+        BrowserAnimationsModule,
+        SharedModuleModule,
+        InputSwitchModule,
+        RippleModule,
+        BadgeModule,
+        TabViewModule,
+        TableModule,
+        ButtonModule,
+        TabMenuModule,
+        ToastModule,
+        RadioButtonModule,
+        InputTextareaModule,
+        AccordionModule,
+        DialogModule,
+        FontAwesomeModule
+    ],
+    providers: [
+        ExcelService,
+        SharedService,
+        GetAuthService,
+        ExecutiveComponent,
+        HelperService,
+        GetAuthorizationService,
+        JsonExportImportService,
+        RsaEncryptionService,
+        MessageService,
+        TextEncryptionService,
+        DatePipe,
+        { provide: APP_CONFIG, useValue: AppConfig }
+    ],
+    bootstrap: [AppComponent]
 })
 export class AppModule { }
 

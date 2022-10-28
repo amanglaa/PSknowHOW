@@ -21,7 +21,7 @@ import { GetAuthorizationService } from '../../services/get-authorization.servic
 import { MenuItem } from 'primeng/api';
 import { Router } from '@angular/router';
 
-declare var $: any;
+declare let $: any;
 
 @Component({
     selector: 'app-project-config',

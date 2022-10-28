@@ -63,13 +63,13 @@ export class HelperService {
                         if (dynamicKeys.length == 0) {
                             dynamicKeys = Object.keys(getData['validationData'][key][kpiName][0]);
                         }
-                        for (let x in dynamicKeys) {
+                        for (const x in dynamicKeys) {
                             getData['validationData'][key][dynamicKeys[x]] = [];
                         }
 
-                        let arr = getData['validationData'][key][kpiName];
+                        const arr = getData['validationData'][key][kpiName];
                         for (let i = 0; i < arr.length; i++) {
-                            for (let item in arr[i]) {
+                            for (const item in arr[i]) {
                                 getData['validationData'][key][item].push(arr[i][item]);
                             }
                         }
@@ -174,16 +174,16 @@ export class HelperService {
                             tempobj = {
                                 label: obj,
                                 value: {
-                                    'trendValue': selectedObj.value,
-                                    'aggregatedValue': zypherKpiData[requiredKpi].value[obj]
+                                    trendValue: selectedObj.value,
+                                    aggregatedValue: zypherKpiData[requiredKpi].value[obj]
                                 }
                             };
                         } else {
                             tempobj = {
                                 label: 'Overall',
                                 value: {
-                                    'trendValue': selectedObj.value,
-                                    'aggregatedValue': zypherKpiData[requiredKpi].value[obj]
+                                    trendValue: selectedObj.value,
+                                    aggregatedValue: zypherKpiData[requiredKpi].value[obj]
                                 }
                             };
                             // by default selecting Select from the drop down in sonar filter
@@ -203,8 +203,8 @@ export class HelperService {
             });
         }
         const objToReturn = {
-            'selectedTestExecutionFilterData': selectedTestExecutionFilterData,
-            'testExecutionFilterData': testExecutionFilterData
+            selectedTestExecutionFilterData,
+            testExecutionFilterData
         };
         return objToReturn;
 
@@ -293,7 +293,7 @@ export class HelperService {
         if (aggType === 'percentile') {
             const data = [a, b];
             const array = data;
-            array.sort(function (a1, b1) {
+            array.sort(function(a1, b1) {
                 return a1 - b1;
             });
             let index = percentile / 100. * (array.length);
@@ -321,7 +321,7 @@ export class HelperService {
         return unordered;
     }
 
-    // compare filters 
+    // compare filters
     compareFilters(obj1, obj2, kanbanActivated) {
 
         if (this.isKanban !== kanbanActivated) {
@@ -346,14 +346,14 @@ export class HelperService {
         // calculate gross maturity
         calculateGrossMaturity(data, globalConfig) {
             if (data && Object.keys(data)?.length) {
-                let self = this;
+                const self = this;
                 self.grossMaturityObj = {};
                 Object.keys(data)?.forEach(key => {
                     data[key]?.forEach(element => {
                         self.grossMaturityObj[element.data] = 0;
                     });
                 });
-    
+
                 let divisor = 0;
                 Object.keys(data)?.forEach(key => {
                     data[key]?.forEach(element => {
@@ -361,7 +361,7 @@ export class HelperService {
                         if (shouldIncludeMaturity.length) {
                             // console.log(key, shouldIncludeMaturity[0]['kpiDetail'].kpiName, shouldIncludeMaturity[0]['kpiDetail'].calculateMaturity, parseFloat(element.maturity));
                             shouldIncludeMaturity = shouldIncludeMaturity[0]['kpiDetail'].calculateMaturity;
-    
+
                             if (shouldIncludeMaturity === true) {
                                 self.grossMaturityObj[element.data] += parseFloat((element.maturity ? parseFloat(element.maturity) : 0) + '');
                             }
@@ -375,7 +375,7 @@ export class HelperService {
                         divisor++;
                     }
                 });
-    
+
                 Object.keys(self.grossMaturityObj)?.forEach(key => {
                     // console.log(self.grossMaturityObj[key], devisor);
                     if (divisor) {
@@ -388,7 +388,7 @@ export class HelperService {
             }
         }
 
-   
+
     sortAlphabetically(objArray) {
         if (objArray && objArray?.length > 1) {
             objArray?.sort((a, b) => a.data.localeCompare(b.data));
@@ -398,7 +398,7 @@ export class HelperService {
 
     /** logic to apply multiselect filter */
     applyAggregationLogic(obj, aggregationType, percentile) {
-        let arr = JSON.parse(JSON.stringify(obj[Object.keys(obj)[0]]));
+        const arr = JSON.parse(JSON.stringify(obj[Object.keys(obj)[0]]));
         for (let i = 0; i < Object.keys(obj).length; i++) {
             for (let j = 0; j < obj[Object.keys(obj)[i]].length; j++) {
                 if (arr.findIndex(x => x.data == obj[Object.keys(obj)[i]][j]['data']) == -1) {
@@ -407,24 +407,20 @@ export class HelperService {
             }
         }
         let aggArr = [];
-        aggArr = arr?.map(item => {
-            return {
+        aggArr = arr?.map(item => ({
                 ...item,
-                value: item.value.map(x => {
-                    return {
+                value: item.value.map(x => ({
                         ...x,
                         value: (typeof x.value === 'object') ? {} : [],
                         lineValue: x?.hasOwnProperty('lineValue') ? (typeof x.lineValue === 'object') ? {} : [] : null
-                    }
-                })
-            }
-        })
+                    }))
+            }));
 
         aggArr = this.sortAlphabetically(aggArr);
 
-        for(let key in obj){
+        for(const key in obj){
             for(let i = 0; i<obj[key]?.length;i++){
-                let idx = aggArr?.findIndex(x => x?.data == obj[key][i]?.data);
+                const idx = aggArr?.findIndex(x => x?.data == obj[key][i]?.data);
                 if(idx != -1){
                     for(let j =0; j<obj[key][i]?.value?.length; j++){
                         if(!Array.isArray(aggArr[idx]?.value[j]?.value)){
@@ -459,7 +455,7 @@ export class HelperService {
                             x.lineValue = parseFloat(((x.lineValue?.reduce((partialSum, a) => partialSum + a, 0)) / x.lineValue?.length).toFixed(2));
                         }
                         return x;
-                    })
+                    });
                 }
             }
 
@@ -472,7 +468,7 @@ export class HelperService {
                             x.lineValue = (x.lineValue?.reduce((partialSum, a) => partialSum + a, 0));
                         }
                         return x;
-                    })
+                    });
                 }
             }
 
@@ -489,13 +485,13 @@ export class HelperService {
                                 x.lineValue = parseFloat(((x.lineValue[(x.lineValue?.length / 2) - 1] + x.lineValue[((x.lineValue?.length / 2) + 1) - 1]) / 2)?.toFixed(2));
                         }
                         return x;
-                    })
+                    });
                 }
             }
             if (aggregationType?.toLowerCase() == 'percentile') {
                 for (let i = 0; i < aggArr?.length; i++) {
                     aggArr[i].value?.map(x => {
-                        x.value?.sort(function (a1, b1) {
+                        x.value?.sort(function(a1, b1) {
                             return a1 - b1;
                         });
                         let index = ((percentile / 100) * (x.value?.length));
@@ -503,7 +499,7 @@ export class HelperService {
                         x.value = index != 0 ? x.value[index - 1] : x.value[index];
                         x.data = x.value;
                         if (x.hasOwnProperty('lineValue') && x?.lineValue != null) {
-                            x.lineValue?.sort(function (a1, b1) {
+                            x.lineValue?.sort(function(a1, b1) {
                                 return a1 - b1;
                             });
                             let index = ((percentile / 100) * (x.lineValue?.length));
@@ -511,7 +507,7 @@ export class HelperService {
                             x.lineValue = index != 0 ? x.lineValue[index - 1] : x.lineValue[index];
                         }
                         return x;
-                    })
+                    });
                 }
             }
         }

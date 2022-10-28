@@ -1,8 +1,8 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
-import { ExcelService } from "src/app/services/excel.service";
-import { HelperService } from "src/app/services/helper.service";
-import { HttpService } from "src/app/services/http.service";
-import { SharedService } from "src/app/services/shared.service";
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ExcelService } from 'src/app/services/excel.service';
+import { HelperService } from 'src/app/services/helper.service';
+import { HttpService } from 'src/app/services/http.service';
+import { SharedService } from 'src/app/services/shared.service';
 
 @Component({
   selector: 'app-backlog',
@@ -29,9 +29,9 @@ export class BacklogComponent implements OnInit, OnDestroy{
   kpiConfigData: Object = {};
   noKpis = false;
   enableByUser = false;
-  noSprints:boolean = false;
-  kpiLoader: boolean = true;
-  noTabAccess: boolean = false;
+  noSprints = false;
+  kpiLoader = true;
+  noTabAccess = false;
   kpiSelectedFilterObj = {};
   updatedConfigGlobalData;
   tooltip = <any>{};
@@ -41,7 +41,7 @@ export class BacklogComponent implements OnInit, OnDestroy{
   allKpiArray: any = [];
   showKpiTrendIndicator={};
   kpiDropdowns: object = {};
-  chartColorList: Array<string> = ['#079FFF', '#00E6C3', '#CDBA38', '#FC6471', '#BD608C', '#7D5BA6']
+  chartColorList: Array<string> = ['#079FFF', '#00E6C3', '#CDBA38', '#FC6471', '#BD608C', '#7D5BA6'];
 
   constructor(private service: SharedService, private httpService: HttpService, private excelService: ExcelService, private helperService: HelperService) {
     // this.kanbanActivated = false;
@@ -77,7 +77,7 @@ export class BacklogComponent implements OnInit, OnDestroy{
 
     this.subscriptions.push(this.service.noSprintsObs.subscribe((res) => {
       this.noSprints = res;
-    }))
+    }));
   }
   ngOnInit() {
     this.selectedtype = this.service.getSelectedType();
@@ -98,9 +98,9 @@ export class BacklogComponent implements OnInit, OnDestroy{
         this.colorObj = x;
         if (this.kpiChartData && Object.keys(this.kpiChartData)?.length > 0) {
           this.trendBoxColorObj = { ...x };
-          for (let key in this.trendBoxColorObj) {
-            let idx = key.lastIndexOf('_');
-            let nodeName = key.slice(0, idx);
+          for (const key in this.trendBoxColorObj) {
+            const idx = key.lastIndexOf('_');
+            const nodeName = key.slice(0, idx);
             this.trendBoxColorObj[nodeName] = this.trendBoxColorObj[key];
           }
         }
@@ -125,14 +125,12 @@ export class BacklogComponent implements OnInit, OnDestroy{
         this.kpiConfigData[this.configGlobalData[i]?.kpiId] = this.configGlobalData[i]?.isEnabled;
       }
     }
-    let disabledKpis = this.configGlobalData?.filter(item => {
-      return item.shown && !item.isEnabled;
-    })
+    const disabledKpis = this.configGlobalData?.filter(item => item.shown && !item.isEnabled);
     // user can enable kpis from show/hide filter, added below flag to show different message to the user
     this.enableByUser = disabledKpis?.length ? true : false;
-    this.updatedConfigGlobalData = this.configGlobalData.filter(item => { return item.shown && item.isEnabled; });
+    this.updatedConfigGlobalData = this.configGlobalData.filter(item => item.shown && item.isEnabled);
     // noKpis - if true, all kpis are not shown to the user (not showing kpis to the user)
-    let showKpisCount = (Object.values(this.kpiConfigData).filter(item => item === true))?.length;
+    const showKpisCount = (Object.values(this.kpiConfigData).filter(item => item === true))?.length;
     if (showKpisCount === 0) {
         this.noKpis = true;
     } else {
@@ -142,7 +140,7 @@ export class BacklogComponent implements OnInit, OnDestroy{
 /**
     Used to receive all filter data from filter component when user
     click apply and call kpi
-    **/
+ **/
   receiveSharedData($event) {
     this.masterData = $event.masterData;
     this.filterData = $event.filterData;
@@ -150,7 +148,7 @@ export class BacklogComponent implements OnInit, OnDestroy{
     this.noOfFilterSelected = Object.keys(this.filterApplyData).length;
     if(this.filterData?.length) {
       this.noTabAccess = false;
-      let kpiIdsForCurrentBoard = this.configGlobalData?.map(kpiDetails => kpiDetails.kpiId);
+      const kpiIdsForCurrentBoard = this.configGlobalData?.map(kpiDetails => kpiDetails.kpiId);
       // call kpi request according to tab selected
       if (this.masterData && Object.keys(this.masterData).length) {
         this.groupZypherKpi(kpiIdsForCurrentBoard);
@@ -221,12 +219,12 @@ export class BacklogComponent implements OnInit, OnDestroy{
       });
   }
 
-  generateKpiProgressBarData(kpiData){ 
+  generateKpiProgressBarData(kpiData){
     if (kpiData?.value && kpiData.value.length > 0 ) {
           if (kpiData.value[0]?.hoverValue) {
-            let total=0;
+            const total=0;
             Object.keys(kpiData.value[0].hoverValue)?.forEach((key) => {
-              if(key?.toLowerCase()?.includes("total")){
+              if(key?.toLowerCase()?.includes('total')){
                 kpiData.value[0].maxValue= kpiData?.value[0]?.hoverValue[key];
               }else{
                 kpiData.value[0].value=kpiData?.value[0]?.hoverValue[key];
@@ -289,8 +287,7 @@ export class BacklogComponent implements OnInit, OnDestroy{
       } else {
         return false;
       }
-    }
-    catch {
+    } catch {
       return false;
     }
   }
@@ -306,11 +303,11 @@ export class BacklogComponent implements OnInit, OnDestroy{
   }
 
   getChartData(kpiId, idx, aggregationType) {
-    let trendValueList = this.allKpiArray[idx]?.trendValueList;
+    const trendValueList = this.allKpiArray[idx]?.trendValueList;
 
     if (trendValueList?.length > 0 && trendValueList[0]?.hasOwnProperty('filter')) {
       if (this.kpiSelectedFilterObj[kpiId]?.length > 1) {
-        let tempArr = {};
+        const tempArr = {};
         for (let i = 0; i < this.kpiSelectedFilterObj[kpiId]?.length; i++) {
 
           tempArr[this.kpiSelectedFilterObj[kpiId][i]] = (trendValueList?.filter(x => x['filter'] == this.kpiSelectedFilterObj[kpiId][i])[0]?.value);
@@ -319,7 +316,7 @@ export class BacklogComponent implements OnInit, OnDestroy{
           this.kpiChartData[kpiId] = this.applyAggregationLogicForProgressBar(tempArr);
         } else {
           this.kpiChartData[kpiId] = this.helperService.applyAggregationLogic(tempArr, aggregationType, this.tooltip.percentile);
-        } 
+        }
       } else {
         if(this.kpiSelectedFilterObj[kpiId]?.length > 0){
           this.kpiChartData[kpiId] = trendValueList?.filter(x => x['filter'] == this.kpiSelectedFilterObj[kpiId][0])[0]?.value;
@@ -361,12 +358,12 @@ export class BacklogComponent implements OnInit, OnDestroy{
   applyAggregationLogicForProgressBar(obj) {
     let maxValue = 0;
     let value = 0;
-    for (let key in obj) {
+    for (const key in obj) {
       if (obj[key].length > 0 && obj[key][0] && obj[key][0]?.value) {
         if (obj[key][0]?.value && obj[key][0]?.value.length > 0) {
           if (obj[key][0]?.value[0]?.hasOwnProperty('hoverValue')) {
             Object.keys(obj[key][0]?.value[0]?.hoverValue)?.forEach((prop) => {
-              if (prop?.toLowerCase()?.includes("total")) {
+              if (prop?.toLowerCase()?.includes('total')) {
                 maxValue += obj[key][0]?.value[0]?.hoverValue[prop];
               } else {
                 value += obj[key][0]?.value[0]?.hoverValue[prop];
@@ -376,7 +373,7 @@ export class BacklogComponent implements OnInit, OnDestroy{
         }
       }
     }
-    let kpiChartData =obj[Object.keys(obj)[0]];
+    const kpiChartData =obj[Object.keys(obj)[0]];
     kpiChartData[0].value[0].maxValue=maxValue;
     kpiChartData[0].value[0].value=value;
     return kpiChartData;
@@ -384,28 +381,28 @@ export class BacklogComponent implements OnInit, OnDestroy{
 
 
   ifKpiExist(kpiId) {
-    let id = this.allKpiArray?.findIndex((kpi) => kpi.kpiId == kpiId);
+    const id = this.allKpiArray?.findIndex((kpi) => kpi.kpiId == kpiId);
     return id;
   }
 
   createAllKpiArray(data) {
-    for (let key in data) {
-      let idx = this.ifKpiExist(data[key]?.kpiId);
+    for (const key in data) {
+      const idx = this.ifKpiExist(data[key]?.kpiId);
       if (idx == -1) {
         this.allKpiArray.push(data[key]);
-        let trendValueList = this.allKpiArray[this.allKpiArray?.length - 1]?.trendValueList;
+        const trendValueList = this.allKpiArray[this.allKpiArray?.length - 1]?.trendValueList;
         if (trendValueList?.length > 0 && trendValueList[0]?.hasOwnProperty('filter')) {
           this.kpiSelectedFilterObj[data[key]?.kpiId] = [];
           if (key === 'kpi3') {
-            this.kpiSelectedFilterObj[data[key]?.kpiId]?.push("Lead Time");
+            this.kpiSelectedFilterObj[data[key]?.kpiId]?.push('Lead Time');
           } else {
-            this.kpiSelectedFilterObj[data[key]?.kpiId]?.push("Overall");
+            this.kpiSelectedFilterObj[data[key]?.kpiId]?.push('Overall');
           }
           this.service.setKpiSubFilterObj(this.kpiSelectedFilterObj);
           this.getDropdownArray(data[key]?.kpiId);
         }
 
-        let agType = this.updatedConfigGlobalData?.filter(x => x.kpiId == data[key]?.kpiId)[0]?.kpiDetail?.aggregationCriteria;
+        const agType = this.updatedConfigGlobalData?.filter(x => x.kpiId == data[key]?.kpiId)[0]?.kpiDetail?.aggregationCriteria;
 
         this.getChartData(data[key]?.kpiId, (this.allKpiArray?.length - 1), agType);
       }
@@ -414,14 +411,14 @@ export class BacklogComponent implements OnInit, OnDestroy{
 
   /** get array of the kpi level dropdown filter */
   getDropdownArray(kpiId) {
-    let idx = this.ifKpiExist(kpiId);
+    const idx = this.ifKpiExist(kpiId);
     let trendValueList = [];
-    let optionsArr = [];
+    const optionsArr = [];
 
     if (idx != -1) {
         trendValueList = this.allKpiArray[idx]?.trendValueList;
         if (trendValueList?.length > 0 && trendValueList[0]?.hasOwnProperty('filter')) {
-            let obj = {};
+            const obj = {};
             for (let i = 0; i < trendValueList?.length; i++) {
                 if(trendValueList[i]?.filter?.toLowerCase() != 'overall'){
                     optionsArr?.push(trendValueList[i]?.filter);
@@ -430,7 +427,7 @@ export class BacklogComponent implements OnInit, OnDestroy{
             obj['filterType'] = 'Select a filter',
             obj['options'] = optionsArr;
             this.kpiDropdowns[kpiId] = [];
-            this.kpiDropdowns[kpiId].push(obj)
+            this.kpiDropdowns[kpiId].push(obj);
         }
     }
 }
@@ -438,14 +435,14 @@ export class BacklogComponent implements OnInit, OnDestroy{
   handleSelectedOption(event, kpi) {
     this.kpiSelectedFilterObj[kpi?.kpiId] = [];
     if (event && Object.keys(event)?.length !== 0 && typeof event === 'object') {
-        for (let key in event) {
+        for (const key in event) {
             if (event[key]?.length == 0) {
                 delete event[key];
                 this.kpiSelectedFilterObj[kpi?.kpiId] = event;
             }else{
                 for(let i = 0;i<event[key]?.length;i++){
                     this.kpiSelectedFilterObj[kpi?.kpiId] = [...this.kpiSelectedFilterObj[kpi?.kpiId], event[key][i]];
-                }                    
+                }
             }
         }
     } else {
@@ -456,7 +453,7 @@ export class BacklogComponent implements OnInit, OnDestroy{
   }
 
   downloadExcel(kpiId, kpiName, isKanban) {
-    const sprintIncluded = ["CLOSED"];
+    const sprintIncluded = ['CLOSED'];
     this.helperService.downloadExcel(kpiId, kpiName, isKanban, this.filterApplyData, this.filterData, sprintIncluded);
   }
 

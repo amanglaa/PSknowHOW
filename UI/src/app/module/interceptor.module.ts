@@ -25,7 +25,7 @@ import { SharedService } from '../services/shared.service';
 import { catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
-declare var $: any;
+declare let $: any;
 
 @Injectable()
 
@@ -40,7 +40,7 @@ export class HttpsRequestInterceptor implements HttpInterceptor {
         if (req.headers.get('httpErrorHandler')) {
             req = req.clone({ headers: req.headers.delete('httpErrorHandler') });
         }
-		    
+
 		req = req.clone({withCredentials: true});
 
         if (req.headers.get('requestArea')) {
@@ -64,7 +64,8 @@ export class HttpsRequestInterceptor implements HttpInterceptor {
             environment.baseUrl + '/api/sonarkanban/kpi',
             environment.baseUrl + '/api/jenkinskanban/kpi',
             environment.baseUrl + '/api/zypherkanban/kpi',
-            environment.baseUrl + '/api/bitbucketkanban/kpi'
+            environment.baseUrl + '/api/bitbucketkanban/kpi',
+            environment.baseUrl + '/api/auth-types'
         ];
 
         const partialRedirectExceptions = [

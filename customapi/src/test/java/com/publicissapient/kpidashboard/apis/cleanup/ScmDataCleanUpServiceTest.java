@@ -29,6 +29,7 @@ import java.util.Arrays;
 import com.publicissapient.kpidashboard.apis.common.service.CacheService;
 import com.publicissapient.kpidashboard.common.constant.CommonConstant;
 import com.publicissapient.kpidashboard.common.constant.ProcessorConstants;
+import com.publicissapient.kpidashboard.common.repository.tracelog.ProcessorExecutionTraceLogRepository;
 import org.bson.types.ObjectId;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -71,6 +72,9 @@ public class ScmDataCleanUpServiceTest {
 	@InjectMocks
 	private ScmDataCleanUpService scmDataCleanUpService;
 
+	@Mock
+	private ProcessorExecutionTraceLogRepository processorExecutionTraceLogRepository;
+
 	@Test
 	public void getToolCategory() {
 		String actualResult = scmDataCleanUpService.getToolCategory();
@@ -92,12 +96,14 @@ public class ScmDataCleanUpServiceTest {
 		doNothing().when(processorItemRepository).deleteByToolConfigId(Mockito.any(ObjectId.class));
 		doNothing().when(mergReqRepo).deleteByProcessorItemIdIn(Mockito.anyList());
 		doNothing().when(cacheService).clearCache(CommonConstant.BITBUCKET_KPI_CACHE);
+		doNothing().when(processorExecutionTraceLogRepository).deleteByBasicProjectConfigIdAndProcessorName(Mockito.any(),Mockito.anyString());
 
 		scmDataCleanUpService.clean("5e9e4593e4b0c8ece56710c3");
 
 		verify(commitRepository, times(1))
 				.deleteByProcessorItemIdIn(Arrays.asList(new ObjectId("5fc6a0c0e4b00ecfb5941e29")));
 		verify(processorItemRepository, times(1)).deleteByToolConfigId(new ObjectId("5e9e4593e4b0c8ece56710c3"));
+		verify(processorExecutionTraceLogRepository, times(1)).deleteByBasicProjectConfigIdAndProcessorName("5e9db8f1e4b0caefbfa8e0c7" , ProcessorConstants.BITBUCKET);
 	}
 	
 	@Test
@@ -114,11 +120,14 @@ public class ScmDataCleanUpServiceTest {
 		doNothing().when(commitRepository).deleteByProcessorItemIdIn(Mockito.anyList());
 		doNothing().when(processorItemRepository).deleteByToolConfigId(Mockito.any(ObjectId.class));
 		doNothing().when(cacheService).clearCache(CommonConstant.GITLAB_KPI_CACHE);
+		doNothing().when(processorExecutionTraceLogRepository).deleteByBasicProjectConfigIdAndProcessorName(Mockito.any(),Mockito.anyString());
 
 		scmDataCleanUpService.clean("5e9e4593e4b0c8ece56710c3");
 
 		verify(commitRepository, times(1))
 				.deleteByProcessorItemIdIn(Arrays.asList(new ObjectId("5fc6a0c0e4b00ecfb5941e29")));
 		verify(processorItemRepository, times(1)).deleteByToolConfigId(new ObjectId("5e9e4593e4b0c8ece56710c3"));
+		verify(processorExecutionTraceLogRepository, times(1)).deleteByBasicProjectConfigIdAndProcessorName("5e9db8f1e4b0caefbfa8e0c7" , ProcessorConstants.GITLAB);
+
 	}
 }

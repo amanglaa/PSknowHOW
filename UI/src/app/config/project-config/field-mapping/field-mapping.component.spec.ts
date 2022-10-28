@@ -40,105 +40,105 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { environment } from 'src/environments/environment';
 
 const completeHierarchyData = {
-  "kanban": [
+  kanban: [
     {
-      "id": "63244d35d1d9f4caf85056f7",
-      "level": 1,
-      "hierarchyLevelId": "corporate",
-      "hierarchyLevelName": "Corporate Name"
+      id: '63244d35d1d9f4caf85056f7',
+      level: 1,
+      hierarchyLevelId: 'corporate',
+      hierarchyLevelName: 'Corporate Name'
     },
     {
-      "id": "63244d35d1d9f4caf85056f8",
-      "level": 2,
-      "hierarchyLevelId": "business",
-      "hierarchyLevelName": "Business Name"
+      id: '63244d35d1d9f4caf85056f8',
+      level: 2,
+      hierarchyLevelId: 'business',
+      hierarchyLevelName: 'Business Name'
     },
     {
-      "id": "63244d35d1d9f4caf85056f9",
-      "level": 3,
-      "hierarchyLevelId": "account",
-      "hierarchyLevelName": "Account Name"
+      id: '63244d35d1d9f4caf85056f9',
+      level: 3,
+      hierarchyLevelId: 'account',
+      hierarchyLevelName: 'Account Name'
     },
     {
-      "id": "63244d35d1d9f4caf85056fa",
-      "level": 4,
-      "hierarchyLevelId": "subaccount",
-      "hierarchyLevelName": "Subaccount"
+      id: '63244d35d1d9f4caf85056fa',
+      level: 4,
+      hierarchyLevelId: 'subaccount',
+      hierarchyLevelName: 'Subaccount'
     },
     {
-      "level": 5,
-      "hierarchyLevelId": "project",
-      "hierarchyLevelName": "Project"
+      level: 5,
+      hierarchyLevelId: 'project',
+      hierarchyLevelName: 'Project'
     },
     {
-      "level": 6,
-      "hierarchyLevelId": "sqd",
-      "hierarchyLevelName": "Squad"
+      level: 6,
+      hierarchyLevelId: 'sqd',
+      hierarchyLevelName: 'Squad'
     }
   ],
-  "scrum": [
+  scrum: [
     {
-      "id": "63244d35d1d9f4caf85056f7",
-      "level": 1,
-      "hierarchyLevelId": "corporate",
-      "hierarchyLevelName": "Corporate Name"
+      id: '63244d35d1d9f4caf85056f7',
+      level: 1,
+      hierarchyLevelId: 'corporate',
+      hierarchyLevelName: 'Corporate Name'
     },
     {
-      "id": "63244d35d1d9f4caf85056f8",
-      "level": 2,
-      "hierarchyLevelId": "business",
-      "hierarchyLevelName": "Business Name"
+      id: '63244d35d1d9f4caf85056f8',
+      level: 2,
+      hierarchyLevelId: 'business',
+      hierarchyLevelName: 'Business Name'
     },
     {
-      "id": "63244d35d1d9f4caf85056f9",
-      "level": 3,
-      "hierarchyLevelId": "account",
-      "hierarchyLevelName": "Account Name"
+      id: '63244d35d1d9f4caf85056f9',
+      level: 3,
+      hierarchyLevelId: 'account',
+      hierarchyLevelName: 'Account Name'
     },
     {
-      "id": "63244d35d1d9f4caf85056fa",
-      "level": 4,
-      "hierarchyLevelId": "subaccount",
-      "hierarchyLevelName": "Subaccount"
+      id: '63244d35d1d9f4caf85056fa',
+      level: 4,
+      hierarchyLevelId: 'subaccount',
+      hierarchyLevelName: 'Subaccount'
     },
     {
-      "level": 5,
-      "hierarchyLevelId": "project",
-      "hierarchyLevelName": "Project"
+      level: 5,
+      hierarchyLevelId: 'project',
+      hierarchyLevelName: 'Project'
     },
     {
-      "level": 6,
-      "hierarchyLevelId": "sprint",
-      "hierarchyLevelName": "Sprint"
+      level: 6,
+      hierarchyLevelId: 'sprint',
+      hierarchyLevelName: 'Sprint'
     },
     {
-      "level": 7,
-      "hierarchyLevelId": "sqd",
-      "hierarchyLevelName": "Squad"
+      level: 7,
+      hierarchyLevelId: 'sqd',
+      hierarchyLevelName: 'Squad'
     }
   ]
 };
 
 
 const fakeSelectedTool = [{
-  'id': '5fc086b9410df80001701334',
-  'toolName': 'Jira',
-  'basicProjectConfigId': '5fc0867e410df8000170132e',
-  'connectionId': '5fc0857c410df80001701327',
-  'createdAt': '2020-11-27T04:55:21',
-  'updatedAt': '2020-11-27T04:55:21',
-  'queryEnabled': false,
-  'boardQuery': ''
+  id: '5fc086b9410df80001701334',
+  toolName: 'Jira',
+  basicProjectConfigId: '5fc0867e410df8000170132e',
+  connectionId: '5fc0857c410df80001701327',
+  createdAt: '2020-11-27T04:55:21',
+  updatedAt: '2020-11-27T04:55:21',
+  queryEnabled: false,
+  boardQuery: ''
 }];
 
 const fakeProject = {
-  "id": "63282c82487eff1e8b70b1b9",
-  "name": "TestMAP",
-  "type": "Scrum",
-  "corporate": "Leve1",
-  "business": "Leve2",
-  "account": "Level3",
-  "subaccount": "Level4"
+  id: '63282c82487eff1e8b70b1b9',
+  name: 'TestMAP',
+  type: 'Scrum',
+  corporate: 'Leve1',
+  business: 'Leve2',
+  account: 'Level3',
+  subaccount: 'Level4'
 };
 
 const fakeSelectedFieldMapping = {
@@ -295,48 +295,49 @@ const fakeSelectedFieldMapping = {
   "storyPointToHourMapping": 8,
   "workingHoursDayCPT": 6,
   "additionalFilterConfig": [
+
   ]
 };
 const successResponse = {
-  "message": "field mappings added successfully",
-  "success": true,
-  "data": {
-    "id": "63282cbaf5c740241aff32a1",
-    "projectToolConfigId": "63282ca6487eff1e8b70b1bb",
-    "basicProjectConfigId": "63282c82487eff1e8b70b1b9",
-    "sprintName": "customfield_12700",
-    "jiradefecttype": [
-      "Defect"
+  message: 'field mappings added successfully',
+  success: true,
+  data: {
+    id: '63282cbaf5c740241aff32a1',
+    projectToolConfigId: '63282ca6487eff1e8b70b1bb',
+    basicProjectConfigId: '63282c82487eff1e8b70b1b9',
+    sprintName: 'customfield_12700',
+    jiradefecttype: [
+      'Defect'
     ],
-    "defectPriority": [],
-    "jiraIssueTypeNames": [
-      "Story",
-      "Enabler Story",
-      "Change request",
-      "Defect",
-      "Epic"
+    defectPriority: [],
+    jiraIssueTypeNames: [
+      'Story',
+      'Enabler Story',
+      'Change request',
+      'Defect',
+      'Epic'
     ],
-    "storyFirstStatus": "Open",
-    "rootCause": "customfield_19121",
-    "jiraStatusForDevelopment": [
-      "Implementing",
-      "In Development",
-      "In Analysis"
+    storyFirstStatus: 'Open',
+    rootCause: 'customfield_19121',
+    jiraStatusForDevelopment: [
+      'Implementing',
+      'In Development',
+      'In Analysis'
     ],
-    "jiraIssueEpicType": [
-      "Epic"
+    jiraIssueEpicType: [
+      'Epic'
     ],
-    "jiraStatusForQa": [
-      "In Testing"
+    jiraStatusForQa: [
+      'In Testing'
     ],
-    "jiraDefectInjectionIssueType": [
-      "Story",
-      "Enabler Story",
-      "Change request"
+    jiraDefectInjectionIssueType: [
+      'Story',
+      'Enabler Story',
+      'Change request'
     ],
-    "jiraDod": [
-      "Closed",
-      "Ready for Delivery"
+    jiraDod: [
+      'Closed',
+      'Ready for Delivery'
     ],
     "jiraDefectCreatedStatus": "Open",
     "issueStatusExcluMissingWork": ["Open"],
@@ -345,113 +346,113 @@ const successResponse = {
       "Enabler Story",
       "Change request"
     ],
-    "jiraTechDebtIdentification": "",
-    "jiraTechDebtCustomField": "",
-    "jiraTechDebtValue": [],
-    "jiraDefectRejectionStatus": "Closed",
-    "jiraBugRaisedByIdentification": "",
-    "jiraBugRaisedByValue": [],
-    "jiraDefectSeepageIssueType": [
-      "Story",
-      "Enabler Story",
-      "Change request"
+    jiraTechDebtIdentification: '',
+    jiraTechDebtCustomField: '',
+    jiraTechDebtValue: [],
+    jiraDefectRejectionStatus: 'Closed',
+    jiraBugRaisedByIdentification: '',
+    jiraBugRaisedByValue: [],
+    jiraDefectSeepageIssueType: [
+      'Story',
+      'Enabler Story',
+      'Change request'
     ],
-    "jiraBugRaisedByCustomField": "",
-    "jiraDefectRemovalStatus": [
-      "Closed",
-      "Ready for Delivery"
+    jiraBugRaisedByCustomField: '',
+    jiraDefectRemovalStatus: [
+      'Closed',
+      'Ready for Delivery'
     ],
-    "jiraDefectRemovalIssueType": [
-      "Story",
-      "Enabler Story",
-      "Change request"
+    jiraDefectRemovalIssueType: [
+      'Story',
+      'Enabler Story',
+      'Change request'
     ],
-    "jiraStoryPointsCustomField": "customfield_20803",
-    "jiraTestAutomationIssueType": [
-      "Story",
-      "Enabler Story",
-      "Change request"
+    jiraStoryPointsCustomField: 'customfield_20803',
+    jiraTestAutomationIssueType: [
+      'Story',
+      'Enabler Story',
+      'Change request'
     ],
-    "jiraCanNotAutomatedTestValue": [],
-    "jiraSprintVelocityIssueType": [
-      "Story",
-      "Enabler Story",
-      "Change request"
+    jiraCanNotAutomatedTestValue: [],
+    jiraSprintVelocityIssueType: [
+      'Story',
+      'Enabler Story',
+      'Change request'
     ],
-    "jiraSprintCapacityIssueType": [
-      "Story",
-      "Enabler Story",
-      "Change request"
+    jiraSprintCapacityIssueType: [
+      'Story',
+      'Enabler Story',
+      'Change request'
     ],
-    "jiraDefectRejectionlIssueType": [
-      "Story",
-      "Enabler Story",
-      "Change request"
+    jiraDefectRejectionlIssueType: [
+      'Story',
+      'Enabler Story',
+      'Change request'
     ],
-    "jiraDefectCountlIssueType": [
-      "Story",
-      "Enabler Story",
-      "Change request"
+    jiraDefectCountlIssueType: [
+      'Story',
+      'Enabler Story',
+      'Change request'
     ],
-    "jiraIssueDeliverdStatus": [
-      "Closed",
-      "Resolved"
+    jiraIssueDeliverdStatus: [
+      'Closed',
+      'Resolved'
     ],
-    "jiraDor": "Ready for Sprint Planning",
-    "jiraIntakeToDorIssueType": [
-      "Story",
-      "Enabler Story",
-      "Change request"
+    jiraDor: 'Ready for Sprint Planning',
+    jiraIntakeToDorIssueType: [
+      'Story',
+      'Enabler Story',
+      'Change request'
     ],
-    "jiraStoryIdentification": [
-      "Story",
-      "Enabler Story",
-      "Change request"
+    jiraStoryIdentification: [
+      'Story',
+      'Enabler Story',
+      'Change request'
     ],
-    "jiraLiveStatus": "",
-    "regressionAutomationLabels": [],
-    "rootCauseValue": [
-      "Coding"
+    jiraLiveStatus: '',
+    regressionAutomationLabels: [],
+    rootCauseValue: [
+      'Coding'
     ],
-    "excludeRCAFromFTPR": [],
-    "resolutionTypeForRejection": [
-      "Invalid",
-      "Duplicate",
-      "Unrequired"
+    excludeRCAFromFTPR: [],
+    resolutionTypeForRejection: [
+      'Invalid',
+      'Duplicate',
+      'Unrequired'
     ],
-    "jiraQADefectDensityIssueType": [
-      "Story",
-      "Enabler Story",
-      "Change request"
+    jiraQADefectDensityIssueType: [
+      'Story',
+      'Enabler Story',
+      'Change request'
     ],
-    "jiraBugRaisedByQACustomField": "",
-    "jiraBugRaisedByQAIdentification": "",
-    "jiraBugRaisedByQAValue": [],
-    "jiraDefectDroppedStatus": [],
-    "epicCostOfDelay": "customfield_58102",
-    "epicRiskReduction": "customfield_58101",
-    "epicUserBusinessValue": "customfield_58100",
-    "epicWsjf": "customfield_58104",
-    "epicTimeCriticality": "customfield_51002",
-    "epicJobSize": "customfield_61041",
-    "productionDefectCustomField": "",
-    "productionDefectIdentifier": "",
-    "productionDefectValue": [],
-    "productionDefectComponentValue": "",
-    "jiraTestCaseType": [],
-    "testAutomatedIdentification": "",
-    "testAutomationCompletedIdentification": "",
-    "testRegressionIdentification": "",
-    "testAutomated": "",
-    "testAutomationCompletedByCustomField": "",
-    "testRegressionByCustomField": "",
-    "jiraAutomatedTestValue": [],
-    "jiraRegressionTestValue": [],
-    "jiraCanBeAutomatedTestValue": [],
-    "estimationCriteria": "Story Point",
-    "storyPointToHourMapping": 8,
-    "workingHoursDayCPT": 6,
-    "additionalFilterConfig": [
+    jiraBugRaisedByQACustomField: '',
+    jiraBugRaisedByQAIdentification: '',
+    jiraBugRaisedByQAValue: [],
+    jiraDefectDroppedStatus: [],
+    epicCostOfDelay: 'customfield_58102',
+    epicRiskReduction: 'customfield_58101',
+    epicUserBusinessValue: 'customfield_58100',
+    epicWsjf: 'customfield_58104',
+    epicTimeCriticality: 'customfield_51002',
+    epicJobSize: 'customfield_61041',
+    productionDefectCustomField: '',
+    productionDefectIdentifier: '',
+    productionDefectValue: [],
+    productionDefectComponentValue: '',
+    jiraTestCaseType: [],
+    testAutomatedIdentification: '',
+    testAutomationCompletedIdentification: '',
+    testRegressionIdentification: '',
+    testAutomated: '',
+    testAutomationCompletedByCustomField: '',
+    testRegressionByCustomField: '',
+    jiraAutomatedTestValue: [],
+    jiraRegressionTestValue: [],
+    jiraCanBeAutomatedTestValue: [],
+    estimationCriteria: 'Story Point',
+    storyPointToHourMapping: 8,
+    workingHoursDayCPT: 6,
+    additionalFilterConfig: [
     ]
   }
 };
@@ -607,12 +608,12 @@ const fakeSelectedFieldMappingWithAdditionalFilters = {
   "basicProjectConfigId": "63282c82487eff1e8b70b1b9",
   "additionalFilterConfig": [
     {
-      "filterId": "sqd",
-      "identifyFrom": "Labels",
-      "identificationField": "",
-      "values": [
-        "Test1",
-        "Test2"
+      filterId: 'sqd',
+      identifyFrom: 'Labels',
+      identificationField: '',
+      values: [
+        'Test1',
+        'Test2'
       ]
     }
   ]
@@ -748,33 +749,33 @@ describe('FieldMappingComponent', () => {
     component.singleSelectionDropdown = false;
     component.selectedField = 'jiraIssueDeliverdStatus';
     component.fieldMappingMultiSelectValues = [{
-      "key": "New",
-      "data": "New"
+      key: 'New',
+      data: 'New'
     }, {
-      "key": "Active",
-      "data": "Active"
+      key: 'Active',
+      data: 'Active'
     }, {
-      "key": "Resolved",
-      "data": "Resolved"
+      key: 'Resolved',
+      data: 'Resolved'
     }, {
-      "key": "Closed",
-      "data": "Closed"
+      key: 'Closed',
+      data: 'Closed'
     }, {
-      "key": "Removed",
-      "data": "Removed"
-    }]
+      key: 'Removed',
+      data: 'Removed'
+    }];
     component.ngOnInit();
     component.fieldMappingForm.controls[component.selectedField].setValue([]);
     fixture.detectChanges();
     component.selectedMultiValue = [{
-      "key": "Resolved",
-      "data": "Resolved"
+      key: 'Resolved',
+      data: 'Resolved'
     }, {
-      "key": "Closed",
-      "data": "Closed"
+      key: 'Closed',
+      data: 'Closed'
     }, {
-      "key": "Removed",
-      "data": "Removed"
+      key: 'Removed',
+      data: 'Removed'
     }];
     component.saveDialog();
     fixture.detectChanges();
@@ -787,8 +788,8 @@ describe('FieldMappingComponent', () => {
     component.ngOnInit();
     component.additionalFiltersArray = [];
     component.additionalFilterIdentifier = {
-      "name": "Squad",
-      "code": "sqd"
+      name: 'Squad',
+      code: 'sqd'
     };
     fixture.detectChanges();
     component.addAdditionalFilterMappings();
@@ -798,14 +799,14 @@ describe('FieldMappingComponent', () => {
 
   it('should render form controls according to type selected by user', () => {
     let event = {
-      "originalEvent": {
-        "isTrusted": true
+      originalEvent: {
+        isTrusted: true
       },
-      "value": "Component"
+      value: 'Component'
     };
     component.additionalFilterIdentifier = {
-      "name": "Squad",
-      "code": "sqd"
+      name: 'Squad',
+      code: 'sqd'
     };
     fixture.detectChanges();
     component.changeControl(event);
@@ -814,10 +815,10 @@ describe('FieldMappingComponent', () => {
     expect(component.fieldMappingForm.controls[component.additionalFilterIdentifier.code + 'IdentSingleValue']).toBeFalsy();
 
     event = {
-      "originalEvent": {
-        "isTrusted": true
+      originalEvent: {
+        isTrusted: true
       },
-      "value": "CustomField"
+      value: 'CustomField'
     };
     component.changeControl(event);
     fixture.detectChanges();
@@ -826,15 +827,15 @@ describe('FieldMappingComponent', () => {
   });
 
   it('should remove additional filter mapping controls on click of remove button', () => {
-    let filter = {
-      "name": "Squad",
-      "code": "sqd"
+    const filter = {
+      name: 'Squad',
+      code: 'sqd'
     };
     component.ngOnInit();
     component.additionalFiltersArray = [];
     component.additionalFilterIdentifier = {
-      "name": "Squad",
-      "code": "sqd"
+      name: 'Squad',
+      code: 'sqd'
     };
     component.addAdditionalFilterMappings();
     fixture.detectChanges();

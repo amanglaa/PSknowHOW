@@ -44,8 +44,8 @@ export class GroupstackchartComponent implements OnChanges {
   @Input() selectedtype: string;
   @Input() legendType: string;
   maxYValue: any;
-  dataPoints: number = 2;
-  dataLength: number = 0;
+  dataPoints = 2;
+  dataLength = 0;
   constructor(private viewContainerRef: ViewContainerRef, private service: SharedService) { }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -68,7 +68,7 @@ export class GroupstackchartComponent implements OnChanges {
 
   draw(status) {
     const elem = this.elem;
-    let self = this;
+    const self = this;
     d3.select(elem).select('svg').remove();
     d3.select(elem).select('.tooltip').remove();
     d3.select(elem).select('.legend').remove();
@@ -81,12 +81,12 @@ export class GroupstackchartComponent implements OnChanges {
     d3.select(elem).select('#xCaptionContainer').select('text').remove();
 
     const data = this.formatData();
-    let thresholdValue = this.thresholdValue;
-    let barWidth = 20;
+    const thresholdValue = this.thresholdValue;
+    const barWidth = 20;
     // let width = this.dataLength * barWidth * 8;
-    let width = this.dataLength <= 5 ? document.getElementById('groupstackchart').offsetWidth - 70 : this.dataLength * barWidth * 8;
+    const width = this.dataLength <= 5 ? document.getElementById('groupstackchart').offsetWidth - 70 : this.dataLength * barWidth * 8;
     // let spacingVariable = width > 1500 ? 145 : width > 1000 ? 120 : width > 600 ? 70 : 50;
-    let spacingVariable = 50;
+    const spacingVariable = 50;
     const height = 190;
     const margin = 50;
     const marginLeft = 40;
@@ -94,7 +94,7 @@ export class GroupstackchartComponent implements OnChanges {
     const marginBottom = 60;
     const marginRight = 100;
 
-    var svgX = d3.select(elem).select('#horizontalSVG').append('svg')
+    const svgX = d3.select(elem).select('#horizontalSVG').append('svg')
       .attr('width', width)
       .attr('height', (height + 35) + 'px')
       .style('text-align', 'center')
@@ -109,7 +109,7 @@ export class GroupstackchartComponent implements OnChanges {
       .attr('transform', `translate(${marginLeft}, ${marginTop})`);
 
     /** Add x-axis */
-    var x0 = d3.scaleBand()
+    const x0 = d3.scaleBand()
       .rangeRound([0, width - margin]);
     if (this.dataLength < 5) {
       x0.paddingInner(.5);
@@ -119,7 +119,7 @@ export class GroupstackchartComponent implements OnChanges {
       x0.paddingInner(0.2);
     }
 
-    var x1 = d3.scaleBand();
+    const x1 = d3.scaleBand();
 
     let divisor = 10;
     let power = 1;
@@ -131,63 +131,75 @@ export class GroupstackchartComponent implements OnChanges {
     divisor = Math.pow(10, power > 1 ? power - 1 : 1);
 
 
-    if (this.maxYValue > 0 && this.maxYValue <= 50)
-      this.maxYValue = 50
-    else if (this.maxYValue > 50 && this.maxYValue <= 100)
-      this.maxYValue = 100
-    else if (this.maxYValue > 100 && this.maxYValue <= 200)
-      this.maxYValue = 200
-    else if (this.maxYValue > 200 && this.maxYValue <= 500)
-      this.maxYValue = 500
-    else if (this.maxYValue > 500)
-      this.maxYValue += divisor;
+    if (this.maxYValue > 0 && this.maxYValue <= 50) {
+this.maxYValue = 50;
+} else if (this.maxYValue > 50 && this.maxYValue <= 100) {
+this.maxYValue = 100;
+} else if (this.maxYValue > 100 && this.maxYValue <= 200) {
+this.maxYValue = 200;
+} else if (this.maxYValue > 200 && this.maxYValue <= 500) {
+this.maxYValue = 500;
+} else if (this.maxYValue > 500) {
+this.maxYValue += divisor;
+}
 
 
-    var y = d3.scaleLinear()
+    const y = d3.scaleLinear()
       .range([height - margin, 0])
       .domain([0, this.maxYValue]);
 
-    var y1 = d3.scaleBand();
-    var z, stackColorsList;
+    const y1 = d3.scaleBand();
+    let z; let stackColorsList;
     if (this.kpiId != 'kpi125' && this.kpiId != 'kpi127') {
       z = d3.scaleOrdinal()
-        .range(["#DEB0D2", "#F2C69B", "#B395E2", "#B5E7BE", "#DF9292", "#B5C6E7", "#ff8c00", "#3F51B5", "#aaaaaa"]);
-      stackColorsList = ["#DEB0D2", "#F2C69B", "#B395E2", "#B5E7BE", "#DF9292", "#B5C6E7", "#ff8c00", "#3F51B5", "#aaaaaa"];
+        .range(['#DEB0D2', '#F2C69B', '#B395E2', '#B5E7BE', '#DF9292', '#B5C6E7', '#ff8c00', '#3F51B5', '#aaaaaa']);
+      stackColorsList = ['#DEB0D2', '#F2C69B', '#B395E2', '#B5E7BE', '#DF9292', '#B5C6E7', '#ff8c00', '#3F51B5', '#aaaaaa'];
     } else {
       z = d3.scaleOrdinal()
         .range(this.color);
       stackColorsList = this.color;
     }
-    let z2 = d3.scaleOrdinal().range(this.color);
-    var stack = d3.stack();
+    const z2 = d3.scaleOrdinal().range(this.color);
+    const stack = d3.stack();
 
-    x0.domain(data.map(function (d) { return d.xName; }));
-    x1.domain(data.map(function (d, i) {
+    x0.domain(data.map(function(d) {
+ return d.xName;
+}));
+    x1.domain(data.map(function(d, i) {
       return d.sprojectName;
     }))
       .rangeRound([0, x0.bandwidth()]);
     // .padding(0.2);// bar width
 
-    var actualTypes = [];
-    data.forEach(function (d) { if (d.type && !actualTypes.includes(d.type)) { actualTypes.push(d.type); } });
+    const actualTypes = [];
+    data.forEach(function(d) {
+ if (d.type && !actualTypes.includes(d.type)) {
+ actualTypes.push(d.type);
+}
+});
     z.domain(actualTypes);
-    var keys = z.domain();
-    var groupData = d3.nest()
-      .key(function (d) { return d.xName + d.sprojectName; })
-      .rollup(function (d, i) {
-        var d2 = { sprojectName: d[0].sprojectName, xName: d[0].xName, hoverValue: d[0].hoverValue, sSprintName: d[0].sSprintName };
-        d.forEach(function (d) {
-          d2[d.type] = d.value;
-        });
-        return d2;
-      })
-      .entries(data)
-      .map(function (d) { return d.value; });
-    var stackData = stack
+    const keys = z.domain();
+    let groupData = d3.rollup(data, function(d, i) {
+      const d2 = { sprojectName: d[0].sprojectName, xName: d[0].xName, hoverValue: d[0].hoverValue, sSprintName: d[0].sSprintName };
+      d.forEach(function(d) {
+        d2[d.type] = d.value;
+      });
+      return d2;
+    }, function(d) {
+ return d.xName + d.sprojectName;
+});
+      // .key(function (d) { return d.xName + d.sprojectName; })
+      // .entries(data)
+      // .map(function (d) { return d.value; });
+      groupData = Array.from(groupData).map(function(d) {
+ return d[1];
+});
+      console.log(groupData);
+    const stackData = stack
       .keys(keys)(groupData);
 
-    svgX.append("g")
-      .attr("class", "xAxis")
+    svgX.append('g')
+      .attr('class', 'xAxis')
       .attr('transform', `translate(0, ${y(0)})`)
       .call(d3.axisBottom(x0));
 
@@ -198,7 +210,7 @@ export class GroupstackchartComponent implements OnChanges {
       .attr('y', 44)
       .attr('transform', 'rotate(0)')
       .text(this.xCaption);
-    var xTick = self.dataPoints === 1 ? width > 1500 ? -20 : width > 1000 ? 20 : 10 : 0;
+    const xTick = self.dataPoints === 1 ? width > 1500 ? -20 : width > 1000 ? 20 : 10 : 0;
     svgX
       .select('.xAxis')
       .selectAll('.tick text')
@@ -213,34 +225,38 @@ export class GroupstackchartComponent implements OnChanges {
       .attr('y2', 10)
       .style('stroke', '#333333');
 
-    svgY.append("g")
-      .attr("class", "yAxis")
+    svgY.append('g')
+      .attr('class', 'yAxis')
       .call(d3.axisLeft(y).ticks(5).tickSize(-width + margin))
-      .append("text")
-      .attr("x", -80)
-      .attr("y", -30)
+      .append('text')
+      .attr('x', -80)
+      .attr('y', -30)
       .attr('transform', 'rotate(-90)')
       .attr('fill', '#437495')
-      .attr('font-size', "12px")
+      .attr('font-size', '12px')
       .text(this.yCaption);
 
     // gridlines
-    svgX.selectAll("line.gridline").data(y.ticks(5)).enter()
-      .append("svg:line")
+    svgX.selectAll('line.gridline').data(y.ticks(5)).enter()
+      .append('svg:line')
       .attr('x1', 0)
       .attr('x2', width)
-      .attr('y1', function (d) { return y(d); })
-      .attr('y2', function (d) { return y(d); })
+      .attr('y1', function(d) {
+ return y(d);
+})
+      .attr('y2', function(d) {
+ return y(d);
+})
       .style('stroke', '#dedede')
       .style('fill', 'none')
       .attr('class', 'gridline');
 
 
-    var serie = svgX.selectAll(".serie")
+    const serie = svgX.selectAll('.serie')
       .data(stackData)
-      .enter().append("g")
-      .attr("class", "serie")
-      .attr("fill", function (d) {
+      .enter().append('g')
+      .attr('class', 'serie')
+      .attr('fill', function(d) {
         return z(d.key);
       });
 
@@ -251,24 +267,34 @@ export class GroupstackchartComponent implements OnChanges {
       .style('opacity', 0);
 
 
-    serie.selectAll("rect")
-      .data(function (d) { return d; })
-      .enter().append("rect")
-      .attr("class", "serie-rect1")
-      .attr("x", function (d, i) {
+    serie.selectAll('rect')
+      .data(function(d) {
+ return d;
+})
+      .enter().append('rect')
+      .attr('class', 'serie-rect1')
+      .attr('x', function(d, i) {
         return self.dataPoints === 1 ? spacingVariable + x1(d.data.sprojectName) : x1(d.data.sprojectName);
       })
-      .attr("y", function (d) { return y(d[1]); })
-      .attr("transform", function (d) { return "translate(" + x0(d?.data?.xName) + ",0)"; })
-      .attr("height", function (d) { return Math.abs(y(d[0]) - y(d[1])); })
-      .attr("width", barWidth)
-      .on("click", function (d, i) { console.log("serie-rect click d", i, d); })
-      .on('mouseover', function (d) {
-        let topValue = 75;
+      .attr('y', function(d) {
+ return y(d[1]);
+})
+      .attr('transform', function(d) {
+ return 'translate(' + x0(d?.data?.xName) + ',0)';
+})
+      .attr('height', function(d) {
+ return Math.abs(y(d[0]) - y(d[1]));
+})
+      .attr('width', barWidth)
+      .on('click', function(d, i) {
+ console.log('serie-rect click d', i, d);
+})
+      .on('mouseover', function(event,d) {
+        const topValue = 75;
         if (d.data.hoverValue) {
 
-          const circle = d3.event.target;
-          var {
+          const circle = event.target;
+          const {
             top: yPosition,
             left: xPosition
           } = circle.getBoundingClientRect();
@@ -278,7 +304,7 @@ export class GroupstackchartComponent implements OnChanges {
             .style('display', 'block')
             .style('opacity', .9);
 
-          let dataObj = JSON.parse(JSON.stringify(d.data));
+          const dataObj = JSON.parse(JSON.stringify(d.data));
           delete dataObj.sSprintName;
           delete dataObj.sprojectName;
           delete dataObj.hoverValue;
@@ -300,7 +326,7 @@ export class GroupstackchartComponent implements OnChanges {
           }
         }
       })
-      .on('mouseout', function (d) {
+      .on('mouseout', function(d) {
         div.transition()
           .duration(500)
           .style('display', 'none')
@@ -308,29 +334,33 @@ export class GroupstackchartComponent implements OnChanges {
 
       });
     if (this.kpiId != 'kpi125' && this.kpiId != 'kpi127') {
-      var serie2 = svgX.selectAll(".serie2")
+      const serie2 = svgX.selectAll('.serie2')
         .data(stackData)
-        .enter().append("g")
-        .attr("class", "serie2")
-        .attr("fill", function (d) {
+        .enter().append('g')
+        .attr('class', 'serie2')
+        .attr('fill', function(d) {
           return z(d.key);
         });
 
-      var triangle = d3.symbol().type(d3.symbolTriangle);
-      let dim = barWidth * 5;
-      serie2.selectAll(".path_triangle")
-        .data(function (d) { return d; })
+      const triangle = d3.symbol().type(d3.symbolTriangle);
+      const dim = barWidth * 5;
+      serie2.selectAll('.path_triangle')
+        .data(function(d) {
+ return d;
+})
         .enter()
-        .append("path")
-        .attr("d", triangle.size(dim))
-        .attr("opacity", 1)
-        .attr("class", "path_triangle")
-        .attr("transform", function (d) { return "translate(" + x0(d?.data?.xName) + ",0)"; })
-        .attr("transform", function (d, i) {
-          let xVal = self.dataPoints === 1 ? spacingVariable + x1(d.data.sprojectName) + x0(d?.data?.xName) : x1(d.data.sprojectName) + x0(d?.data?.xName);
-          return "translate(" + (xVal + 8) + "," + (y(0) + 10) + ")";
+        .append('path')
+        .attr('d', triangle.size(dim))
+        .attr('opacity', 1)
+        .attr('class', 'path_triangle')
+        .attr('transform', function(d) {
+ return 'translate(' + x0(d?.data?.xName) + ',0)';
+})
+        .attr('transform', function(d, i) {
+          const xVal = self.dataPoints === 1 ? spacingVariable + x1(d.data.sprojectName) + x0(d?.data?.xName) : x1(d.data.sprojectName) + x0(d?.data?.xName);
+          return 'translate(' + (xVal + 8) + ',' + (y(0) + 10) + ')';
         })
-        .attr("fill", function (d) {
+        .attr('fill', function(d) {
           return z2(d?.data?.sprojectName);
         });
     }
@@ -338,7 +368,7 @@ export class GroupstackchartComponent implements OnChanges {
     /** legend code */
     const legendDiv = d3.select(this.elem).select('#groupstackchart').append('div');
 
-    let svgLegend = d3
+    const svgLegend = d3
       .select(this.elem)
       .select('#svgLegend')
       .append('svg')
@@ -346,17 +376,17 @@ export class GroupstackchartComponent implements OnChanges {
       .attr('height', 50)
       .append('g');
 
-    let legend = svgLegend.selectAll(".d3-legend")
+    const legend = svgLegend.selectAll('.d3-legend')
       .data(Object.keys(stackData)[0])
       .enter()
       .append('g')
-      .attr("class", "d3-legend")
-      .attr("transform", function (d, i) {
-        return "translate(40, 10)";
+      .attr('class', 'd3-legend')
+      .attr('transform', function(d, i) {
+        return 'translate(40, 10)';
       });
 
     if (this.legendType == 'normal') {
-      let topValue = 30;
+      const topValue = 30;
       legendDiv.transition()
         .duration(200)
         .style('display', 'block')
@@ -380,26 +410,28 @@ export class GroupstackchartComponent implements OnChanges {
         .style('display', 'none')
         .style('opacity', 0);
 
-      legend.append("rect")
-        .attr("width", 12)
-        .attr("height", 12)
-        .attr("x", 0)
-        .attr("y", -7)
-        .style("fill", function (d, i) {
+      legend.append('rect')
+        .attr('width', 12)
+        .attr('height', 12)
+        .attr('x', 0)
+        .attr('y', -7)
+        .style('fill', function(d, i) {
           return '#DF9292';
         });
 
-      legend.append("text")
-        .attr("x", 18)
-        .attr("y", -6)
-        .attr("dy", ".85em")
-        .style("text-anchor", "start")
-        .style("font-size", 10)
-        .text(function (d) { return 'Legend'; });
+      legend.append('text')
+        .attr('x', 18)
+        .attr('y', -6)
+        .attr('dy', '.85em')
+        .style('text-anchor', 'start')
+        .style('font-size', 10)
+        .text(function(d) {
+ return 'Legend';
+});
 
       legend
-        .on('mouseover', function () {
-          let topValue = 30;
+        .on('mouseover', function() {
+          const topValue = 30;
 
           legendDiv.transition()
             .duration(200)
@@ -418,7 +450,7 @@ export class GroupstackchartComponent implements OnChanges {
             .style('left', 70 + 'px')
             .style('top', y[0] - topValue + 'px');
         })
-        .on('mouseout', function () {
+        .on('mouseout', function() {
           legendDiv.transition()
             .duration(500)
             .style('display', 'none')
@@ -434,16 +466,16 @@ export class GroupstackchartComponent implements OnChanges {
 
 
     function wrap(text, textWidth) {
-      text.each(function () {
-        var textContent = d3.select(this),
-          words = textContent.text().trim().split(/\s+/).reverse(),
-          word,
-          line = [],
-          lineNumber = 0,
-          lineHeight = 1.1, // ems
-          yPosition = textContent.attr('y'),
-          dy = parseFloat(textContent.attr('dy')),
-          tspan = textContent
+      text.each(function() {
+        const textContent = d3.select(this);
+          const words = textContent.text().trim().split(/\s+/).reverse();
+          let word;
+          let line = [];
+          let lineNumber = 0;
+          const lineHeight = 1.1; // ems
+          const yPosition = textContent.attr('y');
+          const dy = parseFloat(textContent.attr('dy'));
+          let tspan = textContent
             .text(null)
             .append('tspan')
             .attr('x', 10)
@@ -509,22 +541,22 @@ export class GroupstackchartComponent implements OnChanges {
 
       // console.log(this.data);
       // this.data = this.padData(this.data);
-      var prevsum = 0, currentSum = 0, max = 0;
-      let targetList = [];
+      let prevsum = 0; let currentSum = 0; let max = 0;
+      const targetList = [];
       this.data.forEach((pro) => {
         pro.value?.forEach((item, index) => {
-          let obj = {};
-          obj["sprojectName"] = pro.data;
+          const obj = {};
+          obj['sprojectName'] = pro.data;
           if (item.hoverValue) {
             obj['hoverValue'] = item.hoverValue;
-            obj["sSprintName"] = item.sSprintName;
+            obj['sSprintName'] = item.sSprintName;
           }
-          let sprintValue = index + 1;
+          const sprintValue = index + 1;
           if (typeof (item.value) === 'object') {
             if (item.value) {
-              let types = Object.keys(item.value);
+              const types = Object.keys(item.value);
               if (types.length >= 1) {
-                types.forEach(function (type) {
+                types.forEach(function(type) {
                   obj['type'] = type;
                   obj['value'] = item.value[type];
                   obj['xName'] = item.xAxisTick ? item.xAxisTick : sprintValue;

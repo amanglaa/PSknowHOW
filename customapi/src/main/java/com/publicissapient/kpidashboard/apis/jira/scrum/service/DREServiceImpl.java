@@ -136,7 +136,7 @@ public class DREServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 		List<String> basicProjectConfigIds = new ArrayList<>();
 		Map<String, List<String>> projectWiseDefectRemovelStatus = new HashMap<>();
 		Map<String, Map<String, Object>> uniqueProjectMap = new HashMap<>();
-		Map<String, List<String>> droppedDefects = new HashMap<>();
+		Map<String, Map<String,List<String>>> droppedDefects = new HashMap<>();
 
 		leafNodeList.forEach(leaf -> {
 
@@ -184,7 +184,7 @@ public class DREServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 		KpiHelperService.getDefectsWithoutDrop(droppedDefects, totalDefectList, defectListWoDrop);
 
 		// Find defect with closed status. Avoided making dB query
-		List<JiraIssue> closeDefectList = totalDefectList.stream()
+		List<JiraIssue> closeDefectList = defectListWoDrop.stream()
 				.filter(f -> CollectionUtils
 						.emptyIfNull(projectWiseDefectRemovelStatus.get(f.getBasicProjectConfigId())).stream()
 						.anyMatch(s -> s.equalsIgnoreCase(f.getJiraStatus())))

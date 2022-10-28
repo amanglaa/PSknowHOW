@@ -17,7 +17,7 @@
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
 <p-toast [style]="{marginTop: '80px'}"></p-toast>
-<div class="main p-5">
+<div class="main field-mapping p-5">
     <div class="p-d-flex p-align-center p-jc-between position-relative p-pb-3">
         <div class="p-d-flex p-align-center">
             <a routerLink="/dashboard/Config/ToolMenu" pButton pRipple type="button" icon="pi pi-arrow-left"
@@ -536,7 +536,7 @@
                     <div class="p-field">
                         <label class="field-title">Test Case Issue Type</label>
                         <div class="p-inputgroup">
-                            <p-chips [style]="{'width':'504px', 'border-bottom-right-radius':'0'}"
+                            <p-chips
                                 inputId="jiraTestCaseType" formControlName="jiraTestCaseType"
                                 placeholder="Enter Test Case Issue Type" addOnBlur="true" pTooltip='<span class="tooltiptext">
                                 Issue type of Test Case.
@@ -672,7 +672,7 @@
                     <div class="p-field">
                         <label class="field-title">Status to identify abandoned Test cases</label>
                         <div class="p-inputgroup">
-                            <p-chips [style]="{'width':'504px', 'border-bottom-right-radius':'0'}"
+                            <p-chips
                                 inputId="testCaseStatus" formControlName="testCaseStatus"
                                 placeholder="Enter Status to identify abandoned Test cases" addOnBlur="true" pTooltip='<span class="tooltiptext">
                                     Select status like "Abandoned", "Deprecated" etc so that these can be excluded from Regression automation coverage, In Sprint automation coverage and Test case without story link KPI
@@ -718,7 +718,7 @@
                         <!-- Single value text input for Custom Field-->
                         <!-- -->
                         <div class="p-field p-col-7 p-p-0 p-ml-5"
-                        *ngIf="fieldMapping[ filter.code + 'Identifier'].value == 'CustomField' ">
+                        *ngIf="fieldMapping[ filter.code + 'Identifier'].value === 'CustomField' ">
                             <label class="field-title">{{fieldMapping[filter.code + 'Identifier'].value}}</label>
                             <div class="p-inputgroup">
                                 <input type="text" pInputText id="{{filter.code + 'IdentSingleValue'}}"
@@ -726,7 +726,7 @@
                                     placeholder="Enter {{fieldMapping[filter.code + 'Identifier'].value}}"
                                     [style]="{'width':'300px'}" pTooltip="" tooltipPosition="top" tooltipEvent="hover"
                                     [escape]="false">
-                                <button [hidden]="fieldMapping[filter.code + 'Identifier'].value != 'CustomField'"
+                                <button [hidden]="fieldMapping[filter.code + 'Identifier'].value !== 'CustomField'"
                                     type="button" pButton pRipple icon="pi pi-search"
                                     (click)="showDialogToAddValue(true, filter.code + 'IdentSingleValue' , 'fields')">
                                 </button>
@@ -735,7 +735,7 @@
                         <!-- Multivalue field for Component and Labels-->
                         <!--  -->
                         <div class="p-field p-col-7 p-p-0 p-ml-5"
-                        *ngIf="fieldMapping[ filter.code + 'Identifier'].value == 'Labels' || fieldMapping[filter.code + 'Identifier'].value == 'Component'">
+                        *ngIf="fieldMapping[ filter.code + 'Identifier'].value === 'Labels' || fieldMapping[filter.code + 'Identifier'].value === 'Component'">
                             <label class="field-title">{{fieldMapping[filter.code + 'Identifier'].value}}</label>
                             <div class="">
                                 <p-chips [inputStyle]="{'width':'544px'}"

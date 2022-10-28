@@ -20,8 +20,7 @@ import { Component, OnInit } from '@angular/core';
 import { GetAuthorizationService } from '../services/get-authorization.service';
 import { Router, NavigationEnd } from '@angular/router';
 
-declare var $: any;
-import { MenuItem } from 'primeng/api';
+declare let $: any;
 
 @Component({
     selector: 'app-config',
@@ -29,7 +28,7 @@ import { MenuItem } from 'primeng/api';
     styleUrls: ['./config.component.css']
 })
 export class ConfigComponent implements OnInit {
-    items: MenuItem[];
+    items = [];
     hasAccess = <boolean>false;
     activeTab: any;
 

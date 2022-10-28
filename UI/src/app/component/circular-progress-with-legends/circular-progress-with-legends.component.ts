@@ -57,7 +57,7 @@ export class CircularProgressWithLegendsComponent implements OnInit, OnChanges {
                 value: this.maxValue,
                 size: this.maxValue,
                 label: this.unit,
-                update: function (value) {
+                update(value) {
                     return value;
                 }
             }];
@@ -74,7 +74,7 @@ export class CircularProgressWithLegendsComponent implements OnInit, OnChanges {
     }
 
     draw(status) {
-        let self = this;
+        const self = this;
         if (this.value !== undefined) {
 
             if (status !== 'new') {
@@ -131,8 +131,8 @@ export class CircularProgressWithLegendsComponent implements OnInit, OnChanges {
                     .attr('width', 60)
                     .attr('x', 20)
                     .attr('y', 20)
-                    .attr("rx", 5)
-                    .attr("ry", 5);
+                    .attr('rx', 5)
+                    .attr('ry', 5);
 
                 svgLegends.append('text')
                     .html('Project &nbsp;&nbsp;' + truncate(this.projectName))
@@ -143,25 +143,25 @@ export class CircularProgressWithLegendsComponent implements OnInit, OnChanges {
                     .attr('class', 'projectName')
                     .attr('title', this.projectName);
 
-                let div = d3.select(self.elem).select('.legends').append('div')
+                const div = d3.select(self.elem).select('.legends').append('div')
                     .attr('class', 'projectNameTooltip')
                     .style('opacity', 0);
 
                 if (this.projectName && this.projectName.length >= 20) {
                     const projectLabel = d3.selectAll('.projectName');
                     projectLabel
-                        .on("mouseover", function (d) {
+                        .on('mouseover', function(event,d) {
                             div.transition()
                                 .duration(200)
-                                .style("opacity", .9);
+                                .style('opacity', .9);
                             div.html(self.projectName)
-                                .style("left", (d3.event.layerX - 25) + 'px')
-                                .style("top", (d3.event.layerY + 10) + 'px');
+                                .style('left', (event.layerX - 25) + 'px')
+                                .style('top', (event.layerY + 10) + 'px');
                         })
-                        .on("mouseout", function (d) {
+                        .on('mouseout', function(d) {
                             div.transition()
                                 .duration(500)
-                                .style("opacity", 0);
+                                .style('opacity', 0);
                         });
                 }
             }
@@ -178,15 +178,15 @@ export class CircularProgressWithLegendsComponent implements OnInit, OnChanges {
                 .style('visibility', 'hidden');
             const radiusNum = parseInt(this.radius, 10);
             const thickness = parseInt(this.thickness, 10);
-            var arc = d3.arc().innerRadius(radiusNum).outerRadius(radiusNum + thickness).startAngle(0).endAngle(function (d) {
+            var arc = d3.arc().innerRadius(radiusNum).outerRadius(radiusNum + thickness).startAngle(0).endAngle(function(d) {
                 return (d.value / d.size) * 2 * Math.PI;
             });
             const svg = d3.select(this.elem).select('.content').append('svg').attr('width', this.width + 'px').attr('height', this.height + 'px');
-            const field = svg.selectAll('.field').remove().exit().data(this.fields).enter().append('g').attr('transform', function (d, i) {
+            const field = svg.selectAll('.field').remove().exit().data(this.fields).enter().append('g').attr('transform', function(d, i) {
                 return 'translate(' + (radiusNum + thickness) + ',' + (radiusNum + thickness) + ')';
             });
 
-            field.append('path').attr('class', 'path path--background').attr('d', arc).style('border', '1px solid black').style('fill', function (d, i) {
+            field.append('path').attr('class', 'path path--background').attr('d', arc).style('border', '1px solid black').style('fill', function(d, i) {
                 return backgroundColor;
             });
 
@@ -201,7 +201,7 @@ export class CircularProgressWithLegendsComponent implements OnInit, OnChanges {
             tooltip.append('div')
                 .attr('class', 'label');
 
-            const path = field.append('path').attr('class', 'path path--foreground').style('fill', function (d, i) {
+            const path = field.append('path').attr('class', 'path path--foreground').style('fill', function(d, i) {
                 return fillColor;
             });
 
@@ -209,20 +209,20 @@ export class CircularProgressWithLegendsComponent implements OnInit, OnChanges {
             const label = field.append('text').attr('class', 'label').attr('dy', '.15em').attr('dx', '0px').style('fill', '#4a4a4a').style('font-size', this.fontSize + 'px').style('font-weight', 'bold').style('text-anchor', 'middle');
 
             const updatedValue = this.value;
-            path.on('mouseenter', function (d) {
+            path.on('mouseenter', function(d) {
                 d3.select(this)
                     .attr('stroke', 'white')
                     .transition()
                     .duration(1000)
                     .attr('stroke-width', 2);
             });
-            path.on('mouseleave', function (d) {
+            path.on('mouseleave', function(d) {
                 d3.select(this).transition()
                     .attr('stroke', 'none');
             });
 
             // add values here to update
-            field.each(function (d) {
+            field.each(function(d) {
                 d.previous = d.value;
                 d.value = d.update(updatedValue);
             });
@@ -238,7 +238,7 @@ export class CircularProgressWithLegendsComponent implements OnInit, OnChanges {
             const i = d3.interpolate({
                 value: b.value
             }, b);
-            return function (t) {
+            return function(t) {
                 return arc(i(t));
             };
         }

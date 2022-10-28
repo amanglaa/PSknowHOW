@@ -182,7 +182,7 @@
   margin: 0;
   background: var(--color-white);
   position: absolute;
-  top: 100%;
+  top: 90%;
   right: 0;
   width: 100%;
   border-radius: 3px;
@@ -314,4 +314,7 @@
 .dialog-body input {
   padding: 10px;
   border-radius: 4px;
+}
+.navigation .setting-tab{
+  height: 100px;
 }

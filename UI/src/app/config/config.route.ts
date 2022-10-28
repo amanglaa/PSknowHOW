@@ -37,9 +37,9 @@ export const ConfigRoutes: Routes = [
             // },
             {
                 path: '',
-                loadChildren: './project-config/project-config.module#ProjectConfigModule',
-                canActivate: [GuestGuard]
-                // loadChildren: () => import('./profile/profile.module#ProfileModule').then(m => m.LazyModule)
+                canActivate: [GuestGuard],
+                // loadChildren: () => import('./profile/profile.module').then(m => m.ProfileModule)
+                loadChildren: () => import('./project-config/project-config.module').then(m => m.ProjectConfigModule)
             },
             {
                 path: 'Upload',
@@ -54,9 +54,9 @@ export const ConfigRoutes: Routes = [
             ,
             {
                 path: 'Profile',
-                loadChildren: './profile/profile.module#ProfileModule',
-                canActivate: [GuestGuard]
-                // loadChildren: () => import('./profile/profile.module#ProfileModule').then(m => m.LazyModule)
+                // loadChildren: './profile/profile.module#ProfileModule',
+                canActivate: [GuestGuard],
+                loadChildren: () => import('./profile/profile.module').then(m => m.ProfileModule)
             },
             {
                 path: 'AdvancedSettings',
