@@ -27,6 +27,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.publicissapient.kpidashboard.apis.auth.CustomAuthenticationFailureHandler;
+import com.publicissapient.kpidashboard.apis.auth.service.AuthTypesConfigService;
+import com.publicissapient.kpidashboard.common.model.application.AuthTypeStatus;
+import org.checkerframework.checker.units.qual.A;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -70,10 +73,14 @@ public class StandardLoginRequestFilterTest {
 	@Mock
 	private RsaEncryptionService rsaEncryptionService;
 
+	@Mock
+	private AuthTypesConfigService authTypesConfigService;
+
 	@Before
 	public void setup() {
 		path = "/login";
-		filter = new StandardLoginRequestFilter(path, manager, resultHandler, authenticationFailureHandler, rsaEncryptionService, customApiConfig);
+		filter = new StandardLoginRequestFilter(path, manager, resultHandler, authenticationFailureHandler,
+				rsaEncryptionService, customApiConfig, authTypesConfigService);
 	}
 
 	@Test
@@ -90,6 +97,10 @@ public class StandardLoginRequestFilterTest {
 	@Test
 	public void shouldAuthenticate() {
 		when(request.getMethod()).thenReturn("POST");
+		AuthTypeStatus authTypeStatus = new AuthTypeStatus();
+		authTypeStatus.setAdLogin(false);
+		authTypeStatus.setStandardLogin(true);
+		when(authTypesConfigService.getAuthTypesStatus()).thenReturn(authTypeStatus);
 		String principal = "user1";
 		String credentials = "password1";
 		when(request.getParameter("username")).thenReturn(principal + " ");
@@ -111,6 +122,10 @@ public class StandardLoginRequestFilterTest {
 	@Test
 	public void shouldAuthenticateWithNullUsernamePassword() {
 		when(request.getMethod()).thenReturn("POST");
+		AuthTypeStatus authTypeStatus = new AuthTypeStatus();
+		authTypeStatus.setAdLogin(false);
+		authTypeStatus.setStandardLogin(true);
+		when(authTypesConfigService.getAuthTypesStatus()).thenReturn(authTypeStatus);
 		String principal = null;
 		String credentials = null;
 		when(request.getParameter("username")).thenReturn(principal);
@@ -127,4 +142,16 @@ public class StandardLoginRequestFilterTest {
 		assertEquals("", authentication.getCredentials());
 		assertEquals(AuthType.STANDARD, authentication.getDetails());
 	}
+
+	@Test(expected = AuthenticationServiceException.class)
+	public void shouldThrowExceptionIfDisabled() {
+		AuthTypeStatus authTypeStatus = new AuthTypeStatus();
+		authTypeStatus.setAdLogin(true);
+		authTypeStatus.setStandardLogin(false);
+		when(authTypesConfigService.getAuthTypesStatus()).thenReturn(authTypeStatus);
+		filter.attemptAuthentication(request, response);
+	}
+
+
+
 }
