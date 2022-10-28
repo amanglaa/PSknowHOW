@@ -315,7 +315,7 @@ public class FirstTimePassRateServiceImpl extends JiraKPIService<Double, List<Ob
 		List<JiraIssue> defectListWoDrop = new ArrayList<>();
 		KpiHelperService.getDefectsWithoutDrop(statusConfigsOfRejectedStoriesByProject, issuesBySprintAndType, defectListWoDrop);
 
-		removeRejectedStoriesFromSprint(sprintWiseStories, defectListWoDrop);
+		KpiHelperService.removeRejectedStoriesFromSprint(sprintWiseStories, defectListWoDrop);
 
 		removeStoriesWithDefect(defectListWoDrop, projectWisePriority, projectWiseRCA,statusConfigsOfRejectedStoriesByProject);
 
@@ -364,15 +364,6 @@ public class FirstTimePassRateServiceImpl extends JiraKPIService<Double, List<Ob
 				projectWisePriority.put(leaf.getProjectFilter().getBasicProjectConfigId().toString(), priorityValues);
 			}
 		}
-	}
-
-	private void removeRejectedStoriesFromSprint(List<SprintWiseStory> sprintWiseStories,
-			List<JiraIssue> acceptedStories) {
-
-		Set<String> acceptedStoryIds = acceptedStories.stream().map(JiraIssue::getNumber).collect(Collectors.toSet());
-
-		sprintWiseStories.forEach(sprintWiseStory -> sprintWiseStory.getStoryList()
-				.removeIf(storyId -> !acceptedStoryIds.contains(storyId)));
 	}
 
 
