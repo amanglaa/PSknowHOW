@@ -439,6 +439,7 @@ export class JiraConfigComponent implements OnInit {
     if (this.selectedConnection && this.selectedConnection.id) {
       const postData = {};
       this.showLoadingOnFormElement('boards');
+      this.isLoading = true;
       postData['connectionId'] = this.selectedConnection.id;
       postData['projectKey'] = this.toolForm.controls['projectKey'].value;
       postData['boardType'] = this.selectedProject['Type'];
@@ -453,6 +454,13 @@ export class JiraConfigComponent implements OnInit {
         this.toolForm.controls['boards'].value.forEach((val) => {
           this.boardsData = this.boardsData.filter((data) => (data.boardId + '') !== (val.boardId + ''));
         });
+        this.isLoading = false;
+      });
+    } else {
+      this.messenger.add({
+        severity: 'error',
+        summary:
+          'Select Connection first.',
       });
     }
   };
