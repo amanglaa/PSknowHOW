@@ -436,23 +436,25 @@ export class JiraConfigComponent implements OnInit {
   };
 
   fetchBoards = () => {
-    const postData = {};
-    this.showLoadingOnFormElement('boards');
-    postData['connectionId'] = this.selectedConnection.id;
-    postData['projectKey'] = this.toolForm.controls['projectKey'].value;
-    postData['boardType'] = this.selectedProject['Type'];
-    this.http.getAllBoards(postData).subscribe((response) => {
-      this.hideLoadingOnFormElement('boards');
-      this.isLoading = false;
-      this.boardsData = response['data'];
-      this.boardsData.forEach((board) => {
-        board['projectKey'] = this.toolForm.controls['projectKey'].value;
+    if (this.selectedConnection && this.selectedConnection.id) {
+      const postData = {};
+      this.showLoadingOnFormElement('boards');
+      postData['connectionId'] = this.selectedConnection.id;
+      postData['projectKey'] = this.toolForm.controls['projectKey'].value;
+      postData['boardType'] = this.selectedProject['Type'];
+      this.http.getAllBoards(postData).subscribe((response) => {
+        this.hideLoadingOnFormElement('boards');
+        this.isLoading = false;
+        this.boardsData = response['data'];
+        this.boardsData.forEach((board) => {
+          board['projectKey'] = this.toolForm.controls['projectKey'].value;
+        });
+        // if boards already has value
+        this.toolForm.controls['boards'].value.forEach((val) => {
+          this.boardsData = this.boardsData.filter((data) => (data.boardId + '') !== (val.boardId + ''));
+        });
       });
-      // if boards already has value
-      this.toolForm.controls['boards'].value.forEach((val) => {
-        this.boardsData = this.boardsData.filter((data) => (data.boardId + '') !== (val.boardId + ''));
-      });
-    });
+    }
   };
 
   onBoardUnselect = (value) => {
