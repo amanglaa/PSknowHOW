@@ -157,12 +157,11 @@
         - 80
         - 8080
 
-    - name: copy certs_import.sh file
-      copy:
-        src: ../playbooks/certs_import.sh
-        dest: /var/knh/certs_import.sh
-        mode: 0755
-      ignore_errors: yes
+    - name: Copying script file
+      copy: src={{ item.src }} dest={{ item.dest }} mode=0755
+      with_items:
+        - {src: '../playbooks/certs_import.sh', dest: '/var/knh/certs_import.sh'}
+        - {src: '../playbooks/cleanup.sh', dest: '/var/knh/cleanup.sh'}
       
     - name: Execute certs_import  script
       shell: /var/knh/certs_import.sh {{edcurl}} {{ldapurl}} 
@@ -170,17 +169,10 @@
     - name: clean Sapce
       shell: docker image prune -a -f && docker volume prune -f && docker system prune -f
 
-#    - name: Copy cleanup.sh file
-#      copy:
-#        src: ../playbooks/cleanup.sh
-#        dest: /tmp/cleanup.sh
-#        mode: 0755
-#      ignore_errors: yes
-#
-#    - name: Execute cleanup script
-#      shell: /tmp/cleanup.sh
-#      ignore_errors: yes
-#
-#    - name: Update crontab
-#      shell: ( crontab -u root -l; echo "0 * * * 2 /tmp/cleanup.sh" ) | crontab -u root -
-#      ignore_errors: yes
+   - name: Execute cleanup script
+     shell: /var/knh/cleanup.sh
+     ignore_errors: yes
+
+   - name: Update crontab
+     shell: ( crontab -u root -l; echo "0 * * * 2 /var/knh/cleanup.sh" ) | crontab -u root -
+     ignore_errors: yes
