@@ -4,25 +4,25 @@
   vars_files:
     - vars/defaults.yml
     - vars/app.yml
-  pre_tasks:
-    - name: Install required Packages for CentOS
-      include_tasks: centos.yml
-      when: (ansible_facts['distribution'] == 'CentOS') or (ansible_facts['distribution'] == 'RedHat')
-      # ignore_errors: yes
+  # pre_tasks:
+  #   - name: Install required Packages for CentOS
+  #     include_tasks: centos.yml
+  #     when: (ansible_facts['distribution'] == 'CentOS') or (ansible_facts['distribution'] == 'RedHat')
+  #     # ignore_errors: yes
       
-    - name: Install required Packages for Ubuntu
-      include_tasks: ubuntu.yml
-      when: ansible_facts['distribution'] == 'Ubuntu'
+  #   - name: Install required Packages for Ubuntu
+  #     include_tasks: ubuntu.yml
+  #     when: ansible_facts['distribution'] == 'Ubuntu'
       # ignore_errors: yes
   vars:
     ansible_python_interpreter: /usr/bin/python3
   tasks:
-    - name: Setting environment Variable
+    - name: Setting DB Variable as PS-Internal
       set_fact:
         MONGODB_IMAGE: mongodb-ps
       when: DEPLOY is match("PS-INTERNAL")
 
-    - name: Setting environment Variable for GITHUB
+    - name: Setting DB Variable as GITHUB
       set_fact:
         MONGODB_IMAGE: mongodb
       when: DEPLOY is match("OPENSOURCE")
@@ -169,10 +169,10 @@
     - name: clean Sapce
       shell: docker image prune -a -f && docker volume prune -f && docker system prune -f
 
-   - name: Execute cleanup script
-     shell: /var/knh/cleanup.sh
-     ignore_errors: yes
+    - name: Execute cleanup script
+      shell: /var/knh/cleanup.sh
+      ignore_errors: yes
 
-   - name: Update crontab
-     shell: ( crontab -u root -l; echo "0 * * * 2 /var/knh/cleanup.sh" ) | crontab -u root -
-     ignore_errors: yes
+    - name: Update crontab
+      shell: ( crontab -u root -l; echo "0 * * * 2 /var/knh/cleanup.sh" ) | crontab -u root -
+      ignore_errors: yes
