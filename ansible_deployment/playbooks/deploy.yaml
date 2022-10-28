@@ -27,7 +27,7 @@
         MONGODB_IMAGE: mongodb
       when: DEPLOY is match("OPENSOURCE")
 
-    - name: Execute certs_import  script
+    - name: Execute certs_import script
       shell: /var/knh/certs_import.sh {{sapecloudldap}} {{edcurl}} 
 
     - name: Create target directory
