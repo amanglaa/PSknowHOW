@@ -194,7 +194,8 @@
                                 <label for="{{form_elem.id}}" style="visibility: hidden;">{{form_elem.label}}</label>
                                 <p-button id="{{form_elem.id}}" label="{{form_elem.label}}"
                                     class="p-button-raised p-mt-5" [ngStyle]="{'marfin-top': '10px'}" icon="pi pi-check"
-                                    [loading]="isLoading" (click)="form_elem.clickEventHandler()">
+                                    [loading]="isLoading" (click)="form_elem.clickEventHandler()"
+                                    [disabled]="form_elem.disabled()">
                                 </p-button>
                             </ng-container>
                         </div>

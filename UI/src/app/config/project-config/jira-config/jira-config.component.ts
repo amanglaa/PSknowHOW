@@ -411,8 +411,8 @@ export class JiraConfigComponent implements OnInit {
           }
 
           // prefetch boards if projectKey is present
-          if(this.urlParam === 'Jira') {
-            if(this.toolForm.controls['projectKey'].value) {
+          if (this.urlParam === 'Jira') {
+            if (this.toolForm.controls['projectKey'].value) {
               this.fetchBoards();
             }
           }
@@ -427,6 +427,13 @@ export class JiraConfigComponent implements OnInit {
       }
     });
   }
+
+  checkProjectKey = () => {
+    if (this.toolForm.controls['projectKey'] && this.toolForm.controls['projectKey'].value) {
+      return false;
+    }
+    return true;
+  };
 
   fetchBoards = () => {
     const postData = {};
@@ -459,13 +466,13 @@ export class JiraConfigComponent implements OnInit {
   filterBoards = (event) => {
     const filtered: any[] = [];
     const query = event.query;
-
-    for (const board of this.boardsData) {
-      if (board.boardName.toLowerCase().indexOf(query.toLowerCase()) === 0) {
-        filtered.push(board);
+    if (this.boardsData.length) {
+      for (const board of this.boardsData) {
+        if (board.boardName.toLowerCase().indexOf(query.toLowerCase()) === 0) {
+          filtered.push(board);
+        }
       }
     }
-
     this.filteredBoards = filtered;
   };
 
@@ -834,7 +841,8 @@ export class JiraConfigComponent implements OnInit {
                 containerClass: 'p-col-2 p-d-flex p-ai-center',
                 class: 'p-button-raised',
                 show: true,
-                clickEventHandler: this.fetchBoards
+                clickEventHandler: this.fetchBoards,
+                disabled: this.checkProjectKey
               },
               {
                 type: 'autoComplete',
