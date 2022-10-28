@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.publicissapient.kpidashboard.common.model.jira.JiraIssueMap;
 import org.springframework.stereotype.Repository;
 
 import com.publicissapient.kpidashboard.common.model.jira.JiraIssue;
@@ -222,4 +223,7 @@ public interface JiraIssueRepositoryCustom {// NOPMD
 	List<JiraIssue> findIssuesByDateAndTypeAndStatus(Map<String, List<String>> mapOfFilters,
 			Map<String, Map<String, Object>> uniqueProjectMap, String dateFrom, String dateTo, String range,
 			String mapStatusCriteria, boolean isProductionDefect);
+
+	public List<JiraIssueMap> findIssueAndDescByNumber(List<String> storyNumber);
 }
+
