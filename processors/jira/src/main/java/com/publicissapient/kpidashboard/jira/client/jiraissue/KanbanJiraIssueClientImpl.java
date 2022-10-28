@@ -1354,6 +1354,7 @@ public class KanbanJiraIssueClientImpl extends JiraIssueClient {
 		testCaseDetails.setTestAutomatedDate(jiraIssue.getTestAutomatedDate());
 		testCaseDetails.setDefectStoryID(jiraIssue.getDefectStoryID());
 		testCaseDetails.setDefectRaisedBy(jiraIssue.getDefectRaisedBy());
+		testCaseDetails.setTestCaseStatus(jiraIssue.getStatus());
 
 	}
 

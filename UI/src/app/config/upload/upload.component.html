@@ -26,17 +26,17 @@
           <div class="start">
             <span class="fa fa-download" aria-hidden="true" *ngIf="!logoImage"></span>
             <div *ngIf="!logoImage">Select a logo image to upload</div>
-            <div class="upload-ins">File should be *.pg/png/jpg/jpeg in format, max 50 KB in size and 100 x 100 pixels
+            <div class="upload-ins">File should be *.pg/png/jpg/jpeg in format, max 100 KB in size and 250 x 100 pixels
               in dimension</div>
-            <div *ngIf="error" class="invalid-text">{{error}}</div>
-            <div *ngIf="warning" class="warning-text">{{warning}}</div>
-            <div *ngIf="message" class="success">{{message}}</div>
 
             <span id="file-upload-btn" *ngIf="!logoImage" class="btn btn-primary">Select a file
               <input *ngIf="isUploadFile" id="file-upload" type="file" name="fileUpload" accept="image/*"
                 (change)="onUpload($event)" />
             </span>
             <span id="file-upload-btn" *ngIf="logoImage" class="btn btn-primary" (click)="onDelete()">Delete</span>
+            <div *ngIf="error" class="invalid-text p-pt-3">{{error}}</div>
+            <div *ngIf="warning" class="warning-text p-pt-3">{{warning}}</div>
+            <div *ngIf="message" class="success p-pt-3">{{message}}</div>
           </div>
         </label>
       </div>

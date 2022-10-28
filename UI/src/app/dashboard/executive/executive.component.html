@@ -30,37 +30,37 @@
                   [showTrendIndicator]="showKpiTrendIndicator[kpi?.kpiId] ==false ? showKpiTrendIndicator[kpi?.kpiId] : true"
                   (downloadExcel)="downloadExcel(kpi.kpiId, kpi.kpiName, kpi.kpiDetail.kanban)"
                   [dropdownArr]="kpiDropdowns[kpi?.kpiId]" (optionSelected)="handleSelectedOption($event, kpi)"
-                  [showExport]="true"
+                  [showExport]="true" [showChartView]="showChart"
                   [isShow]="(kpi?.kpiDetail?.additionalFilterSupport && iSAdditionalFilterSelected && kpiLoader === false) || (!iSAdditionalFilterSelected && kpiLoader === false) && (ifKpiExist(kpi.kpiId) != -1) ? true : false">
                   <ng-container *ngIf="!noTabAccess else noDataAccess">
-                    <ng-container *ngIf="(kpiChartData | json) != '{}' && kpiChartData != undefined;else noData">
+                    <ng-container *ngIf="(kpiChartData | json) !== '{}' && kpiChartData != undefined;else noData">
                       <div class="p-pl-3 p-pr-3" [ngSwitch]="kpi?.kpiDetail?.chartType"
                         *ngIf="ifKpiExist(kpi.kpiId) != -1; else loader">
                         <ng-container
                           *ngIf="(kpiChartData[kpi?.kpiId]?.length > 0 && chartColorList[kpi?.kpiId]?.length>0 && !iSAdditionalFilterSelected) || (kpiChartData[kpi?.kpiId]?.length > 0 && chartColorList[kpi?.kpiId]?.length>0 && kpi?.kpiDetail?.additionalFilterSupport && iSAdditionalFilterSelected); else noData">
-                          <app-groupstackchart *ngSwitchCase="'stackedColumn'" [legendType]="'tooltip'"
-                            [xCaption]="kpi?.kpiDetail?.xaxisLabel" [yCaption]="kpi?.kpiDetail?.yaxisLabel"
-                            [unit]="kpi?.kpiDetail?.kpiUnit" [thresholdValue]="kpi?.kpiDetail?.thresholdValue"
-                            [data]="kpiChartData[kpi?.kpiId]" [color]="chartColorList[kpi?.kpiId]"
-                            [selectedtype]="selectedtype"></app-groupstackchart>
-                          <app-table *ngSwitchCase="'table'" [data]="kpiChartData[kpi?.kpiId].data"
-                            [cols]="kpiChartData[kpi?.kpiId]?.columnHeaders" [showMarker]="'true'"
-                            [showMarkerColumnNumber]="0"></app-table>
-                          <app-line-bar-chart-with-hover *ngSwitchCase="match_expression_1">
-                          </app-line-bar-chart-with-hover>
-                          <app-multiline *ngSwitchDefault [thresholdValue]="kpi?.kpiDetail?.thresholdValue"
-                            [unit]="kpi?.kpiDetail?.kpiUnit" [data]="kpiChartData[kpi?.kpiId]"
-                            [xCaption]="kpi?.kpiDetail?.xaxisLabel" [yCaption]="kpi?.kpiDetail?.yaxisLabel"
-                            [name]="kpi?.kpiName" [kpiId]="kpi?.kpiId" [color]="chartColorList[kpi?.kpiId]"
-                            [selectedtype]="selectedtype">
-                          </app-multiline>
-                          <app-grouped-column-plus-line-chart *ngSwitchCase="'grouped_column_plus_line'"
-                            [data]="kpiChartData[kpi?.kpiId]" [lineChart]="true" [unit]="kpi?.kpiDetail?.kpiUnit"
-                            [thresholdValue]="kpi?.kpiDetail?.thresholdValue" [xCaption]="kpi?.kpiDetail?.xaxisLabel"
-                            [yCaption]="kpi?.kpiDetail?.yaxisLabel" [color]="chartColorList[kpi?.kpiId]"
-                            [barLegend]="kpi?.kpiDetail?.barLegend" [lineLegend]="kpi?.kpiDetail?.lineLegend"
-                            [selectedtype]="selectedtype">
-                          </app-grouped-column-plus-line-chart>
+                          <ng-container *ngIf="showChart">
+                            <app-groupstackchart *ngSwitchCase="'stackedColumn'" [legendType]="'tooltip'"
+                              [xCaption]="kpi?.kpiDetail?.xaxisLabel" [yCaption]="kpi?.kpiDetail?.yaxisLabel"
+                              [unit]="kpi?.kpiDetail?.kpiUnit" [thresholdValue]="kpi?.kpiDetail?.thresholdValue"
+                              [data]="kpiChartData[kpi?.kpiId]" [color]="chartColorList[kpi?.kpiId]"
+                              [selectedtype]="selectedtype"></app-groupstackchart>
+                            <app-table *ngSwitchCase="'table'" [data]="kpiChartData[kpi?.kpiId].data"
+                              [cols]="kpiChartData[kpi?.kpiId]?.columnHeaders" [showMarker]="'true'"
+                              [showMarkerColumnNumber]="0"></app-table>
+                            <app-multiline *ngSwitchCase="'line'" [thresholdValue]="kpi?.kpiDetail?.thresholdValue"
+                              [unit]="kpi?.kpiDetail?.kpiUnit" [data]="kpiChartData[kpi?.kpiId]"
+                              [xCaption]="kpi?.kpiDetail?.xaxisLabel" [yCaption]="kpi?.kpiDetail?.yaxisLabel"
+                              [name]="kpi?.kpiName" [kpiId]="kpi?.kpiId" [color]="chartColorList[kpi?.kpiId]"
+                              [selectedtype]="selectedtype">
+                            </app-multiline>
+                            <app-grouped-column-plus-line-chart *ngSwitchCase="'grouped_column_plus_line'"
+                              [data]="kpiChartData[kpi?.kpiId]" [lineChart]="true" [unit]="kpi?.kpiDetail?.kpiUnit"
+                              [thresholdValue]="kpi?.kpiDetail?.thresholdValue" [xCaption]="kpi?.kpiDetail?.xaxisLabel"
+                              [yCaption]="kpi?.kpiDetail?.yaxisLabel" [color]="chartColorList[kpi?.kpiId]"
+                              [barLegend]="kpi?.kpiDetail?.barLegend" [lineLegend]="kpi?.kpiDetail?.lineLegend"
+                              [selectedtype]="selectedtype">
+                            </app-grouped-column-plus-line-chart>
+                          </ng-container>
                         </ng-container>
                       </div>
                     </ng-container>

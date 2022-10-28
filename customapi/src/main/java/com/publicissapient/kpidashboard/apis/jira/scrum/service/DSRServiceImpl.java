@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.publicissapient.kpidashboard.apis.common.service.impl.KpiHelperService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -133,7 +134,7 @@ public class DSRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 		List<String> basicProjectConfigIds = new ArrayList<>();
 		Map<String, Map<String, Object>> uniqueProjectMap = new HashMap<>();
 		Map<String, FieldMapping> projFieldMapping = new HashMap<>();
-		Map<String, List<String>> droppedDefects = new HashMap<>();
+		Map<String, Map<String,List<String>>> droppedDefects = new HashMap<>();
 		leafNodeList.forEach(leaf -> {
 			ObjectId basicProjectConfigId = leaf.getProjectFilter().getBasicProjectConfigId();
 			Map<String, Object> mapOfProjectFilters = new LinkedHashMap<>();
@@ -146,7 +147,7 @@ public class DSRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 			mapOfProjectFilters.put(JiraFeature.ISSUE_TYPE.getFieldValueInFeature(),
 					CommonUtils.convertToPatternList(fieldMapping.getJiraDefectSeepageIssueType()));
 			uniqueProjectMap.put(basicProjectConfigId.toString(), mapOfProjectFilters);
-			droppedDefects.put(basicProjectConfigId.toString(), fieldMapping.getJiraDefectDroppedStatus());
+			KpiHelperService.getDroppedDefectsFilters(droppedDefects, basicProjectConfigId, fieldMapping);
 		});
 		/** additional filter **/
 		KpiDataHelper.createAdditionalFilterMap(kpiRequest, mapOfFilters, Constant.SCRUM, QA, flterHelperService);
@@ -172,19 +173,7 @@ public class DSRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 				storyNumberList, null);
 		List<JiraIssue> defectListWoDrop = new ArrayList<>();
 
-		if (CollectionUtils.isNotEmpty(totalDefectList)) {
-			totalDefectList.stream().filter(jiraIssue -> !StringUtils.isBlank(jiraIssue.getStatus()))
-					.forEach(jiraIssue -> {
-						List<String> defectStatus = droppedDefects.get(jiraIssue.getBasicProjectConfigId());
-						if (CollectionUtils.isNotEmpty(defectStatus)) {
-							if (!defectStatus.contains(jiraIssue.getStatus())) {
-								defectListWoDrop.add(jiraIssue);
-							}
-						} else {
-							defectListWoDrop.add(jiraIssue);
-						}
-					});
-		}
+		KpiHelperService.getDefectsWithoutDrop(droppedDefects, totalDefectList, defectListWoDrop);
 
 		resultListMap.put(SPRINTSTORIES, sprintWiseStoryList);
 		resultListMap.put(TOTALBUGKEY, defectListWoDrop);

@@ -148,6 +148,9 @@
   position: relative;
   z-index: 1;
 }
+.selected-filter-row ul{
+  width: 90%;
+}
 
 .btn-filter {
   color: #fff;
@@ -157,7 +160,7 @@
 }
 
 .filter-nav .checkbox-modified {
-  display: flex;
+  display: block;
   align-items: center;
   position: relative;
   margin-bottom: 12px;
@@ -462,7 +465,9 @@
 .tabs label,
 .btn-custom {
   color: var(--color-black);
-  display: inline-block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin: 0 0 -1px;
   padding: 7px;
   font-weight: 300;
@@ -523,14 +528,10 @@
   display: inline-block;
 }
 
-
-.tabs .label1,.tabs .label2 {
-  margin-left: 10px;
-}
-
 .tabs {
   background-color: #fff;
   z-index: 2;
+  display: flex;
 }
 
 .filter-box {
@@ -615,7 +616,7 @@ input[bsDatepicker] {
 }
 
 .kpiList {
-  height: 350px;
+  height: 300px;
   overflow: auto;
   margin: 0;
 }
@@ -717,7 +718,6 @@ ul li.selectedfilter{
   font-size: 0.8rem;
   display: flex;
   line-height: 1.4rem;
-  width: 370px;
   margin-bottom: 1rem;
 }
 .align-marker {

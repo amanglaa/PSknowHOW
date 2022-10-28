@@ -119,6 +119,7 @@ public class TestWithoutStoryServiceImpl extends ZephyrKPIService<Double, List<O
 		List<String> basicProjectConfigIds = new ArrayList<>();
 		Map<String, Map<String, Object>> uniqueProjectMap = new HashMap<>();
 		Map<String, Map<String, Object>> uniqueProjectMapForStories = new HashMap<>();
+		Map<String, Map<String, Object>> uniqueProjectMapNotIn = new HashMap<>();
 		List<String> storyType = new ArrayList<>();
 		Map<ObjectId, Map<String, List<ProjectToolConfig>>> toolMap = (Map<ObjectId, Map<String, List<ProjectToolConfig>>>) cacheService
 				.cacheProjectToolConfigMapData();
@@ -132,6 +133,7 @@ public class TestWithoutStoryServiceImpl extends ZephyrKPIService<Double, List<O
 			FieldMapping fieldMapping = basicProjetWiseConfig.get(basicProjectConfigId);
 			Map<String, Object> mapOfProjectFilters = new LinkedHashMap<>();
 			Map<String, Object> mapOfStoriesFilter = new LinkedHashMap<>();
+			Map<String, Object> mapOfProjectFiltersNotIn = new LinkedHashMap<>();
 
 			if (CollectionUtils.isNotEmpty(tools)) {
 				setZephyrScaleConfig(tools, regressionLabels, sprintAutomationFolderPath);
@@ -143,6 +145,15 @@ public class TestWithoutStoryServiceImpl extends ZephyrKPIService<Double, List<O
 				mapOfProjectFilters.put(JiraFeature.LABELS.getFieldValueInFeature(),
 						CommonUtils.convertToPatternList(regressionLabels));
 			}
+
+			if (CollectionUtils.isNotEmpty(fieldMapping.getTestCaseStatus())) {
+				mapOfProjectFiltersNotIn.put(JiraFeature.TEST_CASE_STATUS.getFieldValueInFeature(),
+						CommonUtils.convertTestFolderToPatternList(fieldMapping.getTestCaseStatus()));
+			}
+			if (MapUtils.isNotEmpty(mapOfProjectFiltersNotIn)) {
+			uniqueProjectMapNotIn.put(basicProjectConfigId.toString(),mapOfProjectFiltersNotIn);
+			}
+
 			if (CollectionUtils.isNotEmpty(sprintAutomationFolderPath)) {
 				mapOfProjectFilters.put(JiraFeature.ATM_TEST_FOLDER.getFieldValueInFeature(),
 						CommonUtils.convertTestFolderToPatternList(sprintAutomationFolderPath));
@@ -169,8 +180,9 @@ public class TestWithoutStoryServiceImpl extends ZephyrKPIService<Double, List<O
 		mapOfFilters.put(JiraFeature.ISSUE_TYPE.getFieldValueInFeature(),
 				Arrays.asList(NormalizedJira.TEST_TYPE.getValue()));
 		resultListMap.put(STORY_LIST, storyIssueNumberList);
+
 		resultListMap.put(TOTAL_TEST_CASES,
-				testCaseDetailsRepository.findNonRegressionTestCases(mapOfFilters, uniqueProjectMap));
+				testCaseDetailsRepository.findNonRegressionTestDetails(mapOfFilters, uniqueProjectMap,uniqueProjectMapNotIn));
 		return resultListMap;
 	}
 

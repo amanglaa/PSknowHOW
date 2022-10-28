@@ -255,8 +255,7 @@ public final class CommonUtils {
 			if (pattern.contains(Constant.FORWARD_SLASH)) {
 				pattern = pattern.replace(Constant.FORWARD_SLASH, Constant.BACKWARD_FORWARD_SLASH);
 			}
-			regexList.add(Pattern.compile(Constant.FORWARD_SLASH + pattern + Constant.FORWARD_SLASH,
-					Pattern.CASE_INSENSITIVE));
+			regexList.add(Pattern.compile(pattern, Pattern.CASE_INSENSITIVE));
 			if(!value.startsWith(Constant.FORWARD_SLASH)){
 				value = Constant.FORWARD_SLASH.concat(value);
 			}
@@ -272,7 +271,7 @@ public final class CommonUtils {
 	 * @return patern string with regex
 	 */
 	public static Pattern convertToPatternText(String text) {
-		return Pattern.compile(Constant.TILDA_SYMBOL + text + Constant.DOLLAR_SYMBOL, Pattern.CASE_INSENSITIVE);
+		return Pattern.compile(text, Pattern.CASE_INSENSITIVE);
 	}
 
 	/**

@@ -21,7 +21,10 @@ package com.publicissapient.kpidashboard.apis.auth.standard;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.publicissapient.kpidashboard.apis.auth.service.AuthTypesConfigService;
+import com.publicissapient.kpidashboard.common.model.application.AuthTypeStatus;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
@@ -38,6 +41,9 @@ public class StandardLoginRequestFilter extends UsernamePasswordAuthenticationFi
 	private RsaEncryptionService rsaEncryptionService;
 	private CustomApiConfig customApiConfig;
 
+	@Autowired
+	private AuthTypesConfigService authTypesConfigService;
+
 	/**
 	 * 
 	 * @param path
@@ -47,7 +53,7 @@ public class StandardLoginRequestFilter extends UsernamePasswordAuthenticationFi
 	public StandardLoginRequestFilter(String path, AuthenticationManager authManager,
 			AuthenticationResultHandler authenticationResultHandler,
 			CustomAuthenticationFailureHandler authenticationFailureHandler, RsaEncryptionService rsaEncryptionService,
-			CustomApiConfig customApiConfig) {
+			CustomApiConfig customApiConfig, AuthTypesConfigService authTypesConfigService) {
 		super();
 		setAuthenticationManager(authManager);
 		setAuthenticationSuccessHandler(authenticationResultHandler);
@@ -55,6 +61,7 @@ public class StandardLoginRequestFilter extends UsernamePasswordAuthenticationFi
 		setFilterProcessesUrl(path);
 		this.rsaEncryptionService = rsaEncryptionService;
 		this.customApiConfig = customApiConfig;
+		this.authTypesConfigService = authTypesConfigService;
 	}
 
 	/**
@@ -68,6 +75,13 @@ public class StandardLoginRequestFilter extends UsernamePasswordAuthenticationFi
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
 			throws AuthenticationException {// NOSONAR //NOPMD
+
+		AuthTypeStatus authTypesStatus = authTypesConfigService.getAuthTypesStatus();
+
+		if (authTypesStatus != null && !authTypesStatus.isStandardLogin()){
+			throw new AuthenticationServiceException("Standard login is disabled");
+		}
+
 		if (!request.getMethod().equals("POST")) {
 			throw new AuthenticationServiceException("Authentication method not supported: " + request.getMethod());
 		}

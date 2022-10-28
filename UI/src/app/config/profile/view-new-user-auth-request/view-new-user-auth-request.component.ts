@@ -11,7 +11,7 @@ import { SharedService } from 'src/app/services/shared.service';
 })
 export class ViewNewUserAuthRequestComponent implements OnInit {
   newUserAccessRequestData: UserAccessApprovalDTO[] = [];
-  showLoader: boolean = true;
+  showLoader = true;
 
   constructor(
     private readonly httpService: HttpService,
@@ -54,9 +54,9 @@ export class ViewNewUserAuthRequestComponent implements OnInit {
             summary: data.message,
           });
 
-          this.newUserAccessRequestData = this.newUserAccessRequestData.filter(userData => userData.username !== req.username)
+          this.newUserAccessRequestData = this.newUserAccessRequestData.filter(userData => userData.username !== req.username);
           this.sharedService.notificationUpdate();
-          
+
         } else {
           this.messageService.add({
             severity: 'error',

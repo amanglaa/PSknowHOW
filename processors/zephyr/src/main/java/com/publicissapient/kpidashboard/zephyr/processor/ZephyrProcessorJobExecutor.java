@@ -18,6 +18,7 @@
 
 package com.publicissapient.kpidashboard.zephyr.processor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import com.publicissapient.kpidashboard.common.model.zephyr.ZephyrTestCaseDTO;
+import com.publicissapient.kpidashboard.common.util.DateUtil;
 import com.publicissapient.kpidashboard.zephyr.client.ZephyrClient;
 import com.publicissapient.kpidashboard.zephyr.config.ZephyrConfig;
 import com.publicissapient.kpidashboard.zephyr.factory.ZephyrClientFactory;
@@ -234,12 +236,13 @@ public class ZephyrProcessorJobExecutor extends ProcessorJobExecutor<ZephyrProce
 			ProcessorToolConnection processorToolConnection, ZephyrClient zephyrClient, String folderPath) {
 		boolean isTestCaseEmpty = false;
 		do {
-			final List<ZephyrTestCaseDTO> testCase = zephyrClient.getTestCase(testCaseCount.get(), projectConfigMap,
-					folderPath);
+			final List<ZephyrTestCaseDTO> testCase = zephyrClient.getTestCase(testCaseCount.get(), projectConfigMap);
 			if (CollectionUtils.isNotEmpty(testCase)) {
-				zephyrDBService.processTestCaseInfoToDB(testCase, processorToolConnection, projectConfigMap.isKanban(),
+				List<ZephyrTestCaseDTO> filteredTestCasesList = filterTestCasesBsdOnFldrPth(folderPath, testCase);
+				zephyrDBService.processTestCaseInfoToDB(filteredTestCasesList, processorToolConnection, projectConfigMap.isKanban(),
 						processorToolConnection.isCloudEnv());
 				testCaseCount.updateAndGet(test -> test + testCase.size());
+				log.info("{} test cases are fetched and {} are matching with the folderPath:{}",testCase.size(), filteredTestCasesList.size(), folderPath);
 			} else {
 				isTestCaseEmpty = true;
 			}
@@ -359,5 +362,22 @@ public class ZephyrProcessorJobExecutor extends ProcessorJobExecutor<ZephyrProce
 
 	private void clearSelectedBasicProjectConfigIds() {
 		setProjectsBasicConfigIds(null);
+	}
+
+	private static List<ZephyrTestCaseDTO> filterTestCasesBsdOnFldrPth(String folderPath, List<ZephyrTestCaseDTO> totalTestCasesList) {
+		List<ZephyrTestCaseDTO> filteredTestCasesList = new ArrayList<>();
+		totalTestCasesList.stream().forEach(testCases->{
+			Optional<String> folderName = Optional.ofNullable(testCases.getFolder());
+			Optional<String> createdOnDate = Optional.ofNullable(testCases.getCreatedOn());
+			Optional<String> updatedOnDate = Optional.ofNullable(testCases.getUpdatedOn());
+			LocalDateTime instant = LocalDateTime.now();
+			LocalDateTime currentDateMinus15Months = instant.minusMonths(15);
+				if((folderName.isPresent() && folderName.get().contains(folderPath))
+					&& ((updatedOnDate.isPresent() && DateUtil.stringToLocalDateTime(updatedOnDate.get(), DateUtil.TIME_FORMAT_WITH_SEC).isAfter(currentDateMinus15Months))
+					|| (createdOnDate.isPresent() && DateUtil.stringToLocalDateTime(createdOnDate.get(), DateUtil.TIME_FORMAT_WITH_SEC).isAfter(currentDateMinus15Months)))) {
+						filteredTestCasesList.add(testCases);
+				}
+		});
+		return filteredTestCasesList;
 	}
 }

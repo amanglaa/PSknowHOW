@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
 
+import com.publicissapient.kpidashboard.apis.auth.service.AuthTypesConfigService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -98,6 +99,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
 	private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
 	@Autowired
+	private AuthTypesConfigService authTypesConfigService;
+
+	@Autowired
 	public void setRsaEncryptionService(RsaEncryptionService rsaEncryptionService) {
 		this.rsaEncryptionService = rsaEncryptionService;
 	}
@@ -123,6 +127,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
 				.antMatchers("/login/captchavalidate").permitAll().antMatchers("/login**").permitAll()
 				.antMatchers("/error").permitAll()
 				.antMatchers("/authenticationProviders").permitAll()
+				.antMatchers("/auth-types-status").permitAll()
 
 				// management metrics
 				.antMatchers("/info").permitAll().antMatchers("/health").permitAll()
@@ -165,14 +170,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
 	@Bean
 	protected StandardLoginRequestFilter standardLoginRequestFilter() throws Exception {
 		return new StandardLoginRequestFilter("/login", authenticationManager(), authenticationResultHandler,
-				customAuthenticationFailureHandler, rsaEncryptionService, customApiConfig);
+				customAuthenticationFailureHandler, rsaEncryptionService, customApiConfig, authTypesConfigService);
 	}
 
 	// update authenticatoin result handler
 	@Bean
 	protected LdapLoginRequestFilter ldapLoginRequestFilter() throws Exception {
 		return new LdapLoginRequestFilter("/ldap", authenticationManager(), authenticationResultHandler,
-				customAuthenticationFailureHandler, rsaEncryptionService, customApiConfig, adServerDetailsService);
+				customAuthenticationFailureHandler, rsaEncryptionService, customApiConfig, adServerDetailsService,
+				authTypesConfigService);
 	}
 
 	@Bean

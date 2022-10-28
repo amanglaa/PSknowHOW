@@ -174,4 +174,9 @@ public class TokenAuthenticationServiceImpl implements TokenAuthenticationServic
 
 	}
 
+	@Override
+	public void invalidateAuthToken(List<String> users) {
+		userTokenReopository.deleteByUserNameIn(users);
+	}
+
 }

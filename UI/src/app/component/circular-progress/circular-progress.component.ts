@@ -55,7 +55,7 @@ export class CircularProgressComponent implements OnInit, OnChanges {
                 value: this.maxValue,
                 size: this.maxValue,
                 label: this.unit,
-                update: function (value) {
+                update(value) {
                     return value;
                 }
             }];
@@ -122,15 +122,15 @@ export class CircularProgressComponent implements OnInit, OnChanges {
                 .style('visibility', 'hidden');
             const radiusNum = parseInt(this.radius, 10);
             const thickness = parseInt(this.thickness, 10);
-            var arc = d3.arc().innerRadius(radiusNum).outerRadius(radiusNum + thickness).startAngle(0).endAngle(function (d) {
+            var arc = d3.arc().innerRadius(radiusNum).outerRadius(radiusNum + thickness).startAngle(0).endAngle(function(d) {
                 return (d.value / d.size) * 2 * Math.PI;
             });
             const svg = d3.select(this.elem).select('.content').append('svg').attr('width', this.width + 'px').attr('height', this.height + 'px');
-            const field = svg.selectAll('.field').remove().exit().data(this.fields).enter().append('g').attr('transform', function (d, i) {
+            const field = svg.selectAll('.field').remove().exit().data(this.fields).enter().append('g').attr('transform', function(d, i) {
                 return 'translate(' + (radiusNum + thickness) + ',' + (radiusNum + thickness) + ')';
             });
 
-            field.append('path').attr('class', 'path path--background').attr('d', arc).style('border', '1px solid black').style('fill', function (d, i) {
+            field.append('path').attr('class', 'path path--background').attr('d', arc).style('border', '1px solid black').style('fill', function(d, i) {
                 return backgroundColor;
             });
 
@@ -145,7 +145,7 @@ export class CircularProgressComponent implements OnInit, OnChanges {
             tooltip.append('div')
                 .attr('class', 'label');
 
-            const path = field.append('path').attr('class', 'path path--foreground').style('fill', function (d, i) {
+            const path = field.append('path').attr('class', 'path path--foreground').style('fill', function(d, i) {
                 return fillColor;
             });
 
@@ -153,20 +153,20 @@ export class CircularProgressComponent implements OnInit, OnChanges {
             const label = field.append('text').attr('class', 'label').attr('dy', '.15em').attr('dx', '0px').style('fill', '#4a4a4a').style('font-size', this.fontSize + 'px').style('font-weight', 'bold').style('text-anchor', 'middle');
 
             const updatedValue = this.value;
-            path.on('mouseenter', function (d) {
+            path.on('mouseenter', function(d) {
                 d3.select(this)
                     .attr('stroke', 'white')
                     .transition()
                     .duration(1000)
                     .attr('stroke-width', 2);
             });
-            path.on('mouseleave', function (d) {
+            path.on('mouseleave', function(d) {
                 d3.select(this).transition()
                     .attr('stroke', 'none');
             });
 
             // add values here to update
-            field.each(function (d) {
+            field.each(function(d) {
                 d.previous = d.value;
                 d.value = d.update(updatedValue);
             });
@@ -182,7 +182,7 @@ export class CircularProgressComponent implements OnInit, OnChanges {
             const i = d3.interpolate({
                 value: b.value
             }, b);
-            return function (t) {
+            return function(t) {
                 return arc(i(t));
             };
         }

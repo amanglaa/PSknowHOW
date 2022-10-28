@@ -11,6 +11,7 @@ export class TrendIndicatorComponent implements OnInit {
   @Input() color: string;
   @Input() kpiData: object;
   @Input() noOfBox: number;
+  @Input() cols?: Array<object> = [];
   isTrendObject: boolean = false;
   lastValue: any;
 
@@ -18,14 +19,14 @@ export class TrendIndicatorComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.kpiData && this.kpiData['kpiDetail']['chartType'] === 'stackedColumn') {
-      let trend = this.dataTrend?.length > 1 ? this.dataTrend[1] : this.dataTrend[0];
+      const trend = this.dataTrend?.length > 1 ? this.dataTrend[1] : this.dataTrend[0];
       if (trend && Object.keys(trend)?.length > 0) {
         this.isTrendObject = trend && (typeof (trend) === 'object') ? true : false;
-        let list = [];
+        const list = [];
         if (this.isTrendObject) {
           this.dataTrend.forEach((item, index) => {
-            let values = Object.values(item);
-            let sum = values && values.length > 0 ? values.reduce((acc: number, value: number) => acc + value) : 0;
+            const values = Object.values(item);
+            const sum = values && values.length > 0 ? values.reduce((acc: number, value: number) => acc + value) : 0;
             list.push(Math.round(parseFloat(sum + '')));
             if (index === 1) {
               this.lastValue = Math.round(parseFloat(sum + ''));

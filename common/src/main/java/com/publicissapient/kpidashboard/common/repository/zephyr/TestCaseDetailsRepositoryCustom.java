@@ -51,4 +51,10 @@ public interface TestCaseDetailsRepositoryCustom {
 	List<TestCaseDetails> findNonRegressionTestCases(Map<String, List<String>> mapOfFilters,
 			Map<String, Map<String, Object>> uniqueProjectMap);
 
+	List<TestCaseDetails> findNonRegressionTestDetails(Map<String, List<String>> mapOfFilters,
+													 Map<String, Map<String, Object>> uniqueProjectMap,Map<String, Map<String, Object>> uniqueProjectMapNotIn);
+
+	List<TestCaseDetails> findTestDetails(Map<String, List<String>> mapOfFilters,
+										Map<String, Map<String, Object>> uniqueProjectMap,Map<String, Map<String, Object>> uniqueProjectMapNotIn);
+
 }

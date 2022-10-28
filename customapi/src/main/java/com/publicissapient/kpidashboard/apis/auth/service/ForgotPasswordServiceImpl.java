@@ -52,6 +52,7 @@ import com.publicissapient.kpidashboard.common.exceptions.ApplicationException;
 public class ForgotPasswordServiceImpl implements ForgotPasswordService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ForgotPasswordServiceImpl.class);
+	private static final String FORGOT_PASSWORD_TEMPLATE = "Forgot_Password_Template";
 
 	@Autowired
 	private AuthenticationRepository authenticationRepository;
@@ -93,8 +94,8 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService {
 			Map<String, String> customData = createCustomData(authentication.getUsername(), token, url,
 					customApiConfig.getForgotPasswordExpiryInterval());
 			LOGGER.info("Notification message sent to kafka with key : {}", FORGOT_PASSWORD_NOTIFICATION_KEY);
-			commonService.sendNotificationEvent(Arrays.asList(email), customData, customApiConfig.getEmailSubject(),
-					FORGOT_PASSWORD_NOTIFICATION_KEY, customApiConfig.getKafkaMailTopic());
+			commonService.sendEmailWithoutKafka(Arrays.asList(email), customData, customApiConfig.getEmailSubject(),
+					FORGOT_PASSWORD_NOTIFICATION_KEY, customApiConfig.getKafkaMailTopic(),FORGOT_PASSWORD_TEMPLATE);
 			return authentication;
 		}
 		return null;

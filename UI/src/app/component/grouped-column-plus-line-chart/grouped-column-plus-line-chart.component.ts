@@ -32,7 +32,7 @@ import { SharedService } from 'src/app/services/shared.service';
   templateUrl: './grouped-column-plus-line-chart.component.html',
   styleUrls: ['./grouped-column-plus-line-chart.component.css'],
 })
-export class GroupedColumnPlusLineChartComponent implements OnInit {
+export class GroupedColumnPlusLineChartComponent implements OnInit, OnChanges {
   @Input() data: any;
   @Input() lineChart: boolean;
   @Input() thresholdValue: number;
@@ -47,8 +47,8 @@ export class GroupedColumnPlusLineChartComponent implements OnInit {
   drillDownLevel: number;
   lastLevel: any;
   dataPoints: any;
-  barChart: boolean = true;
-  maxValue: number = 1000;
+  barChart = true;
+  maxValue = 1000;
   unmodifiedData: any = [];
 
   constructor(private viewContainerRef: ViewContainerRef, private service: SharedService) { }
@@ -70,10 +70,11 @@ export class GroupedColumnPlusLineChartComponent implements OnInit {
   }
 
   transform2(data) {
-    let result = [];
-    let newObj = {};
+    const result = [];
+    const newObj = {};
     newObj['values'] = [];
 
+    // eslint-disable-next-line @typescript-eslint/prefer-for-of
     for (let i = 0; i < data[0].value.length; i++) {
       if (data[0].value[i].hoverValue) {
         newObj['values'].push({
@@ -94,7 +95,7 @@ export class GroupedColumnPlusLineChartComponent implements OnInit {
     }
 
     newObj['values'].forEach((element, index) => {
-      let newNewObj = {};
+      const newNewObj = {};
       newNewObj['categorie'] = index + 1;
       newNewObj['values'] = [element];
       result.push(newNewObj);
@@ -102,9 +103,10 @@ export class GroupedColumnPlusLineChartComponent implements OnInit {
 
     for (let i = 1; i < data.length; i++) {
       for (let j = 0; j < data[i].value.length; j++) {
-        let newObj = {};
+        // eslint-disable-next-line @typescript-eslint/no-shadow
+        const newObj = {};
         newObj['values'] = [];
-        if (result[j] && result[j]['categorie'] && j + 1 == result[j]['categorie']) {
+        if (result[j] && result[j]['categorie'] && j + 1 === result[j]['categorie']) {
           if (data[i].value[j].hoverValue) {
             result[j].values.push({
               value: data[i].value[j].value,
@@ -129,51 +131,37 @@ export class GroupedColumnPlusLineChartComponent implements OnInit {
   }
 
   draw2(data) {
-    let showUnit = this.unit?.toLowerCase() !== 'number' ? this.unit : '';
+    const showUnit = this.unit?.toLowerCase() !== 'number' ? this.unit : '';
     d3.select(this.elem).select('#verticalSVG').select('svg').remove();
     d3.select(this.elem).select('#horizontalSVG').select('svg').remove();
     d3.select(this.elem).select('#svgLegend').select('svg').remove();
     d3.select(this.elem).select('#legendIndicator').select('svg').remove();
     d3.select(this.elem).select('#xCaptionContainer').select('text').remove();
 
-    let self = this;
+    const self = this;
 
-    let categoriesNames = data.map(function (d) {
-      return d.categorie;
-    });
-    let rateNames = data[0].values.map(function (d) {
-      return d.rate;
-    });
+    const categoriesNames = data.map((d) => d.categorie);
+    const rateNames = data[0].values.map((d) => d.rate);
 
-    let margin = { top: 35, right: 50, bottom: 50, left: 50 };
-    let barWidth = 20;
-    let width = data.length <= 5 ? document.getElementById('chart').offsetWidth - 70 : data.length * barWidth * 8;
-    let height = 225;
-    let paddingFactor = width < 600 ? 0.30 : 0.55;
+    const margin = { top: 35, right: 50, bottom: 50, left: 50 };
+    const barWidth = 20;
+    const width = data.length <= 5 ? document.getElementById('chart').offsetWidth - 70 : data.length * barWidth * 8;
+    const height = 225;
+    const paddingFactor = width < 600 ? 0.30 : 0.55;
 
-    let x0;
+    const x0 = d3.scaleBand().range([0, width - margin.left]).padding([((6 + this.dataPoints) / (3 * this.dataPoints)) * paddingFactor]);
 
-    x0 = d3.scaleBand().range([0, width - margin.left]).padding([((6 + this.dataPoints) / (3 * this.dataPoints)) * paddingFactor]);
+    const x1 = d3.scaleBand();
 
-    let x1 = d3.scaleBand();
-
-    let y = d3.scaleLinear().range([height - margin.top, 0]);
+    const y = d3.scaleLinear().range([height - margin.top, 0]);
 
     x0.domain(categoriesNames);
     x1.domain(rateNames)
       .range([0, x0.bandwidth()]); //.padding(0.0);
 
-    let maxBarValue = d3.max(data, function (categorie) {
-      return d3.max(categorie.values, function (d) {
-        return d.value;
-      });
-    });
+    const maxBarValue = d3.max(data, (categorie) => d3.max(categorie.values, (d) => d.value));
 
-    let maxLineValue = d3.max(data, function (categorie) {
-      return d3.max(categorie.values, function (d) {
-        return d.lineValue;
-      });
-    });
+    const maxLineValue = d3.max(data, (categorie) => d3.max(categorie.values, (d) => d.lineValue));
 
     let divisor = 10;
     let power = 1;
@@ -192,16 +180,17 @@ export class GroupedColumnPlusLineChartComponent implements OnInit {
     let maxYValue = maxVal;
 
 
-    if (maxYValue > 0 && maxYValue <= 50)
-      maxYValue = 50
-    else if (maxYValue > 50 && maxYValue <= 100)
-      maxYValue = 100
-    else if (maxYValue > 100 && maxYValue <= 200)
-      maxYValue = 200
-    else if (maxYValue > 200 && maxYValue <= 500)
-      maxYValue = 500
-    else if (maxYValue > 500)
+    if (maxYValue > 0 && maxYValue <= 50) {
+      maxYValue = 50;
+    } else if (maxYValue > 50 && maxYValue <= 100) {
+      maxYValue = 100;
+    } else if (maxYValue > 100 && maxYValue <= 200) {
+      maxYValue = 200;
+    } else if (maxYValue > 200 && maxYValue <= 500) {
+      maxYValue = 500;
+    } else if (maxYValue > 500) {
       maxYValue += divisor;
+    }
 
     if (!maxYValue) {
       maxYValue = 50;
@@ -214,22 +203,22 @@ export class GroupedColumnPlusLineChartComponent implements OnInit {
       tickPadding = 6;
     }
 
-    let xAxis = d3
+    const xAxis = d3
       .axisBottom(x0)
       .tickSize(0)
-      .tickPadding(tickPadding)
+      .tickPadding(tickPadding);
     // .orient('bottom');
 
-    let yAxis = d3
+    const yAxis = d3
       .axisLeft(y)
       // .orient('left')
       .ticks(5)
       .tickSize(-height, 0, 0);
     // .tickPadding(15);
 
-    let color = d3.scaleOrdinal().range(this.color);
+    const color = d3.scaleOrdinal().range(this.color);
 
-    let svgX = d3
+    const svgX = d3
       .select(this.elem)
       .select('#horizontalSVG')
       .append('svg')
@@ -238,14 +227,14 @@ export class GroupedColumnPlusLineChartComponent implements OnInit {
     // .append('g');
 
 
-    let svgY = d3
+    const svgY = d3
       .select(this.elem)
       .select('#verticalSVG')
       .append('svg')
       .attr('height', height)
-      .attr("width", 50);
+      .attr('width', 50);
 
-    let svgLegend = d3
+    const svgLegend = d3
       .select(this.elem)
       .select('#svgLegend')
       .append('svg')
@@ -262,6 +251,7 @@ export class GroupedColumnPlusLineChartComponent implements OnInit {
       .attr('opacity', '1')
       .call(xAxis);
 
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     const XCaption = d3
       .select(this.elem).select('#xCaptionContainer').append('text');
 
@@ -286,12 +276,12 @@ export class GroupedColumnPlusLineChartComponent implements OnInit {
       .text(self.yCaption);
 
     // gridlines
-    svgX.selectAll("line.gridline").data(y.ticks(4)).enter()
-      .append("svg:line")
+    svgX.selectAll('line.gridline').data(y.ticks(4)).enter()
+      .append('svg:line')
       .attr('x1', 0)
       .attr('x2', width)
-      .attr('y1', function (d) { return y(d); })
-      .attr('y2', function (d) { return y(d); })
+      .attr('y1', (d) => y(d))
+      .attr('y2', (d) => y(d))
       .style('stroke', '#dedede')
       .style('fill', 'none')
       .attr('class', 'gridline');
@@ -304,7 +294,7 @@ export class GroupedColumnPlusLineChartComponent implements OnInit {
       .style('opacity', '1')
       .style('font-size', '10px');
 
-    var xTick = self.dataPoints === 1 ? 12 : 0;
+    const xTick = self.dataPoints === 1 ? 12 : 0;
     svgX
       .select('.xAxis')
       .selectAll('.tick text')
@@ -322,55 +312,37 @@ export class GroupedColumnPlusLineChartComponent implements OnInit {
       .attr('y2', 5)
       .style('stroke', '#333333');
 
-    let slice = svgX
+    const slice = svgX
       .selectAll('.slice')
       .data(data)
       .enter()
       .append('g')
       .attr('class', 'g')
-      .attr('transform', function (d) {
-        return 'translate(' + x0(d.categorie) + ',0)';
-      });
+      .attr('transform', (d) => 'translate(' + x0(d.categorie) + ',0)');
 
     slice
       .selectAll('rect')
-      .data(function (d) {
-        return d.values;
-      })
+      .data((d) => d.values)
       .enter()
       .append('rect')
       .attr('width', barWidth)
-      .attr('x', function (d, i) {
-        return paddingFactor < 0.55 && data.length <= 5 && self.dataPoints === 1 ? x1(d.rate) + barWidth / 1.5 : x1(d.rate);
-      })
-      .style('fill', function (d) {
-        return color(d.rate);
-      })
-      .attr('y', function (d) {
-        return y(0);
-      })
-      .attr('height', function (d) {
-        return height - margin.top - y(0);
-      })
+      .attr('x', (d, i) =>paddingFactor < 0.55 && data.length <= 5 && self.dataPoints === 1 ? x1(d.rate) + barWidth / 1.5 : x1(d.rate))
+      .style('fill', (d) => color(d.rate))
+      .attr('y', (d) => y(0))
+      .attr('height', (d) => height - margin.top - y(0))
       .attr('class', 'bar')
-      .on('mouseover', function (d, i) { })
-      .on('mouseout', function (d) {
-        d3.select(this).style('fill', color(d.rate));
+      .on('mouseover', (d, i) => { })
+      .on('mouseout', (d) => {
+        // d3.select(this).style('fill', color(d.rate));
       });
 
     slice
       .selectAll('rect')
       .transition()
-      .delay(function (d) {
-        return Math.random() * 1000;
-      })
+      .delay((d) => 200)
       .duration(1000)
-      .attr('y', function (d) {
-        return y(d.value);
-      })
-      .attr('height', function (d) {
-        return height - margin.top - y(d.value);
-      });
+      .attr('y', (d) => y(d.value))
+      .attr('height', (d) => height - margin.top - y(d.value));
 
     // threshold line
     if (self.thresholdValue) {
@@ -404,41 +376,39 @@ export class GroupedColumnPlusLineChartComponent implements OnInit {
       .style('opacity', 0);
 
     // bar legend
-    let prevLength = -40;
-    let legend = svgLegend.selectAll(".d3-legend")
+    const prevLength = -40;
+    let legend = svgLegend.selectAll('.d3-legend')
       .data(data[0].values)
       .enter()
-      .append("g")
-      .attr("class", "d3-legend")
-      .attr("transform", function (d, i) {
-        let len = ((i + 1) * 160) + prevLength;
-        return "translate(" + (len) + ", 0)";
+      .append('g')
+      .attr('class', 'd3-legend')
+      .attr('transform', (d, i) => {
+        const len = ((i + 1) * 160) + prevLength;
+        return 'translate(' + (len) + ', 0)';
       });
 
     // Legend indicator  .attr("x", width/2)
-    legend.append("rect")
-      .attr("width", 12)
-      .attr("height", 12)
-      .style("fill", function (d, i) {
-        return color(i);
-      });
+    legend.append('rect')
+      .attr('width', 12)
+      .attr('height', 12)
+      .style('fill', (d, i) => color(i));
 
     //Legend text /.attr("x", width/2 + 20)
-    legend.append("text")
-      .attr("x", 24)
-      .attr("y", 2)
-      .attr("dy", ".85em")
-      .style("text-anchor", "start")
-      .style("font-size", 10)
-      .text(function (d) { return d.rate.length > 15 ? d.rate.substring(0, 12) + '...' : d.rate; });
+    legend.append('text')
+      .attr('x', 24)
+      .attr('y', 2)
+      .attr('dy', '.85em')
+      .style('text-anchor', 'start')
+      .style('font-size', 10)
+      .text((d) => d.rate.length > 15 ? d.rate.substring(0, 12) + '...' : d.rate);
 
     // bar legend text
-    svgLegend.append("text")
-      .attr("x", 0)
-      .attr("y", 0)
-      .attr("dy", ".85em")
-      .style("text-anchor", "start")
-      .style("font-size", 10)
+    svgLegend.append('text')
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('dy', '.85em')
+      .style('text-anchor', 'start')
+      .style('font-size', 10)
       .text(self.barLegend);
     // self.lineChart = false;
     if (self.lineChart) {
@@ -454,8 +424,8 @@ export class GroupedColumnPlusLineChartComponent implements OnInit {
       const duration = 250;
 
       try {
-        let newRawData = JSON.parse(JSON.stringify(self.unmodifiedData));
-        let colorArr = this.color;
+        const newRawData = JSON.parse(JSON.stringify(self.unmodifiedData));
+        const colorArr = this.color;
 
         /* Add line into SVG acoording to data */
         let maxObjectNo = 0;
@@ -471,13 +441,11 @@ export class GroupedColumnPlusLineChartComponent implements OnInit {
           .domain([0, maxYValue])
           .range([height - margin.top, 0]);
 
-        let xScale;
-        // set padding as per the data points
-        xScale = d3.scaleBand()
+
+        const xScale = d3.scaleBand()
           .rangeRound([0, width - margin.left])
-          .domain(newRawData[maxObjectNo].value.map(function (d, i) {
-            return i + 1;
-          })).padding([((6 + self.dataPoints) / (3 * self.dataPoints)) * paddingFactor]);
+          .domain(newRawData[maxObjectNo].value.map((d, i) => i + 1))
+          .padding([((6 + self.dataPoints) / (3 * self.dataPoints)) * paddingFactor]);
 
 
         const elem = this.elem;
@@ -486,21 +454,15 @@ export class GroupedColumnPlusLineChartComponent implements OnInit {
           .attr('class', 'lines');
 
         const line = d3.line()
-          .x((d, i) => {
-            return paddingFactor < 0.55 && data.length <= 5 && self.dataPoints === 1 ? xScale(i + 1) + barWidth / 1.5 : xScale(i + 1);
-          })
-          .y(d => {
-            return yScale(d.lineValue);
-          });
+          .x((d, i) => paddingFactor < 0.55 && data.length <= 5 && self.dataPoints === 1 ? xScale(i + 1) + barWidth / 1.5 : xScale(i + 1))
+          .y(d => yScale(d.lineValue));
 
         lines.selectAll('.line-group')
           .data(newRawData)
           .enter()
           .append('g')
-          .attr('class', function (d, i) {
-            return 'line-group' + i;
-          })
-          .on('mouseover', function (d, i) {
+          .attr('class', (d, i) =>'line-group' + i)
+          .on('mouseover', (d, i) => {
             svgX.append('text')
               .attr('class', 'title-text')
               .style('fill', colorArr[i])
@@ -509,22 +471,20 @@ export class GroupedColumnPlusLineChartComponent implements OnInit {
               .attr('x', (width - margin.left) / 2)
               .attr('y', 15);
           })
-          .on('mouseout', function (d) {
+          .on('mouseout', (d) => {
             svgX.select('.title-text').remove();
           })
           .append('path')
-          .attr('class', function (d, i) {
+          .attr('class', (d, i) => {
             const className = 'line' + i;
             return className;
           })
-          .attr('d', (d, i) => {
-            return line(d.value);
-          })
+          .attr('d', (d, i) => line(d.value))
           .style('stroke', (d, i) => colorArr[i])
           .style('opacity', lineOpacity)
           .style('fill', 'none')
           .style('stroke-width', '2')
-          .on('mouseover', function (d) {
+          .on('mouseover', function(d) {
             d3.select(elem).selectAll('.line')
               .style('opacity', otherLinesOpacityHover);
             d3.select(elem).selectAll('.circle')
@@ -534,7 +494,7 @@ export class GroupedColumnPlusLineChartComponent implements OnInit {
               .style('stroke-width', lineStrokeHover)
               .style('cursor', 'pointer');
           })
-          .on('mouseout', function (d) {
+          .on('mouseout', function(d) {
             d3.selectAll('.line')
               .style('opacity', lineOpacity);
             d3.selectAll('.circle')
@@ -548,20 +508,16 @@ export class GroupedColumnPlusLineChartComponent implements OnInit {
         lines.selectAll('circle-group')
           .data(newRawData).enter()
           .append('g')
-          .attr('class', function (d, i) {
-            return 'circlegroup' + i;
-          })
+          .attr('class', (d, i) => 'circlegroup' + i)
           .style('fill', (d, i) => d3.hsl([colorArr[i]]))
           .style('stroke', (d, i) => d3.hsl([colorArr[i]]).brighter())
           .selectAll('circle')
-          .data((d, index) => {
-            return d.value;
-          })
+          .data((d, index) => d.value)
           .enter()
           .append('g')
           .attr('class', 'circle')
-          .on('mouseover', function (d) {
-            let topValue = 80;
+          .on('mouseover', (event, d) => {
+            const topValue = 80;
             if (d.hoverValue) {
               div.transition()
                 .duration(200)
@@ -569,13 +525,13 @@ export class GroupedColumnPlusLineChartComponent implements OnInit {
                 .style('position', 'fixed')
                 .style('opacity', .9);
 
-              const circle = d3.event.target;
-              let {
+              const circle = event.target;
+              const {
                 top: yPosition,
                 left: xPosition
               } = circle.getBoundingClientRect();
 
-              div.html(`${d.date || d.sSprintName}` + ' : ' + '<span class=\'toolTipValue\'> ' + `${d.lineValue + " " + showUnit}` + '</span>')
+              div.html(`${d.date || d.sSprintName}` + ' : ' + '<span class=\'toolTipValue\'> ' + `${d.lineValue + ' ' + showUnit}` + '</span>')
                 .style('left', xPosition + 20 + 'px')
                 .style('top', yPosition + 20 + 'px');
               for (const hoverData in d.hoverValue) {
@@ -583,7 +539,7 @@ export class GroupedColumnPlusLineChartComponent implements OnInit {
               }
             }
           })
-          .on('mouseout', function (d) {
+          .on('mouseout', (d) => {
             div.transition()
               .duration(500)
               .style('display', 'none')
@@ -591,20 +547,18 @@ export class GroupedColumnPlusLineChartComponent implements OnInit {
 
           })
           .append('circle')
-          .attr('cx', function (d, i) {
-            return paddingFactor < 0.55 && data.length <= 5 && self.dataPoints === 1 ? xScale(i + 1) + barWidth / 1.5 : xScale(i + 1);
-          })
+          .attr('cx', (d, i) => paddingFactor < 0.55 && data.length <= 5 && self.dataPoints === 1 ? xScale(i + 1) + barWidth / 1.5 : xScale(i + 1))
           .attr('cy', d => yScale(d.lineValue))
           .attr('r', circleRadius)
           .style('stroke-width', 1)
           .style('opacity', circleOpacity)
-          .on('mouseover', function (d) {
+          .on('mouseover', function(d) {
             d3.select(this)
               .transition()
               .duration(duration)
               .attr('r', circleRadiusHover);
           })
-          .on('mouseout', function (d) {
+          .on('mouseout', function(d) {
             d3.select(this)
               .transition()
               .duration(duration)
@@ -612,80 +566,71 @@ export class GroupedColumnPlusLineChartComponent implements OnInit {
           });
 
         newRawData.forEach((element, index) => {
-          d3.select(this.elem).selectAll('.circlegroup' + index).selectAll('circle').each(function (dataObj, idx) {
+          d3.select(this.elem).selectAll('.circlegroup' + index).selectAll('circle').each(function(dataObj, idx) {
             const tick = d3.select(this);
-            tick.attr('transform', function () {
-              return 'translate(' + (x1(element.data) + barWidth / 2) + ',0)';
-            });
+            tick.attr('transform', () => 'translate(' + (x1(element.data) + barWidth / 2) + ',0)');
           });
 
-          d3.select(this.elem).selectAll('.line-group' + index).each(function (dataObj, idx) {
+          d3.select(this.elem).selectAll('.line-group' + index).each(function(dataObj, idx) {
             const tick = d3.select(this);
-            tick.attr('transform', function () {
-              return 'translate(' + (x1(element.data) + barWidth / 2) + ',0)';
-            });
+            tick.attr('transform', () => 'translate(' + (x1(element.data) + barWidth / 2) + ',0)');
           });
         });
 
 
         // line legend
-        legend = svgLegend.selectAll(".d3-lineLegend")
+        legend = svgLegend.selectAll('.d3-lineLegend')
           .data(data[0].values)
           .enter()
-          .append("g")
-          .attr("class", "d3-lineLegend")
-          .attr("transform", function (d, i) {
-            let len = ((i + 1) * 160) + prevLength;
-            return "translate(" + (len) + ", 12)";
+          .append('g')
+          .attr('class', 'd3-lineLegend')
+          .attr('transform', (d, i) => {
+            const len = ((i + 1) * 160) + prevLength;
+            return 'translate(' + (len) + ', 12)';
           });
 
-        let legendLine = legend
+        const legendLine = legend
           .append('svg:line')
           .attr('x1', 0)
           .attr('x2', 15)
           .attr('y1', 8)
           .attr('y2', 8)
-          .style('stroke', function (d, i) {
-            return color(i);
-          })
+          .style('stroke', (d, i) => color(i))
           .attr('stroke-width', '2')
           .attr('class', 'legendLine');
 
 
-        legend.append("circle")
-          .style("stroke", "gray")
-          .style("fill", function (d, i) {
-            return color(i);
-          })
-          .attr("r", 4)
-          .attr("cx", 7)
-          .attr("cy", 8);
+        legend.append('circle')
+          .style('stroke', 'gray')
+          .style('fill', (d, i) => color(i))
+          .attr('r', 4)
+          .attr('cx', 7)
+          .attr('cy', 8);
 
         //Legend text /.attr("x", width/2 + 20)
-        legend.append("text")
-          .attr("x", 24)
-          .attr("y", 2)
-          .attr("dy", ".85em")
-          .style("text-anchor", "start")
-          .style("font-size", 10)
-          .text(function (d) { return d.rate.length > 15 ? d.rate.substring(0, 12) + '...' : d.rate; });
+        legend.append('text')
+          .attr('x', 24)
+          .attr('y', 2)
+          .attr('dy', '.85em')
+          .style('text-anchor', 'start')
+          .style('font-size', 10)
+          .text((d) => d.rate.length > 15 ? d.rate.substring(0, 12) + '...' : d.rate);
 
-        svgLegend.append("text")
-          .attr("x", 0)
-          .attr("y", 15)
-          .attr("dy", ".85em")
-          .style("text-anchor", "start")
-          .style("font-size", 10)
+        svgLegend.append('text')
+          .attr('x', 0)
+          .attr('y', 15)
+          .attr('dy', '.85em')
+          .style('text-anchor', 'start')
+          .style('font-size', 10)
           .text(self.lineLegend);
-      }
-      catch (ex) {
+      } catch (ex) {
         console.log(ex);
       }
 
       const content = this.elem.querySelector('#horizontalSVG');
       content.scrollLeft += width;
 
-      let legendIndicator = d3
+      const legendIndicator = d3
         .select(this.elem)
         .select('#legendIndicator')
         .append('svg')
@@ -693,29 +638,27 @@ export class GroupedColumnPlusLineChartComponent implements OnInit {
         .attr('width', 100)
         .attr('cursor', 'pointer')
         .append('g')
-        .attr("class", "d3-legend");
+        .attr('class', 'd3-legend');
 
-      legendIndicator.append("rect")
-        .attr("width", 12)
-        .attr("height", 12)
-        .attr("x", 32)
-        .attr("y", 7)
-        .style("fill", function (d, i) {
-          return '#DF9292';
-        });
+      legendIndicator.append('rect')
+        .attr('width', 12)
+        .attr('height', 12)
+        .attr('x', 32)
+        .attr('y', 7)
+        .style('fill', (d, i) => '#DF9292');
 
-      legendIndicator.append("text")
-        .attr("x", 52)
-        .attr("y", 8)
-        .attr("dy", ".85em")
-        .style("text-anchor", "start")
-        .style("font-size", 10)
-        .text(function (d) { return 'Legend'; });
+      legendIndicator.append('text')
+        .attr('x', 52)
+        .attr('y', 8)
+        .attr('dy', '.85em')
+        .style('text-anchor', 'start')
+        .style('font-size', 10)
+        .text((d) => 'Legend');
 
 
       legendIndicator
-        .on('mouseover', function () {
-          let topValue = 30;
+        .on('mouseover', () => {
+          const topValue = 30;
 
           div.transition()
             .duration(200)
@@ -725,13 +668,13 @@ export class GroupedColumnPlusLineChartComponent implements OnInit {
             .style('max-width', 'unset')
             .style('width', '620px');
 
-          let htmlString = self.elem.querySelector('#svgLegend').innerHTML;
+          const htmlString = self.elem.querySelector('#svgLegend').innerHTML;
 
           div.html(htmlString)
             .style('left', 70 + 'px')
             .style('top', y[0] - topValue + 'px');
         })
-        .on('mouseout', function () {
+        .on('mouseout', () => {
           div.transition()
             .duration(500)
             .style('display', 'none')

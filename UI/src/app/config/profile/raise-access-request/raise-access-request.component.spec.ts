@@ -42,83 +42,83 @@ describe('RaiseRequestComponent', () => {
   const fakeRolesData = require('../../../../test/resource/fakeRolesData.json');
 
   const fakeRequestData = {
-    'username': 'Rishabh',
-    'status': 'Pending',
-    'reviewComments': '',
-    'roles': [{
-      '_id': '5da03f242afa421ae416cad7',
-      'roleName': 'ROLE_PROJECT_VIEWER'
+    username: 'Rishabh',
+    status: 'Pending',
+    reviewComments: '',
+    roles: [{
+      _id: '5da03f242afa421ae416cad7',
+      roleName: 'ROLE_PROJECT_VIEWER'
     }],
-    'projects': [{
-      'projectId': 'DTI_63102_DTI',
-      'projectName': 'DTI'
+    projects: [{
+      projectId: 'DTI_63102_DTI',
+      projectName: 'DTI'
     }]
   };
 
   const fakeRequestResponse = {
-    'message': 'created new access_request',
-    'success': true,
-    'data': [{
-      '_id': '5da47c2ae645ca33dc927bb3',
-      'username': 'Rishabh',
-      'status': 'Pending',
-      'reviewComments': '',
-      'projects': [{
-        'projectName': 'DTI',
-        'projectId': 'DTI_63102_DTI'
+    message: 'created new access_request',
+    success: true,
+    data: [{
+      _id: '5da47c2ae645ca33dc927bb3',
+      username: 'Rishabh',
+      status: 'Pending',
+      reviewComments: '',
+      projects: [{
+        projectName: 'DTI',
+        projectId: 'DTI_63102_DTI'
       }],
-      'roles': [{
-        '_id': '5da03f242afa421ae416cad7',
-        'roleName': 'ROLE_PROJECT_VIEWER'
+      roles: [{
+        _id: '5da03f242afa421ae416cad7',
+        roleName: 'ROLE_PROJECT_VIEWER'
       }]
     }]
   };
 
   const selectedItem = {
-    'nodeId': 'DOJO Transformation Internal',
-    'nodeName': 'DOJO Transformation Internal',
-    'isSelected': false,
-    'itemName': 'DOJO Transformation Internal',
-    'id': 1
+    nodeId: 'DOJO Transformation Internal',
+    nodeName: 'DOJO Transformation Internal',
+    isSelected: false,
+    itemName: 'DOJO Transformation Internal',
+    id: 1
   };
 
   const fakeSelectedProject = {
-    'nodeId': 'DTI_63102_DTI',
-    'nodeName': 'DTI',
-    'isSelected': false,
-    'itemName': 'DTI_63102_DTI',
-    'id': 4
+    nodeId: 'DTI_63102_DTI',
+    nodeName: 'DTI',
+    isSelected: false,
+    itemName: 'DTI_63102_DTI',
+    id: 4
   };
 
   const fakeSelectedProjectArr = [{
-    'nodeId': 'DTI_63102_DTI',
-    'nodeName': 'DTI',
-    'isSelected': false,
-    'itemName': 'DTI_63102_DTI',
-    'id': 4
+    nodeId: 'DTI_63102_DTI',
+    nodeName: 'DTI',
+    isSelected: false,
+    itemName: 'DTI_63102_DTI',
+    id: 4
   }];
 
   const fakeRequestDataProjectsArr = [{
-    'projectId': 'DTI_63102_DTI',
-    'projectName': 'DTI'
+    projectId: 'DTI_63102_DTI',
+    projectName: 'DTI'
   }];
 
   const fakeRole = {
-    '_id': '5da03f242afa421ae416cad7',
-    'roleName': 'ROLE_PROJECT_VIEWER',
-    'roleDescription': 'kpi data at project level',
-    'createdDate': 1570783012645,
-    'lastModifiedDate': 1570783012646,
-    'isDeleted': 'False',
-    'permissions': [{
-      '_id': '5d96dbb1abcd3e3e10b772f6',
-      'permissionName': 'View',
-      'operationName': 'Read',
-      'resourceName': 'resource4',
-      'resourceId': '5d932a126c7b0f37981a2cdc',
-      'createdDate': 1570167729143,
-      'lastModifiedDate': 1570167729143,
-      'isDeleted': 'False'
+    _id: '5da03f242afa421ae416cad7',
+    roleName: 'ROLE_PROJECT_VIEWER',
+    roleDescription: 'kpi data at project level',
+    createdDate: 1570783012645,
+    lastModifiedDate: 1570783012646,
+    isDeleted: 'False',
+    permissions: [{
+      _id: '5d96dbb1abcd3e3e10b772f6',
+      permissionName: 'View',
+      operationName: 'Read',
+      resourceName: 'resource4',
+      resourceId: '5d932a126c7b0f37981a2cdc',
+      createdDate: 1570167729143,
+      lastModifiedDate: 1570167729143,
+      isDeleted: 'False'
     }]
   };
 
@@ -172,7 +172,7 @@ describe('RaiseRequestComponent', () => {
   });
 
   it('Should check if request is getting submitted with successfully', () => {
-    let submittedResponse = {
+    const submittedResponse = {
       success: true
     };
     component.roleList = [
@@ -180,9 +180,7 @@ describe('RaiseRequestComponent', () => {
         active: true
       }
     ];
-    spyOn(httpService, 'saveAccessRequest').and.callFake(() => {
-      return from([submittedResponse]);
-    });
+    spyOn(httpService, 'saveAccessRequest').and.callFake(() => from([submittedResponse]));
     spyOn(messageService, 'add');
     component.submitRequest();
     expect(component.roleSelected).toBeFalsy();
@@ -190,7 +188,7 @@ describe('RaiseRequestComponent', () => {
   });
 
   it('Should check if request is getting submitted without successfully', () => {
-    let submittedResponse = {
+    const submittedResponse = {
       error: true
     };
     component.roleList = [
@@ -198,9 +196,7 @@ describe('RaiseRequestComponent', () => {
         active: true
       }
     ];
-    spyOn(httpService, 'saveAccessRequest').and.callFake(() => {
-      return from([submittedResponse]);
-    });
+    spyOn(httpService, 'saveAccessRequest').and.callFake(() => from([submittedResponse]));
     spyOn(messageService, 'add');
     component.submitRequest();
   });
