@@ -71,4 +71,10 @@ public interface TokenAuthenticationService {
 	 * @return List<ProjectsAccess>
 	 */
 	List<RoleWiseProjects> refreshToken(HttpServletRequest req, HttpServletResponse resp);
+
+	/**
+	 * Invalidate(Remove) auth tokens for provided users
+	 * @param users list of users (usernames)
+	 */
+	void invalidateAuthToken(List<String> users);
 }

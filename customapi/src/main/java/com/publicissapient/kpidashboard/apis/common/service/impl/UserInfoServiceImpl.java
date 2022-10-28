@@ -392,6 +392,11 @@ public class UserInfoServiceImpl implements UserInfoService {
         return new ServiceResponse(true, username + " deleted Successfully", "Ok");
     }
 
+    @Override
+    public List<UserInfo> getUserInfoByAuthType(String authType) {
+        return userInfoRepository.findByAuthType(authType);
+    }
+
     private void cleanAllCache() {
         cacheService.clearAllCache();
         log.info("cache cleared");
