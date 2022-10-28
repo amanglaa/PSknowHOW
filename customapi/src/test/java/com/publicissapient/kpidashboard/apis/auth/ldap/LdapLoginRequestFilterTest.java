@@ -25,6 +25,8 @@ import static org.mockito.Mockito.when;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.publicissapient.kpidashboard.apis.auth.service.AuthTypesConfigService;
+import com.publicissapient.kpidashboard.common.model.application.AuthTypeStatus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -79,9 +81,9 @@ public class LdapLoginRequestFilterTest {
 	
 	@Mock
 	private ADServerDetailsService adServerDetailsService;
-	
+
 	@Mock
-	AuthenticationService authenticationService;
+	private AuthTypesConfigService authTypesConfigService;
 	
 	ADServerDetail adUserDetail = null;
 
@@ -89,7 +91,7 @@ public class LdapLoginRequestFilterTest {
 	public void setup() {
 		path = "/ldap";
 		filter = new LdapLoginRequestFilter(path, manager, resultHandler, customAuthenticationFailureHandler,
-				rsaEncryptionService, customApiConfig, adServerDetailsService);
+				rsaEncryptionService, customApiConfig, adServerDetailsService, authTypesConfigService);
 		adUserDetail = new ADServerDetail();
 		adUserDetail.setDomain("domain");
 		adUserDetail.setHost("host");
@@ -160,6 +162,14 @@ public class LdapLoginRequestFilterTest {
 		adUserDetail = null;
 		when(adServerDetailsService.getADServerConfig()).thenReturn(adUserDetail);
 
+		filter.attemptAuthentication(request, response);
+	}
+	@Test(expected = AuthenticationServiceException.class)
+	public void shouldThrowExceptionIfDisabled() {
+		AuthTypeStatus authTypeStatus = new AuthTypeStatus();
+		authTypeStatus.setAdLogin(false);
+		authTypeStatus.setStandardLogin(true);
+		when(authTypesConfigService.getAuthTypesStatus()).thenReturn(authTypeStatus);
 		filter.attemptAuthentication(request, response);
 	}
 

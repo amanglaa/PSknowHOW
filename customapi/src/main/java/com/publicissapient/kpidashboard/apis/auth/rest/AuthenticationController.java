@@ -36,12 +36,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import com.publicissapient.kpidashboard.apis.auth.service.AuthTypesConfigService;
+import com.publicissapient.kpidashboard.common.model.application.AuthTypeStatus;
 import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -77,6 +80,8 @@ public class AuthenticationController {
 	private final AuthProperties authProperties;
 	private final UserInfoService userInfoService;
 	private final SignupManager signupManager;
+
+	private AuthTypesConfigService authTypesConfigService;
 	private static final String AUTH_RESPONSE_HEADER = "X-Authentication-Token";
 	private static final String STATUS = "Success";
 	private static final String PASSWORD_PATTERN = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[$@$!%*?&]).{8,20})"; // NOSONAR
@@ -94,12 +99,13 @@ public class AuthenticationController {
 	@Autowired
 	public AuthenticationController(AuthenticationService authenticationService,
 			AuthenticationResponseService authenticationResponseService, UserInfoService userInfoService,
-			AuthProperties authProperties, SignupManager signupManager) {
+			AuthProperties authProperties, SignupManager signupManager, AuthTypesConfigService authTypesConfigService) {
 		this.authenticationService = authenticationService;
 		this.authenticationResponseService = authenticationResponseService;
 		this.authProperties = authProperties;
 		this.userInfoService = userInfoService;
 		this.signupManager = signupManager;
+		this.authTypesConfigService = authTypesConfigService;
 	}
 
 	/**
@@ -123,6 +129,12 @@ public class AuthenticationController {
 			HttpServletResponse httpServletResponse, @Valid @RequestBody AuthenticationRequest request) {
 
 		try {
+			AuthTypeStatus authTypesStatus = authTypesConfigService.getAuthTypesStatus();
+
+			if (authTypesStatus != null && !authTypesStatus.isStandardLogin()){
+				return ResponseEntity.status(HttpStatus.OK).body(new ServiceResponse(false,
+						"Cannot complete the registration process. Standard authentication is disabled", null));
+			}
 			Pattern pattern = Pattern.compile(PASSWORD_PATTERN);
 			Matcher matcher = pattern.matcher(request.getPassword());
 			boolean flag = matcher.matches();

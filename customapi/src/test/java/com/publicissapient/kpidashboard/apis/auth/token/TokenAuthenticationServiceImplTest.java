@@ -221,10 +221,10 @@ public class TokenAuthenticationServiceImplTest {
 	public void invalidateAuthToken(){
 
 		List<String> users = Arrays.asList("Test");
-		doNothing().when(userTokenReopository).deleteByUsernameIn(users);
+		doNothing().when(userTokenReopository).deleteByUserNameIn(users);
 
 		service.invalidateAuthToken(users);
-		verify(userTokenReopository, times(1)).deleteByUsernameIn(users);
+		verify(userTokenReopository, times(1)).deleteByUserNameIn(users);
 	}
 
 }
