@@ -38,6 +38,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.publicissapient.kpidashboard.apis.auth.service.AuthTypesConfigService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -89,6 +90,11 @@ public class AuthenticationControllerTest {
 
 	@Mock
 	private SignupManager signupManager;
+
+	@Mock
+	private AuthTypesConfigService authTypesConfigService;
+
+
 
 	@Before
 	public void before() {

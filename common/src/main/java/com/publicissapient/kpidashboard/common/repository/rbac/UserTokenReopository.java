@@ -23,6 +23,8 @@ import org.springframework.data.repository.CrudRepository;
 
 import com.publicissapient.kpidashboard.common.model.rbac.UserTokenData;
 
+import java.util.List;
+
 /**
  * Repository for {@link UserTokenData}.
  */
@@ -52,5 +54,7 @@ public interface UserTokenReopository extends CrudRepository<UserTokenData, Obje
 	 *            the user Name
 	 */
 	void deleteByuserName(String userName);
+
+	void  deleteByUserNameIn(List<String> usernames);
 
 }
