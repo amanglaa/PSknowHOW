@@ -100,6 +100,15 @@
                 </ng-container>
             </ng-container>
         </div>
+        <div class="kpi-card-indicator p-jc-evenly" *ngIf="!showChartView && (kpiData?.kpiId == 'kpi3' || kpiData?.kpiId == 'kpi53')">
+            <ng-container *ngFor="let item of trendData?.data; let i = index;">
+                <app-trend-indicator
+                    [dataTrend]="item" [cols]="trendData?.columnHeaders"
+                    [maturity]="item?.maturity" [color]="getColor(item?.name)" [kpiData]="kpiData"
+                    [noOfBox]="trendData?.length">
+                </app-trend-indicator>
+            </ng-container>
+        </div>
         <!--place for chart to be rendered-->
         <ng-content></ng-content>
     </div>

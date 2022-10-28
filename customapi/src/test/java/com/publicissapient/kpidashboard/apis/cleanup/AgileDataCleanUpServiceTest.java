@@ -24,6 +24,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.publicissapient.kpidashboard.apis.data.FieldMappingDataFactory;
+import com.publicissapient.kpidashboard.common.constant.ProcessorConstants;
 import com.publicissapient.kpidashboard.common.model.application.ProjectBasicConfig;
 import com.publicissapient.kpidashboard.common.repository.application.*;
 import com.publicissapient.kpidashboard.common.repository.tracelog.ProcessorExecutionTraceLogRepository;
@@ -120,7 +121,7 @@ public class AgileDataCleanUpServiceTest {
 		ProjectToolConfig projectToolConfig = new ProjectToolConfig();
 		projectToolConfig.setId(new ObjectId("5e9e4593e4b0c8ece56710c3"));
 		projectToolConfig.setBasicProjectConfigId(new ObjectId("6335368249794a18e8a4479f"));
-		projectToolConfig.setToolName("Jira");
+		projectToolConfig.setToolName(ProcessorConstants.JIRA);
 
         ProjectBasicConfig projectBasicConfig = new ProjectBasicConfig();
         projectBasicConfig.setId(new ObjectId("6335368249794a18e8a4479f"));
@@ -141,7 +142,7 @@ public class AgileDataCleanUpServiceTest {
 		verify(kanbanJiraIssueRepository, times(1)).deleteByBasicProjectConfigId("6335368249794a18e8a4479f");
 		verify(kanbanJiraIssueHistoryRepository, times(1)).deleteByBasicProjectConfigId("6335368249794a18e8a4479f");
 		verify(testCaseDetailsRepository, times(1)).deleteByBasicProjectConfigId("6335368249794a18e8a4479f");
-		verify(processorExecutionTraceLogRepository, times(1)).deleteByBasicProjectConfigIdAndProcessorName("6335368249794a18e8a4479f" , "Jira");
+		verify(processorExecutionTraceLogRepository, times(1)).deleteByBasicProjectConfigIdAndProcessorName("6335368249794a18e8a4479f" , ProcessorConstants.JIRA);
 	}
 
     @Test
@@ -153,7 +154,7 @@ public class AgileDataCleanUpServiceTest {
         ProjectBasicConfig projectBasicConfig = new ProjectBasicConfig();
         projectBasicConfig.setId(new ObjectId("5e9db8f1e4b0caefbfa8e0c7"));
         projectBasicConfig.setIsKanban(false);
-		projectToolConfig.setToolName("Jira");
+		projectToolConfig.setToolName(ProcessorConstants.JIRA);
 
 		FieldMapping fieldMapping = new FieldMapping();
 		String[] values = new String[]{"Bug","Defect"};
@@ -170,7 +171,7 @@ public class AgileDataCleanUpServiceTest {
         verify(jiraIssueRepository, times(1)).deleteByBasicProjectConfigId("5e9db8f1e4b0caefbfa8e0c7");
         verify(jiraIssueCustomHistoryRepository, times(1)).deleteByBasicProjectConfigId("5e9db8f1e4b0caefbfa8e0c7");
 		verify(testCaseDetailsRepository, times(1)).deleteByBasicProjectConfigId("5e9db8f1e4b0caefbfa8e0c7");
-		verify(processorExecutionTraceLogRepository, times(1)).deleteByBasicProjectConfigIdAndProcessorName("5e9db8f1e4b0caefbfa8e0c7", "Jira");
+		verify(processorExecutionTraceLogRepository, times(1)).deleteByBasicProjectConfigIdAndProcessorName("5e9db8f1e4b0caefbfa8e0c7", ProcessorConstants.JIRA);
 
     }
 

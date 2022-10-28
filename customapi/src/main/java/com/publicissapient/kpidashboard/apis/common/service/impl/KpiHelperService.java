@@ -259,6 +259,11 @@ public class KpiHelperService { // NOPMD
 
 		List<SprintWiseStory> sprintWiseStoryList = jiraIssueRepository.findIssuesGroupBySprint(mapOfFilters,
 				uniqueProjectMap, kpiRequest.getFilterToShowOnTrend(), DEV);
+		List<JiraIssue> issuesBySprintAndType = jiraIssueRepository.findIssuesBySprintAndType(mapOfFilters,
+				uniqueProjectMap);
+		List<JiraIssue> storyListWoDrop = new ArrayList<>();
+		KpiHelperService.getDefectsWithoutDrop(droppedDefects, issuesBySprintAndType, storyListWoDrop);
+		removeRejectedStoriesFromSprint(sprintWiseStoryList, storyListWoDrop);
 		// Filter stories fetched in above query to get stories that have DOD
 		// status
 		List<String> storyIdList = new ArrayList<>();
@@ -337,6 +342,11 @@ public class KpiHelperService { // NOPMD
 
 		List<SprintWiseStory> sprintWiseStoryList = jiraIssueRepository.findIssuesGroupBySprint(mapOfFilters,
 				uniqueProjectMap, kpiRequest.getFilterToShowOnTrend(), DEV);
+		List<JiraIssue> issuesBySprintAndType = jiraIssueRepository.findIssuesBySprintAndType(mapOfFilters,
+				uniqueProjectMap);
+		List<JiraIssue> storyListWoDrop = new ArrayList<>();
+		KpiHelperService.getDefectsWithoutDrop(droppedDefects, issuesBySprintAndType, storyListWoDrop);
+		removeRejectedStoriesFromSprint(sprintWiseStoryList, storyListWoDrop);
 		// Filter stories fetched in above query to get stories that have DOD
 		// status
 		List<String> storyIdList = new ArrayList<>();
@@ -1178,16 +1188,16 @@ public class KpiHelperService { // NOPMD
 		return fieldWiseIssuesLatestMap;
 	}
 
-	public static void getDroppedDefectsFilters(Map<String, Map<String,List<String>>> droppedDefects,
-															  ObjectId basicProjectConfigId, FieldMapping fieldMapping) {
-		Map<String,List<String>> filtersMap = new HashMap<>();
+	public static void getDroppedDefectsFilters(Map<String, Map<String, List<String>>> droppedDefects,
+												ObjectId basicProjectConfigId, FieldMapping fieldMapping) {
+		Map<String, List<String>> filtersMap = new HashMap<>();
 		if (CollectionUtils.isNotEmpty(fieldMapping.getResolutionTypeForRejection())) {
 			filtersMap.put(Constant.RESOLUTION_TYPE_FOR_REJECTION, fieldMapping.getResolutionTypeForRejection());
 		}
 		if (StringUtils.isNotEmpty(fieldMapping.getJiraDefectRejectionStatus())) {
 			filtersMap.put(Constant.DEFECT_REJECTION_STATUS, Arrays.asList(fieldMapping.getJiraDefectRejectionStatus()));
 		}
-			droppedDefects.put(basicProjectConfigId.toString(), filtersMap);
+		droppedDefects.put(basicProjectConfigId.toString(), filtersMap);
 	}
 
 	public static void getDefectsWithoutDrop(Map<String, Map<String,List<String>>> droppedDefects, List<JiraIssue> defectDataList,
@@ -1204,7 +1214,7 @@ public class KpiHelperService { // NOPMD
 	private static void getDefectsWoDrop(Map<String, Map<String,List<String>>> droppedDefects, Set<JiraIssue> defectListWoDropSet, JiraIssue jiraIssue) {
 		if (!StringUtils.isBlank(jiraIssue.getStatus())) {
 			Map<String,List<String>> defectStatus = droppedDefects.get(jiraIssue.getBasicProjectConfigId());
-			if (!defectStatus.isEmpty()) {
+			if (null != defectStatus && !defectStatus.isEmpty()) {
 				if (CollectionUtils.isNotEmpty(defectStatus.get(Constant.DEFECT_REJECTION_STATUS))
 						&& CollectionUtils.isNotEmpty(defectStatus.get(Constant.RESOLUTION_TYPE_FOR_REJECTION))) {
 					if (StringUtils.isNotEmpty(jiraIssue.getStatus()) &&
@@ -1234,6 +1244,15 @@ public class KpiHelperService { // NOPMD
 				defectListWoDropSet.add(jiraIssue);
 			}
 		}
+	}
+
+	public static void removeRejectedStoriesFromSprint(List<SprintWiseStory> sprintWiseStories,
+												 List<JiraIssue> acceptedStories) {
+
+		Set<String> acceptedStoryIds = acceptedStories.stream().map(JiraIssue::getNumber).collect(Collectors.toSet());
+
+		sprintWiseStories.forEach(sprintWiseStory -> sprintWiseStory.getStoryList()
+				.removeIf(storyId -> !acceptedStoryIds.contains(storyId)));
 	}
 
 }

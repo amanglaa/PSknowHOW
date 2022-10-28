@@ -1,6 +1,6 @@
 <div class="indicator-container" [ngStyle]="{'border-color': color, 'margin': noOfBox < 3 ? '0 0px 0 0' : '0'}">
 
-    <div class="indicator-average-data" *ngIf="dataTrend">
+    <div class="indicator-average-data" *ngIf="dataTrend && cols?.length == 0">
         <div class="p-pr-3 p-text-center">
             <div class="indicator-heading">Latest</div>
             <p class="average-data-primary" [ngStyle]="{'color': color}"
@@ -11,7 +11,8 @@
                     [ngStyle]="{'color': color}">{{kpiData?.kpiDetail?.kpiUnit}}</span>
             </p>
             <ng-template #lineChartTemplate>
-                <p class="average-data-primary" [ngStyle]="{'color': color}">{{lastValue === 'NA' ? lastValue : (dataTrend?.length > 1 ? dataTrend[1] :
+                <p class="average-data-primary" [ngStyle]="{'color': color}">{{lastValue == 'NA' ? lastValue :
+                    (dataTrend?.length > 1 ? dataTrend[1] :
                     dataTrend[0]) |
                     number: '1.0-1'}}
                     <span *ngIf="kpiData?.kpiDetail?.kpiUnit !== 'Number'"
@@ -31,7 +32,8 @@
                     <div class="arrow-down" *ngIf="dataTrend[0] > dataTrend[1]">
                     </div>
                     <ng-container *ngIf="dataTrend[0] == dataTrend[1]">
-                        <div class="no-trend" *ngIf="kpiData?.kpiId !=='kpi126'; else showPositiveTrend" [ngStyle]="{'color': color}">-- --
+                        <div class="no-trend" *ngIf="kpiData?.kpiId !=='kpi126'; else showPositiveTrend"
+                            [ngStyle]="{'color': color}">-- --
                         </div>
                         <ng-template #showPositiveTrend>
                             <div class="arrow-up">
@@ -58,10 +60,22 @@
                 <div class="indicator-maturity-primary-data">NA</div>
             </ng-template>
         </div>
+        <div class="p-text-center">
+            <div class="indicator-heading">Maturity</div>
+            <p class="indicator-maturity-primary-data">{{ maturity > 0 ? ('M'+maturity) : maturity == 0 ? '--' : 'NA'}}
+            </p>
+        </div>
     </div>
 
-    <div class="indicator-maturity-trend p-text-center">
-        <div class="indicator-heading">Maturity</div>
-        <p class="indicator-maturity-primary-data">{{ maturity > 0 ? ('M'+maturity) : maturity == 0 ? '--' : 'NA'}}</p>
-    </div>
+
+    <ng-container *ngIf="cols?.length>0">
+        <ng-container *ngFor="let col of cols; let i = index;">
+            <div *ngIf="i != 0">
+                <div class="p-text-center" [ngClass]="{'p-pr-3': i != cols.length - 1}">
+                    <div class="indicator-heading">{{col?.header}}</div>
+                    <p class="indicator-maturity-primary-data" [ngStyle]="{'color': col?.field == 'value' && color}">{{dataTrend[col?.field]}}</p>
+                </div>
+            </div>
+        </ng-container>
+    </ng-container>
 </div>

@@ -1096,7 +1096,6 @@ export class ConnectionListComponent implements OnInit {
         this.basicConnectionForm.controls['accessToken']?.enable();
       }else{
         this.basicConnectionForm.controls['baseUrl'].enable();
-        this.basicConnectionForm.controls['baseUrl'].setValue('');
         this.basicConnectionForm.controls['apiEndPoint'].enable();
         this.basicConnectionForm.controls['username'].enable();
         this.basicConnectionForm.controls['password'].enable();

@@ -20,6 +20,7 @@ package com.publicissapient.kpidashboard.apis.cleanup;
 
 import com.publicissapient.kpidashboard.apis.common.service.CacheService;
 import com.publicissapient.kpidashboard.common.constant.CommonConstant;
+import com.publicissapient.kpidashboard.common.constant.ProcessorConstants;
 import com.publicissapient.kpidashboard.common.constant.ProcessorType;
 import com.publicissapient.kpidashboard.common.model.application.ProjectToolConfig;
 import com.publicissapient.kpidashboard.common.model.generic.ProcessorItem;
@@ -27,6 +28,7 @@ import com.publicissapient.kpidashboard.common.repository.application.ProjectToo
 import com.publicissapient.kpidashboard.common.repository.generic.ProcessorItemRepository;
 import com.publicissapient.kpidashboard.common.repository.sonar.SonarDetailsRepository;
 import com.publicissapient.kpidashboard.common.repository.sonar.SonarHistoryRepository;
+import com.publicissapient.kpidashboard.common.repository.tracelog.ProcessorExecutionTraceLogRepository;
 import org.bson.types.ObjectId;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -68,6 +70,9 @@ public class SonarDataCleanUpServiceTest {
     @InjectMocks
     private SonarDataCleanUpService sonarDataCleanUpService;
 
+    @Mock
+    private ProcessorExecutionTraceLogRepository processorExecutionTraceLogRepository;
+
     @Test
     public void getToolCategory() {
         String actualResult = sonarDataCleanUpService.getToolCategory();
@@ -80,6 +85,7 @@ public class SonarDataCleanUpServiceTest {
         ProjectToolConfig projectToolConfig = new ProjectToolConfig();
         projectToolConfig.setId(new ObjectId("5e9e4593e4b0c8ece56710c3"));
         projectToolConfig.setBasicProjectConfigId(new ObjectId("5e9db8f1e4b0caefbfa8e0c7"));
+        projectToolConfig.setToolName(ProcessorConstants.SONAR);
         when(projectToolConfigRepository.findById(Mockito.anyString())).thenReturn(projectToolConfig);
         ProcessorItem processorItem = new ProcessorItem();
         processorItem.setId(new ObjectId("5fc6a0c0e4b00ecfb5941e29"));
@@ -88,6 +94,7 @@ public class SonarDataCleanUpServiceTest {
         doNothing().when(sonarHistoryRepository).deleteByProcessorItemIdIn(Mockito.anyList());
         doNothing().when(processorItemRepository).deleteByToolConfigId(Mockito.any(ObjectId.class));
         doNothing().when(cacheService).clearCache(CommonConstant.SONAR_KPI_CACHE);
+        doNothing().when(processorExecutionTraceLogRepository).deleteByBasicProjectConfigIdAndProcessorName(Mockito.any(),Mockito.anyString());
         sonarDataCleanUpService.clean("5e9e4593e4b0c8ece56710c3");
 
         verify(sonarDetailsRepository, times(1))
@@ -96,5 +103,6 @@ public class SonarDataCleanUpServiceTest {
                 .deleteByProcessorItemIdIn(Arrays.asList(new ObjectId("5fc6a0c0e4b00ecfb5941e29")));
 
         verify(processorItemRepository, times(1)).deleteByToolConfigId(new ObjectId("5e9e4593e4b0c8ece56710c3"));
+        verify(processorExecutionTraceLogRepository, times(1)).deleteByBasicProjectConfigIdAndProcessorName("5e9db8f1e4b0caefbfa8e0c7" , ProcessorConstants.SONAR);
     }
 }

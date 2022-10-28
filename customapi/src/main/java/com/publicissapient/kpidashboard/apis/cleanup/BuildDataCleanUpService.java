@@ -23,6 +23,7 @@ import static com.publicissapient.kpidashboard.common.constant.CommonConstant.CA
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.publicissapient.kpidashboard.common.repository.tracelog.ProcessorExecutionTraceLogRepository;
 import org.apache.commons.collections4.CollectionUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +60,9 @@ public class BuildDataCleanUpService implements ToolDataCleanUpService {
 	@Autowired
 	private DeploymentRepository deploymentRepository;
 
+	@Autowired
+	private ProcessorExecutionTraceLogRepository processorExecutionTraceLogRepository;
+
 	private List<ObjectId> getProcessorItemsIds(ProjectToolConfig tool) {
 		List<ProcessorItem> items = processorItemRepository.findByToolConfigId(tool.getId());
 
@@ -84,6 +88,11 @@ public class BuildDataCleanUpService implements ToolDataCleanUpService {
 
 			// delete corresponding documents from processor_items
 			processorItemRepository.deleteByToolConfigId(tool.getId());
+
+			// delete processors trace logs
+			processorExecutionTraceLogRepository.deleteByBasicProjectConfigIdAndProcessorName(tool.getBasicProjectConfigId().toHexString(),
+					tool.getToolName());
+
 			cacheService.clearCache(CACHE_TOOL_CONFIG_MAP);
 			cacheService.clearCache(CommonConstant.JENKINS_KPI_CACHE);
 
