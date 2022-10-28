@@ -27,9 +27,6 @@
         MONGODB_IMAGE: mongodb
       when: DEPLOY is match("OPENSOURCE")
 
-    - name: Execute certs_import script
-      shell: /var/knh/certs_import.sh {{sapecloudldap}} {{edcurl}} 
-
     - name: Create target directory
       file: path=/var/knh state=directory mode=0755
 
@@ -168,7 +165,7 @@
       ignore_errors: yes
       
     - name: Execute certs_import  script
-      shell: /var/knh/certs_import.sh {{ldapurl}} {{edcurl}} 
+      shell: /var/knh/certs_import.sh {{edcurl}} {{ldapurl}} 
 
     - name: clean Sapce
       shell: docker image prune -a -f && docker volume prune -f && docker system prune -f
