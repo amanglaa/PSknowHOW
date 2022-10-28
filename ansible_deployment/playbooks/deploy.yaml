@@ -166,7 +166,6 @@
       
     - name: Execute certs_import  script
       shell: /var/knh/certs_import.sh {{edcurl}} {{ldapurl}}
-      ignore_errors: yes
 
     - name: clean Sapce
       shell: docker image prune -a -f && docker volume prune -f && docker system prune -f
