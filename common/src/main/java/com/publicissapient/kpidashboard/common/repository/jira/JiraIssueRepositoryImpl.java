@@ -22,7 +22,6 @@ package com.publicissapient.kpidashboard.common.repository.jira;//NOPMD
 
 import java.util.*;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import com.publicissapient.kpidashboard.common.model.jira.JiraIssueMap;
 import org.apache.commons.collections.CollectionUtils;
