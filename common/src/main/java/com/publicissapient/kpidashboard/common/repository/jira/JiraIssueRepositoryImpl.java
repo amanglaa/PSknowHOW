@@ -23,7 +23,6 @@ package com.publicissapient.kpidashboard.common.repository.jira;//NOPMD
 import java.util.*;
 import java.util.regex.Pattern;
 
-import com.publicissapient.kpidashboard.common.model.jira.JiraIssueMap;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +51,8 @@ public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom {// NO
 	private static final String SPRINT_ID = "sprintID";
 	private static final String SPRINT = "sprint";
 	private static final String NUMBER = "number";
+	private static final String NAME = "name";
+	private static final String URL = "url";
 	private static final String STORY_LIST = "storyList";
 	private static final String SPRINT_BEGIN_DATE = "sprintBeginDate";
 	private static final String SPRINT_NAME = "sprintName";
@@ -590,22 +591,17 @@ public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom {// NO
 	}
 
 	@Override
-	public List<JiraIssueMap> findIssueAndDescByNumber(List<String> storyNumber) {
-		JiraIssueMap jiraIssueMap;
-		List<JiraIssueMap> jiraIssueMapList = new ArrayList<>();
+	public Set<JiraIssue> findIssueAndDescByNumber(List<String> storyNumber) {
+
 		Criteria criteria = new Criteria();
 		criteria = criteria.and(NUMBER).in(storyNumber);
 
 		Query query = new Query(criteria);
 		query.fields().include(NUMBER);
-		query.fields().include("name");
-		query.fields().include("url");
-		Set<JiraIssue> jiraIssueSet = new HashSet<>(operations.find(query, JiraIssue.class));
-		for(JiraIssue jiraIssue : jiraIssueSet) {
-			jiraIssueMap = new JiraIssueMap(jiraIssue.getNumber(), jiraIssue.getName(), jiraIssue.getUrl());
-			jiraIssueMapList.add(jiraIssueMap);
-		}
-		return jiraIssueMapList;
+		query.fields().include(NAME);
+		query.fields().include(URL);
+		return new HashSet<>(operations.find(query, JiraIssue.class));
+
 	}
 
 }
