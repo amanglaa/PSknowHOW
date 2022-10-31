@@ -18,4 +18,6 @@ public class JiraIssueMap {
     private String issueNumber;
 
     private String issueDesc;
+
+    private String issueURL;
 }

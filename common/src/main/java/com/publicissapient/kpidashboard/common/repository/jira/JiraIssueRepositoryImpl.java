@@ -592,23 +592,22 @@ public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom {// NO
 
 	@Override
 	public List<JiraIssueMap> findIssueAndDescByNumber(List<String> storyNumber) {
-
-		Set<JiraIssueMap> jiraIssueMapList = new HashSet<>();
 		JiraIssueMap jiraIssueMap;
-
+		List<JiraIssueMap> jiraIssueMapList = new ArrayList<>();
 		Criteria criteria = new Criteria();
 		criteria = criteria.and(NUMBER).in(storyNumber);
 
 		Query query = new Query(criteria);
 		query.fields().include(NUMBER);
 		query.fields().include("name");
-
-		for (JiraIssue jiraIssue: operations.find(query, JiraIssue.class)){
-			jiraIssueMap = new JiraIssueMap(jiraIssue.getNumber(), jiraIssue.getName());
+		query.fields().include("url");
+		System.out.println(operations.find(query, JiraIssue.class));
+		Set<JiraIssue> jiraIssueSet = new HashSet<>(operations.find(query, JiraIssue.class));
+		for(JiraIssue jiraIssue : jiraIssueSet) {
+			jiraIssueMap = new JiraIssueMap(jiraIssue.getNumber(), jiraIssue.getName(), jiraIssue.getUrl());
 			jiraIssueMapList.add(jiraIssueMap);
 		}
-
-		return jiraIssueMapList.stream().collect(Collectors.toList());
+		return jiraIssueMapList;
 	}
 
 }
