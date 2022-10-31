@@ -18,16 +18,11 @@
 
 package com.publicissapient.kpidashboard.apis.util;
 
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.publicissapient.kpidashboard.apis.enums.KPICode;
-import com.publicissapient.kpidashboard.apis.enums.KPIExcelColumns;
 import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
-import com.publicissapient.kpidashboard.apis.model.KPIExcelResponse;
 import com.publicissapient.kpidashboard.common.model.jira.JiraIssue;
 
 /**
@@ -38,23 +33,6 @@ import com.publicissapient.kpidashboard.common.model.jira.JiraIssue;
 public class KPIExcelUtility {
 
 	private KPIExcelUtility() {
-	}
-
-	private static final Map<String, List<KPIExcelColumns>> kpiWiseExcelColumns = new HashMap<>(
-			Map.of(KPICode.DEFECT_INJECTION_RATE.name(),
-					Arrays.asList(KPIExcelColumns.sprintName, KPIExcelColumns.storyId, KPIExcelColumns.linkedDefects)
-
-			));
-
-	/*
-	 * This method returns list of columns enums
-	 * 
-	 * @param kpiCode
-	 * 
-	 * @return list of enum
-	 */
-	public static List<KPIExcelColumns> getExcelColumns(String kpiCode) {
-		return kpiWiseExcelColumns.get(kpiCode);
 	}
 
 	/**
@@ -78,9 +56,4 @@ public class KPIExcelUtility {
 		});
 	}
 
-	public static KPIExcelResponse createKPIExcelResponse(String kpiName, List<KPIExcelData> excelData) {
-		KPIExcelResponse excelResponse = new KPIExcelResponse();
-
-		return excelResponse;
-	}
 }
