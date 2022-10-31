@@ -18,6 +18,7 @@
 
 package com.publicissapient.kpidashboard.jira.client.jiraissue;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.publicissapient.kpidashboard.common.util.DateUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONException;
@@ -59,6 +61,9 @@ public abstract class JiraIssueClient {// NOPMD //NOSONAR
 	protected static final String TESTAUTOMATEDFLAG = "testAutomatedFlag";
 	protected static final String TESTCANBEAUTOMATEDFLAG = "testCanBeAutomatedFlag";
 	protected static final String AUTOMATEDVALUE = "automatedValue";
+
+	protected static final String QUERYDATEFORMAT = "yyyy-MM-dd HH:mm";
+
 
 	@Autowired
 	private TestCaseDetailsRepository testCaseDetailsRepository;
@@ -569,6 +574,12 @@ public abstract class JiraIssueClient {// NOPMD //NOSONAR
 			}
 		});
 		return resultMap;
+	}
+
+	public String getDeltaDate(String lastSuccessfulRun) {
+		LocalDateTime ldt = DateUtil.stringToLocalDateTime(lastSuccessfulRun,QUERYDATEFORMAT);
+		ldt.minusDays(30);
+		return DateUtil.dateTimeFormatter(ldt,QUERYDATEFORMAT);
 	}
 
 }

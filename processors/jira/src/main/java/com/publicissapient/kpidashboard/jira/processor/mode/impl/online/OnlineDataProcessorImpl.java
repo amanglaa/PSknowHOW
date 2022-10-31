@@ -29,6 +29,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.publicissapient.kpidashboard.jira.client.sprint.SprintClient;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,6 +116,8 @@ public class OnlineDataProcessorImpl extends ModeBasedProcessor {
 	@Autowired
 	private SubProjectRepository subProjectRepository;
 
+	@Autowired
+	private SprintClient sprintClient;
 
 	/**
 	 * Validates and collects Jira issues using JIA API for projects with onlinemode
@@ -157,7 +160,8 @@ public class OnlineDataProcessorImpl extends ModeBasedProcessor {
 							Runnable worker = new JiraOnlineRunnable(latch, jiraAdapter, entry.getValue(),
 									projectReleaseRepo, accountHierarchyRepository, kanbanAccountHierarchyRepo,
 									jiraIssueClientFactory, jiraProcessorConfig, boardMetadataRepository,
-									fieldMappingRepository, metadataIdentifierRepository, jiraRestClientFactory);// NOPMD
+									fieldMappingRepository, metadataIdentifierRepository, jiraRestClientFactory,
+									sprintClient);// NOPMD
 							executor.execute(worker);
 						}
 					}

@@ -18,6 +18,7 @@
 
 package com.publicissapient.kpidashboard.jira.client.jiraissue;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -34,6 +35,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.publicissapient.kpidashboard.common.model.connection.Connection;
+import com.publicissapient.kpidashboard.common.model.jira.BoardDetails;
+import com.publicissapient.kpidashboard.common.model.jira.SprintDetails;
+import com.publicissapient.kpidashboard.common.util.DateUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -145,42 +149,36 @@ public class KanbanJiraIssueClientImpl extends JiraIssueClient {
 			boolean dataExist = (kanbanJiraRepo
 					.findTopByBasicProjectConfigId(projectConfig.getBasicProjectConfigId().toString()) != null);
 
-			Map<String, LocalDateTime> maxChangeDatesByIssueType = getLastChangedDatesByIssueType(
-					projectConfig.getBasicProjectConfigId(), projectConfig.getFieldMapping(), dataExist);
-
-			Map<String, LocalDateTime> maxChangeDatesByIssueTypeWithAddedTime = new HashMap<>();
-
-			maxChangeDatesByIssueType.forEach((k, v) -> {
-				long extraMinutes = jiraProcessorConfig.getMinsToReduce();
-				maxChangeDatesByIssueTypeWithAddedTime.put(k, v.minusMinutes(extraMinutes));
-			});
-			int pageSize = jiraAdapter.getPageSize();
-
-			boolean hasMore = true;
-
+			String queryDate = getDeltaDate(processorExecutionTraceLog.getLastSuccessfulRun());
 			String userTimeZone = jiraAdapter.getUserTimeZone(projectConfig);
-			for (int i = 0; hasMore; i += pageSize) {
-				SearchResult searchResult = jiraAdapter.getIssues(projectConfig, maxChangeDatesByIssueTypeWithAddedTime,
-						userTimeZone, i, dataExist);
-				List<Issue> issues = getIssuesFromResult(searchResult);
-				if (total == 0) {
-					total = getTotal(searchResult);
-				}
+			List<BoardDetails> boardDetailsList = projectConfig.getProjectToolConfig().getBoards();
+			for(BoardDetails board : boardDetailsList) {
+				int pageSize = jiraAdapter.getPageSize();
+				boolean hasMore = true;
 
-				List<Issue> purgeIssues = Lists.newArrayList();
-				if (isOffline && issues.size() >= pageSize) {
-					pageSize = issues.size() + 1;
-				}
-				if (CollectionUtils.isNotEmpty(issues)) {
-					List<KanbanJiraIssue> kanbanJiraIssues = saveJiraIssueDetails(issues, projectConfig);
-					findLastSavedKanbanJiraIssueByType(kanbanJiraIssues, lastSavedKanbanJiraIssueChangedDateByType);
-					savedIsuesCount += issues.size();
-				}
-				if (CollectionUtils.isNotEmpty(purgeIssues)) {
-					purgeJiraIssues(purgeIssues, projectConfig);
-				}
-				if (issues.size() < pageSize) {
-					break;
+				for (int i = 0; hasMore; i += pageSize) {
+					SearchResult searchResult = jiraAdapter.getIssues(board, projectConfig, queryDate,
+							userTimeZone, i, dataExist);
+					List<Issue> issues = getIssuesFromResult(searchResult);
+					if (total == 0) {
+						total = getTotal(searchResult);
+					}
+
+					List<Issue> purgeIssues = Lists.newArrayList();
+					if (isOffline && issues.size() >= pageSize) {
+						pageSize = issues.size() + 1;
+					}
+					if (CollectionUtils.isNotEmpty(issues)) {
+						List<KanbanJiraIssue> kanbanJiraIssues = saveJiraIssueDetails(issues, projectConfig);
+						findLastSavedKanbanJiraIssueByType(kanbanJiraIssues, lastSavedKanbanJiraIssueChangedDateByType);
+						savedIsuesCount += issues.size();
+					}
+					if (CollectionUtils.isNotEmpty(purgeIssues)) {
+						purgeJiraIssues(purgeIssues, projectConfig);
+					}
+					if (issues.size() < pageSize) {
+						break;
+					}
 				}
 			}
 		} catch (JSONException e) {
@@ -189,6 +187,7 @@ public class KanbanJiraIssueClientImpl extends JiraIssueClient {
 		} finally {
 			boolean isAttemptSuccess = isAttemptSuccess(total, savedIsuesCount);
 			if (!isAttemptSuccess) {
+				processorExecutionTraceLog.setLastSuccessfulRun(null);
 				lastSavedKanbanJiraIssueChangedDateByType.clear();
 			}
 			saveExecutionTraceLog(processorExecutionTraceLog, lastSavedKanbanJiraIssueChangedDateByType,
@@ -222,15 +221,30 @@ public class KanbanJiraIssueClientImpl extends JiraIssueClient {
 		}
 
 		processorExecutionTraceLog.setExecutionSuccess(isSuccess);
+		if(isSuccess){
+			processorExecutionTraceLog.setLastSuccessfulRun(DateUtil.dateTimeFormatter(LocalDateTime.now(),"yyyy-MM-dd HH:mm"));
+		}
 		processorExecutionTraceLog.setExecutionEndedAt(System.currentTimeMillis());
 		processorExecutionTraceLogService.save(processorExecutionTraceLog);
 	}
 
 	private ProcessorExecutionTraceLog createTraceLog(String basicProjectConfigId) {
-		ProcessorExecutionTraceLog processorExecutionTraceLog = new ProcessorExecutionTraceLog();
-		processorExecutionTraceLog.setProcessorName(ProcessorConstants.JIRA);
-		processorExecutionTraceLog.setBasicProjectConfigId(basicProjectConfigId);
-		processorExecutionTraceLog.setExecutionStartedAt(System.currentTimeMillis());
+		List<ProcessorExecutionTraceLog> traceLogs = processorExecutionTraceLogService
+				.getTraceLogs(ProcessorConstants.JIRA, basicProjectConfigId);
+		ProcessorExecutionTraceLog processorExecutionTraceLog = null;
+
+		if (CollectionUtils.isNotEmpty(traceLogs)) {
+			processorExecutionTraceLog = traceLogs.get(0);
+			if(null == processorExecutionTraceLog.getLastSuccessfulRun()){
+				processorExecutionTraceLog.setLastSuccessfulRun(jiraProcessorConfig.getStartDate());
+			}
+		}else {
+			processorExecutionTraceLog = new ProcessorExecutionTraceLog();
+			processorExecutionTraceLog.setProcessorName(ProcessorConstants.JIRA);
+			processorExecutionTraceLog.setBasicProjectConfigId(basicProjectConfigId);
+			processorExecutionTraceLog.setExecutionStartedAt(System.currentTimeMillis());
+			processorExecutionTraceLog.setLastSuccessfulRun(jiraProcessorConfig.getStartDate());
+		}
 		return processorExecutionTraceLog;
 	}
 
