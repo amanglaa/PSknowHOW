@@ -62,6 +62,7 @@ public class DIRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 	private static final String DEFECT_DATA = "defectData";
 	private static final String STORY = "Stories";
 	private static final String DEFECT = "Defects";
+	private static final String ISSUE_DATA = "issueData";
 
 	@Autowired
 	private KpiHelperService kpiHelperService;
@@ -163,6 +164,7 @@ public class DIRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 		Map<String, Object> storyDefectDataListMap = fetchKPIDataFromDb(sprintLeafNodeList, startDate, endDate,
 				kpiRequest);
 		List<SprintWiseStory> sprintWiseStoryList = (List<SprintWiseStory>) storyDefectDataListMap.get(STORY_DATA);
+		Map<String,JiraIssue> issueData=(Map<String,JiraIssue>) storyDefectDataListMap.get(ISSUE_DATA);
 
 		Map<Pair<String, String>, List<SprintWiseStory>> sprintWiseMap = sprintWiseStoryList.stream().collect(Collectors
 				.groupingBy(sws -> Pair.of(sws.getBasicProjectConfigId(), sws.getSprint()), Collectors.toList()));
@@ -173,6 +175,7 @@ public class DIRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 		Map<Pair<String, String>, Double> sprintWiseDIRMap = new HashMap<>();
 
 		Map<Pair<String, String>, Map<String, Integer>> sprintWiseHowerMap = new HashMap<>();
+		
 		List<KPIExcelData> excelData = new ArrayList<>();
 		sprintWiseMap.forEach((sprint, sprintWiseStories) -> {
 			List<JiraIssue> sprintWiseDefectList = new ArrayList<>();
@@ -197,7 +200,7 @@ public class DIRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 			//if for populating excel data 
 			if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
 				String sprintName = sprintIdSprintNameMap.get(sprint.getValue());
-				KPIExcelUtility.populateDirExcelData(sprintName, totalStoryIdList, defectList, excelData);
+				KPIExcelUtility.populateDirExcelData(sprintName, totalStoryIdList, defectList, excelData,issueData);
 			}
 			sprintWiseDIRMap.put(sprint, dirForCurrentLeaf);
 			setHowerMap(sprintWiseHowerMap, sprint, totalStoryIdList, sprintWiseDefectList);

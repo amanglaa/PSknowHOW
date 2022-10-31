@@ -18,9 +18,12 @@
 
 package com.publicissapient.kpidashboard.apis.util;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import org.apache.commons.collections.MapUtils;
 
 import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
 import com.publicissapient.kpidashboard.common.model.jira.JiraIssue;
@@ -41,17 +44,26 @@ public class KPIExcelUtility {
 	 * @param kpiName
 	 * @param storyIds
 	 * @param defects
+	 * @param issueData
 	 * 
 	 */
 	public static void populateDirExcelData(String sprint, List<String> storyIds, List<JiraIssue> defects,
-			List<KPIExcelData> kpiExcelData) {
+			List<KPIExcelData> kpiExcelData,Map<String,JiraIssue> issueData) {
 		storyIds.forEach(story -> {
 			Map<String, String> linkedDefects = defects.stream().filter(d -> d.getDefectStoryID().contains(story))
 					.collect(Collectors.toMap(JiraIssue::getNumber, JiraIssue::getUrl));
 			KPIExcelData excelData = new KPIExcelData();
 			excelData.setSprintName(sprint);
-			excelData.setStoryId(story);
 			excelData.setLinkedDefects(linkedDefects);
+			if(MapUtils.isNotEmpty(issueData)) {
+				JiraIssue jiraIssue=issueData.get(story);
+				if(null!=jiraIssue) {
+					excelData.setIssueDesc(jiraIssue.getName());
+					Map<String,String> storyId=new HashMap<>();
+					storyId.put(story, jiraIssue.getUrl());
+					excelData.setStoryId(storyId);
+				}
+			}
 			kpiExcelData.add(excelData);
 		});
 	}
