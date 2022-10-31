@@ -4,11 +4,11 @@
  import { TextEncryptionService } from './text.encryption.service';
  @Injectable()
  export class GuestGuard implements CanActivate {
- 
+
      constructor(private aesEncryption: TextEncryptionService) { }
- 
+
      canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-        let decryptedText = this.aesEncryption.convertText(localStorage.getItem('authorities'), 'decrypt');
+        const decryptedText = this.aesEncryption.convertText(localStorage.getItem('authorities'), 'decrypt');
         if(!decryptedText) {
             return false;
         }
@@ -19,4 +19,3 @@
         }
      }
  }
- 

@@ -19,8 +19,10 @@
 <div class="navigation rows ">
   <ul class=" nav nav-pills p-d-flex p-pl-0 p-justify-between p-m-0">
     <li class="nav-item img-container">
-      <img src="assets/img/sapientLogo.PNG" routerLink="mydashboard" routerLinkActive="active"
-        (click)="selectTab('mydashboard')" alt=".." />
+      <img *ngIf="logoImage" src={{logoImage}} routerLink="mydashboard" routerLinkActive="active"
+        (click)="selectTab('mydashboard')" alt="Logo"/>
+      <img *ngIf="!logoImage" src="assets/img/sapientLogo.PNG" routerLink="mydashboard" routerLinkActive="active"
+        (click)="selectTab('mydashboard')" alt="Logo"/>
     </li>
     <ng-container *ngIf="boardNameArr?.length>0">
       <ul class="nav-menu p-d-flex p-jc-between p-pl-0">
@@ -46,7 +48,6 @@
       <div class="half">
         <label for="profile2" class="profile-dropdown">
           <input type="checkbox" id="profile2">
-          <img *ngIf="logoImage" src={{logoImage}} alt="..">
           <span>
             <div class="float-left w-100">{{username}}</div>
             <div class="float-left w-100">

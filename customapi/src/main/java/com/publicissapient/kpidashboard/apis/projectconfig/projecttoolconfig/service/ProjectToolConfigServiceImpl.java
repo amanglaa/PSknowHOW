@@ -182,6 +182,13 @@ public class ProjectToolConfigServiceImpl implements ProjectToolConfigService {
 					null);
 		}
 
+		if (CollectionUtils.isNotEmpty(projectToolConfig.getBoards())
+				&& CollectionUtils.isNotEmpty(projectTool.getBoards())) {
+			if (!compareTwoListOfObjects(projectTool.getBoards(), projectToolConfig.getBoards())) {
+				cleanData(projectTool);
+			}
+		}
+
 		projectTool.setToolName(projectToolConfig.getToolName());
 		projectTool.setBasicProjectConfigId(projectToolConfig.getBasicProjectConfigId());
 		projectTool.setConnectionId(projectToolConfig.getConnectionId());
@@ -213,6 +220,23 @@ public class ProjectToolConfigServiceImpl implements ProjectToolConfigService {
 		cacheService.clearCache(CommonConstant.CACHE_TOOL_CONFIG_MAP);
 		cacheService.clearCache(CommonConstant.CACHE_PROJECT_TOOL_CONFIG_MAP);
 		return new ServiceResponse(true, "updated the project_tools Successfully", projectTool);
+	}
+
+	/**
+	 * make a copy of the list so the original list is not changed, and remove() is supported
+	 * @param l1
+	 * @param l2
+	 * @return
+	 */
+	private static boolean compareTwoListOfObjects( List<?> l1, List<?> l2 ) {
+		
+		ArrayList<?> cp = new ArrayList<>( l1 );
+		for ( Object o : l2 ) {
+			if ( !cp.remove( o ) ) {
+				return false;
+			}
+		}
+		return cp.isEmpty();
 	}
 
 	@Override

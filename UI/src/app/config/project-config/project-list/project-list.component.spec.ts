@@ -46,133 +46,133 @@ describe('ProjectListComponent', () => {
   const projectListData = require('../../../../test/resource/projectListData.json');
   const formFieldData = [
     {
-      "level": 1,
-      "hierarchyLevelId": "country",
-      "hierarchyLevelName": "Country",
-      "suggestions": [
-        "Canada",
-        "India",
-        "USA"
+      level: 1,
+      hierarchyLevelId: 'country',
+      hierarchyLevelName: 'Country',
+      suggestions: [
+        'Canada',
+        'India',
+        'USA'
       ]
     },
     {
-      "level": 2,
-      "hierarchyLevelId": "state",
-      "hierarchyLevelName": "State",
-      "suggestions": [
-        "Haryana",
-        "Karnataka",
-        "Ontario",
-        "Texas",
-        "Washinton"
+      level: 2,
+      hierarchyLevelId: 'state',
+      hierarchyLevelName: 'State',
+      suggestions: [
+        'Haryana',
+        'Karnataka',
+        'Ontario',
+        'Texas',
+        'Washinton'
       ]
     },
     {
-      "level": 3,
-      "hierarchyLevelId": "city",
-      "hierarchyLevelName": "City",
-      "suggestions": [
-        "Bangalore",
-        "Gurgaon",
-        "Houston",
-        "Kurukshetra",
-        "Ottawa",
-        "Remond",
-        "Seattle"
+      level: 3,
+      hierarchyLevelId: 'city',
+      hierarchyLevelName: 'City',
+      suggestions: [
+        'Bangalore',
+        'Gurgaon',
+        'Houston',
+        'Kurukshetra',
+        'Ottawa',
+        'Remond',
+        'Seattle'
       ]
     }
   ];
   const projectsAccess = [
     {
-      "role": "ROLE_PROJECT_ADMIN",
-      "projects": [
+      role: 'ROLE_PROJECT_ADMIN',
+      projects: [
         {
-          "projectName": "FieldMappingTest",
-          "projectId": "6327fcb2106fed5ba66ad750",
-          "hierarchy": [
+          projectName: 'FieldMappingTest',
+          projectId: '6327fcb2106fed5ba66ad750',
+          hierarchy: [
             {
-              "hierarchyLevel": {
-                "level": 1,
-                "hierarchyLevelId": "country",
-                "hierarchyLevelName": "Country"
+              hierarchyLevel: {
+                level: 1,
+                hierarchyLevelId: 'country',
+                hierarchyLevelName: 'Country'
               },
-              "value": "Canada"
+              value: 'Canada'
             },
             {
-              "hierarchyLevel": {
-                "level": 2,
-                "hierarchyLevelId": "state",
-                "hierarchyLevelName": "State"
+              hierarchyLevel: {
+                level: 2,
+                hierarchyLevelId: 'state',
+                hierarchyLevelName: 'State'
               },
-              "value": "Ontario"
+              value: 'Ontario'
             },
             {
-              "hierarchyLevel": {
-                "level": 3,
-                "hierarchyLevelId": "city",
-                "hierarchyLevelName": "City"
+              hierarchyLevel: {
+                level: 3,
+                hierarchyLevelId: 'city',
+                hierarchyLevelName: 'City'
               },
-              "value": "Ottawa"
+              value: 'Ottawa'
             }
           ]
         },
         {
-          "projectName": "FieldMappingTest2",
-          "projectId": "63274333106fed5ba66ad748",
-          "hierarchy": [
+          projectName: 'FieldMappingTest2',
+          projectId: '63274333106fed5ba66ad748',
+          hierarchy: [
             {
-              "hierarchyLevel": {
-                "level": 1,
-                "hierarchyLevelId": "country",
-                "hierarchyLevelName": "Country"
+              hierarchyLevel: {
+                level: 1,
+                hierarchyLevelId: 'country',
+                hierarchyLevelName: 'Country'
               },
-              "value": "Canada"
+              value: 'Canada'
             },
             {
-              "hierarchyLevel": {
-                "level": 2,
-                "hierarchyLevelId": "state",
-                "hierarchyLevelName": "State"
+              hierarchyLevel: {
+                level: 2,
+                hierarchyLevelId: 'state',
+                hierarchyLevelName: 'State'
               },
-              "value": "Ontario"
+              value: 'Ontario'
             },
             {
-              "hierarchyLevel": {
-                "level": 3,
-                "hierarchyLevelId": "city",
-                "hierarchyLevelName": "City"
+              hierarchyLevel: {
+                level: 3,
+                hierarchyLevelId: 'city',
+                hierarchyLevelName: 'City'
               },
-              "value": "Ottawa"
+              value: 'Ottawa'
             }
           ]
         },
         {
-          "projectName": "FieldMappingTest3",
-          "projectId": "6328087d22a86a5df15e53e6",
-          "hierarchy": [
+          projectName: 'FieldMappingTest3',
+          projectId: '6328087d22a86a5df15e53e6',
+          hierarchy: [
             {
-              "hierarchyLevel": {
-                "level": 1,
-                "hierarchyLevelId": "country",
-                "hierarchyLevelName": "Country"
+              hierarchyLevel: {
+                level: 1,
+                hierarchyLevelId: 'country',
+                hierarchyLevelName: 'Country'
               },
-              "value": "Canada"
+              value: 'Canada'
             },
             {
-              "hierarchyLevel": {
-                "level": 2,
-                "hierarchyLevelId": "state",
-                "hierarchyLevelName": "State"
+              hierarchyLevel: {
+                level: 2,
+                hierarchyLevelId: 'state',
+                hierarchyLevelName: 'State'
               },
-              "value": "Ontario"
+              value: 'Ontario'
             },
             {
-              "hierarchyLevel": {
-                "level": 3,
-                "hierarchyLevelId": "city",
-                "hierarchyLevelName": "City"
+              hierarchyLevel: {
+                level: 3,
+                hierarchyLevelId: 'city',
+                hierarchyLevelName: 'City'
               },
-              "value": "Ottawa"
+              value: 'Ottawa'
             }
           ]
         }
@@ -251,13 +251,13 @@ describe('ProjectListComponent', () => {
 
   it('should navigate to basic-config on click of "Edit"', () => {
     const navigateSpy = spyOn(router, 'navigate');
-    let fakeProject =  {
-      "id": "631f394dcfef11709d7ddc7b",
-      "name": "MAP",
-      "type": "Scrum",
-      "country": "India",
-      "state": "Haryana",
-      "city": "Gurgaon"
+    const fakeProject =  {
+      id: '631f394dcfef11709d7ddc7b',
+      name: 'MAP',
+      type: 'Scrum',
+      country: 'India',
+      state: 'Haryana',
+      city: 'Gurgaon'
   };
     component.editProject(fakeProject);
     expect(sharedService.getSelectedProject()).toEqual(fakeProject);
@@ -265,58 +265,56 @@ describe('ProjectListComponent', () => {
   });
 
   it('should delete project on click of "Delete"', () => {
-    let project = {
-      "id": "631f394dcfef11709d7ddc7b",
-      "name": "MAP",
-      "type": "Scrum",
-      "country": "India",
-      "state": "Haryana",
-      "city": "Gurgaon"
+    const project = {
+      id: '631f394dcfef11709d7ddc7b',
+      name: 'MAP',
+      type: 'Scrum',
+      country: 'India',
+      state: 'Haryana',
+      city: 'Gurgaon'
   };
 
-    let deleteResponse = {
-      "message": "MAP deleted successfully",
-      "success": true,
-      "data": {
-        "id": "631f394dcfef11709d7ddc7b",
-        "projectName": "MAP",
-        "createdAt": "2022-09-12T19:21:09",
-        "kanban": false,
-        "hierarchy": [
+    const deleteResponse = {
+      message: 'MAP deleted successfully',
+      success: true,
+      data: {
+        id: '631f394dcfef11709d7ddc7b',
+        projectName: 'MAP',
+        createdAt: '2022-09-12T19:21:09',
+        kanban: false,
+        hierarchy: [
           {
-            "hierarchyLevel": {
-              "level": 1,
-              "hierarchyLevelId": "country",
-              "hierarchyLevelName": "Country"
+            hierarchyLevel: {
+              level: 1,
+              hierarchyLevelId: 'country',
+              hierarchyLevelName: 'Country'
             },
-            "value": "India"
+            value: 'India'
           },
           {
-            "hierarchyLevel": {
-              "level": 2,
-              "hierarchyLevelId": "state",
-              "hierarchyLevelName": "State"
+            hierarchyLevel: {
+              level: 2,
+              hierarchyLevelId: 'state',
+              hierarchyLevelName: 'State'
             },
-            "value": "Haryana"
+            value: 'Haryana'
           },
           {
-            "hierarchyLevel": {
-              "level": 3,
-              "hierarchyLevelId": "city",
-              "hierarchyLevelName": "City"
+            hierarchyLevel: {
+              level: 3,
+              hierarchyLevelId: 'city',
+              hierarchyLevelName: 'City'
             },
-            "value": "Gurgaon"
+            value: 'Gurgaon'
           }
         ],
-        "isKanban": false
+        isKanban: false
       }
     };
 
     const confirmationService = TestBed.inject(ConfirmationService);
-    
-    const mockConfirm: any = spyOn<any>(confirmationService, 'confirm').and.callFake((confirmation: Confirmation) => {
-      return confirmation.accept();
-    });
+
+    const mockConfirm: any = spyOn<any>(confirmationService, 'confirm').and.callFake((confirmation: Confirmation) => confirmation.accept());
     component.deleteProject(project);
     expect(mockConfirm).toHaveBeenCalled();
     httpMock.expectOne(baseUrl + '/api/basicconfigs/631f394dcfef11709d7ddc7b').flush(deleteResponse);

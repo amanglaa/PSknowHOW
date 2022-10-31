@@ -29,18 +29,18 @@
   right: 0;
   z-index: 0;
 }
-*>>>.axis.axis--y line {
+::ng-deep .axis.axis--y line {
   stroke: #dedede;
   z-index: -10
 }
 
-*>>>.axis.axis--y .domain {
+::ng-deep .axis.axis--y .domain {
   display: none;
 }
-*>>>.dot {
+::ng-deep .dot {
   fill: var(--color-black);
 }
 
-*>>>.tick text {
+::ng-deep .tick text {
   font-size: 9px;
 }

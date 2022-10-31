@@ -60,6 +60,10 @@ public interface JiraIssueRepositoryCustom {// NOPMD
 			Map<String, Map<String, Object>> uniqueProjectMap,String filterToShowOnTrend,
 			String individualDevOrQa);
 
+	List<SprintWiseStory> findIssuesAndTestDetailsGroupBySprint(Map<String, List<String>> mapOfFilters,
+												  Map<String, Map<String, Object>> uniqueProjectMap,String filterToShowOnTrend,
+												  String individualDevOrQa, Map<String, Map<String, Object>> uniqueProjectMapNotIn);
+
 	/**
 	 * Find issue by story number list.
 	 *

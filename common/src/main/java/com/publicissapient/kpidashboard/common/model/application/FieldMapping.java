@@ -21,7 +21,6 @@ package com.publicissapient.kpidashboard.common.model.application;//NOPMD
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -182,7 +181,7 @@ public class FieldMapping extends BasicModel {
 	private List<String> jiraAutomatedTestValue;
 	private List<String> jiraRegressionTestValue;
 	private List<String> jiraCanBeAutomatedTestValue;
-
+	private List<String> testCaseStatus;
 	@Builder.Default
 	private String estimationCriteria = "Story Point";
 
@@ -192,9 +191,11 @@ public class FieldMapping extends BasicModel {
 	@Builder.Default
 	private Double workingHoursDayCPT = 6D;
 
-	//additional filter config fields
+	// additional filter config fields
 	private List<AdditionalFilterConfig> additionalFilterConfig;
 
+	// issue status to exclude missing worklogs
+	private List<String> issueStatusExcluMissingWork;
 
 	/**
 	 * Get jira issue type names string [ ].
@@ -233,6 +234,5 @@ public class FieldMapping extends BasicModel {
 	public void setJiraTestCaseType(String[] jiraTestCaseType) {
 		this.jiraTestCaseType = jiraTestCaseType == null ? null : jiraTestCaseType.clone();
 	}
-
 
 }

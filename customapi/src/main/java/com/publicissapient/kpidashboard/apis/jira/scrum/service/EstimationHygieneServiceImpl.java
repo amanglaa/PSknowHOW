@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.publicissapient.kpidashboard.apis.appsetting.service.ConfigHelperService;
 import com.publicissapient.kpidashboard.apis.enums.Filters;
 import com.publicissapient.kpidashboard.apis.enums.KPICode;
 import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
@@ -49,6 +50,7 @@ import com.publicissapient.kpidashboard.apis.model.KpiRequest;
 import com.publicissapient.kpidashboard.apis.model.Node;
 import com.publicissapient.kpidashboard.apis.model.TreeAggregatorDetail;
 import com.publicissapient.kpidashboard.common.model.application.DataCount;
+import com.publicissapient.kpidashboard.common.model.application.FieldMapping;
 import com.publicissapient.kpidashboard.common.model.jira.JiraIssue;
 import com.publicissapient.kpidashboard.common.model.jira.SprintDetails;
 import com.publicissapient.kpidashboard.common.repository.jira.JiraIssueRepository;
@@ -57,20 +59,19 @@ import com.publicissapient.kpidashboard.common.repository.jira.SprintRepository;
 @Component
 public class EstimationHygieneServiceImpl extends JiraKPIService<Integer, List<Object>, Map<String, Object>> {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(EstimationHygieneServiceImpl.class);
-
-	private static final String SEARCH_BY_ISSUE_TYPE = "Filter by issue type";
 	public static final String UNCHECKED = "unchecked";
+	private static final Logger LOGGER = LoggerFactory.getLogger(EstimationHygieneServiceImpl.class);
+	private static final String SEARCH_BY_ISSUE_TYPE = "Filter by issue type";
 	private static final String ISSUES = "issues";
 	private static final String MODAL_HEAD_ISSUE_ID = "Issue Id";
 	private static final String MODAL_HEAD_ISSUE_DESC = "Issue Description";
 	private static final String ISSUES_WITHOUT_ESTIMATES = "Issue without estimates";
 	private static final String ISSUES_MISSING_WORKLOGS = "Issue with missing worklogs";
 	private static final String OVERALL = "Overall";
-
+	@Autowired
+	ConfigHelperService configHelperService;
 	@Autowired
 	private JiraIssueRepository jiraIssueRepository;
-
 	@Autowired
 	private SprintRepository sprintRepository;
 
@@ -105,8 +106,7 @@ public class EstimationHygieneServiceImpl extends JiraKPIService<Integer, List<O
 		Node leafNode = leafNodeList.stream().findFirst().orElse(null);
 		if (null != leafNode) {
 			LOGGER.info("Estimation Hygiene -> Requested sprint : {}", leafNode.getName());
-			String basicProjectConfigId = leafNode.getProjectFilter()
-					.getBasicProjectConfigId().toString();
+			String basicProjectConfigId = leafNode.getProjectFilter().getBasicProjectConfigId().toString();
 			String sprintId = leafNode.getSprintFilter().getId();
 			SprintDetails sprintDetails = sprintRepository.findBySprintID(sprintId);
 			if (null != sprintDetails) {
@@ -124,7 +124,7 @@ public class EstimationHygieneServiceImpl extends JiraKPIService<Integer, List<O
 	/**
 	 * Populates KPI value to sprint leaf nodes and gives the trend analysis at
 	 * sprint level.
-	 * 
+	 *
 	 * @param sprintLeafNodeList
 	 * @param trendValueList
 	 * @param kpiElement
@@ -158,6 +158,9 @@ public class EstimationHygieneServiceImpl extends JiraKPIService<Integer, List<O
 
 			List<IterationKpiModalValue> overAllWithoutEstmodalValues = new ArrayList<>();
 			List<IterationKpiModalValue> overAllMissingModalValues = new ArrayList<>();
+
+			FieldMapping fieldMapping = configHelperService.getFieldMappingMap()
+					.get(latestSprint.getProjectFilter().getBasicProjectConfigId());
 			typeWiseIssues.forEach((issueType, issues) -> {
 				issueTypes.add(issueType);
 				List<IterationKpiModalValue> withoutEstmodalValues = new ArrayList<>();
@@ -165,8 +168,10 @@ public class EstimationHygieneServiceImpl extends JiraKPIService<Integer, List<O
 				int issueCount = 0;
 				int issueWithoutEstimate = 0;
 				int issueMissingLog = 0;
+
 				for (JiraIssue jiraIssue : issues) {
 					issueCount++;
+
 					overAllIssueCount.set(0, overAllIssueCount.get(0) + 1);
 					if (jiraIssue.getEstimate() == null || Double.valueOf(jiraIssue.getEstimate()).equals(0.0)) {
 						issueWithoutEstimate++;
@@ -179,7 +184,9 @@ public class EstimationHygieneServiceImpl extends JiraKPIService<Integer, List<O
 						withoutEstmodalValues.add(iterationKpiModalValue);
 						overAllWithoutEstmodalValues.add(iterationKpiModalValue);
 					}
-					if (jiraIssue.getTimeSpentInMinutes() == null || jiraIssue.getTimeSpentInMinutes() == 0) {
+
+					if ((jiraIssue.getTimeSpentInMinutes() == null || jiraIssue.getTimeSpentInMinutes() == 0)
+							&& !checkStatus(jiraIssue, fieldMapping)) {
 						issueMissingLog++;
 						overAllMissingLog.set(0, overAllMissingLog.get(0) + 1);
 						// set modal values
@@ -228,5 +235,15 @@ public class EstimationHygieneServiceImpl extends JiraKPIService<Integer, List<O
 			kpiElement.setModalHeads(modalHeads);
 			kpiElement.setTrendValueList(trendValue);
 		}
+	}
+
+	private boolean checkStatus(JiraIssue jiraIssue, FieldMapping fieldMapping) {
+
+		boolean toDrop = false;
+		if (null != fieldMapping && CollectionUtils.isNotEmpty(fieldMapping.getIssueStatusExcluMissingWork())) {
+			toDrop = fieldMapping.getIssueStatusExcluMissingWork().stream().map(String::toUpperCase)
+					.collect(Collectors.toList()).contains(jiraIssue.getJiraStatus().toUpperCase());
+		}
+		return toDrop;
 	}
 }

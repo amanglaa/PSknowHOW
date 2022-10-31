@@ -17,14 +17,14 @@
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
   <div class="dashboard-config-block p-p-3">
     <p-toast position="top-right"></p-toast>
-    <button (click)="save()" class="save-kpi p-p-2"><img src="../../../assets/img/save_icon.svg" class="save-icon"/>Save</button>
+    <button (click)="save()" class="save-kpi p-p-2"><img src="../../../assets/img/save_icon.svg" alt="save" class="save-icon"/>Save</button>
     <p-tabView (onChange)="handleTabChange($event)" class="dashboard-config-tabs">
         <p-tabPanel *ngFor='let item of tabHeaders' header="{{item}}" headerStyleClass="tab-{{item}}">
             <form [formGroup]="kpiForm" autocomplete="off" *ngIf="item === selectedTab">
                 <div *ngFor="let boardData of tabListContent[item]; let i=index" class="kpi-category-header-block">
                     <div class="kpi-category-header p-mb-3"
                         *ngIf="((boardData?.boardName && boardData?.kpis.length > 0) 
-                        && ((item.toLowerCase() === 'scrum' && i==0 && tabListContent[item].length < 3) || (item.toLowerCase() === 'kanban' && i==0 && tabListContent[item].length < 2) || (i==0 && item.toLowerCase() == 'others') || i!==0))">
+                        && ((item.toLowerCase() === 'scrum' && i==0 && tabListContent[item].length < 3) || (item.toLowerCase() === 'kanban' && i==0 && tabListContent[item].length < 2) || (i==0 && item.toLowerCase() === 'others') || i!==0))">
                         <div class="p-grid board-name-block p-py-2 p-d-flex p-jc-between">
                             <div class="p-xl-6 p-md-12 p-pl-3 p-pr-3 p-text-left board-name">
                                 {{boardData.boardName}}

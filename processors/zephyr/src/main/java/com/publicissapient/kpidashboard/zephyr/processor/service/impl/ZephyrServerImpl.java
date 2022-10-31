@@ -46,8 +46,7 @@ public class ZephyrServerImpl implements ZephyrClient {
 	private ProcessorToolConnectionService processorToolConnectionService;
 
 	@Override
-	public List<ZephyrTestCaseDTO> getTestCase(final int startAt, final ProjectConfFieldMapping projectConfig,
-			String folderPath) {
+	public List<ZephyrTestCaseDTO> getTestCase(final int startAt, final ProjectConfFieldMapping projectConfig) {
 		List<ZephyrTestCaseDTO> testCaseList = new ArrayList<>();
 		ProcessorToolConnection toolInfo = projectConfig.getProcessorToolConnection();
 
@@ -63,9 +62,6 @@ public class ZephyrServerImpl implements ZephyrClient {
 			queryBuilder.append(QUERY_PARAM).append(PROJECT_KEY);
 			queryBuilder.append(projectConfig.getProjectKey());
 			queryBuilder.append(INVERTED_COMMA);
-			if (folderPath != null) {
-				queryBuilder.append(" AND folder = ").append(INVERTED_COMMA).append(folderPath).append(INVERTED_COMMA);
-			}
 
 			log.info("ZEPHYR query executed {} ....", queryBuilder);
 			if (StringUtils.isNotBlank(queryBuilder)) {

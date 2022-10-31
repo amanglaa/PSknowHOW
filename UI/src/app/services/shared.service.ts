@@ -54,7 +54,7 @@ export class SharedService implements OnInit {
   public suggestionsData: any = [];
   private passServerRole= new BehaviorSubject<boolean>(false);
   public activateKanban;
-  public selectedTypeObs = new BehaviorSubject("scrum");
+  public selectedTypeObs = new BehaviorSubject('scrum');
   public boardId = 1;
 
   // make filterdata and masterdata persistent across dashboards
@@ -67,15 +67,17 @@ export class SharedService implements OnInit {
   currentSelectedSprintObs = this.currentSelectedSprintSub.asObservable();
   mapColorToProject = new BehaviorSubject<any>({});
   mapColorToProjectObs = this.mapColorToProject.asObservable();
-  selectedFilterOption = new Subject<any>();
+  selectedFilterOption = new BehaviorSubject<any>({});
   selectedFilterOptionObs = this.selectedFilterOption.asObservable();
   noSprints = new Subject<any>();
   noSprintsObs = this.noSprints.asObservable();
   noProjects = new Subject<any>();
   noProjectsObs = this.noProjects.asObservable();
+  showTableView = new BehaviorSubject<boolean>(true);
+  showTableViewObs = this.showTableView.asObservable();
   setNoData = new Subject<boolean>();
   clickedItem = new Subject<any>();
-  public xLabelValue:any;
+  public xLabelValue: any;
   constructor() {
     this.passDataToDashboard = new EventEmitter();
     this.onTabRefresh = new EventEmitter();
@@ -276,6 +278,9 @@ export class SharedService implements OnInit {
   }
   getSelectedDateFilter(){
     return this.xLabelValue;
+  }
+  setShowTableView(val){
+    this.showTableView.next(val);
   }
 }
 

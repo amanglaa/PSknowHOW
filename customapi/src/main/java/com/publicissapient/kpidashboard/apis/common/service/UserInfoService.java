@@ -24,6 +24,7 @@ import com.publicissapient.kpidashboard.common.model.rbac.UserInfo;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * An Interface to gets users and authorities.
@@ -127,4 +128,6 @@ public interface UserInfoService {
 	 * @param username username
 	 */
 	ServiceResponse deleteUser(String username);
+
+	List<UserInfo> getUserInfoByAuthType(String userType);
 }

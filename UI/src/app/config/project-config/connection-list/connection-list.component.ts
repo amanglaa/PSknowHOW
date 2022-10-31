@@ -17,7 +17,7 @@
  ******************************************************************************/
 
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ConfirmationService } from 'primeng/api';
 import { HttpService } from '../../../services/http.service';
 import { TestConnectionService } from '../../../services/test-connection.service';
@@ -30,79 +30,79 @@ import { RsaEncryptionService } from 'src/app/services/rsa.encryption.service';
   styleUrls: ['./connection-list.component.css']
 })
 export class ConnectionListComponent implements OnInit {
-  basicConnectionForm: FormGroup;
+  basicConnectionForm: UntypedFormGroup;
   addEditConnectionFieldsNlabels = [
     {
       connectionType: 'Jira',
       connectionLabel: 'Jira',
-      labels: ['Connection Type', 'Connection Name', 'Is Cloud Environment', 'Base Url', 'Username', 'Password', 'Api End Point', 'IsOAuth', 'Private Key', 'Consumer Key', 'Is Offline', 'Is Connection Private'],
-      inputFields: ['type', 'connectionName', 'cloudEnv', 'baseUrl', 'username', 'password', 'apiEndPoint', 'isOAuth', 'privateKey', 'consumerKey', 'offline', 'connPrivate']
+       labels: ['Connection Type', 'Connection Name', 'Is Cloud Environment', 'Base Url', 'Username', 'Use vault password', 'Password', 'Api End Point', 'IsOAuth', 'Private Key', 'Consumer Key', 'Is Offline', 'Is Connection Private'],
+       inputFields: ['type', 'connectionName', 'cloudEnv', 'baseUrl', 'username', 'vault', 'password', 'apiEndPoint', 'isOAuth', 'privateKey', 'consumerKey', 'offline', 'connPrivate']
     },
     {
       connectionType: 'Azure',
       connectionLabel: 'Azure Boards',
-      labels: ['Connection Type', 'Connection Name', 'Base Url', 'Username', 'PAT', 'Is Connection Private'],
-      inputFields: ['type', 'connectionName', 'baseUrl', 'username', 'pat', 'connPrivate']
+      labels: ['Connection Type', 'Connection Name', 'Base Url', 'Username', 'Use vault password', 'PAT', 'Is Connection Private'],
+      inputFields: ['type', 'connectionName', 'baseUrl', 'username', 'vault', 'pat', 'connPrivate']
     },
     {
       connectionType: 'GitHub',
       connectionLabel: 'GitHub',
-      labels: ['Connection Type', 'Connection Name', 'Base Url', 'Repo Ownername', 'Access Token', 'Is Connection Private'],
-      inputFields: ['type', 'connectionName', 'baseUrl', 'username', 'accessToken', 'connPrivate']
+      labels: ['Connection Type', 'Connection Name', 'Base Url', 'Repo Ownername', 'Use vault password', 'Access Token', 'Is Connection Private'],
+      inputFields: ['type', 'connectionName', 'baseUrl', 'username', 'vault', 'accessToken', 'connPrivate']
     },
     {
       connectionType: 'GitLab',
       connectionLabel: 'GitLab',
-      labels: ['Connection Type', 'Connection Name', 'Base Url', 'Username', 'Access Token', 'Is Connection Private'],
-      inputFields: ['type', 'connectionName', 'baseUrl', 'username', 'accessToken', 'connPrivate']
+      labels: ['Connection Type', 'Connection Name', 'Base Url', 'Username', 'Use vault password', 'Access Token', 'Is Connection Private'],
+      inputFields: ['type', 'connectionName', 'baseUrl', 'username', 'vault', 'accessToken', 'connPrivate']
     },
     {
       connectionType: 'Bitbucket',
       connectionLabel: 'Bitbucket',
-      labels: ['Connection Type', 'Connection Name', 'Is Cloud Environment', 'Base Url', 'Username', 'Password', 'API End Point', 'Is Connection Private'],
-      inputFields: ['type', 'connectionName', 'cloudEnv', 'baseUrl', 'username', 'password', 'apiEndPoint', 'connPrivate']
+      labels: ['Connection Type', 'Connection Name', 'Is Cloud Environment', 'Base Url', 'Username', 'Use vault password','Password', 'API End Point', 'Is Connection Private'],
+      inputFields: ['type', 'connectionName', 'cloudEnv', 'baseUrl', 'username', 'vault','password', 'apiEndPoint', 'connPrivate']
     },
     {
       connectionType: 'Sonar',
       connectionLabel: 'Sonar',
-      labels: ['Connection Type', 'Connection Name', 'Is Cloud Environment', 'Base Url', 'Username', 'Password', 'Access Token', 'Is Connection Private'],
-      inputFields: ['type', 'connectionName', 'cloudEnv', 'baseUrl', 'username', 'password', 'accessToken', 'connPrivate']
+      labels: ['Connection Type', 'Connection Name', 'Is Cloud Environment', 'Base Url', 'Username','Use vault password', 'Password', 'Access Token', 'Is Connection Private'],
+      inputFields: ['type', 'connectionName', 'cloudEnv', 'baseUrl', 'username','vault', 'password', 'accessToken', 'connPrivate']
     },
     {
       connectionType: 'Jenkins',
       connectionLabel: 'Jenkins',
-      labels: ['Connection Type', 'Connection Name', 'Base Url', 'Username', 'Api Key', 'Is Connection Private'],
-      inputFields: ['type', 'connectionName', 'baseUrl', 'username', 'apiKey', 'connPrivate']
+      labels: ['Connection Type', 'Connection Name', 'Base Url', 'Username', 'Use vault password', 'Api Key', 'Is Connection Private'],
+      inputFields: ['type', 'connectionName', 'baseUrl', 'username', 'vault', 'apiKey', 'connPrivate']
     },
     {
       connectionType: 'Bamboo',
       connectionLabel: 'Bamboo',
-      labels: ['Connection Type', 'Connection Name', 'Base Url', 'Username', 'Password', 'Is Connection Private'],
-      inputFields: ['type', 'connectionName', 'baseUrl', 'username', 'password', 'connPrivate']
+      labels: ['Connection Type', 'Connection Name', 'Base Url', 'Username', 'Use vault password','Password', 'Is Connection Private'],
+      inputFields: ['type', 'connectionName', 'baseUrl', 'username', 'vault','password', 'connPrivate']
     },
     {
       connectionType: 'Teamcity',
       connectionLabel: 'Teamcity',
-      labels: ['Connection Type', 'Connection Name', 'Base Url', 'Username', 'Password', 'Is Connection Private'],
-      inputFields: ['type', 'connectionName', 'baseUrl', 'username', 'password', 'connPrivate']
+      labels: ['Connection Type', 'Connection Name', 'Base Url', 'Username', 'Use vault password', 'Password', 'Is Connection Private'],
+      inputFields: ['type', 'connectionName', 'baseUrl', 'username', 'vault', 'password', 'connPrivate']
     },
     {
       connectionType: 'AzurePipeline',
       connectionLabel: 'Azure Pipeline',
-      labels: ['Connection Type', 'Connection Name', 'Base Url', 'PAT', 'Is Connection Private'],
-      inputFields: ['type', 'connectionName', 'baseUrl', 'pat', 'connPrivate']
+      labels: ['Connection Type', 'Connection Name', 'Base Url', 'Use vault password', 'PAT', 'Is Connection Private'],
+      inputFields: ['type', 'connectionName', 'baseUrl', 'vault', 'pat', 'connPrivate']
     },
     {
       connectionType: 'AzureRepository',
       connectionLabel: 'Azure Repository',
-      labels: ['Connection Type', 'Connection Name', 'Base Url', 'PAT', 'Is Connection Private'],
-      inputFields: ['type', 'connectionName', 'baseUrl', 'pat', 'connPrivate']
+      labels: ['Connection Type', 'Connection Name', 'Base Url', 'Use vault password', 'PAT', 'Is Connection Private'],
+      inputFields: ['type', 'connectionName', 'baseUrl', 'vault', 'pat', 'connPrivate']
     },
     {
       connectionType: 'Zephyr',
       connectionLabel: 'Zephyr',
-      labels: ['Connection Type', 'Connection Name', 'Is Cloud Environment', 'Base Url', 'Username', 'Password', 'Api End Point', 'Access Token', 'Is Connection Private'],
-      inputFields: ['type', 'connectionName', 'cloudEnv', 'baseUrl', 'username', 'password', 'apiEndPoint', 'accessToken', 'connPrivate']
+      labels: ['Connection Type', 'Connection Name', 'Is Cloud Environment', 'Base Url', 'Username', 'Use vault password', 'Password', 'Api End Point', 'Access Token', 'Is Connection Private'],
+      inputFields: ['type', 'connectionName', 'cloudEnv', 'baseUrl', 'username', 'vault', 'password', 'apiEndPoint', 'accessToken', 'connPrivate']
     }
   ];
 
@@ -120,7 +120,25 @@ export class ConnectionListComponent implements OnInit {
           field: 'consumerKey',
           isEnabled: false
         }
-      ]
+        ],
+          vault: [
+            {
+              field: 'password',
+              isEnabled: false
+            },
+            {
+              field: 'accessToken',
+              isEnabled: false
+            },
+            {
+              field: 'pat',
+              isEnabled: false
+            },
+            {
+              field:'apiKey',
+              isEnabled: false
+            }
+          ]
     },
     enableDisableAnotherTime: {
       cloudEnv: [],
@@ -158,7 +176,25 @@ export class ConnectionListComponent implements OnInit {
           isEnabled: false
         }
       ],
-      isOAuth: []
+      isOAuth: [],
+      vault: [
+              {
+                field: 'password',
+                isEnabled: false
+              },
+              {
+                field: 'accessToken',
+                isEnabled: false
+              },
+              {
+                field: 'pat',
+                isEnabled: false
+              },
+              {
+                field:'apiKey',
+                isEnabled: false
+              }
+          ]
     }
   };
 
@@ -306,23 +342,23 @@ export class ConnectionListComponent implements OnInit {
 
   testingConnection: boolean;
 
-  isNewlyConfigAdded: boolean = false;
+  isNewlyConfigAdded = false;
 
   fieldsObj = {};
 
-  disableConnectionTypeDropDown: boolean = false;
+  disableConnectionTypeDropDown = false;
 
   roleAccess: any = {};
 
-  isConnectionAddEditAccess: boolean = false;
+  isConnectionAddEditAccess = false;
 
-  testConnectionMsg: string = '';
-  testConnectionValid: boolean = true;
-  isRoleViewer: boolean = false;
-  currentUser: string = '';
-  zephyrUrl: string = '';
+  testConnectionMsg = '';
+  testConnectionValid = true;
+  isRoleViewer = false;
+  currentUser = '';
+  zephyrUrl = '';
 
-  constructor(private httpService: HttpService, private formBuilder: FormBuilder, private rsa: RsaEncryptionService, private confirmationService: ConfirmationService, private testConnectionService: TestConnectionService
+  constructor(private httpService: HttpService, private formBuilder: UntypedFormBuilder, private rsa: RsaEncryptionService, private confirmationService: ConfirmationService, private testConnectionService: TestConnectionService
     , private authorization: GetAuthorizationService) { }
 
   ngOnInit(): void {
@@ -392,7 +428,6 @@ export class ConnectionListComponent implements OnInit {
   }
 
   onChangeConnection(connection) {
-    console.log(connection);
     this.selectedConnectionType = connection.type;
     this.connectionTypeFieldsAssignment();
     this.defaultEnableDisableSwitch();
@@ -583,9 +618,9 @@ export class ConnectionListComponent implements OnInit {
     if (!response.success && !!response.message) {
       this.confirmationService.confirm({
         message: response.message,
-        header: header,
+        header,
         icon: 'fa fa-times-circle text-danger',
-        key: "connectionStatus",
+        key: 'connectionStatus',
         accept: () => {
         },
         reject: () => {
@@ -607,9 +642,9 @@ export class ConnectionListComponent implements OnInit {
     this.defaultEnableDisableSwitch();
     this.disableEnableCheckBox();
     if (connection.type.toLowerCase() == 'bitbucket' && connection.cloudEnv == true) {
-      this.checkBitbucketValue(true, "cloudEnv", connection.type.toLowerCase())
-    } else if (connection.type.toLowerCase() == 'zephyr' && connection.cloudEnv == true) {
-      this.checkZephyr(true, "cloudEnv", connection.type.toLowerCase());
+      this.checkBitbucketValue(true, 'cloudEnv', connection.type.toLowerCase());
+    } else if (connection.type.toLowerCase() == 'zephyr') {
+      this.checkZephyr();
     }
   }
 
@@ -686,7 +721,7 @@ export class ConnectionListComponent implements OnInit {
     } else if (this.selectedConnectionType.toLowerCase() === 'zephyr' && !!this.basicConnectionForm.controls['cloudEnv'] && this.connection['cloudEnv'] === true) {
       this.basicConnectionForm.controls['username'].disable();
       this.basicConnectionForm.controls['password'].disable();
-      //this.basicConnectionForm.controls['apiEndpoint'].disable();
+      // this.basicConnectionForm.controls['apiEndpoint'].disable();
       this.basicConnectionForm.controls['baseUrl'].disable();
       this.basicConnectionForm.controls['accessToken'].enable();
     } else if (this.selectedConnectionType.toLowerCase() === 'zephyr' && !!this.basicConnectionForm.controls['cloudEnv'] && this.connection['cloudEnv'] === false) {
@@ -702,7 +737,10 @@ export class ConnectionListComponent implements OnInit {
       this.basicConnectionForm.controls['password'].enable();
       this.basicConnectionForm.controls['accessToken'].disable();
     }
-
+    if(this.selectedConnectionType.toLowerCase() === 'sonar' && !!this.basicConnectionForm.controls['vault'] && this.connection['vault'] === true){
+      this.basicConnectionForm.controls['password'].disable();
+      this.basicConnectionForm.controls['accessToken'].disable();
+    }
   }
 
   enableDisableSwitch(event, field, type?) {
@@ -711,9 +749,9 @@ export class ConnectionListComponent implements OnInit {
       if (!!this.enableDisableOnToggle.enableDisableEachTime[field] && this.enableDisableOnToggle.enableDisableEachTime[field].length) {
         this.enableDisableOnToggle.enableDisableEachTime[field].forEach(element => {
           if (event.checked) {
-            this.basicConnectionForm.controls[element.field].enable();
+            this.basicConnectionForm.controls[element.field]?.enable();
           } else {
-            this.basicConnectionForm.controls[element.field].disable();
+            this.basicConnectionForm.controls[element.field]?.disable();
           }
         });
       }
@@ -721,9 +759,9 @@ export class ConnectionListComponent implements OnInit {
       if (!!this.enableDisableOnToggle.enableDisableAnotherTime[field] && this.enableDisableOnToggle.enableDisableAnotherTime[field].length) {
         this.enableDisableOnToggle.enableDisableAnotherTime[field].forEach(element => {
           if (event.checked) {
-            this.basicConnectionForm.controls[element.field].disable();
+            this.basicConnectionForm.controls[element.field]?.disable();
           } else {
-            this.basicConnectionForm.controls[element.field].enable();
+            this.basicConnectionForm.controls[element.field]?.enable();
           }
         });
       }
@@ -743,9 +781,9 @@ export class ConnectionListComponent implements OnInit {
       if (!!this.enableDisableOnToggle.enableDisableEachTime[field] && this.enableDisableOnToggle.enableDisableEachTime[field].length) {
         this.enableDisableOnToggle.enableDisableEachTime[field].forEach(element => {
           if (event.checked) {
-            this.basicConnectionForm.controls[element.field].enable();
+            this.basicConnectionForm.controls[element.field]?.enable();
           } else {
-            this.basicConnectionForm.controls[element.field].disable();
+            this.basicConnectionForm.controls[element.field]?.disable();
           }
         });
       }
@@ -753,9 +791,9 @@ export class ConnectionListComponent implements OnInit {
       if (!!this.enableDisableOnToggle.enableDisableAnotherTime[field] && this.enableDisableOnToggle.enableDisableAnotherTime[field].length) {
         this.enableDisableOnToggle.enableDisableAnotherTime[field].forEach(element => {
           if (event.checked) {
-            this.basicConnectionForm.controls[element.field].disable();
+            this.basicConnectionForm.controls[element.field]?.disable();
           } else {
-            this.basicConnectionForm.controls[element.field].enable();
+            this.basicConnectionForm.controls[element.field]?.enable();
           }
         });
       }
@@ -763,8 +801,8 @@ export class ConnectionListComponent implements OnInit {
 
     this.checkBitbucketValue(event.checked, field, type);
 
-    this.checkZephyr(event.checked, field, type);
-    this.enableDisableFieldsOnIsCloudSwithChange(event.checked, field, type);
+    this.checkZephyr();
+    this.enableDisableFieldsOnIsCloudSwithChange();
   }
 
   testConnection() {
@@ -783,12 +821,18 @@ export class ConnectionListComponent implements OnInit {
     if (this.connection['type'].toLowerCase() === 'zephyr' && this.connection['cloudEnv']) {
       reqData['baseUrl'] = this.basicConnectionForm.controls['baseUrl']['value'];
     }
+    if(reqData['vault'] == true){
+      reqData['password'] = '';
+      reqData['pat'] = '';
+      reqData['accessToken'] = '';
+      reqData['apiKey'] = '';
+    }
     this.testConnectionMsg = '';
     this.testConnectionValid = true;
 
     switch (this.connection.type) {
       case 'Jira':
-        this.testConnectionService.testJira(reqData['baseUrl'], reqData['apiEndPoint'], reqData['username'], reqData['password']).subscribe(next => {
+        this.testConnectionService.testJira(reqData['baseUrl'], reqData['apiEndPoint'], reqData['username'], reqData['password'], reqData['vault']).subscribe(next => {
           if (next.success && next.data === 200) {
             this.testConnectionMsg = 'Valid Connection';
             this.testConnectionValid = true;
@@ -805,7 +849,7 @@ export class ConnectionListComponent implements OnInit {
 
         break;
       case 'Azure':
-        this.testConnectionService.testAzureBoards(reqData['baseUrl'], reqData['username'], reqData['pat'])
+        this.testConnectionService.testAzureBoards(reqData['baseUrl'], reqData['username'], reqData['pat'], reqData['vault'])
           .subscribe(next => {
             if (next.success && next.data === 200) {
               this.testConnectionMsg = 'Valid Connection';
@@ -821,7 +865,7 @@ export class ConnectionListComponent implements OnInit {
             this.testingConnection = false;
           });
         break;
-      case 'GitLab': this.testConnectionService.testGitLab(reqData['baseUrl'], reqData['accessToken']).subscribe(next => {
+      case 'GitLab': this.testConnectionService.testGitLab(reqData['baseUrl'], reqData['accessToken'], reqData['vault']).subscribe(next => {
         if (next.success && next.data === 200) {
           this.testConnectionMsg = 'Valid Connection';
           this.testConnectionValid = true;
@@ -836,7 +880,7 @@ export class ConnectionListComponent implements OnInit {
         this.testingConnection = false;
       });
         break;
-      case 'Bitbucket': this.testConnectionService.testBitbucket(reqData['baseUrl'], reqData['username'], reqData['password'], reqData['apiEndPoint'], reqData['cloudEnv']).subscribe(next => {
+      case 'Bitbucket': this.testConnectionService.testBitbucket(reqData['baseUrl'], reqData['username'], reqData['password'], reqData['apiEndPoint'], reqData['cloudEnv'], reqData['vault']).subscribe(next => {
         if (next.success && next.data === 200) {
           this.testConnectionMsg = 'Valid Connection';
           this.testConnectionValid = true;
@@ -852,7 +896,7 @@ export class ConnectionListComponent implements OnInit {
       });
         break;
       case 'Sonar':
-        this.testConnectionService.testSonar(reqData['baseUrl'], reqData['username'], reqData['password'], reqData['accessToken'], reqData['cloudEnv']).subscribe(next => {
+        this.testConnectionService.testSonar(reqData['baseUrl'], reqData['username'], reqData['password'], reqData['accessToken'], reqData['cloudEnv'], reqData['vault']).subscribe(next => {
           if (next.success && next.data === 200) {
             this.testConnectionMsg = 'Valid Connection';
             this.testConnectionValid = true;
@@ -867,7 +911,7 @@ export class ConnectionListComponent implements OnInit {
           this.testingConnection = false;
         });
         break;
-      case 'Jenkins': this.testConnectionService.testJenkins(reqData['baseUrl'], reqData['username'], reqData['apiKey']).subscribe(next => {
+      case 'Jenkins': this.testConnectionService.testJenkins(reqData['baseUrl'], reqData['username'], reqData['apiKey'], reqData['vault']).subscribe(next => {
         if (next.success && next.data === 200) {
           this.testConnectionMsg = 'Valid Connection';
           this.testConnectionValid = true;
@@ -893,7 +937,7 @@ export class ConnectionListComponent implements OnInit {
       });
 
         break;
-      case 'Bamboo': this.testConnectionService.testBamboo(reqData['baseUrl'], reqData['username'], reqData['password']).subscribe(next => {
+      case 'Bamboo': this.testConnectionService.testBamboo(reqData['baseUrl'], reqData['username'], reqData['password'], reqData['vault']).subscribe(next => {
         if (next.success && next.data === 200) {
           this.testConnectionMsg = 'Valid Connection';
           this.testConnectionValid = true;
@@ -908,7 +952,7 @@ export class ConnectionListComponent implements OnInit {
         this.testingConnection = false;
       });
         break;
-      case 'Teamcity': this.testConnectionService.testTeamCity(reqData['baseUrl'], reqData['username'], reqData['password']).subscribe(next => {
+      case 'Teamcity': this.testConnectionService.testTeamCity(reqData['baseUrl'], reqData['username'], reqData['password'], reqData['vault']).subscribe(next => {
         if (next.success && next.data === 200) {
           this.testConnectionMsg = 'Valid Connection';
           this.testConnectionValid = true;
@@ -924,7 +968,7 @@ export class ConnectionListComponent implements OnInit {
       });
         break;
       case 'AzurePipeline':
-        this.testConnectionService.testAzurePipeline(reqData['baseUrl'], 'dummyUserName', reqData['pat'])
+        this.testConnectionService.testAzurePipeline(reqData['baseUrl'], 'dummyUserName', reqData['pat'], reqData['vault'])
           .subscribe(next => {
             if (next.success && next.data === 200) {
               this.testConnectionMsg = 'Valid Connection';
@@ -941,7 +985,7 @@ export class ConnectionListComponent implements OnInit {
           });
         break;
       case 'AzureRepository':
-        this.testConnectionService.testAzureRepository(reqData['baseUrl'], 'dummyUserName', reqData['pat'])
+        this.testConnectionService.testAzureRepository(reqData['baseUrl'], 'dummyUserName', reqData['pat'], reqData['vault'])
           .subscribe(next => {
             if (next.success && next.data === 200) {
               this.testConnectionMsg = 'Valid Connection';
@@ -957,7 +1001,7 @@ export class ConnectionListComponent implements OnInit {
             this.testingConnection = false;
           });
         break;
-      case 'GitHub': this.testConnectionService.testGithub(reqData['baseUrl'], reqData['username'], reqData['accessToken']).subscribe(next => {
+      case 'GitHub': this.testConnectionService.testGithub(reqData['baseUrl'], reqData['username'], reqData['accessToken'], reqData['vault']).subscribe(next => {
         if (next.success && next.data === 200) {
           this.testConnectionMsg = 'Valid Connection';
           this.testConnectionValid = true;
@@ -973,7 +1017,7 @@ export class ConnectionListComponent implements OnInit {
       });
         break;
 
-      case 'Zephyr': this.testConnectionService.testZephyr(reqData['baseUrl'], reqData['username'], reqData['password'], reqData['apiEndPoint'], reqData['accessToken'], reqData['cloudEnv']).subscribe(next => {
+      case 'Zephyr': this.testConnectionService.testZephyr(reqData['baseUrl'], reqData['username'], reqData['password'], reqData['apiEndPoint'], reqData['accessToken'], reqData['cloudEnv'], reqData['vault']).subscribe(next => {
         if (next.success && next.data === 200) {
           this.testConnectionMsg = 'Valid Connection';
           this.testConnectionValid = true;
@@ -994,72 +1038,100 @@ export class ConnectionListComponent implements OnInit {
   showInfo(type, field) {
     let tooltipText = '';
     if (type == 'github' && field == 'baseUrl') {
-      tooltipText = 'Url i.e : for public github this url will be https://api.github.com.'
+      tooltipText = 'Url i.e : for public github this url will be https://api.github.com.';
     }
     if (type == 'github' && field == 'username') {
-      tooltipText = 'The name appended before your repository name (i.e. ownerName/repositoryName).'
+      tooltipText = 'The name appended before your repository name (i.e. ownerName/repositoryName).';
     }
     return tooltipText;
   }
 
   checkBitbucketValue(event, field, type) {
     /** to add information besides username and password labels for bitbucket when isCloudEnv = true */
-    if (type == 'bitbucket' && field == 'cloudEnv' && event) {
-      let tempArr = [...this.addEditConnectionFieldsNlabels];
-      let bitbucketObj = tempArr.filter((item) => item.connectionLabel.toLowerCase() == 'bitbucket')[0];
-      bitbucketObj.labels = ['Connection Type', 'Connection Name', 'Is Cloud Environment', 'Base Url', 'Username (Profile Username)', 'Password (App Password)', 'API End Point', 'Is Connection Private'];
-      let index = tempArr.findIndex((item) => item.connectionLabel.toLowerCase() == 'bitbucket');
-      tempArr[index] = bitbucketObj;
-      this.addEditConnectionFieldsNlabels = [...tempArr];
-    } else {
-      let tempArr = [...this.addEditConnectionFieldsNlabels];
-      let bitbucketObj = tempArr.filter((item) => item.connectionLabel.toLowerCase() == 'bitbucket')[0];
-      bitbucketObj.labels = ['Connection Type', 'Connection Name', 'Is Cloud Environment', 'Base Url', 'Username', 'Password', 'API End Point', 'Is Connection Private'];
-      let index = tempArr.findIndex((item) => item.connectionLabel.toLowerCase() == 'bitbucket');
+    if(type == 'bitbucket'){
+      const tempArr = [...this.addEditConnectionFieldsNlabels];
+      const bitbucketObj = tempArr.filter((item) => item.connectionLabel.toLowerCase() == 'bitbucket')[0];
+      if(this.basicConnectionForm.controls['cloudEnv'].value){
+        bitbucketObj.labels = ['Connection Type', 'Connection Name', 'Is Cloud Environment', 'Base Url', 'Username (Profile Username)', 'Use vault password', 'Password (App Password)', 'API End Point', 'Is Connection Private'];
+      }else{
+        bitbucketObj.labels = ['Connection Type', 'Connection Name', 'Is Cloud Environment', 'Base Url', 'Username', 'Use vault password','Password', 'API End Point', 'Is Connection Private'];
+      }
+      const index = tempArr.findIndex((item) => item.connectionLabel.toLowerCase() == 'bitbucket');
       tempArr[index] = bitbucketObj;
       this.addEditConnectionFieldsNlabels = [...tempArr];
     }
   }
 
-  checkZephyr(event, field, type) {
+  checkZephyr() {
     /** to add information besides username and password labels for bitbucket when isCloudEnv = true */
-    if (type == 'zephyr' && field == 'cloudEnv' && event) {
-
-      this.basicConnectionForm.controls['baseUrl'].setValue(this.zephyrUrl);
-      this.basicConnectionForm.controls['baseUrl'].disable();
-      this.basicConnectionForm.controls['apiEndPoint'].setValue('');
-      this.basicConnectionForm.controls['apiEndPoint'].disable();
-      this.basicConnectionForm.controls['username'].setValue('');
-      this.basicConnectionForm.controls['username'].disable();
-      this.basicConnectionForm.controls['password'].setValue('');
-      this.basicConnectionForm.controls['password'].disable();
-      this.basicConnectionForm.controls['accessToken'].enable();
-    } else if (type == 'zephyr' && field == 'cloudEnv' && !event) {
-      this.basicConnectionForm.controls['baseUrl'].enable();
-      this.basicConnectionForm.controls['baseUrl'].setValue('');
-      this.basicConnectionForm.controls['accessToken'].setValue('');
-      this.basicConnectionForm.controls['accessToken'].disable();
-      this.basicConnectionForm.controls['username'].enable();
-      this.basicConnectionForm.controls['password'].enable();
-      this.basicConnectionForm.controls['apiEndPoint'].enable();
+    if(this.connection['type']?.toLowerCase() == 'zephyr'){
+      if(this.connection['vault'] == true && this.connection['cloudEnv'] == true){
+        this.basicConnectionForm.controls['baseUrl'].setValue(this.zephyrUrl);
+        this.basicConnectionForm.controls['baseUrl'].disable();
+        this.basicConnectionForm.controls['apiEndPoint'].setValue('');
+        this.basicConnectionForm.controls['apiEndPoint'].disable();
+        this.basicConnectionForm.controls['username'].setValue('');
+        this.basicConnectionForm.controls['username'].disable();
+        this.basicConnectionForm.controls['password'].setValue('');
+        this.basicConnectionForm.controls['password'].disable();
+        this.basicConnectionForm.controls['accessToken'].setValue('');
+        this.basicConnectionForm.controls['accessToken'].disable();
+      }else if(this.connection['vault'] == true && this.connection['cloudEnv'] == false){
+        this.basicConnectionForm.controls['baseUrl'].enable();
+        this.basicConnectionForm.controls['apiEndPoint'].enable();
+        this.basicConnectionForm.controls['username'].enable();
+        this.basicConnectionForm.controls['password'].setValue('');
+        this.basicConnectionForm.controls['password'].disable();
+        this.basicConnectionForm.controls['accessToken'].setValue('');
+        this.basicConnectionForm.controls['accessToken'].disable();
+      }else if(this.connection['vault'] == false && this.connection['cloudEnv'] == true){
+        this.basicConnectionForm.controls['baseUrl'].setValue(this.zephyrUrl);
+        this.basicConnectionForm.controls['baseUrl'].disable();
+        this.basicConnectionForm.controls['apiEndPoint'].setValue('');
+        this.basicConnectionForm.controls['apiEndPoint'].disable();
+        this.basicConnectionForm.controls['username'].setValue('');
+        this.basicConnectionForm.controls['username'].disable();
+        this.basicConnectionForm.controls['password'].setValue('');
+        this.basicConnectionForm.controls['password'].disable();
+        this.basicConnectionForm.controls['accessToken']?.enable();
+      }else{
+        this.basicConnectionForm.controls['baseUrl'].enable();
+        this.basicConnectionForm.controls['apiEndPoint'].enable();
+        this.basicConnectionForm.controls['username'].enable();
+        this.basicConnectionForm.controls['password'].enable();
+        this.basicConnectionForm.controls['accessToken'].setValue('');
+        this.basicConnectionForm.controls['accessToken'].disable();
+      }
     }
-
   }
-  enableDisableFieldsOnIsCloudSwithChange(event, field, type) {
-
-    if (type == 'sonar' && field == 'cloudEnv' && event) {
-      this.basicConnectionForm.controls['username'].setValue('');
-      this.basicConnectionForm.controls['password'].setValue('');
-      this.basicConnectionForm.controls['username'].disable();
-      this.basicConnectionForm.controls['password'].disable();
-      this.basicConnectionForm.controls['accessToken'].enable();
-    } else if (type == 'sonar' && field == 'cloudEnv' && !event) {
-      this.basicConnectionForm.controls['username'].enable();
-      this.basicConnectionForm.controls['password'].enable();
-      this.basicConnectionForm.controls['accessToken'].setValue('');
-      this.basicConnectionForm.controls['accessToken'].disable();
+  enableDisableFieldsOnIsCloudSwithChange() {
+    if(this.connection['type']?.toLowerCase() == 'sonar'){
+      if(this.connection['vault'] == true && this.connection['cloudEnv'] == true){
+        this.basicConnectionForm.controls['username'].setValue('');
+        this.basicConnectionForm.controls['username'].disable();
+        this.basicConnectionForm.controls['password'].setValue('');
+        this.basicConnectionForm.controls['password'].disable();
+        this.basicConnectionForm.controls['accessToken'].setValue('');
+        this.basicConnectionForm.controls['accessToken'].disable();
+      }else if(this.connection['vault'] == true && this.connection['cloudEnv'] == false){
+        this.basicConnectionForm.controls['username'].enable();
+        this.basicConnectionForm.controls['password'].setValue('');
+        this.basicConnectionForm.controls['password'].disable();
+        this.basicConnectionForm.controls['accessToken'].setValue('');
+        this.basicConnectionForm.controls['accessToken'].disable();
+      }else if(this.connection['vault'] == false && this.connection['cloudEnv'] == true){
+        this.basicConnectionForm.controls['username'].setValue('');
+        this.basicConnectionForm.controls['username'].disable();
+        this.basicConnectionForm.controls['password'].setValue('');
+        this.basicConnectionForm.controls['password'].disable();
+        this.basicConnectionForm.controls['accessToken']?.enable();
+      }else{
+        this.basicConnectionForm.controls['username'].enable();
+        this.basicConnectionForm.controls['password'].enable();
+        this.basicConnectionForm.controls['accessToken'].setValue('');
+        this.basicConnectionForm.controls['accessToken'].disable();
+      }
     }
-
   }
 
   emptyUrlInZephyr() {

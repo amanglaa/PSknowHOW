@@ -23,14 +23,20 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import java.util.List;
 import javax.validation.constraints.NotNull;
 
+import com.publicissapient.kpidashboard.apis.jira.model.BoardDetailsDTO;
+import com.publicissapient.kpidashboard.apis.jira.model.BoardRequestDTO;
+import com.publicissapient.kpidashboard.apis.jira.service.JiraToolConfigServiceImpl;
+import com.publicissapient.kpidashboard.apis.model.ServiceResponse;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -64,6 +70,9 @@ public class JiraController {
 
 	@Autowired
 	private CacheService cacheService;
+
+	@Autowired
+	private JiraToolConfigServiceImpl jiraToolConfigService;
 
 	/**
 	 * This method handles Jira Scrum KPIs request.
@@ -136,4 +145,16 @@ public class JiraController {
 		}
 	}
 
+	@PostMapping(value = "/jira/board", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ServiceResponse getJiraBoardDetailsList(@RequestBody BoardRequestDTO boardRequestDTO) {
+		ServiceResponse response;
+		List<BoardDetailsDTO> boardDetailsList = jiraToolConfigService.getJiraBoardDetailsList(boardRequestDTO);
+		if (CollectionUtils.isEmpty(boardDetailsList)) {
+			response = new ServiceResponse(false,
+					"Not found any configure board details with provided connection details", null);
+		} else {
+			response = new ServiceResponse(true, "Successfully fetched board details list", boardDetailsList);
+		}
+		return response;
+	}
 }

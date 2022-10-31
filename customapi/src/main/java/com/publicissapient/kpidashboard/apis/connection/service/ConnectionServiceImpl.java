@@ -67,13 +67,14 @@ import lombok.extern.slf4j.Slf4j;
  * This class provides various methods related to operations on Connections
  *
  * @author dilip
- * 
  * @author jagmongr
  */
 @Service
 @Slf4j
 public class ConnectionServiceImpl implements ConnectionService {
 
+	private static final String CONNECTION_EMPTY_MSG = "Connection name cannot be empty";
+	private static final String ERROR_MSG = "A connection with same details already exists. Connection name is ";
 	@Autowired
 	private RsaEncryptionService rsaEncryptionService;
 
@@ -98,10 +99,6 @@ public class ConnectionServiceImpl implements ConnectionService {
 	@Autowired
 	private AuthenticationService authenticationService;
 
-	private static final String CONNECTION_EMPTY_MSG = "Connection name cannot be empty";
-
-	private static final String ERROR_MSG = "A connection with same details already exists. Connection name is ";
-
 	/**
 	 * Fetch all connection data.
 	 *
@@ -123,8 +120,9 @@ public class ConnectionServiceImpl implements ConnectionService {
 
 		List<Connection> nonAuthConnection = new ArrayList<>();
 
-		connectionData.stream().filter(e->!e.getConnectionUsers().contains(authenticationService.getLoggedInUser()) && e.isConnPrivate()).forEach(
-				nonAuthConnection::add);
+		connectionData.stream().filter(
+				e -> !e.getConnectionUsers().contains(authenticationService.getLoggedInUser()) && e.isConnPrivate())
+				.forEach(nonAuthConnection::add);
 
 		if (CollectionUtils.isNotEmpty(nonAuthConnection)) {
 			connectionData.removeAll(nonAuthConnection);
@@ -276,22 +274,14 @@ public class ConnectionServiceImpl implements ConnectionService {
 			break;
 		case TOOL_GITHUB:
 		case TOOL_GITLAB:
-			String accessToken = rsaEncryptionService.decrypt(inputConn.getAccessToken(),
-					customApiConfig.getRsaPrivateKey());
-			String accessTokenExists = aesEncryptionService.decrypt(currConn.getAccessToken(),
-					customApiConfig.getAesEncryptionKey());
-
-			if (checkConnDetails(inputConn, currConn) && accessToken.equals(accessTokenExists))
-				existingConnection = currConn;
+			boolean commonConnection = checkConnDetails(inputConn, currConn);
+			checkVaultConnection(inputConn, currConn, existingConnection, commonConnection);
 			break;
 		case TOOL_AZURE:
 		case TOOL_AZUREPIPELINE:
 		case TOOL_AZUREREPO:
-			String pat = rsaEncryptionService.decrypt(inputConn.getPat(), customApiConfig.getRsaPrivateKey());
-			String patExists = aesEncryptionService.decrypt(currConn.getPat(), customApiConfig.getAesEncryptionKey());
-
-			if (inputConn.getBaseUrl().equals(currConn.getBaseUrl()) && pat.equals(patExists))
-				existingConnection = currConn;
+			checkVaultConnection(inputConn, currConn, existingConnection,
+					inputConn.getBaseUrl().equals(currConn.getBaseUrl()));
 			break;
 		case TOOL_JIRA:
 		case TOOL_BITBUCKET:
@@ -299,12 +289,7 @@ public class ConnectionServiceImpl implements ConnectionService {
 				existingConnection = currConn;
 			break;
 		case TOOL_JENKINS:
-			String apiKey = rsaEncryptionService.decrypt(inputConn.getApiKey(), customApiConfig.getRsaPrivateKey());
-			String apiKeyExists = aesEncryptionService.decrypt(currConn.getApiKey(),
-					customApiConfig.getAesEncryptionKey());
-
-			if (checkConnDetails(inputConn, currConn) && apiKey.equals(apiKeyExists))
-				existingConnection = currConn;
+			checkVaultConnection(inputConn, currConn, existingConnection, checkConnDetails(inputConn, currConn));
 			break;
 		case TOOL_ZEPHYR:
 			existingConnection = checkConnDetailsZephyr(inputConn, currConn, api);
@@ -390,14 +375,66 @@ public class ConnectionServiceImpl implements ConnectionService {
 	private Connection checkConnDetailsZephyr(Connection inputConn, Connection currConn, String api) {
 		Connection existingConnection = null;
 		if (inputConn.isCloudEnv()) {
-			String accessTokenExistsZephyr = aesEncryptionService.decrypt(currConn.getAccessToken(),
-					customApiConfig.getAesEncryptionKey());
-			if (api.equals("save") && inputConn.getAccessToken().equals(accessTokenExistsZephyr)
-					&& inputConn.getBaseUrl().equals(currConn.getBaseUrl())) {
+			boolean sameURLCheck = api.equals("save") && inputConn.getBaseUrl().equals(currConn.getBaseUrl());
+			existingConnection = checkVaultConnection(inputConn, currConn, existingConnection, sameURLCheck);
+		} else {
+			if (checkConnDetails(inputConn, currConn) && inputConn.getApiEndPoint().equals(currConn.getApiEndPoint())) {
+				existingConnection = currConn;
+			}
+		}
+		return existingConnection;
+	}
+
+	private Connection checkVaultConnection(Connection inputConn, Connection currConn, Connection existingConnection,
+			boolean sameUrlcheck) {
+		if (!inputConn.isVault()) {
+			boolean accessTokenSimilarity;
+			try {
+				switch (inputConn.getType()) {
+				case TOOL_SONAR:
+					String accessToken = rsaEncryptionService.decrypt(inputConn.getAccessToken(),
+							customApiConfig.getRsaPrivateKey());
+					String accessTokenExistsSonar = aesEncryptionService.decrypt(currConn.getAccessToken(),
+							customApiConfig.getAesEncryptionKey());
+					accessTokenSimilarity = accessToken.equals(accessTokenExistsSonar);
+					break;
+				case TOOL_ZEPHYR:
+					String accessTokenExistsZephyr = aesEncryptionService.decrypt(currConn.getAccessToken(),
+							customApiConfig.getAesEncryptionKey());
+					accessTokenSimilarity = inputConn.getAccessToken().equals(accessTokenExistsZephyr);
+					break;
+				case TOOL_GITLAB:
+					String gitAccessToken = rsaEncryptionService.decrypt(inputConn.getAccessToken(),
+							customApiConfig.getRsaPrivateKey());
+					String accessTokenExists = aesEncryptionService.decrypt(currConn.getAccessToken(),
+							customApiConfig.getAesEncryptionKey());
+					accessTokenSimilarity = gitAccessToken.equals(accessTokenExists);
+					break;
+				case TOOL_AZUREREPO:
+					String pat = rsaEncryptionService.decrypt(inputConn.getPat(), customApiConfig.getRsaPrivateKey());
+					String patExists = aesEncryptionService.decrypt(currConn.getPat(),
+							customApiConfig.getAesEncryptionKey());
+					accessTokenSimilarity = pat.equals(patExists);
+					break;
+				case TOOL_JENKINS:
+					String apiKey = rsaEncryptionService.decrypt(inputConn.getApiKey(),
+							customApiConfig.getRsaPrivateKey());
+					String apiKeyExists = aesEncryptionService.decrypt(currConn.getApiKey(),
+							customApiConfig.getAesEncryptionKey());
+					accessTokenSimilarity = apiKey.equals(apiKeyExists);
+					break;
+				default:
+					accessTokenSimilarity = false;
+					break;
+				}
+			} catch (Exception exception) {
+				accessTokenSimilarity = false;
+			}
+			if (sameUrlcheck && accessTokenSimilarity) {
 				existingConnection = currConn;
 			}
 		} else {
-			if (checkConnDetails(inputConn, currConn) && inputConn.getApiEndPoint().equals(currConn.getApiEndPoint())) {
+			if (sameUrlcheck) {
 				existingConnection = currConn;
 			}
 		}
@@ -457,6 +494,7 @@ public class ConnectionServiceImpl implements ConnectionService {
 		existingConnection.setOffline(connection.isOffline());
 		existingConnection.setOfflineFilePath(connection.getOfflineFilePath());
 		existingConnection.setCloudEnv(connection.isCloudEnv());
+		existingConnection.setVault(connection.isVault());
 		existingConnection.setUpdatedAt(DateUtil.dateTimeFormatter(LocalDateTime.now(), DateUtil.TIME_FORMAT));
 		existingConnection.setConnPrivate(connection.isConnPrivate());
 		existingConnection.setUpdatedBy(authenticationService.getLoggedInUser());
@@ -471,7 +509,8 @@ public class ConnectionServiceImpl implements ConnectionService {
 	/**
 	 * Checks if @param Connection has non empty connectionName
 	 *
-	 * @param conn for details.
+	 * @param conn
+	 *            for details.
 	 * @return Boolean
 	 */
 	private boolean isDataValid(Connection conn) {
@@ -522,7 +561,7 @@ public class ConnectionServiceImpl implements ConnectionService {
 				customApiConfig.getAesEncryptionKey());
 		return encryptedString == null ? "" : encryptedString;
 	}
-	
+
 	private void setEncryptedApiKeyForDb(Connection conn) {
 		String apiKeyFromClient = conn.getApiKey();
 		if (StringUtils.isEmpty(apiKeyFromClient)) {
@@ -540,14 +579,8 @@ public class ConnectionServiceImpl implements ConnectionService {
 	private Connection checkConnDetailsSonar(Connection inputConn, Connection currConn, String api) {
 		Connection existingConnection = null;
 		if (inputConn.isCloudEnv()) {
-			String accessToken = rsaEncryptionService.decrypt(inputConn.getAccessToken(),
-					customApiConfig.getRsaPrivateKey());
-			String accessTokenExistsSonar = aesEncryptionService.decrypt(currConn.getAccessToken(),
-					customApiConfig.getAesEncryptionKey());
-			if (api.equals("save") && accessToken.equals(accessTokenExistsSonar)
-					&& inputConn.getBaseUrl().equals(currConn.getBaseUrl())) {
-				existingConnection = currConn;
-			}
+			boolean sameURLCheck = api.equals("save") && inputConn.getBaseUrl().equals(currConn.getBaseUrl());
+			existingConnection = checkVaultConnection(inputConn, currConn, existingConnection, sameURLCheck);
 		} else {
 			if (checkConnDetails(inputConn, currConn)) {
 				existingConnection = currConn;
@@ -555,7 +588,7 @@ public class ConnectionServiceImpl implements ConnectionService {
 		}
 		return existingConnection;
 	}
-	
+
 	private void encryptSecureFields(Connection conn) {
 
 		String typeName = conn.getType();
@@ -640,8 +673,9 @@ public class ConnectionServiceImpl implements ConnectionService {
 
 	/**
 	 * delete a connection by id.
-	 * 
-	 * @param id deleted the connection data present at id.
+	 *
+	 * @param id
+	 *            deleted the connection data present at id.
 	 * @return ServiceResponse with data object,message and status flag true if data
 	 *         is found,false if not data found
 	 */
@@ -677,7 +711,7 @@ public class ConnectionServiceImpl implements ConnectionService {
 
 	/**
 	 * get a List of projects using connection.
-	 * 
+	 *
 	 * @param projectToolConfig
 	 * @return projectInUseList
 	 */

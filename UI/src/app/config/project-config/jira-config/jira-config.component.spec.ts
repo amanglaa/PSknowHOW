@@ -34,6 +34,7 @@ import { ChipsModule } from 'primeng/chips';
 import { ToastModule } from 'primeng/toast';
 import { TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
+import { AutoCompleteModule } from 'primeng/autocomplete';
 
 import { environment } from 'src/environments/environment';
 import { Observable } from 'rxjs';
@@ -54,54 +55,54 @@ describe('JiraConfigComponent', () => {
 
   const fakeJiraConnections = require('../../../../test/resource/fakeJiraConnections.json');
   const fakeSelectedTool = [{
-    'id': '5fc086b9410df80001701334',
-    'toolName': 'Jira',
-    'basicProjectConfigId': '5fc0867e410df8000170132e',
-    'connectionId': '5fc0857c410df80001701327',
-    'projectId': '23932',
-    'projectKey': 'Test1',
-    'createdAt': '2020-11-27T04:55:21',
-    'updatedAt': '2020-11-27T04:55:21',
-    'queryEnabled': true,
-    'boardQuery': ''
+    id: '5fc086b9410df80001701334',
+    toolName: 'Jira',
+    basicProjectConfigId: '5fc0867e410df8000170132e',
+    connectionId: '5fc0857c410df80001701327',
+    projectId: '23932',
+    projectKey: 'Test1',
+    createdAt: '2020-11-27T04:55:21',
+    updatedAt: '2020-11-27T04:55:21',
+    queryEnabled: true,
+    boardQuery: ''
   }];
   const fakeProject = {
-    "id": "6335363749794a18e8a4479b",
-    "name": "Scrum Project",
-    "type": "Scrum",
-    "hierarchyLevelOne": "Sample One",
-    "hierarchyLevelTwo": "Sample Two",
-    "hierarchyLevelThree": "Sample Three"
+    id: '6335363749794a18e8a4479b',
+    name: 'Scrum Project',
+    type: 'Scrum',
+    hierarchyLevelOne: 'Sample One',
+    hierarchyLevelTwo: 'Sample Two',
+    hierarchyLevelThree: 'Sample Three'
   };
   const successResponse = {
-    'message': 'created and saved new project_tools',
-    'success': true,
-    'data': {
-      'id': '5fca41ef193e9300010c87d9',
-      'toolName': 'Jira',
-      'basicProjectConfigId': '5fca113c193e9300010c87ce',
-      'connectionId': '5fc643cd11193836e6545560',
-      'projectKey': '1212',
-      'createdAt': '2020-12-04T14:04:31',
-      'updatedAt': '2020-12-04T14:04:31',
-      'queryEnabled': true,
-      'boardQuery': 'Test_Query'
+    message: 'created and saved new project_tools',
+    success: true,
+    data: {
+      id: '5fca41ef193e9300010c87d9',
+      toolName: 'Jira',
+      basicProjectConfigId: '5fca113c193e9300010c87ce',
+      connectionId: '5fc643cd11193836e6545560',
+      projectKey: '1212',
+      createdAt: '2020-12-04T14:04:31',
+      updatedAt: '2020-12-04T14:04:31',
+      queryEnabled: true,
+      boardQuery: 'Test_Query'
     }
   };
   const selectedConnection = {
-    'id': '5fc643cd11193836e6545560',
-    'type': 'Jira',
-    'connectionName': 'DOJO Transformation Internal -Jira Connection',
-    'cloudEnv': false,
-    'baseUrl': 'https://tools.publicis.sapient.com/jira',
-    'username': '',
-    'password': '',
-    'apiEndPoint': 'rest/api/2/',
-    'consumerKey': '',
-    'privateKey': '',
-    'isOAuth': false,
-    'offline': true,
-    'offlineFilePath': ''
+    id: '5fc643cd11193836e6545560',
+    type: 'Jira',
+    connectionName: 'DOJO Transformation Internal -Jira Connection',
+    cloudEnv: false,
+    baseUrl: 'https://tools.publicis.sapient.com/jira',
+    username: '',
+    password: '',
+    apiEndPoint: 'rest/api/2/',
+    consumerKey: '',
+    privateKey: '',
+    isOAuth: false,
+    offline: true,
+    offlineFilePath: ''
   };
 
   beforeEach(() => {
@@ -114,6 +115,7 @@ describe('JiraConfigComponent', () => {
         HttpClientTestingModule,
         InputSwitchModule,
         ChipsModule,
+        AutoCompleteModule,
         ToastModule,
         TableModule,
         TooltipModule,
@@ -174,8 +176,13 @@ describe('JiraConfigComponent', () => {
   it('should save form', () => {
     component.ngOnInit();
     component.toolForm.controls['projectKey'].setValue('1212');
-    component.toolForm.controls['boardQuery'].setValue('Test_Query');
-    component.toolForm.controls['queryEnabled'].setValue(true);
+    component.toolForm.controls['boards'].setValue([
+      {
+        boardId: '123123',
+        boardName: 'Copy of ABC Kanban',
+        projectKey: 'ABC'
+      }
+    ]);
     component.isEdit = false;
     component.selectedConnection = selectedConnection;
 
@@ -187,8 +194,13 @@ describe('JiraConfigComponent', () => {
   it('should submit edit form', () => {
     component.ngOnInit();
     component.toolForm.controls['projectKey'].setValue('1212');
-    component.toolForm.controls['boardQuery'].setValue('Test_Query');
-    component.toolForm.controls['queryEnabled'].setValue(true);
+    component.toolForm.controls['boards'].setValue([
+      {
+        boardId: '123123',
+        boardName: 'Copy of ABC Kanban',
+        projectKey: 'ABC'
+      }
+    ]);
     component.isEdit = true;
     component.selectedConnection = selectedConnection;
 

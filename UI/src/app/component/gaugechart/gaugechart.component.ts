@@ -109,11 +109,11 @@ export class GaugechartComponent implements OnChanges {
     const el = d3.select(this.elem).select('.chart-gauge');
 
     const type = this.type;
-    (function () {
+    (function() {
 
-      let barWidth, chart, chartInset, degToRad, repaintGauge,
-        height, margin, percToDeg, percToRad,
-        percent, radius, svg, totalPercent, width;
+      let barWidth; let chart; let chartInset; let degToRad; let repaintGauge;
+        let height; let margin; let percToDeg; let percToRad;
+        let percent; let radius; let svg; let totalPercent; let width;
 
       percent = percentValue;
       chartInset = 10;
@@ -134,15 +134,15 @@ export class GaugechartComponent implements OnChanges {
 
       // Utility methods
 
-      percToDeg = function (perc) {
+      percToDeg = function(perc) {
         return perc * 360;
       };
 
-      percToRad = function (perc) {
+      percToRad = function(perc) {
         return degToRad(percToDeg(perc));
       };
 
-      degToRad = function (deg) {
+      degToRad = function(deg) {
         return deg * Math.PI / 180;
       };
 
@@ -184,7 +184,7 @@ export class GaugechartComponent implements OnChanges {
       const arc2 = d3.arc().outerRadius(radius - chartInset).innerRadius(radius - chartInset - barWidth);
       const arc1 = d3.arc().outerRadius(radius - chartInset).innerRadius(radius - chartInset - barWidth);
 
-      repaintGauge = function () {
+      repaintGauge = function() {
         const perc = 0.5;
         const next_start = totalPercent;
         const arcStartRad1 = percToRad(next_start);
@@ -237,14 +237,14 @@ export class GaugechartComponent implements OnChanges {
 
       };
 
-      const dataset = [{ metric: name, value: value }];
+      const dataset = [{ metric: name, value }];
 
       const texts = svg.selectAll('text')
         .data(dataset)
         .enter();
 
       texts.append('text')
-        .text(function () {
+        .text(function() {
           return dataset[0].metric;
         })
         .attr('id', 'Name')
@@ -260,7 +260,7 @@ export class GaugechartComponent implements OnChanges {
 
       function displayValue() {
         texts.append('text')
-          .text(function () {
+          .text(function() {
             return dataset[0].value;
           })
           .attr('id', 'Value')
@@ -270,7 +270,7 @@ export class GaugechartComponent implements OnChanges {
       }
 
       texts.append('text')
-        .text(function () {
+        .text(function() {
           return 0;
         })
         .attr('id', 'scale0')
@@ -283,7 +283,7 @@ export class GaugechartComponent implements OnChanges {
       if (type === 'DIR') {
 
         texts.append('text')
-          .text(function () {
+          .text(function() {
             return 115;
           })
           .attr('id', 'scale15')
@@ -292,7 +292,7 @@ export class GaugechartComponent implements OnChanges {
           .style('fill', '#000000');
 
         texts.append('text')
-          .text(function () {
+          .text(function() {
             return 125;
           })
           .attr('id', 'scale25')
@@ -301,7 +301,7 @@ export class GaugechartComponent implements OnChanges {
           .style('fill', '#000000');
 
         texts.append('text')
-          .text(function () {
+          .text(function() {
             return 150;
           })
           .attr('id', 'scale50')
@@ -310,7 +310,7 @@ export class GaugechartComponent implements OnChanges {
           .style('fill', '#000000');
 
         texts.append('text')
-          .text(function () {
+          .text(function() {
             return 175;
           })
           .attr('id', 'scale75')
@@ -321,7 +321,7 @@ export class GaugechartComponent implements OnChanges {
 
       if (type === 'FTPR') {
         texts.append('text')
-          .text(function () {
+          .text(function() {
             return 25;
           })
           .attr('id', 'scale25')
@@ -330,7 +330,7 @@ export class GaugechartComponent implements OnChanges {
           .style('fill', '#000000');
 
         texts.append('text')
-          .text(function () {
+          .text(function() {
             return 50;
           })
           .attr('id', 'scale50')
@@ -338,7 +338,7 @@ export class GaugechartComponent implements OnChanges {
           .attr('font-size', 10)
           .style('fill', '#000000');
         texts.append('text')
-          .text(function () {
+          .text(function() {
             return 75;
           })
           .attr('id', 'scale75')
@@ -347,7 +347,7 @@ export class GaugechartComponent implements OnChanges {
           .style('fill', '#000000');
 
         texts.append('text')
-          .text(function () {
+          .text(function() {
             return 90;
           })
           .attr('id', 'scale90')
@@ -358,7 +358,7 @@ export class GaugechartComponent implements OnChanges {
 
       if (type === 'ART') {
         texts.append('text')
-          .text(function () {
+          .text(function() {
             return 5;
           })
           .attr('id', 'scale25')
@@ -367,7 +367,7 @@ export class GaugechartComponent implements OnChanges {
           .style('fill', '#000000');
 
         texts.append('text')
-          .text(function () {
+          .text(function() {
             return 8;
           })
           .attr('id', 'scale50')
@@ -375,7 +375,7 @@ export class GaugechartComponent implements OnChanges {
           .attr('font-size', 10)
           .style('fill', '#000000');
         texts.append('text')
-          .text(function () {
+          .text(function() {
             return 12;
           })
           .attr('id', 'scale75')
@@ -384,7 +384,7 @@ export class GaugechartComponent implements OnChanges {
           .style('fill', '#000000');
 
         texts.append('text')
-          .text(function () {
+          .text(function() {
             return 20;
           })
           .attr('id', 'scale90')
@@ -395,7 +395,7 @@ export class GaugechartComponent implements OnChanges {
 
       if (type === 'DRE') {
         texts.append('text')
-          .text(function () {
+          .text(function() {
             return 40;
           })
           .attr('id', 'scale40')
@@ -404,7 +404,7 @@ export class GaugechartComponent implements OnChanges {
           .style('fill', '#000000');
 
         texts.append('text')
-          .text(function () {
+          .text(function() {
             return 60;
           })
           .attr('id', 'scale60')
@@ -412,7 +412,7 @@ export class GaugechartComponent implements OnChanges {
           .attr('font-size', 10)
           .style('fill', '#000000');
         texts.append('text')
-          .text(function () {
+          .text(function() {
             return 80;
           })
           .attr('id', 'scale80')
@@ -421,7 +421,7 @@ export class GaugechartComponent implements OnChanges {
           .style('fill', '#000000');
 
         texts.append('text')
-          .text(function () {
+          .text(function() {
             return 90;
           })
           .attr('id', 'scale90')
@@ -432,7 +432,7 @@ export class GaugechartComponent implements OnChanges {
 
       if (type === 'DSR' || type === 'DRR') {
         texts.append('text')
-          .text(function () {
+          .text(function() {
             return 5;
           })
           .attr('id', 'scale5')
@@ -441,7 +441,7 @@ export class GaugechartComponent implements OnChanges {
           .style('fill', '#000000');
 
         texts.append('text')
-          .text(function () {
+          .text(function() {
             return 10;
           })
           .attr('id', 'scale10')
@@ -450,7 +450,7 @@ export class GaugechartComponent implements OnChanges {
           .style('fill', '#000000');
 
         texts.append('text')
-          .text(function () {
+          .text(function() {
             return 20;
           })
           .attr('id', 'scale20')
@@ -459,7 +459,7 @@ export class GaugechartComponent implements OnChanges {
           .style('fill', '#000000');
 
         texts.append('text')
-          .text(function () {
+          .text(function() {
             return 2;
           })
           .attr('id', 'scale2')
@@ -470,7 +470,7 @@ export class GaugechartComponent implements OnChanges {
 
       if (type === 'DIR') {
         texts.append('text')
-          .text(function () {
+          .text(function() {
             return '200';
           })
           .attr('id', 'scale200')
@@ -479,7 +479,7 @@ export class GaugechartComponent implements OnChanges {
           .style('fill', '#000000');
       } else {
         texts.append('text')
-          .text(function () {
+          .text(function() {
             return gaugeMaxValue;
           })
           .attr('id', 'scale100')
@@ -489,11 +489,11 @@ export class GaugechartComponent implements OnChanges {
       }
 
 
-      const Needle = (function () {
+      const Needle = (function() {
 
         // Helper function that returns the `d` value for moving the needle
-        const recalcPointerPos = function (perc) {
-          let centerX, centerY, leftX, leftY, rightX, rightY, thetaRad, topX, topY;
+        const recalcPointerPos = function(perc) {
+          let centerX; let centerY; let leftX; let leftY; let rightX; let rightY; let thetaRad; let topX; let topY;
           thetaRad = percToRad(perc / 2);
           centerX = 0;
           centerY = 0;
@@ -512,12 +512,12 @@ export class GaugechartComponent implements OnChanges {
           this.radius = this.len / 8;
         }
 
-        Needle.prototype.render = function () {
+        Needle.prototype.render = function() {
           this.el.append('circle').attr('class', 'needle-center').attr('cx', 0).attr('cy', 0).attr('r', this.radius);
           return this.el.append('path').attr('class', 'needle').attr('id', 'client-needle').attr('d', recalcPointerPos.call(this, 0));
         };
 
-        Needle.prototype.moveTo = function (perc) {
+        Needle.prototype.moveTo = function(perc) {
           let self;
           const oldValue = this.perc || 0;
 
@@ -525,18 +525,18 @@ export class GaugechartComponent implements OnChanges {
           self = this;
 
           // Reset pointer position
-          this.el.transition().delay(100).duration(200).select('.needle').tween('reset-progress', function () {
+          this.el.transition().delay(100).duration(200).select('.needle').tween('reset-progress', function() {
             const node = this;
-            return function (percentOfPercent) {
+            return function(percentOfPercent) {
               const progress = (1 - percentOfPercent) * oldValue;
               repaintGauge(progress);
               return d3.select(node).attr('d', recalcPointerPos.call(self, progress));
             };
           });
 
-          this.el.transition().delay(300).duration(1500).select('.needle').tween('progress', function () {
+          this.el.transition().delay(300).duration(1500).select('.needle').tween('progress', function() {
             const node = this;
-            return function (percentOfPercent) {
+            return function(percentOfPercent) {
               const progress = percentOfPercent * perc;
               repaintGauge(progress);
               return d3.select(node).attr('d', recalcPointerPos.call(self, progress));

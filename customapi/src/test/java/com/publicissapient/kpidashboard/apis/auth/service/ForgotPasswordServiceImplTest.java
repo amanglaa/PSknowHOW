@@ -21,6 +21,7 @@ package com.publicissapient.kpidashboard.apis.auth.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.publicissapient.kpidashboard.common.exceptions.ApplicationException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -203,5 +204,66 @@ public class ForgotPasswordServiceImplTest {
 
 		forgotPasswordService.resetPassword(updatedPasswordRequest);
 	}
+
+	/*
+	 * Test with incorrect data
+	 */
+	@Test
+	public void updatePasswordNoRuleFollow(){
+		ResetPasswordRequest updatedPasswordRequest = new ResetPasswordRequest();
+		updatedPasswordRequest.setPassword("xyz");
+		updatedPasswordRequest.setResetToken("abc-xyz");
+		ForgotPasswordToken forgotPasswordToken = new ForgotPasswordToken();
+		forgotPasswordToken.setExpiryDate(30);
+		forgotPasswordToken.setUsername("abc");
+		String email = "abc@xyz.com";
+		List<Authentication> authenticateList = new ArrayList<>();
+		Authentication authentication = new Authentication("abc", "xyz", email);
+		authenticateList.add(authentication);
+		Mockito.when(forgotPasswordTokenRepository.findByToken(Mockito.any())).thenReturn(forgotPasswordToken);
+		Mockito.when(authenticationRepository.findByUsername("abc")).thenReturn(authentication);
+		Assert.assertThrows(ApplicationException.class,()->{
+			forgotPasswordService.resetPassword(updatedPasswordRequest);
+		});
+	}
+
+	@Test
+	public void updatePasswordSameAsOld(){
+		ResetPasswordRequest updatedPasswordRequest = new ResetPasswordRequest();
+		updatedPasswordRequest.setPassword("Web@1234");
+		updatedPasswordRequest.setResetToken("abc-xyz");
+		ForgotPasswordToken forgotPasswordToken = new ForgotPasswordToken();
+		forgotPasswordToken.setExpiryDate(30);
+		forgotPasswordToken.setUsername("abc");
+		String email = "abc@xyz.com";
+		List<Authentication> authenticateList = new ArrayList<>();
+		Authentication authentication = new Authentication("abc", "Web@1234", email);
+		authenticateList.add(authentication);
+		Mockito.when(forgotPasswordTokenRepository.findByToken(Mockito.any())).thenReturn(forgotPasswordToken);
+		Mockito.when(authenticationRepository.findByUsername("abc")).thenReturn(authentication);
+		Assert.assertThrows(ApplicationException.class,()->{
+			forgotPasswordService.resetPassword(updatedPasswordRequest);
+		});
+	}
+
+	@Test
+	public void updatePasswordContainingUserName(){
+		ResetPasswordRequest updatedPasswordRequest = new ResetPasswordRequest();
+		updatedPasswordRequest.setPassword("Abc@1234");
+		updatedPasswordRequest.setResetToken("abc-xyz");
+		ForgotPasswordToken forgotPasswordToken = new ForgotPasswordToken();
+		forgotPasswordToken.setExpiryDate(30);
+		forgotPasswordToken.setUsername("abc");
+		String email = "abc@xyz.com";
+		List<Authentication> authenticateList = new ArrayList<>();
+		Authentication authentication = new Authentication("abc", "Web@1234", email);
+		authenticateList.add(authentication);
+		Mockito.when(forgotPasswordTokenRepository.findByToken(Mockito.any())).thenReturn(forgotPasswordToken);
+		Mockito.when(authenticationRepository.findByUsername("abc")).thenReturn(authentication);
+		Assert.assertThrows(ApplicationException.class,()->{
+			forgotPasswordService.resetPassword(updatedPasswordRequest);
+		});
+	}
+
 
 }

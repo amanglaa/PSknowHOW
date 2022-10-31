@@ -21,6 +21,8 @@ package com.publicissapient.kpidashboard.apis.auth.ldap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.publicissapient.kpidashboard.apis.auth.service.AuthTypesConfigService;
+import com.publicissapient.kpidashboard.common.model.application.AuthTypeStatus;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -49,6 +51,8 @@ public class LdapLoginRequestFilter extends UsernamePasswordAuthenticationFilter
 	private CustomApiConfig customApiConfig;
 	private ADServerDetailsService adServerDetailsService;
 
+	private AuthTypesConfigService authTypesConfigService;
+
 	/**
 	 * Instantiates a new Ldap login request filter.
 	 *
@@ -62,9 +66,10 @@ public class LdapLoginRequestFilter extends UsernamePasswordAuthenticationFilter
 	 * 
 	 */
 	public LdapLoginRequestFilter(String path, AuthenticationManager authenticationManager,
-			AuthenticationResultHandler authenticationResultHandler,
-			CustomAuthenticationFailureHandler authenticationFailureHandler, RsaEncryptionService rsaEncryptionService,
-			CustomApiConfig customApiConfig, ADServerDetailsService adServerDetailsService) {
+								  AuthenticationResultHandler authenticationResultHandler,
+								  CustomAuthenticationFailureHandler authenticationFailureHandler, RsaEncryptionService rsaEncryptionService,
+								  CustomApiConfig customApiConfig, ADServerDetailsService adServerDetailsService,
+								  AuthTypesConfigService authTypesConfigService) {
 		super();
 		setAuthenticationSuccessHandler(authenticationResultHandler);
 		setAuthenticationFailureHandler(authenticationFailureHandler);
@@ -74,6 +79,7 @@ public class LdapLoginRequestFilter extends UsernamePasswordAuthenticationFilter
 		this.rsaEncryptionService = rsaEncryptionService;
 		this.customApiConfig = customApiConfig;
 		this.adServerDetailsService = adServerDetailsService;
+		this.authTypesConfigService = authTypesConfigService;
 	}
 
 	/**
@@ -85,6 +91,12 @@ public class LdapLoginRequestFilter extends UsernamePasswordAuthenticationFilter
 	 */
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
+
+		AuthTypeStatus authTypesStatus = authTypesConfigService.getAuthTypesStatus();
+		if (authTypesStatus != null && !authTypesStatus.isAdLogin()){
+			throw new AuthenticationServiceException("Active Directory login is disabled");
+		}
+
 		if (!request.getMethod().equals("POST")) {
 			throw new AuthenticationServiceException("Authentication method not supported: " + request.getMethod());
 		}

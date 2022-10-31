@@ -833,6 +833,7 @@ db.getCollection('kpi_master').insert(
     "aggregationCriteria": "average",
     "isAdditionalFilterSupport": false,
     "calculateMaturity": true,
+    "hideOverallFilter" : true,
     "maturityRange": ["-20","20-40","40-60","60-80","80-"]
   },
   {
@@ -947,6 +948,7 @@ db.getCollection('kpi_master').insert(
     "aggregationCriteria": "sum",
     "isAdditionalFilterSupport": false,
     "calculateMaturity": true,
+    "hideOverallFilter" : true,
     "maturityRange": ["-100","100-50","50-30","30-10","10-"]
   },
   {
@@ -1027,6 +1029,7 @@ db.getCollection('kpi_master').insert(
     "aggregationCriteria": "average",
     "isAdditionalFilterSupport": false,
     "calculateMaturity": true,
+    "hideOverallFilter" : true,
     "maturityRange": ["-50","50-30","30-20","20-10","10-"]
   },
   {
@@ -1351,6 +1354,7 @@ db.getCollection('kpi_master').insert(
     "aggregationCriteria": "average",
     "isAdditionalFilterSupport": true,
     "calculateMaturity": true,
+    "hideOverallFilter" : true,
     "maturityRange": ["-10","10-8","8-5","5-3","3-"]
   },
   {
@@ -1417,6 +1421,7 @@ db.getCollection('kpi_master').insert(
     "aggregationCriteria": "average",
     "isAdditionalFilterSupport": false,
     "calculateMaturity": true,
+    "hideOverallFilter" : true,
     "maturityRange": ["-16","16-8","8-4","4-2","2-"]
   },
   {
@@ -1481,6 +1486,7 @@ db.getCollection('kpi_master').insert(
     "aggregationCriteria": "average",
     "isAdditionalFilterSupport": false,
     "calculateMaturity": true,
+    "hideOverallFilter" : true,
     "maturityRange": ["-2","2-4","4-8","8-16","16-"]
   },
   {
@@ -1547,6 +1553,7 @@ db.getCollection('kpi_master').insert(
     "aggregationCriteria": "average",
     "isAdditionalFilterSupport": false,
     "calculateMaturity": true,
+    "hideOverallFilter" : true,
     "maturityRange": ["-45","45-30","30-15","15-5","5-"]
   },
   {
@@ -2252,6 +2259,7 @@ db.getCollection('kpi_master').insert(
     "showTrend": true,
     "isAdditionalFilterSupport": false,
     "calculateMaturity": true,
+    "hideOverallFilter" : true,
     "maturityRange": ["-20","20-40","40-60","60-80","80-"]
   },
   {
@@ -2362,6 +2370,7 @@ db.getCollection('kpi_master').insert(
     "aggregationCriteria": "sum",
     "isAdditionalFilterSupport": false,
     "calculateMaturity": true,
+    "hideOverallFilter" : true,
     "maturityRange": ["-100","100-50","50-30","30-10","10-"]
   },
   {
@@ -2552,6 +2561,7 @@ db.getCollection('kpi_master').insert(
     "aggregationCriteria": "average",
     "isAdditionalFilterSupport": false,
     "calculateMaturity": true,
+    "hideOverallFilter" : true,
     "maturityRange": ["-45","45-30","30-15","15-5","5-"]
   },
   {
@@ -2618,6 +2628,7 @@ db.getCollection('kpi_master').insert(
     "aggregationCriteria": "sum",
     "isAdditionalFilterSupport": false,
     "calculateMaturity": true,
+    "hideOverallFilter" : true,
     "maturityRange": ["-2","2-4","4-8","8-16","16-"]
   },
   {

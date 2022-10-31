@@ -82,5 +82,19 @@ public interface UserInfoRepository extends CrudRepository<UserInfo, ObjectId> {
 	 */
 	void deleteByUsername(String userName);
 
+	/**
+	 * Find by authType and authorities in
+	 * @param authType authType
+	 * @param roles roles
+	 * @return list of users
+	 */
+	List<UserInfo> findByAuthTypeAndAuthoritiesIn(String authType, List<String> roles);
 
+
+	/**
+	 * find all the users by auth type
+	 * @param authType auth types
+	 * @return list of users
+	 */
+    List<UserInfo> findByAuthType(String authType);
 }

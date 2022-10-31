@@ -48,6 +48,11 @@ public enum JiraFeature {
 	 */
 	STATUS("status"),
 	/**
+	 * Test Case Status jira feature.
+	 */
+	TEST_CASE_STATUS("testCaseStatus"),
+
+	/**
 	 * Sprint id jira feature.
 	 */
 	SPRINT_ID("sprintID"),
