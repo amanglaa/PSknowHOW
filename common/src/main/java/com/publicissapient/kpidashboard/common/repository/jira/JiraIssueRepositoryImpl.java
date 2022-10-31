@@ -601,7 +601,6 @@ public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom {// NO
 		query.fields().include(NUMBER);
 		query.fields().include("name");
 		query.fields().include("url");
-		System.out.println(operations.find(query, JiraIssue.class));
 		Set<JiraIssue> jiraIssueSet = new HashSet<>(operations.find(query, JiraIssue.class));
 		for(JiraIssue jiraIssue : jiraIssueSet) {
 			jiraIssueMap = new JiraIssueMap(jiraIssue.getNumber(), jiraIssue.getName(), jiraIssue.getUrl());
