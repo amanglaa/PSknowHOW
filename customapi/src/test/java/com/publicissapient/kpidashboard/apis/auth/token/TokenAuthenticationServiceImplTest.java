@@ -22,13 +22,16 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -212,6 +215,16 @@ public class TokenAuthenticationServiceImplTest {
 		when(authenticationService.getLoggedInUser()).thenReturn("SUPERADMIN");
 		List<RoleWiseProjects> result = service.refreshToken(request, response);
 		assertEquals(result.size(), 0);
+	}
+
+	@Test
+	public void invalidateAuthToken(){
+
+		List<String> users = Arrays.asList("Test");
+		doNothing().when(userTokenReopository).deleteByUserNameIn(users);
+
+		service.invalidateAuthToken(users);
+		verify(userTokenReopository, times(1)).deleteByUserNameIn(users);
 	}
 
 }

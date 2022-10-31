@@ -91,6 +91,10 @@ public interface UserInfoRepository extends CrudRepository<UserInfo, ObjectId> {
 	List<UserInfo> findByAuthTypeAndAuthoritiesIn(String authType, List<String> roles);
 
 
-
-
+	/**
+	 * find all the users by auth type
+	 * @param authType auth types
+	 * @return list of users
+	 */
+    List<UserInfo> findByAuthType(String authType);
 }

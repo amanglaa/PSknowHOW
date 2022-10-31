@@ -269,6 +269,11 @@ public class KpiHelperService { // NOPMD
 
 		List<SprintWiseStory> sprintWiseStoryList = jiraIssueRepository.findIssuesGroupBySprint(mapOfFilters,
 				uniqueProjectMap, kpiRequest.getFilterToShowOnTrend(), DEV);
+		List<JiraIssue> issuesBySprintAndType = jiraIssueRepository.findIssuesBySprintAndType(mapOfFilters,
+				uniqueProjectMap);
+		List<JiraIssue> storyListWoDrop = new ArrayList<>();
+		KpiHelperService.getDefectsWithoutDrop(droppedDefects, issuesBySprintAndType, storyListWoDrop);
+		removeRejectedStoriesFromSprint(sprintWiseStoryList, storyListWoDrop);
 		// Filter stories fetched in above query to get stories that have DOD
 		// status
 		List<String> storyIdList = new ArrayList<>();
@@ -347,6 +352,11 @@ public class KpiHelperService { // NOPMD
 
 		List<SprintWiseStory> sprintWiseStoryList = jiraIssueRepository.findIssuesGroupBySprint(mapOfFilters,
 				uniqueProjectMap, kpiRequest.getFilterToShowOnTrend(), DEV);
+		List<JiraIssue> issuesBySprintAndType = jiraIssueRepository.findIssuesBySprintAndType(mapOfFilters,
+				uniqueProjectMap);
+		List<JiraIssue> storyListWoDrop = new ArrayList<>();
+		KpiHelperService.getDefectsWithoutDrop(droppedDefects, issuesBySprintAndType, storyListWoDrop);
+		removeRejectedStoriesFromSprint(sprintWiseStoryList, storyListWoDrop);
 		// Filter stories fetched in above query to get stories that have DOD
 		// status
 		List<String> storyIdList = new ArrayList<>();
@@ -1256,6 +1266,15 @@ public class KpiHelperService { // NOPMD
 				defectListWoDropSet.add(jiraIssue);
 			}
 		}
+	}
+
+	public static void removeRejectedStoriesFromSprint(List<SprintWiseStory> sprintWiseStories,
+												 List<JiraIssue> acceptedStories) {
+
+		Set<String> acceptedStoryIds = acceptedStories.stream().map(JiraIssue::getNumber).collect(Collectors.toSet());
+
+		sprintWiseStories.forEach(sprintWiseStory -> sprintWiseStory.getStoryList()
+				.removeIf(storyId -> !acceptedStoryIds.contains(storyId)));
 	}
 
 }

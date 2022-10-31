@@ -202,7 +202,7 @@ public final class JiraProcessorUtil {
                         sprint.setState(valueAsStr);
                         break;
                     case RAPIDVIEWID:
-                        sprint.setOriginBoardId(valueAsStr);
+                       // sprint.setOriginBoardId(valueAsStr);
                         break;
                     case NAME:
                         sprint.setSprintName(valueAsStr);
@@ -223,7 +223,7 @@ public final class JiraProcessorUtil {
                         sprint.setGoal(valueAsStr);
                         break;
 					case BOARDID:
-						sprint.setOriginBoardId(valueAsStr);
+						//sprint.setOriginBoardId(valueAsStr);
 						break;
                     default:
                         break;
@@ -249,7 +249,7 @@ public final class JiraProcessorUtil {
             } else {
 				boardId = jsonNode.get(RAPIDVIEWID).asText();
             }
-            sprint.setOriginBoardId(boardId);
+           // sprint.setOriginBoardId(boardId);
             sprint.setSprintName(jsonNode.get(NAME) == null ? null : jsonNode.get(NAME).asText());
             sprint.setStartDate(
                     jsonNode.get(STARTDATE) == null ? null : convertToNewFormat(jsonNode.get(STARTDATE).asText()));
