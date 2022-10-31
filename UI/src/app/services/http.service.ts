@@ -91,7 +91,7 @@ import { UserAccessApprovalResponseDTO, UserAccessReqPayload } from '../model/us
     private basicConfigUrl = this.baseUrl + '/api/basicconfigs';
     private connectionUrl = this.baseUrl + '/api/connections';
     private fieldMappingsUrl = this.baseUrl + '/api/tools';
-
+    private getAllBoardsUrl = this.baseUrl + '/api/jira/board';
     private getHierarchyLevelsUrl = this.baseUrl + '/api/hierarchylevels';
 
     /** Download EMM Excel Sheet Url */
@@ -612,6 +612,11 @@ import { UserAccessApprovalResponseDTO, UserAccessReqPayload } from '../model/us
     /** Delete Connection */
     deleteConnection(connection) {
         return this.http.delete(this.connectionUrl + `/${connection.id}`);
+    }
+
+    /** Fetch list of boards for a project key on JIRA config */
+    getAllBoards(boardQueryData) {
+        return this.http.post(this.getAllBoardsUrl, boardQueryData);
     }
 
     /** Get all Tool Configs */

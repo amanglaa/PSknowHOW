@@ -21,7 +21,17 @@ package com.publicissapient.kpidashboard.apis.common.service.impl;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -422,12 +432,18 @@ public class KpiHelperService { // NOPMD
 
 		List<SprintDetails> sprintDetails = sprintRepository.findBySprintIDIn(sprintList);
 		Set<String> totalIssue = new HashSet<>();
-		sprintDetails.stream().forEach(sprintDetail -> {
-			if (CollectionUtils.isNotEmpty(sprintDetail.getTotalIssues())) {
-				totalIssue.addAll(sprintDetail.getTotalIssues());
-			}
+		if(CollectionUtils.isNotEmpty(sprintDetails)) {
+			sprintDetails.stream().forEach(sprintDetail -> {
+				if (CollectionUtils.isNotEmpty(sprintDetail.getTotalIssues())) {
+					totalIssue.addAll(KpiDataHelper.getIssuesIdListBasedOnTypeFromSprintDetails(sprintDetail,
+							CommonConstant.TOTAL_ISSUES));
+				}
 
-		});
+			});
+		} else {
+			mapOfFilters.put(JiraFeature.SPRINT_ID.getFieldValueInFeature(),
+					sprintList.stream().distinct().collect(Collectors.toList()));
+		}
 
 		/** additional filter **/
 		KpiDataHelper.createAdditionalFilterMap(kpiRequest, mapOfFilters, Constant.SCRUM, DEV, flterHelperService);
@@ -435,8 +451,14 @@ public class KpiHelperService { // NOPMD
 		mapOfFilters.put(JiraFeature.BASIC_PROJECT_CONFIG_ID.getFieldValueInFeature(),
 				basicProjectConfigIds.stream().distinct().collect(Collectors.toList()));
 
-		resultListMap.put(SPRINTVELOCITYKEY,
-				jiraIssueRepository.findIssueByNumber(mapOfFilters, totalIssue, uniqueProjectMap));
+		if (CollectionUtils.isNotEmpty(totalIssue)) {
+			resultListMap.put(SPRINTVELOCITYKEY,
+					jiraIssueRepository.findIssueByNumber(mapOfFilters, totalIssue, uniqueProjectMap));
+		} else {
+			List<JiraIssue> sprintVelocityList = jiraIssueRepository.findIssuesBySprintAndType(mapOfFilters,
+					uniqueProjectMap);
+			resultListMap.put(SPRINTVELOCITYKEY, sprintVelocityList);
+		}
 		resultListMap.put(SPRINT_WISE_SPRINTDETAILS, sprintDetails);
 
 		return resultListMap;

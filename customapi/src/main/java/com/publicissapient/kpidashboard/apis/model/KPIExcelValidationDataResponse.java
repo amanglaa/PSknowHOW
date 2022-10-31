@@ -18,6 +18,7 @@
 
 package com.publicissapient.kpidashboard.apis.model;
 
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -36,6 +37,8 @@ public class KPIExcelValidationDataResponse {
 
     private String kpiName;
     private String kpiId;
+    @JsonProperty("excelData")
+    private List<KPIExcelData> excelData;
 
     /**
      * The Map of sprint and data.
@@ -96,5 +99,15 @@ public class KPIExcelValidationDataResponse {
     public void setKpiId(String kpiId) {
         this.kpiId = kpiId;
     }
+
+	public List<KPIExcelData> getExcelData() {
+		return excelData;
+	}
+
+	public void setExcelData(List<KPIExcelData> excelData) {
+		this.excelData = excelData;
+	}
+    
+    
 
 }

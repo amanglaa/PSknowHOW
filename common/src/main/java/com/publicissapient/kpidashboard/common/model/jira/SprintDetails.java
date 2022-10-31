@@ -48,16 +48,16 @@ public class SprintDetails extends BasicModel {
 	private String endDate;
 	private String completeDate;
 	private String activatedDate;
-	private String originBoardId;
+	private List<String> originBoardId;
 	private String goal;
 	private ObjectId basicProjectConfigId;
 	private ObjectId processorId;
-	private List<String> completedIssues;
-	private List<String> notCompletedIssues;
-	private List<String> puntedIssues;
-	private List<String> completedIssuesAnotherSprint;
+	private List<SprintIssue> completedIssues;
+	private List<SprintIssue> notCompletedIssues;
+	private List<SprintIssue> puntedIssues;
+	private List<SprintIssue> completedIssuesAnotherSprint;
 	private List<String> addedIssues;
-	private List<String> totalIssues;
+	private List<SprintIssue> totalIssues;
 	
 	@Override
 	public boolean equals(Object o) {

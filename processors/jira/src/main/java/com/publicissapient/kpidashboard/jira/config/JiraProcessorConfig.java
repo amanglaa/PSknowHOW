@@ -63,5 +63,7 @@ public class JiraProcessorConfig {
 	private String jiraServerSprintReportApi;
 	private String jiraDirectTicketLinkKey;
 	private String jiraCloudDirectTicketLinkKey;
-
+	private String jiraSprintByBoardUrlApi;
+	private String jiraEpicApi;
+	private Integer sprintReportCountToBeFetched;
 }

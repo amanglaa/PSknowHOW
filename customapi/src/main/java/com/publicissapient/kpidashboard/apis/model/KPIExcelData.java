@@ -16,20 +16,42 @@
  *
  ******************************************************************************/
 
-package com.publicissapient.kpidashboard.jira.adapter.impl.async;
+package com.publicissapient.kpidashboard.apis.model;
 
-import com.atlassian.jira.rest.client.api.JiraRestClient;
-import com.atlassian.jira.rest.client.api.SearchRestClient;
-import com.publicissapient.kpidashboard.jira.adapter.atlassianbespoke.client.CustomAsynchronousIssueRestClient;
 
-public interface ProcessorJiraRestClient extends JiraRestClient {
-    /**
-     * Gets Processor Search Client
-     *
-     * @return the com.atlassian.jira.rest.client.api handling search (e.g. JQL)
-     */
-    SearchRestClient getProcessorSearchClient();
+import java.util.Map;
 
-    CustomAsynchronousIssueRestClient getCustomIssueClient();
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-    }
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+/**
+ * Represents the Excel Data for KPIs
+ */
+
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class KPIExcelData {
+
+	@JsonProperty("Sprint Name")
+	private String sprintName;
+	
+	@JsonProperty("Story ID")
+	private String storyId;
+	
+	@JsonProperty("Issue Description")
+	private String issueDesc;
+	
+	@JsonProperty("url")
+	private String issueUrl;
+	
+	@JsonProperty("Linked Defects")
+	private Map<String,String> linkedDefects;
+}
