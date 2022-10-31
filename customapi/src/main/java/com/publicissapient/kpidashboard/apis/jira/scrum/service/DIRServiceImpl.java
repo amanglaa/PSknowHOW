@@ -32,18 +32,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.publicissapient.kpidashboard.apis.common.service.impl.KpiHelperService;
-import com.publicissapient.kpidashboard.apis.config.CustomApiConfig;
 import com.publicissapient.kpidashboard.apis.enums.Filters;
 import com.publicissapient.kpidashboard.apis.enums.KPICode;
 import com.publicissapient.kpidashboard.apis.enums.KPISource;
 import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
 import com.publicissapient.kpidashboard.apis.jira.service.JiraKPIService;
+import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
 import com.publicissapient.kpidashboard.apis.model.KpiElement;
 import com.publicissapient.kpidashboard.apis.model.KpiRequest;
 import com.publicissapient.kpidashboard.apis.model.Node;
 import com.publicissapient.kpidashboard.apis.model.TreeAggregatorDetail;
+import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
 import com.publicissapient.kpidashboard.common.model.application.DataCount;
-import com.publicissapient.kpidashboard.common.model.application.ValidationData;
 import com.publicissapient.kpidashboard.common.model.jira.JiraIssue;
 import com.publicissapient.kpidashboard.common.model.jira.SprintWiseStory;
 
@@ -65,9 +65,6 @@ public class DIRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 
 	@Autowired
 	private KpiHelperService kpiHelperService;
-
-	@Autowired
-	private CustomApiConfig customApiConfig;
 
 	/**
 	 * {@inheritDoc}
@@ -174,8 +171,9 @@ public class DIRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 				Collectors.toMap(SprintWiseStory::getSprint, SprintWiseStory::getSprintName, (name1, name2) -> name1));
 
 		Map<Pair<String, String>, Double> sprintWiseDIRMap = new HashMap<>();
-		Map<String, ValidationData> validationDataMap = new HashMap<>();
+
 		Map<Pair<String, String>, Map<String, Integer>> sprintWiseHowerMap = new HashMap<>();
+		List<KPIExcelData> excelData = new ArrayList<>();
 		sprintWiseMap.forEach((sprint, sprintWiseStories) -> {
 			List<JiraIssue> sprintWiseDefectList = new ArrayList<>();
 
@@ -194,20 +192,18 @@ public class DIRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 					&& CollectionUtils.isNotEmpty(sprintWiseStories)) {
 				dirForCurrentLeaf = ((double) defectList.size() / totalStoryIdList.size()) * 100;
 			}
-
 			sprintWiseDefectList.addAll(defectList);
-
-			String validationDataKey = sprintIdSprintNameMap.get(sprint.getValue());
-
-			populateValidationDataObject(kpiElement, requestTrackerId, validationDataKey, validationDataMap,
-					totalStoryIdList, defectList);
-
+			
+			//if for populating excel data 
+			if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
+				String sprintName = sprintIdSprintNameMap.get(sprint.getValue());
+				KPIExcelUtility.populateDirExcelData(sprintName, totalStoryIdList, defectList, excelData);
+			}
 			sprintWiseDIRMap.put(sprint, dirForCurrentLeaf);
 			setHowerMap(sprintWiseHowerMap, sprint, totalStoryIdList, sprintWiseDefectList);
 		});
 
 		sprintLeafNodeList.forEach(node -> {
-
 			String trendLineName = node.getProjectFilter().getName();
 			String currentSprintComponentId = node.getSprintFilter().getId();
 			Pair<String, String> currentNodeIdentifier = Pair
@@ -237,6 +233,7 @@ public class DIRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 
 			trendValueList.add(dataCount);
 		});
+		kpiElement.setExcelData(excelData);
 	}
 
 	/**
@@ -266,37 +263,6 @@ public class DIRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 			howerMap.put(STORY, 0);
 		}
 		sprintWiseHowerMap.put(sprint, howerMap);
-	}
-
-	/**
-	 * This method populates KPI Element with Validation data. It will be
-	 * triggered only for request originated to get Excel data.
-	 * 
-	 * @param kpiElement
-	 *            KpiElement
-	 * @param requestTrackerId
-	 *            request id
-	 * @param validationDataKey
-	 *            validation data key
-	 * @param validationDataMap
-	 *            validation data map
-	 * @param storyIdList
-	 *            story id list
-	 * @param sprintWiseDefectList
-	 *            sprints defect list
-	 */
-	private void populateValidationDataObject(KpiElement kpiElement, String requestTrackerId, String validationDataKey,
-			Map<String, ValidationData> validationDataMap, List<String> storyIdList,
-			List<JiraIssue> sprintWiseDefectList) {
-
-		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-			ValidationData validationData = new ValidationData();
-			validationData.setStoryKeyList(storyIdList);
-			validationData.setDefectKeyList(
-					sprintWiseDefectList.stream().map(JiraIssue::getNumber).collect(Collectors.toList()));
-			validationDataMap.put(validationDataKey, validationData);
-			kpiElement.setMapOfSprintAndData(validationDataMap);
-		}
 	}
 
 	@Override
