@@ -199,8 +199,10 @@ public class JiraOnlineRunnable implements Runnable {// NOPMD
 	}
 	private void collectSprintReportData(JiraAdapter jiraAdapter, ProjectConfFieldMapping projectConfig) {
 		log.info("START - SprintReport fetching start");
-		sprintClient.createSprintDetailBasedOnBoard(projectConfig, jiraAdapter);
-		log.info("END - SprintReport fetching start");
+		if(!projectConfig.isKanban()) {
+			sprintClient.createSprintDetailBasedOnBoard(projectConfig, jiraAdapter);
+		}
+		log.info("END - SprintReport fetching End");
 	}
 
 		/**

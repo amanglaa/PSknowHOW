@@ -34,6 +34,7 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -566,10 +567,13 @@ public class OnlineAdapter implements JiraAdapter {
 
 	private void populateMetaData(JSONObject entityDataJson, ProjectConfFieldMapping projectConfig) {
 		JiraIssueMetadata jiraIssueMetadata = new JiraIssueMetadata();
-		jiraIssueMetadata.setIssueTypeMap(getMetaDataMap((JSONObject) entityDataJson.get("types"),"typeName"));
-		jiraIssueMetadata.setStatusMap(getMetaDataMap((JSONObject) entityDataJson.get("statuses"),"statusName"));
-		jiraIssueMetadata.setPriorityMap(getMetaDataMap((JSONObject) entityDataJson.get("priorities"),"priorityName"));
-		projectConfig.setJiraIssueMetadata(jiraIssueMetadata);
+		if (Objects.nonNull(entityDataJson)) {
+			jiraIssueMetadata.setIssueTypeMap(getMetaDataMap((JSONObject) entityDataJson.get("types"), "typeName"));
+			jiraIssueMetadata.setStatusMap(getMetaDataMap((JSONObject) entityDataJson.get("statuses"), "statusName"));
+			jiraIssueMetadata
+					.setPriorityMap(getMetaDataMap((JSONObject) entityDataJson.get("priorities"), "priorityName"));
+			projectConfig.setJiraIssueMetadata(jiraIssueMetadata);
+		}
 	}
 
 	private Map<String,String> getMetaDataMap(JSONObject object,String fieldName){
