@@ -304,8 +304,6 @@ export class JiraConfigComponent implements OnInit {
       this.clearSonarForm();
       this.updateSonarConnectionTypeAndVersionList(connection.cloudEnv);
       this.enableDisableOrganizationKey(connection.cloudEnv);
-
-
     }
 
     if (this.urlParam === 'AzurePipeline') {
@@ -316,7 +314,9 @@ export class JiraConfigComponent implements OnInit {
       }
     }
 
-
+    if (this.urlParam === 'Jira') {
+      this.isLoading = false;
+    }
   }
 
   enableDisableOrganizationKey(cloudEnv) {
@@ -384,7 +384,7 @@ export class JiraConfigComponent implements OnInit {
   }
   getConnectionList(toolName) {
     this.loading = true;
-    this.isLoading = true;
+    // this.isLoading = true;
     this.http.getAllConnectionTypeBased(toolName).subscribe((response) => {
       this.loading = false;
       if (response && response['success']) {
@@ -437,7 +437,7 @@ export class JiraConfigComponent implements OnInit {
   };
 
   checkBoards = () => {
-    if (this.isLoading || !this.boardsData || !this.boardsData.length) {
+    if (!this.boardsData || !this.boardsData.length) {
       return true;
     }
     return false;
@@ -447,7 +447,7 @@ export class JiraConfigComponent implements OnInit {
     if (this.selectedConnection && this.selectedConnection.id) {
       const postData = {};
       this.showLoadingOnFormElement('boards');
-      this.isLoading = true;
+      // this.isLoading = true;
       postData['connectionId'] = this.selectedConnection.id;
       postData['projectKey'] = this.toolForm.controls['projectKey'].value;
       postData['boardType'] = this.selectedProject['Type'];
@@ -461,18 +461,17 @@ export class JiraConfigComponent implements OnInit {
           this.toolForm.controls['boards'].value.forEach((val) => {
             this.boardsData = this.boardsData.filter((data) => (data.boardId + '') !== (val.boardId + ''));
           });
-          this.isLoading = false;
         } else {
           this.messenger.add({
             severity: 'error',
             summary:
               'No boards found for the selected Project Key.',
           });
-          this.hideLoadingOnFormElement('boards');
-          this.isLoading = false;
-          this.boardsData = [];
-          this.toolForm.controls['boards'].setValue([]);
         }
+        this.hideLoadingOnFormElement('boards');
+        this.isLoading = false;
+        this.boardsData = [];
+        this.toolForm.controls['boards'].setValue([]);
       });
 
     } else {
