@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -188,17 +189,18 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 							sprintIssues);
 				});
 			} else {
-				//todo
+				// for azure board sprint details collections empty so that we have to prepare data from jira issue
 				Map<String, List<JiraIssue>> projectWiseJiraIssues = allJiraIssue.stream()
 						.collect(Collectors.groupingBy(JiraIssue::getBasicProjectConfigId));
 				projectWiseJiraIssues.forEach((basicProjectConfigId, projectWiseIssuesList) -> {
 					Map<String, List<JiraIssue>> sprintWiseJiraIssues = projectWiseIssuesList.stream()
+							.filter(jiraIssue -> Objects.nonNull(jiraIssue.getSprintID()))
 							.collect(Collectors.groupingBy(JiraIssue::getSprintID));
-					sprintWiseJiraIssues.forEach((sprintId, sprintWiseIssuesList) -> {
-						sprintWiseIssues.put(Pair.of(basicProjectConfigId, sprintId), sprintWiseIssuesList);
-					});
+					sprintWiseJiraIssues.forEach((sprintId, sprintWiseIssuesList) -> sprintWiseIssues
+							.put(Pair.of(basicProjectConfigId, sprintId), sprintWiseIssuesList));
 				});
 			}
+			// end : for azure board sprint details collections empty so that we have to prepare data from jira issue.
 		}
 
 		Map<String, ValidationData> validationDataMap = new HashMap<>();
