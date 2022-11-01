@@ -123,6 +123,19 @@ pipeline {
               }
           }
       }
+      stage('Pushing Anchore scan report') {
+        when{
+            expression { env.SCAN_DOCKER_IMAGE == 'true' }
+         }
+         steps {
+              withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: env.awss3credentialsid, secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']
+              {
+                sh """
+                    ls ${JENKINS_HOME}/jobs/${JOB_NAME}/builds/${BUILD_NUMBER}/archive/AnchoreReport.${JOB_NAME}_${BUILD_NUMBER}
+                """
+              }
+          }
+      }
       stage('Deploy') {
         when{
             expression { env.DEPLOY }
