@@ -48,6 +48,8 @@ import com.publicissapient.kpidashboard.apis.model.KpiElement;
 import com.publicissapient.kpidashboard.apis.model.KpiRequest;
 import com.publicissapient.kpidashboard.apis.model.Node;
 import com.publicissapient.kpidashboard.apis.model.TreeAggregatorDetail;
+import com.publicissapient.kpidashboard.apis.util.KpiDataHelper;
+import com.publicissapient.kpidashboard.common.constant.CommonConstant;
 import com.publicissapient.kpidashboard.common.model.application.DataCount;
 import com.publicissapient.kpidashboard.common.model.jira.JiraIssue;
 import com.publicissapient.kpidashboard.common.model.jira.SprintDetails;
@@ -114,7 +116,8 @@ public class WorkRemainingServiceImpl extends JiraKPIService<Integer, List<Objec
 			String sprintId = leafNode.getSprintFilter().getId();
 			SprintDetails sprintDetails = sprintRepository.findBySprintID(sprintId);
 			if (null != sprintDetails) {
-				List<String> notCompletedIssues = sprintDetails.getNotCompletedIssues();
+				List<String> notCompletedIssues = KpiDataHelper.getIssuesIdListBasedOnTypeFromSprintDetails(sprintDetails,
+						CommonConstant.NOT_COMPLETED_ISSUES);
 				if (CollectionUtils.isNotEmpty(notCompletedIssues)) {
 					List<JiraIssue> issueList = jiraIssueRepository
 							.findByNumberInAndBasicProjectConfigId(notCompletedIssues, basicProjectConfigId);
@@ -130,7 +133,7 @@ public class WorkRemainingServiceImpl extends JiraKPIService<Integer, List<Objec
 	 * sprint level.
 	 * 
 	 * @param sprintLeafNodeList
-	 * @param trendValueList
+	 * @param trendValue
 	 * @param kpiElement
 	 * @param kpiRequest
 	 */
@@ -210,17 +213,17 @@ public class WorkRemainingServiceImpl extends JiraKPIService<Integer, List<Objec
 			data.add(overAllCount);
 			data.add(overAllStPoints);
 			data.add(overAllHours);
-			IterationKpiValue OverAllIterationKpiValue = new IterationKpiValue(OVERALL, OVERALL, data);
-			iterationKpiValues.add(OverAllIterationKpiValue);
+			IterationKpiValue overAllIterationKpiValue = new IterationKpiValue(OVERALL, OVERALL, data);
+			iterationKpiValues.add(overAllIterationKpiValue);
 
 			// Create kpi level filters
 			IterationKpiFiltersOptions filter1 = new IterationKpiFiltersOptions(SEARCH_BY_ISSUE_TYPE, issueTypes);
 			IterationKpiFiltersOptions filter2 = new IterationKpiFiltersOptions(SEARCH_BY_PRIORITY, statuses);
-			IterationKpiFilters IterationKpiFilters = new IterationKpiFilters(filter1, filter2);
+			IterationKpiFilters iterationKpiFilters = new IterationKpiFilters(filter1, filter2);
 			// Modal Heads Options
 			List<String> modalHeads = Arrays.asList(MODAL_HEAD_ISSUE_ID, MODAL_HEAD_ISSUE_DESC);
 			trendValue.setValue(iterationKpiValues);
-			kpiElement.setFilters(IterationKpiFilters);
+			kpiElement.setFilters(iterationKpiFilters);
 			kpiElement.setSprint(latestSprint.getName());
 			kpiElement.setModalHeads(modalHeads);
 			kpiElement.setTrendValueList(trendValue);

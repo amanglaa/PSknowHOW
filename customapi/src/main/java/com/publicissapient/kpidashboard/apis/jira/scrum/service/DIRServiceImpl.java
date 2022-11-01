@@ -271,7 +271,7 @@ public class DIRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 	/**
 	 * This method populates KPI Element with Validation data. It will be
 	 * triggered only for request originated to get Excel data.
-	 * 
+	 *
 	 * @param kpiElement
 	 *            KpiElement
 	 * @param requestTrackerId

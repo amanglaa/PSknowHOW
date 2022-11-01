@@ -29,20 +29,22 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections.CollectionUtils;
+import com.atlassian.jira.rest.client.api.domain.Issue;
+import com.google.common.collect.ImmutableList;
+import com.publicissapient.kpidashboard.common.model.jira.BoardDetails;
+import com.publicissapient.kpidashboard.common.model.jira.SprintIssue;
+import com.publicissapient.kpidashboard.jira.client.jiraprojectmetadata.JiraIssueMetadata;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -68,10 +70,13 @@ import com.publicissapient.kpidashboard.jira.config.JiraProcessorConfig;
 import com.publicissapient.kpidashboard.jira.model.JiraToolConfig;
 import com.publicissapient.kpidashboard.jira.model.ProjectConfFieldMapping;
 import com.publicissapient.kpidashboard.jira.util.JiraConstants;
-import com.publicissapient.kpidashboard.jira.util.JiraProcessorUtil;
 
 import io.atlassian.util.concurrent.Promise;
 import lombok.extern.slf4j.Slf4j;
+
+import static com.atlassian.jira.rest.client.api.IssueRestClient.Expandos.CHANGELOG;
+import static com.atlassian.jira.rest.client.api.IssueRestClient.Expandos.NAMES;
+import static com.atlassian.jira.rest.client.api.IssueRestClient.Expandos.SCHEMA;
 
 /**
  * Default JIRA client which interacts with Java JIRA API to extract data for
@@ -94,12 +99,14 @@ public class OnlineAdapter implements JiraAdapter {
 	private static final String ADDED_ISSUES="issueKeysAddedDuringSprint";
 	private static final String NOT_COMPLETED_ISSUES="issuesNotCompletedInCurrentSprint";
 	private static final String KEY="key";
-	
+	private static final String ENTITY_DATA ="entityData";
+	private static final String PRIORITYID="priorityId";
+	private static final String STATUSID="statusId";
+
+	private static final String TYPEID="typeId";
 
 	private JiraProcessorConfig jiraProcessorConfig;
-
 	private AesEncryptionService aesEncryptionService;
-
 	private ProcessorJiraRestClient client;
 
 	public OnlineAdapter() {
@@ -136,9 +143,9 @@ public class OnlineAdapter implements JiraAdapter {
 	 * @return list of issues
 	 */
 	@Override
-	public SearchResult getIssues(ProjectConfFieldMapping projectConfig,
-			Map<String, LocalDateTime> startDateTimeByIssueType, String userTimeZone, int pageStart,
-			boolean dataExist) {
+	public SearchResult getIssues(BoardDetails boardDetails, ProjectConfFieldMapping projectConfig,
+								  String startDateTimeByIssueType, String userTimeZone, int pageStart,
+								  boolean dataExist) {
 		SearchResult searchResult = null;
 
 		if (client == null) {
@@ -146,25 +153,12 @@ public class OnlineAdapter implements JiraAdapter {
 		} else {
 			String query = StringUtils.EMPTY;
 			try {
-				Map<String, String> startDateTimeStrByIssueType = new HashMap<>();
+				query = "updatedDate>='"+ startDateTimeByIssueType+"'";
 
-				startDateTimeByIssueType.forEach((type, localDateTime) -> {
-					ZonedDateTime zonedDateTime = localDateTime.atZone(ZoneId.of(userTimeZone));
-					DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
-					String dateTimeStr = zonedDateTime.format(formatter);
-					startDateTimeStrByIssueType.put(type, dateTimeStr);
-
-				});
-
-				query = (projectConfig.getJira().isQueryEnabled()
-						? JiraProcessorUtil.processJql(projectConfig.getJira().getBoardQuery(),
-								startDateTimeStrByIssueType, dataExist)
-						: JiraProcessorUtil.createJql(projectConfig.getJira().getProjectKey(),
-								startDateTimeStrByIssueType));
 				log.info("jql= " + query);
 				Instant start = Instant.now();
 
-				Promise<SearchResult> promisedRs = client.getProcessorSearchClient().searchJql(query,
+				Promise<SearchResult> promisedRs = client.getCustomIssueClient().searchBoardIssue(boardDetails.getBoardId(),query,
 						jiraProcessorConfig.getPageSize(), pageStart, JiraConstants.ISSUE_FIELD_SET);
 				searchResult = promisedRs.claim();
 				Instant finish = Instant.now();
@@ -186,6 +180,16 @@ public class OnlineAdapter implements JiraAdapter {
 		}
 
 		return searchResult;
+	}
+
+	public List<Issue> getEpicIssues(List<String> epicKeyList) {
+		List<Issue> issueList = new ArrayList<>();
+		epicKeyList.forEach(epicKey -> {
+			Promise<Issue> promise = client.getCustomIssueClient().
+					getIssue(epicKey, ImmutableList.of(SCHEMA, NAMES, CHANGELOG));
+			issueList.add(promise.claim());
+		});
+		return issueList;
 	}
 
 	/**
@@ -477,7 +481,7 @@ public class OnlineAdapter implements JiraAdapter {
 				URLConnection connection;
 
 				connection = url.openConnection();
-				getSprintReport(getDataFromServer(projectConfig, (HttpURLConnection) connection),sprintDetails);	
+				getSprintReport(getDataFromServer(projectConfig, (HttpURLConnection) connection),sprintDetails,projectConfig);
 			}
 		log.info("End sprint report api. Sprint Id : {} , Board Id : {}",sprintId,boardId);
 		} catch (RestClientException rce) {
@@ -505,41 +509,48 @@ public class OnlineAdapter implements JiraAdapter {
 
 	}
 	
-	private void getSprintReport(String sprintReportObj,SprintDetails sprintDetails) {
+	private void getSprintReport(String sprintReportObj,SprintDetails sprintDetails,ProjectConfFieldMapping projectConfig) {
 		if (StringUtils.isNotBlank(sprintReportObj)) {
 			JSONArray completedIssuesJson = new JSONArray();
 			JSONArray notCompletedIssuesJson = new JSONArray();
 			JSONArray puntedIssuesJson = new JSONArray();
 			JSONArray completedIssuesAnotherSprintJson = new JSONArray();
 			JSONObject addedIssuesJson = new JSONObject();
-	
-			List<String> completedIssues = new ArrayList<>();
-			List<String> notCompletedIssues = new ArrayList<>();
-			List<String> puntedIssues = new ArrayList<>();
-			List<String> completedIssuesAnotherSprint = new ArrayList<>();
-			List<String> addedIssues = new ArrayList<>();
-			List<String> totalIssues =new ArrayList<>();
-			
+			JSONObject entityDataJson = new JSONObject();
+
+
+
+			List<SprintIssue> completedIssues = Optional.ofNullable(sprintDetails.getCompletedIssues()).orElse(new ArrayList<>());
+			List<SprintIssue> notCompletedIssues = Optional.ofNullable(sprintDetails.getNotCompletedIssues()).orElse(new ArrayList<>());
+			List<SprintIssue> puntedIssues = Optional.ofNullable(sprintDetails.getPuntedIssues()).orElse(new ArrayList<>());
+			List<SprintIssue> completedIssuesAnotherSprint = Optional.ofNullable(sprintDetails.getCompletedIssuesAnotherSprint())
+					.orElse(new ArrayList<>());
+			List<String> addedIssues = Optional.ofNullable(sprintDetails.getAddedIssues()).orElse(new ArrayList<>());
+			List<SprintIssue> totalIssues = Optional.ofNullable(sprintDetails.getTotalIssues()).orElse(new ArrayList<>());
 			try {
 				JSONObject obj = (JSONObject)new JSONParser().parse(sprintReportObj);
 				if(null!=obj) {
-					JSONObject contentObj=(JSONObject)obj.get(CONTENTS);
-					completedIssuesJson=(JSONArray)contentObj.get(COMPLETED_ISSUES);
-					notCompletedIssuesJson=(JSONArray)contentObj.get(NOT_COMPLETED_ISSUES);
-					puntedIssuesJson=(JSONArray)contentObj.get(PUNTED_ISSUES);
-					completedIssuesAnotherSprintJson=(JSONArray)contentObj.get(COMPLETED_ISSUES_ANOTHER_SPRINT);
-					addedIssuesJson=(JSONObject)contentObj.get(ADDED_ISSUES);
+					JSONObject contentObj = (JSONObject) obj.get(CONTENTS);
+					completedIssuesJson = (JSONArray) contentObj.get(COMPLETED_ISSUES);
+					notCompletedIssuesJson = (JSONArray) contentObj.get(NOT_COMPLETED_ISSUES);
+					puntedIssuesJson = (JSONArray) contentObj.get(PUNTED_ISSUES);
+					completedIssuesAnotherSprintJson = (JSONArray) contentObj.get(COMPLETED_ISSUES_ANOTHER_SPRINT);
+					addedIssuesJson = (JSONObject) contentObj.get(ADDED_ISSUES);
+					entityDataJson = (JSONObject) contentObj.get(ENTITY_DATA);
 				}
-				setIssues(completedIssuesJson, completedIssues, totalIssues);
+
+				populateMetaData(entityDataJson,projectConfig);
+
+				setIssues(completedIssuesJson, completedIssues, totalIssues, projectConfig);
 				
-				setIssues(notCompletedIssuesJson, notCompletedIssues, totalIssues);
+				setIssues(notCompletedIssuesJson, notCompletedIssues, totalIssues, projectConfig);
 				
-				setPuntedCompletedAnotherSprint(puntedIssuesJson, puntedIssues);
+				setPuntedCompletedAnotherSprint(puntedIssuesJson, puntedIssues, projectConfig);
 				
-				setPuntedCompletedAnotherSprint(completedIssuesAnotherSprintJson, completedIssuesAnotherSprint);
+				setPuntedCompletedAnotherSprint(completedIssuesAnotherSprintJson, completedIssuesAnotherSprint, projectConfig);
 				
 				addedIssues = setAddedIssues(addedIssuesJson, addedIssues);
-				
+
 				sprintDetails.setCompletedIssues(completedIssues);
 				sprintDetails.setNotCompletedIssues(notCompletedIssues);
 				sprintDetails.setCompletedIssuesAnotherSprint(completedIssuesAnotherSprint);
@@ -551,6 +562,31 @@ public class OnlineAdapter implements JiraAdapter {
 				log.error("Parser exception when parsing statuses", pe);
 			}
 		}
+	}
+
+	private void populateMetaData(JSONObject entityDataJson, ProjectConfFieldMapping projectConfig) {
+		JiraIssueMetadata jiraIssueMetadata = new JiraIssueMetadata();
+		if (Objects.nonNull(entityDataJson)) {
+			jiraIssueMetadata.setIssueTypeMap(getMetaDataMap((JSONObject) entityDataJson.get("types"), "typeName"));
+			jiraIssueMetadata.setStatusMap(getMetaDataMap((JSONObject) entityDataJson.get("statuses"), "statusName"));
+			jiraIssueMetadata
+					.setPriorityMap(getMetaDataMap((JSONObject) entityDataJson.get("priorities"), "priorityName"));
+			projectConfig.setJiraIssueMetadata(jiraIssueMetadata);
+		}
+	}
+
+	private Map<String,String> getMetaDataMap(JSONObject object,String fieldName){
+		Map<String,String> map = new HashMap<>();
+		if(null != object){
+			object.keySet().forEach(key->{
+				JSONObject innerObj = (JSONObject) object.get(key);
+				Object fieldObject = innerObj.get(fieldName);
+				if(null != fieldObject){
+					map.put(key.toString(),fieldObject.toString());
+				}
+			});
+		}
+		return map;
 	}
 
 	/**
@@ -572,30 +608,165 @@ public class OnlineAdapter implements JiraAdapter {
 	 * @param puntedIssues
 	 */
 	@SuppressWarnings("unchecked")
-	private void setPuntedCompletedAnotherSprint(JSONArray puntedIssuesJson, List<String> puntedIssues) {
+	private void setPuntedCompletedAnotherSprint(JSONArray puntedIssuesJson, List<SprintIssue> puntedIssues
+			,ProjectConfFieldMapping projectConfig) {
 		puntedIssuesJson.forEach(puntedObj->{
 			JSONObject punObj = (JSONObject) puntedObj;
 			if(null!=punObj) {
-				puntedIssues.add((String)punObj.get(KEY));
+				SprintIssue issue = getSprintIssue(punObj,projectConfig);
+				puntedIssues.add(issue);
 			}
 		});
 	}
 
+	private SprintIssue getSprintIssue(JSONObject obj, ProjectConfFieldMapping projectConfig) {
+		SprintIssue issue = new SprintIssue();
+		issue.setNumber(obj.get(KEY).toString());
+
+		Optional<Connection> connectionOptional = projectConfig.getJira().getConnection();
+		boolean isCloudEnv = connectionOptional.map(Connection::isCloudEnv).orElse(false);
+		if(isCloudEnv){
+			issue.setPriority(getOptionalString(obj, "priorityName"));
+			issue.setStatus(getOptionalString(obj, "statusName"));
+			issue.setTypeName(getOptionalString(obj, "typeName"));
+		}else {
+			issue.setPriority(getName(projectConfig,PRIORITYID,obj));
+			issue.setStatus(getName(projectConfig,STATUSID,obj));
+			issue.setTypeName(getName(projectConfig,TYPEID,obj));
+		}
+		Object StoryPointObject = getStatistics((JSONObject) obj.get("estimateStatistic"),
+				"statFieldValue","value");
+		Object timeEstimateObject = getStatistics((JSONObject) obj.get("trackingStatistic"),
+				"statFieldValue","value");
+		issue.setEstimate(timeEstimateObject == null? null:timeEstimateObject.toString());
+		issue.setStoryPoints(StoryPointObject == null? null:Double.valueOf(StoryPointObject.toString()));
+		return issue;
+	}
+
+	private String getName(ProjectConfFieldMapping projectConfig,String entityDataKey,JSONObject jsonObject){
+		String name = null;
+		Object obj = jsonObject.get(entityDataKey);
+		if(null != obj){
+			JiraIssueMetadata metadata = projectConfig.getJiraIssueMetadata();
+			switch (entityDataKey){
+				case PRIORITYID:
+					name = metadata.getPriorityMap().getOrDefault(obj.toString(),null);
+					break;
+				case STATUSID:
+					name = metadata.getStatusMap().getOrDefault(obj.toString(),null);
+					break;
+				case TYPEID:
+					name = metadata.getIssueTypeMap().getOrDefault(obj.toString(),null);
+					break;
+				default:
+					break;
+			}
+		}
+		return name;
+	}
 	/**
-	 * @param completedIssuesJson
-	 * @param completedIssues
+	 * @param projectConfig
+	 * @param issues
+	 * @param projectConfig
 	 * @param totalIssues
 	 */
 	@SuppressWarnings("unchecked")
-	private void setIssues(JSONArray issuesJson, List<String> issues,
-			List<String> totalIssues) {
+	private void setIssues(JSONArray issuesJson, List<SprintIssue> issues,
+			List<SprintIssue> totalIssues,ProjectConfFieldMapping projectConfig) {
 		issuesJson.forEach(jsonObj->{
 			JSONObject obj = (JSONObject) jsonObj;
 			if(null!=obj) {
-				issues.add((String)obj.get(KEY));
-				totalIssues.add((String)obj.get(KEY));
+				SprintIssue issue = getSprintIssue(obj,projectConfig);
+				issues.add(issue);
+				totalIssues.add(issue);
 			}
 		});
 	}
 
+	private Object getStatistics(JSONObject object,String objectName,String fieldName){
+		Object resultObj = null;
+		if(null != object){
+			JSONObject innerObj = (JSONObject) object.get(objectName);
+			if(null != innerObj){
+				resultObj = innerObj.get(fieldName);
+			}
+		}
+		return resultObj;
+	}
+
+
+	public List<Issue> getEpic(ProjectConfFieldMapping projectConfig, String boardId) {
+		List<String> epicList = new ArrayList<>();
+		try {
+			JiraToolConfig jiraToolConfig = projectConfig.getJira();
+			if (null != jiraToolConfig) {
+				boolean isLast = false;
+				int startIndex = 0;
+				do {
+					URL url = getEpicUrl(projectConfig, boardId, startIndex);
+					URLConnection connection;
+					connection = url.openConnection();
+					String jsonResponse = getDataFromServer(projectConfig, (HttpURLConnection) connection);
+					isLast = populateData(jsonResponse, epicList, projectConfig, boardId);
+					startIndex = epicList.size() + 1;
+				}while(!isLast);
+			}
+		} catch (RestClientException rce) {
+			log.error("Client exception when loading sprint report", rce);
+			throw rce;
+		} catch (MalformedURLException mfe) {
+			log.error("Malformed url for loading sprint report", mfe);
+		} catch (IOException ioe) {
+			log.error("IOException", ioe);
+		}
+		return getEpicIssues(epicList);
+	}
+
+	private boolean populateData(String sprintReportObj, List<String> epicList,
+											 ProjectConfFieldMapping projectConfig, String boardId) {
+		boolean isLast = true;
+		if (StringUtils.isNotBlank(sprintReportObj)) {
+			JSONArray valuesJson = new JSONArray();
+			try {
+				JSONObject obj = (JSONObject)new JSONParser().parse(sprintReportObj);
+				if(null!=obj) {
+					valuesJson = (JSONArray)obj.get("values");
+				}
+				getEpic(valuesJson, epicList, projectConfig, boardId);
+				isLast = Boolean.valueOf(obj.get("isLast").toString());
+			} catch (ParseException pe) {
+				log.error("Parser exception when parsing statuses", pe);
+			}
+		}
+		return isLast;
+	}
+
+	private void getEpic(JSONArray valuesJson,List<String> sprintDetailsSet,ProjectConfFieldMapping projectConfig,String boardId) {
+		valuesJson.forEach(values -> {
+			JSONObject sprintJson = (JSONObject) values;
+			if (null != sprintJson) {
+				sprintDetailsSet.add(sprintJson.get(KEY).toString());
+			}
+		});
+	}
+
+	private URL getEpicUrl(ProjectConfFieldMapping projectConfig, String boardId, int startIndex)
+			throws MalformedURLException {
+
+		Optional<Connection> connectionOptional = projectConfig.getJira().getConnection();
+		boolean isCloudEnv = connectionOptional.map(Connection::isCloudEnv).orElse(false);
+		String serverURL = jiraProcessorConfig.getJiraEpicApi();
+
+		serverURL = serverURL.replace("{startAtIndex}",String.valueOf(startIndex)).replace("{boardId}",boardId);
+		String baseUrl = connectionOptional.map(Connection::getBaseUrl).orElse("");
+		return new URL(baseUrl + (baseUrl.endsWith("/") ? "" : "/")  + serverURL);
+	}
+
+	private String getOptionalString(final JSONObject jsonObject, final String attributeName) {
+		final Object res = jsonObject.get(attributeName);
+		if (res == null) {
+			return null;
+		}
+		return res.toString();
+	}
 }

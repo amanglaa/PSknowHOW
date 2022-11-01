@@ -29,6 +29,7 @@ import { ChipsModule } from 'primeng/chips';
 import { AccordionModule } from 'primeng/accordion';
 import { FieldsetModule } from 'primeng/fieldset';
 import { PasswordModule } from 'primeng/password';
+import { AutoCompleteModule } from 'primeng/autocomplete';
 // import { ButtonModule, SharedModule } from 'primeng/primeng';
 import { TableModule } from 'primeng/table';
 import { AutoCompleteComponent } from '../component/auto-complete/auto-complete.component';
@@ -90,7 +91,8 @@ import { CompareStartEndWithCurrentDatePipe } from './pipes/compareStartEndWithC
     SharedModuleModule,
     CardModule,
     DialogModule,
-    TabViewModule
+    TabViewModule,
+    AutoCompleteModule
   ],
   declarations: [
     ConfigComponent,

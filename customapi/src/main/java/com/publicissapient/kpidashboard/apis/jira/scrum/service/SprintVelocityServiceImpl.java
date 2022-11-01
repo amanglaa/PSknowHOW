@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -41,6 +42,8 @@ import com.publicissapient.kpidashboard.apis.model.KpiElement;
 import com.publicissapient.kpidashboard.apis.model.KpiRequest;
 import com.publicissapient.kpidashboard.apis.model.Node;
 import com.publicissapient.kpidashboard.apis.model.TreeAggregatorDetail;
+import com.publicissapient.kpidashboard.apis.util.KpiDataHelper;
+import com.publicissapient.kpidashboard.common.constant.CommonConstant;
 import com.publicissapient.kpidashboard.common.model.application.DataCount;
 import com.publicissapient.kpidashboard.common.model.application.ValidationData;
 import com.publicissapient.kpidashboard.common.model.jira.JiraIssue;
@@ -176,13 +179,28 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 
 		List<SprintDetails> sprintDetails = (List<SprintDetails>) sprintVelocityStoryMap.get(SPRINT_WISE_SPRINTDETAILS);
 
-		if (CollectionUtils.isNotEmpty(sprintDetails) && CollectionUtils.isNotEmpty(allJiraIssue)) {
-			sprintDetails.forEach(sd -> {
-				List<String> availableIssues = sd.getTotalIssues().stream().distinct().collect(Collectors.toList());
-				List<JiraIssue> sprintIssues = allJiraIssue.stream()
-						.filter(element -> availableIssues.contains(element.getNumber())).collect(Collectors.toList());
-				sprintWiseIssues.put(Pair.of(sd.getBasicProjectConfigId().toString(), sd.getSprintID()), sprintIssues);
-			});
+		if(CollectionUtils.isNotEmpty(allJiraIssue)) {
+			if (CollectionUtils.isNotEmpty(sprintDetails)) {
+				sprintDetails.forEach(sd -> {
+					List<String> totalIssues = KpiDataHelper.getIssuesIdListBasedOnTypeFromSprintDetails(sd,
+							CommonConstant.TOTAL_ISSUES);
+					List<JiraIssue> sprintIssues = allJiraIssue.stream().filter(element -> totalIssues.contains(element.getNumber())).collect(Collectors.toList());
+					sprintWiseIssues.put(Pair.of(sd.getBasicProjectConfigId().toString(), sd.getSprintID()),
+							sprintIssues);
+				});
+			} else {
+				//start : for azure board sprint details collections empty so that we have to prepare data from jira issue
+				Map<String, List<JiraIssue>> projectWiseJiraIssues = allJiraIssue.stream()
+						.collect(Collectors.groupingBy(JiraIssue::getBasicProjectConfigId));
+				projectWiseJiraIssues.forEach((basicProjectConfigId, projectWiseIssuesList) -> {
+					Map<String, List<JiraIssue>> sprintWiseJiraIssues = projectWiseIssuesList.stream()
+							.filter(jiraIssue -> Objects.nonNull(jiraIssue.getSprintID()))
+							.collect(Collectors.groupingBy(JiraIssue::getSprintID));
+					sprintWiseJiraIssues.forEach((sprintId, sprintWiseIssuesList) -> sprintWiseIssues
+							.put(Pair.of(basicProjectConfigId, sprintId), sprintWiseIssuesList));
+				});
+			}
+			// end : for azure board sprint details collections empty so that we have to prepare data from jira issue.
 		}
 
 		Map<String, ValidationData> validationDataMap = new HashMap<>();
@@ -199,8 +217,7 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 				List<JiraIssue> sprintJiraIssues = sprintWiseIssues.get(currentNodeIdentifier);
 				sprintVelocityForCurrentLeaf = sprintJiraIssues.stream()
 						.mapToDouble(ji -> Double.valueOf(ji.getEstimate())).sum();
-				populateValidationDataObject(kpiElement, requestTrackerId, validationDataMap, sprintJiraIssues,
-						kpiRequest.getFilterToShowOnTrend(), node);
+				populateValidationDataObject(kpiElement, requestTrackerId, validationDataMap, sprintJiraIssues, node);
 			}
 
 			setSprintWiseLogger(node.getSprintFilter().getName(), currentSprintLeafVelocityMap.get(SPRINTVELOCITYKEY),
@@ -226,12 +243,11 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 	 * @param kpiElement
 	 * @param requestTrackerId
 	 * @param validationDataMap
-	 * @param currentSprintLeafVelocityMap
-	 * @param filterToShowOnTrend
+	 * @param jiraIssues
 	 * @param node
 	 */
 	private void populateValidationDataObject(KpiElement kpiElement, String requestTrackerId,
-			Map<String, ValidationData> validationDataMap, List<JiraIssue> jiraIssues, String filterToShowOnTrend,
+			Map<String, ValidationData> validationDataMap, List<JiraIssue> jiraIssues,
 			Node node) {
 
 		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {

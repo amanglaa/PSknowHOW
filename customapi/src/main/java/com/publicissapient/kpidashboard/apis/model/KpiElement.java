@@ -100,6 +100,9 @@ public class KpiElement implements Serializable { // NOPMD
 	private transient IterationKpiFilters filters;
 	private String sprint;
 	private List<String> modalHeads;
+	
+	@JsonIgnore
+	private transient List<KPIExcelData> excelData;
 
 	public Integer getGroupId() {
 		return groupId;
@@ -793,4 +796,13 @@ public class KpiElement implements Serializable { // NOPMD
 		this.modalHeads = modalHeads;
 	}
 
+	public List<KPIExcelData> getExcelData() {
+		return excelData;
+	}
+
+	public void setExcelData(List<KPIExcelData> excelData) {
+		this.excelData = excelData;
+	}
+	
+	
 }
