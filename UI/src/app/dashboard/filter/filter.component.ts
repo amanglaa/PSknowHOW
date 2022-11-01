@@ -612,17 +612,25 @@ export class FilterComponent implements OnInit {
 
     getKpiOrderedList() {
         if (this.isEmptyObject(this.kpiListData)) {
-            this.httpService.getShowHideKpi().subscribe((response) => {
-                if (response.success === true) {
-                    this.kpiListData = response.data;
-                    this.service.setDashConfigData(this.kpiListData);
-                    this.navigateToSelectedTab();
-                    this.service.changedMainDashboardValueSub.next(this.kpiListData?.scrum[0].boardName);
-                    this.processKpiList();
-                }
-            }, error => {
-                this.messageService.add({ severity: 'error', summary: 'Error in fetching roles. Please try after some time.' });
-            });
+            this.kpiListData = this.service.getDashConfigData();
+            if (!this.kpiListData || !Object.keys(this.kpiListData).length) {
+                this.httpService.getShowHideKpi().subscribe((response) => {
+                    if (response.success === true) {
+                        this.kpiListData = response.data;
+                        this.service.setDashConfigData(this.kpiListData);
+                        this.navigateToSelectedTab();
+                        this.service.changedMainDashboardValueSub.next(this.kpiListData?.scrum[0].boardName);
+                        this.processKpiList();
+                    }
+                }, error => {
+                    this.messageService.add({ severity: 'error', summary: 'Error in fetching roles. Please try after some time.' });
+                });
+            } else {
+                this.navigateToSelectedTab();
+                this.service.changedMainDashboardValueSub.next(this.kpiListData?.scrum[0].boardName);
+                this.processKpiList();
+            }
+
         } else {
             this.processKpiList();
         }
