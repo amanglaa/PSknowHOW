@@ -129,8 +129,8 @@ pipeline {
          }
          steps {
               sh """
-			           scanpath=${JENKINS_HOME}/jobs/${JOB_NAME}/builds/${BUILD_NUMBER}/archive/AnchoreReport.${JOB_NAME}_${BUILD_NUMBER}
-                 aws s3 sync $scanpath s3://knowhow-prod-backup/ImageScanReport/knowhowcustomapi/${env.version}/
+			           ${JENKINS_HOME}/jobs/${JOB_NAME}/builds/${BUILD_NUMBER}/archive/AnchoreReport.${JOB_NAME}_${BUILD_NUMBER}
+                 aws s3 sync ${JENKINS_HOME}/jobs/${JOB_NAME}/builds/${BUILD_NUMBER}/archive/AnchoreReport.${JOB_NAME}_${BUILD_NUMBER}/ s3://knowhow-prod-backup/ImageScanReport/knowhow-${JOB_NAME}/${env.version}/
 			  """
           }
       }
