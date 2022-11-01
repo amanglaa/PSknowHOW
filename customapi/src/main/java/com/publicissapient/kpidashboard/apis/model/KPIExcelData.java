@@ -51,4 +51,17 @@ public class KPIExcelData {
 	
 	@JsonProperty("Linked Defects")
 	private Map<String,String> linkedDefects;
+
+	@JsonProperty("First Time Pass")
+	private String firstTimePass;
+
+	@JsonProperty("Escaped Defect")
+	private String escapedDefect;
+
+	@JsonProperty("Defect Removed")
+	private String removedDefect;
+
+	@JsonProperty("Defect id")
+	private Map<String,String> defectId;
+
 }

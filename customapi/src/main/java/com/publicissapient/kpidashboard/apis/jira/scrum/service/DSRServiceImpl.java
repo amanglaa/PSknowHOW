@@ -28,9 +28,12 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.publicissapient.kpidashboard.apis.common.service.impl.KpiHelperService;
+import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
+import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -57,7 +60,6 @@ import com.publicissapient.kpidashboard.apis.util.KpiDataHelper;
 import com.publicissapient.kpidashboard.common.constant.NormalizedJira;
 import com.publicissapient.kpidashboard.common.model.application.DataCount;
 import com.publicissapient.kpidashboard.common.model.application.FieldMapping;
-import com.publicissapient.kpidashboard.common.model.application.ValidationData;
 import com.publicissapient.kpidashboard.common.model.jira.JiraIssue;
 import com.publicissapient.kpidashboard.common.model.jira.SprintWiseStory;
 import com.publicissapient.kpidashboard.common.repository.jira.JiraIssueRepository;
@@ -230,8 +232,8 @@ public class DSRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 				Collectors.toMap(SprintWiseStory::getSprint, SprintWiseStory::getSprintName, (name1, name2) -> name1));
 		List<JiraIssue> totalDefects = (List<JiraIssue>) defectDataListMap.get(TOTALBUGKEY);
 		Map<Pair<String, String>, Double> sprintWiseDsrMap = new HashMap<>();
-		Map<String, ValidationData> validationDataMap = new HashMap<>();
 		Map<Pair<String, String>, Map<String, Integer>> sprintWiseHowerMap = new HashMap<>();
+		List<KPIExcelData> excelData = new ArrayList<>();
 
 		sprintWiseMap.forEach((sprint, sprintWiseStories) -> {
 
@@ -258,9 +260,13 @@ public class DSRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 			sprintWiseUatDefectList.addAll(subCategoryWiseUatBugList);
 			sprintWiseTotaldDefectList.addAll(subCategoryWiseTotalBugList);
 
-			String validationDataKey = sprintIdSprintNameMap.get(sprint.getValue());
-			populateValidationDataObject(kpiElement, requestTrackerId, validationDataMap, validationDataKey,
-					sprintWiseUatDefectList, sprintWiseTotaldDefectList);
+			//if for populating excel data
+			if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
+				Map<String, JiraIssue> totalBugList = subCategoryWiseTotalBugList.stream()
+						.collect(Collectors.toMap(JiraIssue::getNumber, Function.identity()));
+				String sprintName = sprintIdSprintNameMap.get(sprint.getValue());
+				KPIExcelUtility.populateDefectRelatedExcelData(sprintName, totalBugList, subCategoryWiseUatBugList, excelData, KPICode.DEFECT_SEEPAGE_RATE.getKpiId());
+			}
 			sprintWiseDsrMap.put(sprint, dSRForCurrentLeaf);
 			setHowerMap(sprintWiseHowerMap, sprint, sprintWiseUatDefectList, sprintWiseTotaldDefectList);
 		});
@@ -344,35 +350,6 @@ public class DSRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 		sprintWiseHowerMap.put(sprint, howerMap);
 	}
 
-	/**
-	 * Checks for API request source. If it is Excel it populates the validation
-	 * data node of the KPI element.
-	 * 
-	 * @param kpiElement
-	 * @param requestTrackerId
-	 * @param validationDataMap
-	 * @param key
-	 * @param sprintWiseUatBugList
-	 * @param sprintWiseTotalBugList
-	 */
-	private void populateValidationDataObject(KpiElement kpiElement, String requestTrackerId,
-			Map<String, ValidationData> validationDataMap, String key, List<JiraIssue> sprintWiseUatBugList,
-			List<JiraIssue> sprintWiseTotalBugList) {
-
-		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-
-			ValidationData validationData = new ValidationData();
-			validationData.setDefectKeyList(
-					sprintWiseUatBugList.stream().map(JiraIssue::getNumber).collect(Collectors.toList()));
-			validationData.setTotalDefectKeyList(
-					sprintWiseTotalBugList.stream().map(JiraIssue::getNumber).collect(Collectors.toList()));
-
-			validationDataMap.put(key, validationData);
-
-			kpiElement.setMapOfSprintAndData(validationDataMap);
-
-		}
-	}
 
 	@Override
 	public Double calculateKpiValue(List<Double> valueList, String kpiName) {

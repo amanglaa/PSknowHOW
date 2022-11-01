@@ -27,9 +27,12 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.publicissapient.kpidashboard.apis.common.service.impl.KpiHelperService;
+import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
+import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bson.types.ObjectId;
@@ -241,6 +244,7 @@ public class DREServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 		Map<Pair<String, String>, Double> sprintWiseDREMap = new HashMap<>();
 		Map<String, ValidationData> validationDataMap = new HashMap<>();
 		Map<Pair<String, String>, Map<String, Integer>> sprintWiseHowerMap = new HashMap<>();
+		List<KPIExcelData> excelData = new ArrayList<>();
 
 		sprintWiseMap.forEach((sprint, sprintWiseStories) -> {
 
@@ -282,7 +286,9 @@ public class DREServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 			sprintWiseClosedDefectList.addAll(subCategoryWiseClosedDefectList);
 			sprintWiseTotaldDefectList.addAll(subCategoryWiseTotaldDefectList);
 
-			populateValidationDataObject(kpiElement, requestTrackerId, storyDefectDataListMap, validationDataMap,
+
+
+			populateValidationDataObject(requestTrackerId, storyDefectDataListMap, excelData,
 					sprint, sprintWiseClosedDefectList, sprintWiseTotaldDefectList);
 
 			setSprintWiseLogger(sprint, totalStoryIdList, sprintWiseTotaldDefectList, sprintWiseClosedDefectList);
@@ -323,51 +329,26 @@ public class DREServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 		});
 	}
 
-	/**
-	 * This method check for API request source. If it is Excel it populates the
-	 * validation data node of the KPI element.
-	 * 
-	 * @param kpiElement
-	 *            root element in which validation data has to be populated
-	 * @param requestTrackerId
-	 *            needed to check the source
-	 * @param storyDefectDataListMap
-	 *            needed to get the sprintName
-	 * @param validationDataMap
-	 * @param sprint
-	 *            sprintId
-	 * @param sprintWiseClosedDefectList
-	 *            this maps with defects of the validation data.
-	 * @param sprintWiseTotaldDefectList
-	 *            this maps with the totalDefect of the validation data.
-	 */
-	@SuppressWarnings("unchecked")
-	private void populateValidationDataObject(KpiElement kpiElement, String requestTrackerId,
-			Map<String, Object> storyDefectDataListMap, Map<String, ValidationData> validationDataMap,
-			Pair<String, String> sprint, List<JiraIssue> sprintWiseClosedDefectList,
-			List<JiraIssue> sprintWiseTotaldDefectList) {
+
+	private void populateValidationDataObject( String requestTrackerId,
+											  Map<String, Object> storyDefectDataListMap, List<KPIExcelData> excelData,
+											  Pair<String, String> sprint, List<JiraIssue> sprintWiseClosedDefectList,
+											  List<JiraIssue> sprintWiseTotaldDefectList) {
 		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
 
 			Map<String, String> sprintWiseStoryNameMap = ((List<SprintWiseStory>) storyDefectDataListMap
 					.get(SPRINT_WISE_STORY_DATA)).stream()
-							.collect(Collectors.toMap(SprintWiseStory::getSprint, SprintWiseStory::getSprintName,
-									(name1, name2) -> name1));
+					.collect(Collectors.toMap(SprintWiseStory::getSprint, SprintWiseStory::getSprintName,
+							(name1, name2) -> name1));
 
-			ValidationData validationData = new ValidationData();
-			validationData.setDefectKeyList(
-					sprintWiseClosedDefectList.stream().map(JiraIssue::getNumber).collect(Collectors.toList()));
-			validationData.setTotalDefectKeyList(
-					sprintWiseTotaldDefectList.stream().map(JiraIssue::getNumber).collect(Collectors.toList()));
+				Map<String, JiraIssue> totalDefectList = sprintWiseTotaldDefectList.stream()
+						.collect(Collectors.toMap(JiraIssue::getNumber, Function.identity()));
 
-			String key = sprintWiseStoryNameMap.get(sprint.getValue());
-			if (!sprint.getKey().equals(sprint.getValue())
-					&& requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-
-				key = new StringBuilder().append(key).append(Constant.UNDERSCORE).append(sprint.getKey()).toString();
-			}
-			validationDataMap.put(key, validationData);
-
-			kpiElement.setMapOfSprintAndData(validationDataMap);
+				String sprintName = sprintWiseStoryNameMap.get(sprint.getValue());
+				if (!sprint.getKey().equals(sprint.getValue())) {
+					sprintName = new StringBuilder().append(sprintName).append(Constant.UNDERSCORE).append(sprint.getKey()).toString();
+				}
+				KPIExcelUtility.populateDefectRelatedExcelData(sprintName, totalDefectList, sprintWiseClosedDefectList, excelData,KPICode.DEFECT_REMOVAL_EFFICIENCY.getKpiId());
 
 		}
 	}

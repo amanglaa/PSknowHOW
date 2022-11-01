@@ -27,11 +27,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 
 import com.publicissapient.kpidashboard.apis.common.service.impl.KpiHelperService;
+import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
+import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -80,6 +83,7 @@ public class FirstTimePassRateServiceImpl extends JiraKPIService<Double, List<Ob
 	private static final String SPRINT_WISE_CLOSED_STORIES = "sprintWiseClosedStories";
 	private static final String HOVER_KEY_CLOSED_STORIES = "Closed Stories";
 	private static final String HOVER_KEY_FTP_STORIES = "FTP Stories";
+	private static final String ISSUE_DATA = "Issue Data";
 
 	private static final String DEV = "DeveloperKpi";
 
@@ -153,9 +157,11 @@ public class FirstTimePassRateServiceImpl extends JiraKPIService<Double, List<Ob
 		Map<String, String> sprintIdSprintNameMap = sprintWiseStoryList.stream().collect(
 				Collectors.toMap(SprintWiseStory::getSprint, SprintWiseStory::getSprintName, (name1, name2) -> name1));
 
+		Map<String,JiraIssue> issueData=(Map<String,JiraIssue>) resultMap.get(ISSUE_DATA);
+
 		Map<Pair<String, String>, Double> sprintWiseFTPRMap = new HashMap<>();
-		Map<String, ValidationData> validationDataMap = new HashMap<>();
 		Map<Pair<String, String>, Map<String, Integer>> sprintWiseHowerMap = new HashMap<>();
+		List<KPIExcelData> excelData = new ArrayList<>();
 		sprintWiseMap.forEach((sprint, sprintWiseStories) -> {
 			List<Double> addFilterFtprList = new ArrayList<>();
 			List<String> totalStoryIdList = new ArrayList<>();
@@ -172,10 +178,12 @@ public class FirstTimePassRateServiceImpl extends JiraKPIService<Double, List<Ob
 			}
 			addFilterFtprList.add(ftprForCurrentLeaf);
 
-			String validationDataKey = sprintIdSprintNameMap.get(sprint.getValue());
+			//if for populating excel data
+			if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
+				String sprintName = sprintIdSprintNameMap.get(sprint.getValue());
+				KPIExcelUtility.populateFTPRExcelData(sprintName, totalStoryIdList, ftpStoriesList, excelData,issueData);
+			}
 
-			populateValidationDataObject(kpiElement, requestTrackerId, validationDataKey, validationDataMap,
-					totalStoryIdList, ftpStoriesList);
 			double sprintWiseFtpr = calculateKpiValue(addFilterFtprList, KPICode.FIRST_TIME_PASS_RATE.getKpiId());
 			sprintWiseFTPRMap.put(sprint, sprintWiseFtpr);
 			setHowerMap(sprintWiseHowerMap, sprint, totalStoryIdList, ftpStoriesList);
@@ -211,21 +219,8 @@ public class FirstTimePassRateServiceImpl extends JiraKPIService<Double, List<Ob
 
 			trendValueList.add(dataCount);
 		});
+		kpiElement.setExcelData(excelData);
 
-	}
-
-	private void populateValidationDataObject(KpiElement kpiElement, String requestTrackerId, String validationDataKey,
-			Map<String, ValidationData> validationDataMap, List<String> storyIdList,
-			List<JiraIssue> sprintWiseFtpStoriesList) {
-
-		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-			ValidationData validationData = new ValidationData();
-			validationData.setStoryKeyList(storyIdList);
-			validationData.setFirstTimePassStories(
-					sprintWiseFtpStoriesList.stream().map(JiraIssue::getNumber).collect(Collectors.toList()));
-			validationDataMap.put(validationDataKey, validationData);
-			kpiElement.setMapOfSprintAndData(validationDataMap);
-		}
 	}
 
 	private void setHowerMap(Map<Pair<String, String>, Map<String, Integer>> sprintWiseHowerMap,
@@ -324,8 +319,16 @@ public class FirstTimePassRateServiceImpl extends JiraKPIService<Double, List<Ob
 
 		removeStoriesWithReturnTransaction(defectListWoDrop, storiesHistory);
 
+		List<String> storyIdList = new ArrayList<>();
+		sprintWiseStories.forEach(s -> storyIdList.addAll(s.getStoryList()));
+		Set<JiraIssue> issueData=jiraIssueRepository.findIssueAndDescByNumber(storyIdList);
+		Map<String, JiraIssue> issueMapping = issueData.stream()
+				.collect(Collectors.toMap(JiraIssue::getNumber, Function.identity()));
+
+
 		resultListMap.put(SPRINT_WISE_CLOSED_STORIES, sprintWiseStories);
 		resultListMap.put(FIRST_TIME_PASS_STORIES, defectListWoDrop);
+		resultListMap.put(ISSUE_DATA, issueMapping);
 		return resultListMap;
 	}
 
