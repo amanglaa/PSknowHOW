@@ -25,9 +25,12 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.publicissapient.kpidashboard.apis.appsetting.service.ConfigHelperService;
 import com.publicissapient.kpidashboard.common.model.application.FieldMapping;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -77,6 +80,7 @@ public class CreatedVsResolvedServiceImpl extends JiraKPIService<Double, List<Ob
 	private static final String CREATED_DEFECTS = "createdDefects";
 	private static final String RESOLVED_DEFECTS = "resolvedDefects";
 	private static final String DEV = "DeveloperKpi";
+	private static final String PROJECT_WISE_CLOSED_STORY_STATUS= "projectWiseClosedStoryStatus";
 
 	@Autowired
 	private CustomApiConfig customApiConfig;
@@ -92,6 +96,8 @@ public class CreatedVsResolvedServiceImpl extends JiraKPIService<Double, List<Ob
 
 	@Autowired
 	private KpiHelperService kpiHelperService;
+	@Autowired
+	private ConfigHelperService configHelperService;
 
 	/**
 	 * Gets Qualifier Type
@@ -155,7 +161,7 @@ public class CreatedVsResolvedServiceImpl extends JiraKPIService<Double, List<Ob
 		List<String> basicProjectConfigIds = new ArrayList<>();
 		Map<String, Map<String, Object>> uniqueProjectMap = new HashMap<>();
 		List<String> defectType = new ArrayList<>();
-
+		Map<String, List<String>> projectWiseClosedStatusMap = new HashMap<>();
 		leafNodeList.forEach(leaf -> {
 			ObjectId basicProjectConfigId = leaf.getProjectFilter().getBasicProjectConfigId();
 			Map<String, Object> mapOfProjectFilters = new LinkedHashMap<>();
@@ -166,6 +172,12 @@ public class CreatedVsResolvedServiceImpl extends JiraKPIService<Double, List<Ob
 			mapOfProjectFilters.put(JiraFeature.ISSUE_TYPE.getFieldValueInFeature(), defectType);
 			uniqueProjectMap.put(basicProjectConfigId.toString(), mapOfProjectFilters);
 
+			FieldMapping fieldMapping = configHelperService.getFieldMappingMap()
+					.get(basicProjectConfigId);
+			if (Optional.ofNullable(fieldMapping.getJiraIssueDeliverdStatus()).isPresent()) {
+				projectWiseClosedStatusMap.put(basicProjectConfigId.toString(),
+						fieldMapping.getJiraIssueDeliverdStatus().stream().distinct().collect(Collectors.toList()));
+			}
 		});
 
 		List<SprintDetails> sprintDetails = sprintRepository.findBySprintIDIn(sprintList);
@@ -184,9 +196,18 @@ public class CreatedVsResolvedServiceImpl extends JiraKPIService<Double, List<Ob
 		mapOfFilters.put(JiraFeature.BASIC_PROJECT_CONFIG_ID.getFieldValueInFeature(),
 				basicProjectConfigIds.stream().distinct().collect(Collectors.toList()));
 
-		resultListMap.put(CREATED_VS_RESOLVED_KEY,
-				jiraIssueRepository.findIssueByNumber(mapOfFilters, totalIssue, uniqueProjectMap));
-		resultListMap.put(SPRINT_WISE_SPRINTDETAILS, sprintDetails);
+		if (CollectionUtils.isNotEmpty(totalIssue)) {
+			resultListMap.put(CREATED_VS_RESOLVED_KEY,
+					jiraIssueRepository.findIssueByNumber(mapOfFilters, totalIssue, uniqueProjectMap));
+			resultListMap.put(SPRINT_WISE_SPRINTDETAILS, sprintDetails);
+		} else {
+			//start : for azure board sprint details collections put is empty due to we did not have required data of issues.
+			resultListMap.put(CREATED_VS_RESOLVED_KEY,
+					jiraIssueRepository.findIssuesBySprintAndType(mapOfFilters, uniqueProjectMap));
+			resultListMap.put(SPRINT_WISE_SPRINTDETAILS, new ArrayList<>());
+			//end : for azure board sprint details collections put is empty due to we did not have required data of issues.
+		}
+		resultListMap.put(PROJECT_WISE_CLOSED_STORY_STATUS, projectWiseClosedStatusMap);
 		setDbQueryLogger((List<JiraIssue>) resultListMap.get(CREATED_VS_RESOLVED_KEY));
 		return resultListMap;
 
@@ -254,19 +275,21 @@ public class CreatedVsResolvedServiceImpl extends JiraKPIService<Double, List<Ob
 							completedIssues);
 				});
 			} else {
-				//todo
-				//FieldMapping fieldMapping = configHelperService.getFieldMappingMap().get(basicProjectConfigId);
+				// for azure board sprint details collections empty so that we have to prepare data from jira issue
+				Map<String, List<String>> projectWiseClosedStatusMap = (Map<String, List<String>>) createdVsResolvedMap
+						.get(PROJECT_WISE_CLOSED_STORY_STATUS);
 				Map<String, List<JiraIssue>> projectWiseJiraIssues = allJiraIssue.stream()
 						.collect(Collectors.groupingBy(JiraIssue::getBasicProjectConfigId));
 				projectWiseJiraIssues.forEach((basicProjectConfigId, projectWiseIssuesList) -> {
 					Map<String, List<JiraIssue>> sprintWiseJiraIssues = projectWiseIssuesList.stream()
+							.filter(jiraIssue -> Objects.nonNull(jiraIssue.getSprintID()))
 							.collect(Collectors.groupingBy(JiraIssue::getSprintID));
-					sprintWiseJiraIssues.forEach((sprintId, totalIssues) -> {
-						sprintWiseCreatedIssues.put(Pair.of(basicProjectConfigId, sprintId), totalIssues);
-					});
+					sprintWiseJiraIssues.forEach((sprintId, totalIssues) -> 
+						sprintWiseCreatedIssues.put(Pair.of(basicProjectConfigId, sprintId), totalIssues));
+					List<String> closedStatus = projectWiseClosedStatusMap.get(basicProjectConfigId);
 					sprintWiseJiraIssues.forEach((sprintId, sprintWiseIssuesList) -> {
 						List<JiraIssue> completedIssues = sprintWiseIssuesList.stream()
-								.filter(jiraIssue -> jiraIssue.getStatus().equalsIgnoreCase("closed"))
+								.filter(jiraIssue -> closedStatus.contains(jiraIssue.getStatus()))
 								.collect(Collectors.toList());
 						sprintWiseClosedIssues.put(Pair.of(basicProjectConfigId, sprintId), completedIssues);
 					});
