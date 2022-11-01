@@ -242,7 +242,6 @@ public class DREServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 				.groupingBy(sws -> Pair.of(sws.getBasicProjectConfigId(), sws.getSprint()), Collectors.toList()));
 
 		Map<Pair<String, String>, Double> sprintWiseDREMap = new HashMap<>();
-		Map<String, ValidationData> validationDataMap = new HashMap<>();
 		Map<Pair<String, String>, Map<String, Integer>> sprintWiseHowerMap = new HashMap<>();
 		List<KPIExcelData> excelData = new ArrayList<>();
 
@@ -285,10 +284,7 @@ public class DREServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 			subCategoryWiseDREList.add(dreForCurrentLeaf);
 			sprintWiseClosedDefectList.addAll(subCategoryWiseClosedDefectList);
 			sprintWiseTotaldDefectList.addAll(subCategoryWiseTotaldDefectList);
-
-
-
-			populateValidationDataObject(requestTrackerId, storyDefectDataListMap, excelData,
+			populateExcelDataObject(requestTrackerId, storyDefectDataListMap, excelData,
 					sprint, sprintWiseClosedDefectList, sprintWiseTotaldDefectList);
 
 			setSprintWiseLogger(sprint, totalStoryIdList, sprintWiseTotaldDefectList, sprintWiseClosedDefectList);
@@ -327,10 +323,11 @@ public class DREServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 			trendValueList.add(dataCount);
 
 		});
+		kpiElement.setExcelData(excelData);
 	}
 
 
-	private void populateValidationDataObject( String requestTrackerId,
+	private void populateExcelDataObject( String requestTrackerId,
 											  Map<String, Object> storyDefectDataListMap, List<KPIExcelData> excelData,
 											  Pair<String, String> sprint, List<JiraIssue> sprintWiseClosedDefectList,
 											  List<JiraIssue> sprintWiseTotaldDefectList) {

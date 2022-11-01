@@ -19,6 +19,7 @@
 package com.publicissapient.kpidashboard.apis.model;
 
 
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -61,7 +62,28 @@ public class KPIExcelData {
 	@JsonProperty("Defect Removed")
 	private String removedDefect;
 
-	@JsonProperty("Defect id")
+	@JsonProperty("Defect Rejected")
+	private String rejectedDefect;
+
+	@JsonProperty("Priority")
+	private String priority;
+
+	@JsonProperty("Root Cause")
+	private List<String> rootCause;
+
+	@JsonProperty("Resolved")
+	private String resolvedTickets;
+
+	@JsonProperty("Defect ID")
 	private Map<String,String> defectId;
+
+	@JsonProperty("Created Defect ID")
+	private Map<String,String> createdDefectId;
+
+	@JsonProperty("Test Case ID")
+	private String testCaseId;
+
+	@JsonProperty("Automated")
+	private String automated;
 
 }

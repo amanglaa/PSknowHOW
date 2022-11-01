@@ -34,6 +34,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.publicissapient.kpidashboard.apis.common.service.impl.KpiHelperService;
+import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
+import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -285,7 +287,7 @@ public class RCAServiceImpl extends JiraKPIService<Long, List<Object>, Map<Strin
 				.groupingBy(sws -> Pair.of(sws.getBasicProjectConfigId(), sws.getSprint()), Collectors.toList()));
 
 		Map<Pair<String, String>, Map<String, Long>> sprintWiseRCAMap = new HashMap<>();
-		Map<String, ValidationData> validationDataMap = new HashMap<>();
+		List<KPIExcelData> excelData= new ArrayList<>();
 		// Assumption: There will be no sprint without any story. If yes, then a
 		// sprint will contain all defects.It is assumed that those defects will
 		// be linked with story. Otherwise if there will be a case where a
@@ -308,7 +310,7 @@ public class RCAServiceImpl extends JiraKPIService<Long, List<Object>, Map<Strin
 			Map<String, Long> rcaCountMap = sprintWiseDefectDataList.stream()
 					.flatMap(f -> f.getRootCauseList().stream())
 					.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
-			populateValidationDataObject(kpiElement, requestTrackerId, storyDefectDataListMap, validationDataMap,
+			populateExcelDataObject(requestTrackerId, storyDefectDataListMap, excelData,
 					sprint, sprintWiseDefectDataList);
 
 			setSprintWiseLogger(sprint, storyIdList, sprintWiseDefectDataList, rcaCountMap);
@@ -358,53 +360,32 @@ public class RCAServiceImpl extends JiraKPIService<Long, List<Object>, Map<Strin
 			});
 			mapTmp.get(node.getId()).setValue(dataCountMap);
 		});
+		kpiElement.setExcelData(excelData);
 	}
 
-	/**
-	 * This method check for API request source. If it is Excel it populates the
-	 * validation data node of the KPI element.
-	 * 
-	 * @param kpiElement
-	 * @param requestTrackerId
-	 * @param storyDefectDataListMap
-	 * @param validationDataMap
-	 * @param sprint
-	 * @param sprintWiseDefectDataList
-	 */
-	@SuppressWarnings(UNCHECKED)
-	private void populateValidationDataObject(KpiElement kpiElement, String requestTrackerId,
-			Map<String, Object> storyDefectDataListMap, Map<String, ValidationData> validationDataMap,
+	private void populateExcelDataObject(String requestTrackerId,
+			Map<String, Object> storyDefectDataListMap, List<KPIExcelData> excelData,
 			Pair<String, String> sprint, List<JiraIssue> sprintWiseDefectDataList) {
-		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
 
-			List<String> defectKeyList = new ArrayList<>();
-			List<String> rootCauseList = new ArrayList<>();
+		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
 
 			Map<String, String> sprintWiseStoryNameMap = ((List<SprintWiseStory>) storyDefectDataListMap
 					.get(SPRINT_WISE_STORY_DATA)).stream()
-							.collect(Collectors.toMap(SprintWiseStory::getSprint, SprintWiseStory::getSprintName,
-									(name1, mane2) -> name1));
+					.collect(Collectors.toMap(SprintWiseStory::getSprint, SprintWiseStory::getSprintName,
+							(name1, mane2) -> name1));
 
-			for (JiraIssue jiraIssue : sprintWiseDefectDataList) {
-
-				defectKeyList.add(jiraIssue.getNumber());
-				rootCauseList.addAll(jiraIssue.getRootCauseList());
+			String sprintName = sprintWiseStoryNameMap.get(sprint.getValue());
+			if (!sprint.getKey().equals(sprint.getValue())) {
+				sprintName = new StringBuilder().append(sprintName).append(Constant.UNDERSCORE).append(sprint.getKey()).toString();
 			}
+			KPIExcelUtility.populateDefectRelatedExcelData(sprintName, sprintWiseDefectDataList, excelData,KPICode.DEFECT_COUNT_BY_RCA.getKpiId());
 
-			ValidationData validationData = new ValidationData();
-			validationData.setDefectKeyList(defectKeyList);
-			validationData.setDefectRootCauseList(rootCauseList);
-
-			String key = sprintWiseStoryNameMap.get(sprint.getValue());
-			validationDataMap.put(key, validationData);
-
-			kpiElement.setMapOfSprintAndData(validationDataMap);
 		}
 	}
 
 	/**
 	 * Sets DB Query Logger
-	 * 
+	 *
 	 * @param storyIdList
 	 * @param defectLinkedWithSprint
 	 * @param removeStoryLinkedWithDefectFoundFromSprintLinkage
@@ -436,7 +417,7 @@ public class RCAServiceImpl extends JiraKPIService<Long, List<Object>, Map<Strin
 
 	/**
 	 * Sets Sprint Wise Logger
-	 * 
+	 *
 	 * @param sprint
 	 * @param storyIdList
 	 * @param sprintWiseDefectDataList

@@ -29,6 +29,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.publicissapient.kpidashboard.apis.common.service.impl.KpiHelperService;
+import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
+import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -285,7 +287,8 @@ public class DCServiceImpl extends JiraKPIService<Long, List<Object>, Map<String
 		Map<Pair<String, String>, Map<String, Long>> sprintWiseDCPriorityMap = new HashMap<>();
 		Map<Pair<String, String>, Integer> sprintWiseTDCMap = new HashMap<>();
 
-		Map<String, ValidationData> validationDataMap = new HashMap<>();
+
+		List<KPIExcelData> excelData= new ArrayList<>();
 
 		Set<String> projectWisePriorityList = new HashSet<>();
 		sprintWiseMap.forEach((sprintFilter, sprintWiseStories) -> {
@@ -302,7 +305,7 @@ public class DCServiceImpl extends JiraKPIService<Long, List<Object>, Map<String
 			Map<String, Long> priorityCountMap = KPIHelperUtil.setpriorityScrum(sprintWiseDefectDataList,
 					customApiConfig);
 			projectWisePriorityList.addAll(priorityCountMap.keySet());
-			populateValidationDataObject(kpiElement, requestTrackerId, storyDefectDataListMap, validationDataMap,
+			populateExcelDataObject( requestTrackerId, storyDefectDataListMap, excelData,
 					sprintFilter, sprintWiseDefectDataList);
 
 			setSprintWiseLogger(sprintFilter, storyIdList, sprintWiseDefectDataList, priorityCountMap);
@@ -346,6 +349,8 @@ public class DCServiceImpl extends JiraKPIService<Long, List<Object>, Map<String
 
 		});
 
+		kpiElement.setExcelData(excelData);
+
 	}
 
 	/**
@@ -376,57 +381,23 @@ public class DCServiceImpl extends JiraKPIService<Long, List<Object>, Map<String
 		return dataCount;
 	}
 
-	/**
-	 * This method check for API request source. If it is Excel it populates the
-	 * validation data node of the KPI element.
-	 * 
-	 * @param kpiElement
-	 *            KpiElement
-	 * @param requestTrackerId
-	 *            request id
-	 * @param storyDefectDataListMap
-	 *            map containing data fetched from DB
-	 * @param validationDataMap
-	 *            map to hold validation data
-	 * @param sprint
-	 *            unique key
-	 * @param sprintWiseDefectDataList
-	 *            list of defects tagged to story
-	 */
-	@SuppressWarnings(UNCHECKED)
-	private void populateValidationDataObject(KpiElement kpiElement, String requestTrackerId,
-			Map<String, Object> storyDefectDataListMap, Map<String, ValidationData> validationDataMap,
+	private void populateExcelDataObject(String requestTrackerId,
+			Map<String, Object> storyDefectDataListMap, List<KPIExcelData> excelData,
 			Pair<String, String> sprint, List<JiraIssue> sprintWiseDefectDataList) {
 
 		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-
-			List<String> defectKeyList = new ArrayList<>();
-			List<String> priorityList = new ArrayList<>();
 
 			Map<String, String> sprintWiseStoryNameMap = ((List<SprintWiseStory>) storyDefectDataListMap
 					.get(SPRINT_WISE_STORY_DATA)).stream()
 							.collect(Collectors.toMap(SprintWiseStory::getSprint, SprintWiseStory::getSprintName,
 									(name1, mane2) -> name1));
 
-			for (JiraIssue jiraIssue : sprintWiseDefectDataList) {
-
-				defectKeyList.add(jiraIssue.getNumber());
-				priorityList.add(jiraIssue.getPriority());
+			String sprintName = sprintWiseStoryNameMap.get(sprint.getValue());
+			if (!sprint.getKey().equals(sprint.getValue())) {
+				sprintName = new StringBuilder().append(sprintName).append(Constant.UNDERSCORE).append(sprint.getKey()).toString();
 			}
+			KPIExcelUtility.populateDefectRelatedExcelData(sprintName, sprintWiseDefectDataList, excelData,KPICode.DEFECT_COUNT_BY_PRIORITY.getKpiId());
 
-			ValidationData validationData = new ValidationData();
-			validationData.setDefectKeyList(defectKeyList);
-			validationData.setDefectPriorityList(priorityList);
-
-			String key = sprintWiseStoryNameMap.get(sprint.getValue());
-			if (!sprint.getKey().equals(sprint.getValue())
-					&& requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-
-				key = new StringBuilder().append(key).append(Constant.UNDERSCORE).append(sprint.getKey()).toString();
-			}
-			validationDataMap.put(key, validationData);
-
-			kpiElement.setMapOfSprintAndData(validationDataMap);
 		}
 	}
 

@@ -19,11 +19,14 @@
 package com.publicissapient.kpidashboard.apis.jira.scrum.service;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.core.Feature;
 
 import com.publicissapient.kpidashboard.apis.common.service.impl.KpiHelperService;
+import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
+import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -222,7 +225,7 @@ public class DRRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 				.groupingBy(sws -> Pair.of(sws.getBasicProjectConfigId(), sws.getSprint()), Collectors.toList()));
 
 		Map<Pair<String, String>, Double> sprintWiseDRRMap = new HashMap<>();
-		Map<String, ValidationData> validationDataMap = new HashMap<>();
+		List<KPIExcelData> excelData = new ArrayList<>();
 		Map<Pair<String, String>, Map<String, Integer>> sprintWiseHowerMap = new HashMap<>();
 
 		sprintWiseMap.forEach((sprint, sprintWiseStories) -> {
@@ -260,7 +263,7 @@ public class DRRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 			sprintWiseRejectedDefectList.addAll(sprintWiseRejectedDefects);
 			sprintWiseTotaldDefectList.addAll(sprintWiseTotaldDefects);
 
-			populateValidationDataObject(kpiElement, requestTrackerId, storyDefectDataListMap, validationDataMap,
+			populateExcelDataObject(requestTrackerId, storyDefectDataListMap, excelData,
 					sprint, sprintWiseRejectedDefectList, sprintWiseTotaldDefectList);
 
 			setSprintWiseLogger(sprint, totalStoryIdList, sprintWiseTotaldDefectList, sprintWiseRejectedDefectList);
@@ -311,21 +314,9 @@ public class DRRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 				.compareTo(node2.getSprintFilter().getStartDate()));
 	}
 
-	/**
-	 * Checks for API request source. If it is Excel it populates the validation
-	 * data node of the KPI element.
-	 * 
-	 * @param kpiElement
-	 * @param requestTrackerId
-	 * @param storyDefectDataListMap
-	 * @param validationDataMap
-	 * @param sprint
-	 * @param sprintWiseRejectedDefectList
-	 * @param sprintWiseTotaldDefectList
-	 */
-	@SuppressWarnings("unchecked")
-	private void populateValidationDataObject(KpiElement kpiElement, String requestTrackerId,
-			Map<String, Object> storyDefectDataListMap, Map<String, ValidationData> validationDataMap,
+
+	private void populateExcelDataObject( String requestTrackerId,
+			Map<String, Object> storyDefectDataListMap, List<KPIExcelData> excelData,
 			Pair<String, String> sprint, List<JiraIssue> sprintWiseRejectedDefectList,
 			List<JiraIssue> sprintWiseTotaldDefectList) {
 		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
@@ -335,21 +326,14 @@ public class DRRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 							.collect(Collectors.toMap(SprintWiseStory::getSprint, SprintWiseStory::getSprintName,
 									(name1, name2) -> name1));
 
-			ValidationData validationData = new ValidationData();
-			validationData.setRejectedDefectKeyList(
-					sprintWiseRejectedDefectList.stream().map(JiraIssue::getNumber).collect(Collectors.toList()));
-			validationData.setTotalDefectKeyList(
-					sprintWiseTotaldDefectList.stream().map(JiraIssue::getNumber).collect(Collectors.toList()));
+			Map<String, JiraIssue> totalDefectList = sprintWiseTotaldDefectList.stream()
+					.collect(Collectors.toMap(JiraIssue::getNumber, Function.identity()));
 
-			String key = sprintWiseStoryNameMap.get(sprint.getValue());
-			if (!sprint.getKey().equals(sprint.getValue())
-					&& requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-
-				key = new StringBuilder().append(key).append(Constant.UNDERSCORE).append(sprint.getKey()).toString();
+			String sprintName = sprintWiseStoryNameMap.get(sprint.getValue());
+			if (!sprint.getKey().equals(sprint.getValue())) {
+				sprintName = new StringBuilder().append(sprintName).append(Constant.UNDERSCORE).append(sprint.getKey()).toString();
 			}
-			validationDataMap.put(key, validationData);
-
-			kpiElement.setMapOfSprintAndData(validationDataMap);
+			KPIExcelUtility.populateDefectRelatedExcelData(sprintName, totalDefectList, sprintWiseRejectedDefectList, excelData,KPICode.DEFECT_REJECTION_RATE.getKpiId());
 		}
 	}
 

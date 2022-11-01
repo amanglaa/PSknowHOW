@@ -26,6 +26,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -43,14 +44,15 @@ import com.publicissapient.kpidashboard.apis.enums.KPISource;
 import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
 import com.publicissapient.kpidashboard.apis.filter.service.FilterHelperService;
 import com.publicissapient.kpidashboard.apis.jira.service.JiraKPIService;
+import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
 import com.publicissapient.kpidashboard.apis.model.KpiElement;
 import com.publicissapient.kpidashboard.apis.model.KpiRequest;
 import com.publicissapient.kpidashboard.apis.model.Node;
 import com.publicissapient.kpidashboard.apis.model.TreeAggregatorDetail;
+import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
 import com.publicissapient.kpidashboard.apis.util.KpiDataHelper;
 import com.publicissapient.kpidashboard.common.constant.NormalizedJira;
 import com.publicissapient.kpidashboard.common.model.application.DataCount;
-import com.publicissapient.kpidashboard.common.model.application.ValidationData;
 import com.publicissapient.kpidashboard.common.model.jira.JiraIssue;
 import com.publicissapient.kpidashboard.common.model.jira.SprintDetails;
 import com.publicissapient.kpidashboard.common.repository.jira.JiraIssueRepository;
@@ -247,7 +249,7 @@ public class CreatedVsResolvedServiceImpl extends JiraKPIService<Double, List<Ob
 			});
 		}
 
-		Map<String, ValidationData> validationDataMap = new HashMap<>();
+		List<KPIExcelData> excelData = new ArrayList<>();
 
 		sprintLeafNodeList.forEach(node -> {
 			// Leaf node wise data
@@ -268,8 +270,7 @@ public class CreatedVsResolvedServiceImpl extends JiraKPIService<Double, List<Ob
 				resolvedForCurrentLeaf = closedIssues.size();
 				hoverValue.put(CREATED_DEFECTS, createdIssues.size());
 				hoverValue.put(RESOLVED_DEFECTS, closedIssues.size());
-				populateValidationDataObject(kpiElement, requestTrackerId, validationDataMap, node, createdIssues,
-						closedIssues);
+				populateExcelDataObject(requestTrackerId, excelData, node, createdIssues, closedIssues);
 			}
 
 			log.debug("[CREATED-VS-RESOLVED-SPRINT-WISE][{}]. Created Vs Resolved for sprint {}  is {} - {}",
@@ -288,36 +289,22 @@ public class CreatedVsResolvedServiceImpl extends JiraKPIService<Double, List<Ob
 			trendValueList.add(dataCount);
 			mapTmp.get(node.getId()).setValue(new ArrayList<DataCount>(Arrays.asList(dataCount)));
 		});
+		kpiElement.setExcelData(excelData);
 	}
 
-	/**
-	 * Populates Validation Data Object
-	 * 
-	 * @param kpiElement
-	 * @param requestTrackerId
-	 * @param validationDataMap
-	 * @param totalCreatedTickets
-	 * @param totalResolvedTickets
-	 * @param node
-	 */
-	private void populateValidationDataObject(KpiElement kpiElement, String requestTrackerId,
-			Map<String, ValidationData> validationDataMap, Node node, List<JiraIssue> totalCreatedTickets,
-			List<JiraIssue> totalResolvedTickets) {
+	private void populateExcelDataObject(String requestTrackerId, List<KPIExcelData> excelData, Node node,
+			List<JiraIssue> totalCreatedTickets, List<JiraIssue> totalResolvedTickets) {
 
 		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
 
-			String keyForValidation = node.getSprintFilter().getName();
+			Map<String, JiraIssue> createdTicketMap = totalCreatedTickets.stream()
+					.collect(Collectors.toMap(JiraIssue::getNumber, Function.identity()));
 
-			ValidationData validationData = new ValidationData();
-
-			validationData.setCreatedTicketList(
-					totalCreatedTickets.stream().map(JiraIssue::getNumber).collect(Collectors.toList()));
-			validationData.setResolvedTickets(
-					totalResolvedTickets.stream().map(JiraIssue::getNumber).collect(Collectors.toList()));
-			validationDataMap.put(keyForValidation, validationData);
-
-			kpiElement.setMapOfSprintAndData(validationDataMap);
+			String sprintName = node.getSprintFilter().getName();
+			KPIExcelUtility.populateStoryRelatedExcelData(sprintName, createdTicketMap, totalResolvedTickets, excelData,
+					KPICode.CREATED_VS_RESOLVED_DEFECTS.getKpiId());
 		}
+
 	}
 
 	/**

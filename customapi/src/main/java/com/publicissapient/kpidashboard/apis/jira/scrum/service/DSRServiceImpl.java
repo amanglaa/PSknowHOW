@@ -301,6 +301,7 @@ public class DSRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 			trendValueList.add(dataCount);
 
 		});
+		kpiElement.setExcelData(excelData);
 	}
 
 	private List<JiraIssue> checkUATDefect(List<JiraIssue> testCaseList, Map<String, FieldMapping> projFieldMapping) {
