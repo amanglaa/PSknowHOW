@@ -294,12 +294,13 @@ public class CommittmentReliabilityServiceImpl extends JiraKPIService<Long, List
 					jiraIssueRepository.findIssueByNumber(mapOfFilters, totalIssue, uniqueProjectMap));
 			resultListMap.put(SPRINT_DETAILS, sprintDetails);
 		} else {
-			// for azure board sprint details collections put is empty due to we did not have required data of issues.
+			//start: for azure board sprint details collections put is empty due to we did not have required data of issues.
 			resultListMap.put(PROJECT_WISE_TOTAL_ISSUE,
 					jiraIssueRepository.findIssuesBySprintAndType(mapOfFilters, uniqueProjectMap));
 			resultListMap.put(SPRINT_DETAILS, null);
 		}
 		resultListMap.put(PROJECT_WISE_CLOSED_STORY_STATUS, projectWiseClosedStatusMap);
+		//end: for azure board sprint details collections put is empty due to we did not have required data of issues.
 		return resultListMap;
 	}
 

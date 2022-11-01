@@ -180,11 +180,12 @@ public class StoryCountImpl extends JiraKPIService<Double, List<Object>, Map<Str
 					jiraIssueRepository.findIssueByNumber(mapOfFilters, totalIssue, uniqueProjectMap));
 			resultListMap.put(SPRINTSDETAILS, sprintDetails);
 		} else {
-			// for azure board sprint details collections put is empty due to we did not have required data of issues.
+			//start : for azure board sprint details collections put is empty due to we did not have required data of issues.
 			resultListMap.put(STORY_LIST,
 					jiraIssueRepository.findIssuesBySprintAndType(mapOfFilters, uniqueProjectMap));
 			resultListMap.put(SPRINTSDETAILS, null);
 		}
+		//end : for azure board sprint details collections put is empty due to we did not have required data of issues.
 		return resultListMap;
 
 	}

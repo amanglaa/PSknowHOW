@@ -456,12 +456,13 @@ public class KpiHelperService { // NOPMD
 					jiraIssueRepository.findIssueByNumber(mapOfFilters, totalIssue, uniqueProjectMap));
 			resultListMap.put(SPRINT_WISE_SPRINTDETAILS, sprintDetails);
 		} else {
-			// for azure board sprint details collections put is empty due to we did not have required data of issues.
+			//start: for azure board sprint details collections put is empty due to we did not have required data of issues.
 			List<JiraIssue> sprintVelocityList = jiraIssueRepository.findIssuesBySprintAndType(mapOfFilters,
 					uniqueProjectMap);
 			resultListMap.put(SPRINTVELOCITYKEY, sprintVelocityList);
 			resultListMap.put(SPRINT_WISE_SPRINTDETAILS, null);
 		}
+		//end: for azure board sprint details collections put is empty due to we did not have required data of issues.
 
 		return resultListMap;
 

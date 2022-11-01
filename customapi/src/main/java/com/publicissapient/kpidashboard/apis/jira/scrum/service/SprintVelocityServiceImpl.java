@@ -189,7 +189,7 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 							sprintIssues);
 				});
 			} else {
-				// for azure board sprint details collections empty so that we have to prepare data from jira issue
+				//start : for azure board sprint details collections empty so that we have to prepare data from jira issue
 				Map<String, List<JiraIssue>> projectWiseJiraIssues = allJiraIssue.stream()
 						.collect(Collectors.groupingBy(JiraIssue::getBasicProjectConfigId));
 				projectWiseJiraIssues.forEach((basicProjectConfigId, projectWiseIssuesList) -> {
