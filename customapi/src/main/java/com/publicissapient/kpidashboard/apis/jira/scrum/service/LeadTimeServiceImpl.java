@@ -10,8 +10,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
+import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
+import com.publicissapient.kpidashboard.common.model.jira.JiraIssue;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -44,6 +48,8 @@ import com.publicissapient.kpidashboard.common.model.jira.JiraIssueSprint;
 import com.publicissapient.kpidashboard.common.repository.jira.JiraIssueCustomHistoryRepository;
 
 import lombok.extern.slf4j.Slf4j;
+
+import static java.util.stream.Collectors.toMap;
 
 @Component
 @Slf4j
@@ -197,7 +203,8 @@ public class LeadTimeServiceImpl extends JiraKPIService<Long, List<Object>, Map<
 
 	private void kpiWithFilter(Map<String, List<JiraIssueCustomHistory>> projectWiseJiraIssue, Map<String, Node> mapTmp,
 			List<Node> leafNodeList, KpiElement kpiElement) {
-		Map<String, ValidationData> validationDataMap = new HashMap<>();
+		//Map<String, ValidationData> validationDataMap = new HashMap<>();
+		List<KPIExcelData> excelData = new ArrayList<>();
 		String requestTrackerId = getRequestTrackerId();
 
 		leafNodeList.forEach(node -> {
@@ -217,10 +224,11 @@ public class LeadTimeServiceImpl extends JiraKPIService<Long, List<Object>, Map<
 						"[LEAD-TIME-FILTER-WISE][{}].  : Intake to DOR: {} . DoR to DoD: {} . DoD to Live: {} . Intake to Live: {}",
 						requestTrackerId, cycleMap.get(INTAKE_TO_DOR), cycleMap.get(DOR_TO_DOD),
 						cycleMap.get(DOD_TO_LIVE), cycleMap.get(LEAD_TIME));
-				populateValidationDataObject(kpiElement, requestTrackerId, validationDataMap, cycleTimeList,
+				populateExcelDataObject( requestTrackerId, excelData, cycleMap,
 						trendLineName);
 			}
 		});
+		kpiElement.setExcelData(excelData);
 	}
 
 	private Map<String, List<DataCount>> getDataCountMap(String trendLineName, Map<String, Long> cycleMap) {
@@ -347,23 +355,19 @@ public class LeadTimeServiceImpl extends JiraKPIService<Long, List<Object>, Map<
 
 	/**
 	 *
-	 * @param kpiElement
+
 	 * @param requestTrackerId
-	 * @param validationDataMap
-	 * @param cycleTimeValidationData
+	 * @param excelData
+	
 	 * @param trendLineName
 	 */
-	private void populateValidationDataObject(KpiElement kpiElement, String requestTrackerId,
-			Map<String, ValidationData> validationDataMap, List<CycleTimeValidationData> cycleTimeValidationData,
-			String trendLineName) {
+	private void populateExcelDataObject( String requestTrackerId,List<KPIExcelData> excelData
+			,Map<String, Long> cycleMap,
+										  String trendLineName) {
 
 		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-			ValidationData validationData = new ValidationData();
-			if (CollectionUtils.isNotEmpty(cycleTimeValidationData)) {
-				validationData.setCycleTimeList(cycleTimeValidationData);
-			}
-			validationDataMap.put(trendLineName, validationData);
-			kpiElement.setMapOfSprintAndData(validationDataMap);
+
+			KPIExcelUtility.populateLeadTime(excelData,trendLineName,cycleMap);
 
 		}
 	}

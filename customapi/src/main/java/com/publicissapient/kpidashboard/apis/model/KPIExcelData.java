@@ -42,13 +42,39 @@ public class KPIExcelData {
 
 	@JsonProperty("Sprint Name")
 	private String sprintName;
-	
+
+	@JsonProperty("Project Name")
+	private String projectName;
+
+	@JsonProperty("Issue Type")
+	private String issueType;
+
+	@JsonProperty("Resolution Time(In Days)")
+	private String resolutionTime;
+
+
+
 	@JsonProperty("Story ID")
 	private Map<String,String> storyId;
 	
 	@JsonProperty("Issue Description")
 	private String issueDesc;
-	
+
+	@JsonProperty("Story Size(In story point)")
+	private String storyPoints;
+
+	@JsonProperty("Intake to DOR(In Days)")
+	private String intakeToDOR;
+
+	@JsonProperty("DOR to DOD (In Days)")
+	private String dorToDod;
+
+	@JsonProperty("DOD TO Live (In Days)")
+	private String dodToLive;
+	@JsonProperty("Lead Time (In Days)")
+	private String leadTime;
+
+
 	@JsonProperty("Linked Defects")
 	private Map<String,String> linkedDefects;
 }

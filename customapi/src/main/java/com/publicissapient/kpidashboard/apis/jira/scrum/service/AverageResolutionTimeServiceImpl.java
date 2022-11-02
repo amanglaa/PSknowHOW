@@ -10,11 +10,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 
 import com.publicissapient.kpidashboard.apis.common.service.impl.KpiHelperService;
+import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
+import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -51,6 +54,8 @@ import com.publicissapient.kpidashboard.common.repository.jira.JiraIssueCustomHi
 import com.publicissapient.kpidashboard.common.repository.jira.JiraIssueRepository;
 
 import lombok.extern.slf4j.Slf4j;
+
+import static java.util.stream.Collectors.toMap;
 
 @Component
 @Slf4j
@@ -89,7 +94,7 @@ public class AverageResolutionTimeServiceImpl extends JiraKPIService<Double, Lis
 
 	@Override
 	public KpiElement getKpiData(KpiRequest kpiRequest, KpiElement kpiElement,
-			TreeAggregatorDetail treeAggregatorDetail) throws ApplicationException {
+								 TreeAggregatorDetail treeAggregatorDetail) throws ApplicationException {
 
 		List<DataCount> trendValueList = new ArrayList<>();
 		Node root = treeAggregatorDetail.getRoot();
@@ -135,7 +140,7 @@ public class AverageResolutionTimeServiceImpl extends JiraKPIService<Double, Lis
 	}
 
 	/**
-	 * 
+	 *
 	 * @param mapTmp
 	 * @param sprintLeafNodeList
 	 * @param trendValueList
@@ -145,8 +150,8 @@ public class AverageResolutionTimeServiceImpl extends JiraKPIService<Double, Lis
 
 	@SuppressWarnings("unchecked")
 	private void sprintWiseLeafNodeValue(Map<String, Node> mapTmp, List<Node> sprintLeafNodeList,
-			List<DataCount> trendValueList, KpiElement kpiElement, KpiRequest kpiRequest,
-			Set<String> absentIssueTypesRoot) {
+										 List<DataCount> trendValueList, KpiElement kpiElement, KpiRequest kpiRequest,
+										 Set<String> absentIssueTypesRoot) {
 
 		String requestTrackerId = getRequestTrackerId();
 		sprintLeafNodeList.sort((node1, node2) -> node1.getSprintFilter().getStartDate()
@@ -170,13 +175,18 @@ public class AverageResolutionTimeServiceImpl extends JiraKPIService<Double, Lis
 		List<JiraIssue> jiraIssues = (List<JiraIssue>) resultMap.get(JIRA_ISSUE_LIST);
 
 		Map<String, ValidationData> validationDataMap = new HashMap<>();
+		List<KPIExcelData> excelData = new ArrayList<>();
 		// create sprint wise map of resolution time with issue type
 		Map<String, List<ResolutionTimeValidation>> sprintWiseResolution = groupSprintWiseIssues(jiraIssues,
-				resolutionTimeIssueIdWise, validationDataMap);
+				resolutionTimeIssueIdWise);
+
 
 		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-			kpiElement.setMapOfSprintAndData(validationDataMap);
+
+			KPIExcelUtility.populateAverageResolutionTime( sprintWiseResolution, excelData);
 		}
+
+
 
 		Map<String, Map<String, Double>> sprintIssueTypeWiseTime = new HashMap<>();
 		sprintWiseResolution.forEach((sprint, issueWiseTimeList) -> {
@@ -242,10 +252,11 @@ public class AverageResolutionTimeServiceImpl extends JiraKPIService<Double, Lis
 			});
 			mapTmp.get(node.getId()).setValue(dataCountMap);
 		});
+		kpiElement.setExcelData(excelData);
 	}
 
 	private Map<String, Double> getResolutionTime(List<JiraIssueCustomHistory> jiraIssueCustomHistories,
-			Map<String, FieldMapping> fieldMappingMap) {
+												  Map<String, FieldMapping> fieldMappingMap) {
 		Map<String, Double> sprintWiseResult = new HashMap<>();
 		if (CollectionUtils.isNotEmpty(jiraIssueCustomHistories)) {
 			for (JiraIssueCustomHistory jiraIssueCustomHistory : jiraIssueCustomHistories) {
@@ -265,7 +276,7 @@ public class AverageResolutionTimeServiceImpl extends JiraKPIService<Double, Lis
 
 	/**
 	 * this method get story completion days
-	 * 
+	 *
 	 * @param fieldMapping
 	 *            fieldMapping
 	 * @param storySprintDetails
@@ -307,7 +318,7 @@ public class AverageResolutionTimeServiceImpl extends JiraKPIService<Double, Lis
 
 	@Override
 	public Map<String, Object> fetchKPIDataFromDb(List<Node> leafNodeList, String startDate, String endDate,
-			KpiRequest kpiRequest) {
+												  KpiRequest kpiRequest) {
 		Map<String, List<String>> mapOfFilters = new LinkedHashMap<>();
 		Map<String, Object> resultListMap = new HashMap<>();
 
@@ -380,7 +391,8 @@ public class AverageResolutionTimeServiceImpl extends JiraKPIService<Double, Lis
 
 
 	private Map<String, List<ResolutionTimeValidation>> groupSprintWiseIssues(List<JiraIssue> jiraIssues,
-			Map<String, Double> resolutionTimeIssueIdWise, Map<String, ValidationData> validationDataMap) {
+																			  Map<String, Double> resolutionTimeIssueIdWise) {
+
 
 		Map<String, List<ResolutionTimeValidation>> sprintSubCatIssueTypeStoryMap = new HashMap<>();
 
@@ -394,13 +406,15 @@ public class AverageResolutionTimeServiceImpl extends JiraKPIService<Double, Lis
 				Double time = resolutionTimeIssueIdWise.get(issue.getNumber());
 				if (null != time) {
 					resolutionTimeValidation.setIssueNumber(issue.getNumber());
+					resolutionTimeValidation.setUrl(issue.getUrl());
+					resolutionTimeValidation.setIssueDescription(issue.getName());
 					resolutionTimeValidation.setIssueType(issue.getTypeName());
 					resolutionTimeValidation.setResolutionTime(time);
 					resolutionTimes.add(resolutionTimeValidation);
 				}
 			});
-			validationData.setResolutionTimeIssues(resolutionTimes);
-			validationDataMap.put(sprintWiseIssue.get(0).getSprintName(), validationData);
+
+
 			sprintSubCatIssueTypeStoryMap.put(sprint, resolutionTimes);
 
 		});
