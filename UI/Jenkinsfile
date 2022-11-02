@@ -5,6 +5,7 @@ pipeline {
     }
    environment {
        awss3credentialsid = "AWS_S3_CREDENTIALS"
+       awss3buckitname = "${env.S3_BUCKIT_NAME}"
        select_docker_registry = "${env.DEFAULT_REGISTRY}"
        registryCredId = "DOCKER_REGISTRY_CREDENTIALS"
        }
@@ -144,6 +145,19 @@ pipeline {
                 anchore bailOnFail: false, bailOnPluginFail: false, engineCredentialsId: 'Anchore-Cred', engineurl: 'http://172.19.0.6:8228/v1', forceAnalyze: true, name: 'ui_images'
               }
           }
+      }
+      stage('Uploading Docker scan report to s3') {
+        when{
+            expression { env.SCAN_DOCKER_IMAGE == 'true' }
+         }
+         steps {
+               withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: env.awss3credentialsid, secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']])
+              {
+                sh """
+                 aws s3 sync ${JENKINS_HOME}/jobs/${JOB_NAME}/builds/${BUILD_NUMBER}/archive/AnchoreReport.${JOB_NAME}_${BUILD_NUMBER}/ s3://${awss3buckitname}/ImageScanReport/knowhow-${JOB_NAME}/${env.version}/
+			  """
+              }
+         }
       }
      stage('Deploy') {
           when{

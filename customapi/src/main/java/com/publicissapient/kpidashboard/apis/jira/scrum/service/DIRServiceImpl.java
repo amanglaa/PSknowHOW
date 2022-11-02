@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.publicissapient.kpidashboard.apis.enums.KPIColumn;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -237,6 +238,7 @@ public class DIRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 			trendValueList.add(dataCount);
 		});
 		kpiElement.setExcelData(excelData);
+		kpiElement.setExcelColumns(KPIColumn.DEFECT_INJECTION_RATE.getColumns());
 	}
 
 	/**
