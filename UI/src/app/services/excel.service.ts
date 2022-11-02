@@ -47,11 +47,13 @@ export class ExcelService {
                     for(const datakey in data[key]) {
                         appendedRowData.push({text: datakey, hyperlink: data[key][datakey]});
                     }
-                    if(appendedRowData.length === 1){
-                        rowData[key]= appendedRowData[0];
-                    }else{
+                    if (appendedRowData.length === 0) {
+                        rowData[key] = '';
+                    } else if (appendedRowData.length === 1) {
+                        rowData[key] = appendedRowData[0];
+                    } else {
                         rowData['rowSpan'] = appendedRowData.length;
-                        rowData[key]=appendedRowData;
+                        rowData[key] = appendedRowData;
                     }
 
                 }
@@ -72,7 +74,7 @@ export class ExcelService {
             filename = kpiData.kpiName;
         }
 
-        if (kpiData === undefined) {
+        if (kpiData === undefined || Object.keys(kpiData).length === 0) {
             const noData = worksheet.addRow(['NO Data Available']);
             noData.font = {
                 name: 'Comic Sans MS',
