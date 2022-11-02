@@ -654,7 +654,7 @@ public class OnlineAdapter implements JiraAdapter {
 		if(null != currentEstimateFieldId){
 			Object estimateObject = getStatistics((JSONObject) obj.get("currentEstimateStatistic"),
 					"statFieldValue","value");
-			String storyPointCustomField = StringUtils.defaultIfBlank(projectConfig.getFieldMapping().getSprintName(),"");
+			String storyPointCustomField = StringUtils.defaultIfBlank(projectConfig.getFieldMapping().getJiraStoryPointsCustomField(),"");
 			if(storyPointCustomField.equalsIgnoreCase(currentEstimateFieldId.toString())){
 				issue.setStoryPoints(estimateObject == null? null:Double.valueOf(estimateObject.toString()));
 			}else{
