@@ -108,7 +108,7 @@ public class SprintClientImpl implements SprintClient {
 			List<SprintDetails> dbSprints = sprintRepository.findBySprintIDIn(sprintIds);
 			Map<String, SprintDetails> dbSprintDetailMap = dbSprints.stream()
 					.collect(Collectors.toMap(SprintDetails::getSprintID, Function.identity()));
-			List<SprintDetails> sprintToRemove = new ArrayList<>();
+			List<SprintDetails> sprintToSave = new ArrayList<>();
 			sprintDetailsSet.forEach(sprint -> {
 				boolean fetchReport = false;
 				String boardId = sprint.getOriginBoardId().get(0);
@@ -118,18 +118,19 @@ public class SprintClientImpl implements SprintClient {
 
 					SprintDetails dbSprintDetails =  dbSprintDetailMap.get(sprint.getSprintID());
 					sprint.setId(dbSprintDetails.getId());
-					//sprint change in db record.
-					if (sprint.getState().equalsIgnoreCase(SprintDetails.SPRINT_STATE_ACTIVE) ||
-							!sprint.getState().equalsIgnoreCase(dbSprintDetails.getState())) {
-						fetchReport = true;
-					}else if (!dbSprintDetails.getOriginBoardId().containsAll(sprint.getOriginBoardId())) {
+					//case 1 : same sprint different board id
+					if (!dbSprintDetails.getOriginBoardId().containsAll(sprint.getOriginBoardId())) {
 						dbSprintDetails.getOriginBoardId().add(boardId);
 						sprint = dbSprintDetails;
 						fetchReport = true;
-					} else {
+					}//case 2 : sprint state is active or changed which is present in db
+					else if (sprint.getState().equalsIgnoreCase(SprintDetails.SPRINT_STATE_ACTIVE) ||
+							!sprint.getState().equalsIgnoreCase(dbSprintDetails.getState())) {
+						sprint = dbSprintDetails;
+						fetchReport = true;
+					}else {
 						log.info("Sprint not to be saved again : {}, status: {} ", sprint.getOriginalSprintId(),
 								sprint.getState());
-						sprintToRemove.add(sprint);
 						fetchReport = false;
 					}
 				} else {
@@ -138,12 +139,10 @@ public class SprintClientImpl implements SprintClient {
 
 				if(fetchReport){
 					getSprintReport(sprint, jiraAdapter, projectConfig, boardId);
+					sprintToSave.add(sprint);
 				}
 			});
-			if (CollectionUtils.isNotEmpty(sprintToRemove)) {
-				sprintDetailsSet.removeAll(sprintToRemove);
-			}
-			sprintRepository.saveAll(sprintDetailsSet);
+			sprintRepository.saveAll(sprintToSave);
 			log.info("{} sprints found", sprintDetailsSet.size());
 		}
 	}
@@ -162,7 +161,7 @@ public class SprintClientImpl implements SprintClient {
 			List<SprintDetails> sprintDetailsList = getSprints(projectConfig,boardDetails.getBoardId());
 			if (CollectionUtils.isNotEmpty(sprintDetailsList)) {
 				Set<SprintDetails> sprintDetailSet = limitSprint(sprintDetailsList);
-				 processSprints(projectConfig, sprintDetailSet, jiraAdapter);
+				processSprints(projectConfig, sprintDetailSet, jiraAdapter);
 			}
 		});
 	}
@@ -215,7 +214,7 @@ public class SprintClientImpl implements SprintClient {
 				if(null!=obj) {
 					valuesJson = (JSONArray)obj.get("values");
 				}
-				setIssues(valuesJson, sprintDetailsSet, projectConfig, boardId);
+				setSprintDetails(valuesJson, sprintDetailsSet, projectConfig, boardId);
 				isLast = Boolean.valueOf(obj.get("isLast").toString());
 			} catch (ParseException pe) {
 				log.error("Parser exception when parsing statuses", pe);
@@ -224,13 +223,17 @@ public class SprintClientImpl implements SprintClient {
 		return isLast;
 	}
 
-	private void setIssues(JSONArray valuesJson,List<SprintDetails> sprintDetailsSet,ProjectConfFieldMapping projectConfig,String boardId) {
+	private void setSprintDetails(JSONArray valuesJson,List<SprintDetails> sprintDetailsSet,
+								  ProjectConfFieldMapping projectConfig,String boardId) {
 		valuesJson.forEach(values->{
 			JSONObject sprintJson = (JSONObject) values;
-			if(null!=sprintJson) {
+			if(null != sprintJson) {
 				SprintDetails sprintDetails = new SprintDetails();
 				sprintDetails.setSprintName(sprintJson.get(NAME).toString());
-				sprintDetails.setOriginBoardId(Arrays.asList(boardId));
+				List<String> boardList = new ArrayList<>();
+				//boardList.add("17903");
+				boardList.add(boardId);
+				sprintDetails.setOriginBoardId(boardList);
 				sprintDetails.setOriginalSprintId(sprintJson.get(ID).toString());
 				sprintDetails.setState(sprintJson.get(STATE).toString().toUpperCase());
 				String sprintId = sprintDetails.getOriginalSprintId() + JiraConstants.COMBINE_IDS_SYMBOL

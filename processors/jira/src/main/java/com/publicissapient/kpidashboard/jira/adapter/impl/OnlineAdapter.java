@@ -65,6 +65,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -517,13 +518,13 @@ public class OnlineAdapter implements JiraAdapter {
 
 
 
-			List<SprintIssue> completedIssues = Optional.ofNullable(sprintDetails.getCompletedIssues()).orElse(new ArrayList<>());
-			List<SprintIssue> notCompletedIssues = Optional.ofNullable(sprintDetails.getNotCompletedIssues()).orElse(new ArrayList<>());
-			List<SprintIssue> puntedIssues = Optional.ofNullable(sprintDetails.getPuntedIssues()).orElse(new ArrayList<>());
-			List<SprintIssue> completedIssuesAnotherSprint = Optional.ofNullable(sprintDetails.getCompletedIssuesAnotherSprint())
-					.orElse(new ArrayList<>());
-			List<String> addedIssues = Optional.ofNullable(sprintDetails.getAddedIssues()).orElse(new ArrayList<>());
-			List<SprintIssue> totalIssues = Optional.ofNullable(sprintDetails.getTotalIssues()).orElse(new ArrayList<>());
+			Set<SprintIssue> completedIssues = Optional.ofNullable(sprintDetails.getCompletedIssues()).orElse(new HashSet<>());
+			Set<SprintIssue> notCompletedIssues = Optional.ofNullable(sprintDetails.getNotCompletedIssues()).orElse(new HashSet<>());
+			Set<SprintIssue> puntedIssues = Optional.ofNullable(sprintDetails.getPuntedIssues()).orElse(new HashSet<>());
+			Set<SprintIssue> completedIssuesAnotherSprint = Optional.ofNullable(sprintDetails.getCompletedIssuesAnotherSprint())
+					.orElse(new HashSet<>());
+			Set<String> addedIssues = Optional.ofNullable(sprintDetails.getAddedIssues()).orElse(new HashSet<>());
+			Set<SprintIssue> totalIssues = Optional.ofNullable(sprintDetails.getTotalIssues()).orElse(new HashSet<>());
 			try {
 				JSONObject obj = (JSONObject)new JSONParser().parse(sprintReportObj);
 				if(null!=obj) {
@@ -592,10 +593,10 @@ public class OnlineAdapter implements JiraAdapter {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private List<String> setAddedIssues(JSONObject addedIssuesJson, List<String> addedIssues) {
+	private Set<String> setAddedIssues(JSONObject addedIssuesJson, Set<String> addedIssues) {
 		Set<String> keys = addedIssuesJson.keySet();
 		if(CollectionUtils.isNotEmpty(keys)) {
-			addedIssues=keys.stream().collect(Collectors.toList());
+			addedIssues=keys.stream().collect(Collectors.toSet());
 		}
 		return addedIssues;
 	}
@@ -605,12 +606,13 @@ public class OnlineAdapter implements JiraAdapter {
 	 * @param puntedIssues
 	 */
 	@SuppressWarnings("unchecked")
-	private void setPuntedCompletedAnotherSprint(JSONArray puntedIssuesJson, List<SprintIssue> puntedIssues
+	private void setPuntedCompletedAnotherSprint(JSONArray puntedIssuesJson, Set<SprintIssue> puntedIssues
 			,ProjectConfFieldMapping projectConfig) {
 		puntedIssuesJson.forEach(puntedObj->{
 			JSONObject punObj = (JSONObject) puntedObj;
 			if(null!=punObj) {
 				SprintIssue issue = getSprintIssue(punObj,projectConfig);
+				puntedIssues.remove(issue);
 				puntedIssues.add(issue);
 			}
 		});
@@ -689,13 +691,15 @@ public class OnlineAdapter implements JiraAdapter {
 	 * @param totalIssues
 	 */
 	@SuppressWarnings("unchecked")
-	private void setIssues(JSONArray issuesJson, List<SprintIssue> issues,
-			List<SprintIssue> totalIssues,ProjectConfFieldMapping projectConfig) {
+	private void setIssues(JSONArray issuesJson, Set<SprintIssue> issues,
+						   Set<SprintIssue> totalIssues,ProjectConfFieldMapping projectConfig) {
 		issuesJson.forEach(jsonObj->{
 			JSONObject obj = (JSONObject) jsonObj;
 			if(null!=obj) {
 				SprintIssue issue = getSprintIssue(obj,projectConfig);
+				issues.remove(issue);
 				issues.add(issue);
+				totalIssues.remove(issue);
 				totalIssues.add(issue);
 			}
 		});
