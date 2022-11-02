@@ -21,7 +21,6 @@ package com.publicissapient.kpidashboard.apis.util;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -54,7 +53,7 @@ public class KPIExcelUtility {
 	 * @param issueData
 	 */
 	public static void populateDirExcelData(String sprint, List<String> storyIds, List<JiraIssue> defects,
-											List<KPIExcelData> kpiExcelData, Map<String, JiraIssue> issueData) {
+			List<KPIExcelData> kpiExcelData, Map<String, JiraIssue> issueData) {
 		storyIds.forEach(story -> {
 			Map<String, String> linkedDefects = defects.stream().filter(d -> d.getDefectStoryID().contains(story))
 					.map(defect -> {
@@ -79,9 +78,8 @@ public class KPIExcelUtility {
 		});
 	}
 
-
 	public static void populateFTPRExcelData(String sprint, List<String> storyIds, List<JiraIssue> ftprStories,
-											 List<KPIExcelData> kpiExcelData, Map<String, JiraIssue> issueData) {
+			List<KPIExcelData> kpiExcelData, Map<String, JiraIssue> issueData) {
 		List<String> collect = ftprStories.stream().map(JiraIssue::getNumber).collect(Collectors.toList());
 		storyIds.forEach(story -> {
 			KPIExcelData excelData = new KPIExcelData();
@@ -101,7 +99,7 @@ public class KPIExcelUtility {
 	}
 
 	public static void populateDefectDensityExcelData(String sprint, List<String> storyIds, List<JiraIssue> ftprStories,
-													  List<KPIExcelData> kpiExcelData) {
+			List<KPIExcelData> kpiExcelData) {
 		List<String> collect = ftprStories.stream().map(JiraIssue::getNumber).collect(Collectors.toList());
 		storyIds.forEach(story -> {
 			KPIExcelData excelData = new KPIExcelData();
@@ -124,10 +122,11 @@ public class KPIExcelUtility {
 	 * @param kpiId
 	 */
 	public static void populateDefectRelatedExcelData(String sprint, Map<String, JiraIssue> totalBugList,
-													  List<JiraIssue> conditionDefects, List<KPIExcelData> kpiExcelData, String kpiId) {
-		List<String> conditionalList = conditionDefects.stream().map(JiraIssue::getNumber).collect(Collectors.toList());
+			List<JiraIssue> conditionDefects, List<KPIExcelData> kpiExcelData, String kpiId) {
 
 		if (MapUtils.isNotEmpty(totalBugList)) {
+			List<String> conditionalList = conditionDefects.stream().map(JiraIssue::getNumber)
+					.collect(Collectors.toList());
 			totalBugList.forEach((defectId, jiraIssue) -> {
 				String present = conditionalList.contains(defectId) ? Constant.EXCEL_YES : Constant.EMPTY_STRING;
 				KPIExcelData excelData = new KPIExcelData();
@@ -161,7 +160,7 @@ public class KPIExcelUtility {
 	 * @param kpiId
 	 */
 	public static void populateDefectRelatedExcelData(String sprint, List<JiraIssue> jiraIssues,
-													  List<KPIExcelData> kpiExcelData, String kpiId) {
+			List<KPIExcelData> kpiExcelData, String kpiId) {
 		jiraIssues.stream().forEach(jiraIssue -> {
 			KPIExcelData excelData = new KPIExcelData();
 			excelData.setSprintName(sprint);
@@ -192,10 +191,10 @@ public class KPIExcelUtility {
 	 * @param kpiId
 	 */
 	public static void populateStoryRelatedExcelData(String sprint, Map<String, JiraIssue> totalStoriesMap,
-													 List<JiraIssue> conditionStories, List<KPIExcelData> kpiExcelData, String kpiId) {
-		List<String> conditionalList = conditionStories.stream().map(JiraIssue::getNumber).collect(Collectors.toList());
-
+			List<JiraIssue> conditionStories, List<KPIExcelData> kpiExcelData, String kpiId) {
 		if (MapUtils.isNotEmpty(totalStoriesMap)) {
+			List<String> conditionalList = conditionStories.stream().map(JiraIssue::getNumber)
+					.collect(Collectors.toList());
 			totalStoriesMap.forEach((storyId, jiraIssue) -> {
 				String present = conditionalList.contains(storyId) ? Constant.EXCEL_YES : Constant.EMPTY_STRING;
 				KPIExcelData excelData = new KPIExcelData();
@@ -212,10 +211,10 @@ public class KPIExcelUtility {
 	}
 
 	public static void populateTestCaseExcelData(String sprint, Map<String, TestCaseDetails> totalStoriesMap,
-												 List<TestCaseDetails> conditionStories, List<KPIExcelData> kpiExcelData, String kpiId) {
-		List<String> conditionalList = conditionStories.stream().map(TestCaseDetails::getNumber)
-				.collect(Collectors.toList());
+			List<TestCaseDetails> conditionStories, List<KPIExcelData> kpiExcelData, String kpiId) {
 		if (MapUtils.isNotEmpty(totalStoriesMap)) {
+			List<String> conditionalList = conditionStories.stream().map(TestCaseDetails::getNumber)
+					.collect(Collectors.toList());
 			totalStoriesMap.forEach((storyId, jiraIssue) -> {
 				String present = conditionalList.contains(storyId) ? Constant.EXCEL_YES : Constant.EMPTY_STRING;
 				KPIExcelData excelData = new KPIExcelData();
@@ -227,10 +226,10 @@ public class KPIExcelUtility {
 		}
 	}
 
-	public static void populateSonarScrumExcelData(String projectName, List<String> jobList, List<String> kpiSpecificDataList,
-												   List<String> versionDate, List<KPIExcelData> kpiExcelData, String kpiId) {
+	public static void populateSonarScrumExcelData(String projectName, List<String> jobList,
+			List<String> kpiSpecificDataList, List<String> versionDate, List<KPIExcelData> kpiExcelData, String kpiId) {
 		if (CollectionUtils.isNotEmpty(jobList)) {
-			for (int i = 0; i <= jobList.size(); i++) {
+			for (int i = 0; i < jobList.size(); i++) {
 				KPIExcelData excelData = new KPIExcelData();
 				excelData.setProject(projectName);
 				excelData.setJobName(jobList.get(i));
@@ -250,40 +249,33 @@ public class KPIExcelUtility {
 	}
 
 	public static void populateInSprintAutomationExcelData(String sprint, List<TestCaseDetails> allTestList,
-														   List<TestCaseDetails> automatedList,List<JiraIssue> linkedStories, List<KPIExcelData> kpiExcelData, String kpiId) {
+			List<TestCaseDetails> automatedList, List<JiraIssue> linkedStories, List<KPIExcelData> kpiExcelData,
+			String kpiId) {
 		List<String> conditionalList = automatedList.stream().map(TestCaseDetails::getNumber)
 				.collect(Collectors.toList());
 
-
-
-		/*if (CollectionUtils.isNotEmpty(allTestList)) {
-			allTestList.forEach((testIssue) -> {
-				String present = conditionalList.contains(testIssue) ? Constant.EXCEL_YES : Constant.EMPTY_STRING;
-				linkedStories.computeIfPresent((story,issue)->{
-					testIssue.getDefectStoryID().contains(story)
-				});
-				Map<String, String> linkedDefects = defects.stream().filter(d -> d.getDefectStoryID().contains(story))
-						.map(defect -> {
-							if (StringUtils.isEmpty(defect.getUrl())) {
-								defect.setUrl(Constant.EMPTY_STRING);
-							}
-							return defect;
-						}).collect(Collectors.toMap(JiraIssue::getNumber, JiraIssue::getUrl));
-
-				KPIExcelData excelData = new KPIExcelData();
-				excelData.setSprintName(sprint);
-				excelData.setTestCaseId(testIssue.getNumber());
-				Map<String, String> linkedStory=new HashMap<>();
-
-				linkedStory.put()
-
-				excelData.setLinkedStory(linkedStory);
-
-				excelData.setAutomated(present);
-				kpiExcelData.add(excelData);
-			});
-		}
-		*
+		/*
+		 * if (CollectionUtils.isNotEmpty(allTestList)) {
+		 * allTestList.forEach((testIssue) -> { String present =
+		 * conditionalList.contains(testIssue) ? Constant.EXCEL_YES :
+		 * Constant.EMPTY_STRING; linkedStories.computeIfPresent((story,issue)->{
+		 * testIssue.getDefectStoryID().contains(story) }); Map<String, String>
+		 * linkedDefects = defects.stream().filter(d ->
+		 * d.getDefectStoryID().contains(story)) .map(defect -> { if
+		 * (StringUtils.isEmpty(defect.getUrl())) {
+		 * defect.setUrl(Constant.EMPTY_STRING); } return defect;
+		 * }).collect(Collectors.toMap(JiraIssue::getNumber, JiraIssue::getUrl));
+		 * 
+		 * KPIExcelData excelData = new KPIExcelData(); excelData.setSprintName(sprint);
+		 * excelData.setTestCaseId(testIssue.getNumber()); Map<String, String>
+		 * linkedStory=new HashMap<>();
+		 * 
+		 * linkedStory.put()
+		 * 
+		 * excelData.setLinkedStory(linkedStory);
+		 * 
+		 * excelData.setAutomated(present); kpiExcelData.add(excelData); }); }
+		 *
 		 */
 	}
 
@@ -294,7 +286,5 @@ public class KPIExcelUtility {
 	private static String checkEmptyURL(JiraIssue jiraIssue) {
 		return StringUtils.isEmpty(jiraIssue.getUrl()) ? Constant.EMPTY_STRING : jiraIssue.getUrl();
 	}
-
-
 
 }

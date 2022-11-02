@@ -213,8 +213,10 @@ public class RegressionPercentageServiceImpl extends ZephyrKPIService<Double, Li
 
 		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
 
-			Map<String, TestCaseDetails> totalTestCaseMap = totalTest.stream()
-					.collect(Collectors.toMap(TestCaseDetails::getNumber, Function.identity()));
+			Map<String, TestCaseDetails> totalTestCaseMap =new HashMap<>();
+			if(CollectionUtils.isNotEmpty(totalTest)){
+				totalTest.stream().forEach(test -> totalTestCaseMap.putIfAbsent(test.getNumber(), test));
+			}
 
 			KPIExcelUtility.populateTestCaseExcelData(sprintName, totalTestCaseMap, automatedTest, excelData,
 					KPICode.REGRESSION_AUTOMATION_COVERAGE.getKpiId());

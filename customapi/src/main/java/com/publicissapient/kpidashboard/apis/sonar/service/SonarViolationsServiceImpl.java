@@ -153,7 +153,7 @@ public class SonarViolationsServiceImpl extends SonarKPIService<Long, List<Objec
 				tempMap.get(projectNodeId).setValue(projectWiseDataMap);
 				if (getRequestTrackerId().toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
 					KPIExcelUtility.populateSonarScrumExcelData(tempMap.get(projectNodeId).getProjectFilter().getName(),
-							projectList, violations, versionDate, excelData, KPICode.SONAR_TECH_DEBT.getKpiId());
+							projectList, violations, versionDate, excelData, KPICode.SONAR_VIOLATIONS.getKpiId());
 				}
 			}
 		});
