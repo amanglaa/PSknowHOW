@@ -286,7 +286,6 @@ public class SprintClientImpl implements SprintClient {
 			throws MalformedURLException {
 
 		Optional<Connection> connectionOptional = projectConfig.getJira().getConnection();
-		boolean isCloudEnv = connectionOptional.map(Connection::isCloudEnv).orElse(false);
 		String serverURL = jiraProcessorConfig.getJiraSprintByBoardUrlApi();
 		serverURL = serverURL.replace("{startAtIndex}",String.valueOf(startIndex)).replace("{boardId}",boardId);
 		String baseUrl = connectionOptional.map(Connection::getBaseUrl).orElse("");

@@ -25,13 +25,13 @@ import com.atlassian.jira.rest.client.api.SessionRestClient;
 import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.atlassian.jira.rest.client.api.domain.SearchResult;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousIssueRestClient;
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import com.publicissapient.kpidashboard.jira.adapter.atlassianbespoke.parser.CustomIssueJsonParser;
 import com.publicissapient.kpidashboard.jira.adapter.atlassianbespoke.parser.CustomSearchResultJsonParser;
 import com.publicissapient.kpidashboard.jira.util.JiraConstants;
 import io.atlassian.util.concurrent.Promise;
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
-import com.publicissapient.kpidashboard.jira.adapter.atlassianbespoke.parser.CustomIssueJsonParser;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -39,7 +39,6 @@ import org.codehaus.jettison.json.JSONObject;
 import javax.annotation.Nullable;
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
-import java.net.URLEncoder;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -131,7 +130,6 @@ public class CustomAsynchronousIssueRestClient extends AsynchronousIssueRestClie
 		}
 	}
 
-	//TODO
 	/**
 	 * @param maxResults Maximum results
 	 * @param startAt start At page number
