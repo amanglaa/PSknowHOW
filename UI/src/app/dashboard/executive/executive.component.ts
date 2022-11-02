@@ -379,14 +379,9 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
         const sprintIncluded = ['CLOSED'];
         this.helperService.downloadExcel(kpiId, kpiName, isKanban, this.filterApplyData, this.filterData, sprintIncluded).subscribe(getData => {
             this.kpiExcelData=this.excelService.generateExcelModalData(getData);
-            this.modalDetails['tableHeadings'] = this.kpiExcelData.headerNames;
+            this.modalDetails['tableHeadings'] = this.kpiExcelData.headerNames.map(column => column.header);
             this.modalDetails['header'] = kpiName;
-            this.modalDetails['tableValues'] = JSON.parse(JSON.stringify(this.kpiExcelData.excelData)).map(data => {
-                if(data.hasOwnProperty('rowSpan')){
-                    delete data.rowSpan;
-                }
-                return Object.values(data);
-            });
+            this.modalDetails['tableValues'] = this.kpiExcelData.excelData;
             this.displayModal = true;
         });
     }
