@@ -44,8 +44,12 @@ export class ExcelService {
                     rowData[key] = data[key];
                 }else{
                     const appendedRowData = [];
-                    for(const datakey in data[key]) {
-                        appendedRowData.push({text: datakey, hyperlink: data[key][datakey]});
+                    for (const datakey in data[key]) {
+                        if (data[key][datakey]) {
+                            appendedRowData.push({ text: datakey, hyperlink: data[key][datakey] });
+                        } else {
+                            appendedRowData.push(datakey);
+                        }
                     }
                     if (appendedRowData.length === 0) {
                         rowData[key] = '';
