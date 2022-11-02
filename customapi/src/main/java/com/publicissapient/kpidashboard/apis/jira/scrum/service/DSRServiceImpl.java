@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.publicissapient.kpidashboard.apis.enums.KPIColumn;
 import com.publicissapient.kpidashboard.common.model.application.ValidationData;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -301,6 +302,7 @@ public class DSRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 
 		});
 		kpiElement.setExcelData(excelData);
+		kpiElement.setExcelColumns(KPIColumn.DEFECT_SEEPAGE_RATE.getColumns());
 	}
 
 	private List<JiraIssue> checkUATDefect(List<JiraIssue> testCaseList, Map<String, FieldMapping> projFieldMapping) {

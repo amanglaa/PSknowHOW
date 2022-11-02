@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.publicissapient.kpidashboard.apis.enums.KPIColumn;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -188,7 +189,7 @@ public class RegressionPercentageServiceImpl extends ZephyrKPIService<Double, Li
 
 		});
 		kpiElement.setExcelData(excelData);
-
+		kpiElement.setExcelColumns(KPIColumn.REGRESSION_AUTOMATION_COVERAGE.getColumns());
 	}
 
 	/**
@@ -218,8 +219,7 @@ public class RegressionPercentageServiceImpl extends ZephyrKPIService<Double, Li
 				totalTest.stream().forEach(test -> totalTestCaseMap.putIfAbsent(test.getNumber(), test));
 			}
 
-			KPIExcelUtility.populateTestCaseExcelData(sprintName, totalTestCaseMap, automatedTest, excelData,
-					KPICode.REGRESSION_AUTOMATION_COVERAGE.getKpiId());
+			KPIExcelUtility.populateRegressionAutomationExcelData(sprintName, totalTestCaseMap, automatedTest, excelData);
 
 		}
 	}

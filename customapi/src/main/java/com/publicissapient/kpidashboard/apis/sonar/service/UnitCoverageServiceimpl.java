@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.publicissapient.kpidashboard.apis.enums.KPIColumn;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -173,6 +174,7 @@ public class UnitCoverageServiceimpl extends SonarKPIService<Double, List<Object
 		});
 
 		kpiElement.setExcelData(excelData);
+		kpiElement.setExcelColumns(KPIColumn.UNIT_TEST_COVERAGE.getColumns());
 	}
 
 	private void prepareCoverageList(Map<String, SonarHistory> history, String date, String projectNodeId,

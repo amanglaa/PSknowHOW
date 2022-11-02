@@ -29,6 +29,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.publicissapient.kpidashboard.apis.common.service.impl.KpiHelperService;
+import com.publicissapient.kpidashboard.apis.enums.KPIColumn;
 import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
 import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
 import org.apache.commons.collections.CollectionUtils;
@@ -350,6 +351,7 @@ public class DCServiceImpl extends JiraKPIService<Long, List<Object>, Map<String
 		});
 
 		kpiElement.setExcelData(excelData);
+		kpiElement.setExcelColumns(KPIColumn.DEFECT_COUNT_BY_PRIORITY.getColumns());
 
 	}
 

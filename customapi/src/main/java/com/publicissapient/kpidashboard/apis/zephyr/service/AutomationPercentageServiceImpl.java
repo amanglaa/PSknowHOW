@@ -30,6 +30,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.publicissapient.kpidashboard.apis.enums.KPIColumn;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bson.types.ObjectId;
@@ -266,8 +267,6 @@ public final class AutomationPercentageServiceImpl extends ZephyrKPIService<Doub
 
 		List<SprintWiseStory> sprintWiseStoryList = (List<SprintWiseStory>) defectDataListMap.get(SPRINTSTORIES);
 		Set<JiraIssue> allJiraIssues = (Set<JiraIssue>) defectDataListMap.get(ISSUE_DATA);
-		Map<String, List<JiraIssue>> projectWiseIssues = allJiraIssues.stream()
-				.collect(Collectors.groupingBy(issue -> issue.getBasicProjectConfigId(), Collectors.toList()));
 
 		Map<Pair<String, String>, List<SprintWiseStory>> sprintWiseMap = sprintWiseStoryList.stream().collect(Collectors
 				.groupingBy(sws -> Pair.of(sws.getBasicProjectConfigId(), sws.getSprint()), Collectors.toList()));
@@ -308,7 +307,7 @@ public final class AutomationPercentageServiceImpl extends ZephyrKPIService<Doub
 					sprintWiseAutoTestMap.get(currentNodeIdentifier));
 			currentSprintLeafNodeDefectDataMap.put(TESTCASEKEY, sprintWiseTotalTestMap.get(currentNodeIdentifier));
 			currentSprintLeafNodeDefectDataMap.put(ISSUE_DATA,
-					projectWiseIssues.get(node.getProjectFilter().getBasicProjectConfigId().toString()));
+					allJiraIssues);
 			double automationForCurrentLeaf = 0.0;
 			if (null != sprintWisePercentage.get(currentNodeIdentifier)) {
 				automationForCurrentLeaf = sprintWisePercentage.get(currentNodeIdentifier);
@@ -333,6 +332,7 @@ public final class AutomationPercentageServiceImpl extends ZephyrKPIService<Doub
 
 		});
 		kpiElement.setExcelData(excelData);
+		kpiElement.setExcelColumns(KPIColumn.INSPRINT_AUTOMATION_COVERAGE.getColumns());
 	}
 
 	/**
@@ -370,7 +370,7 @@ public final class AutomationPercentageServiceImpl extends ZephyrKPIService<Doub
 					.get(AUTOMATEDTESTCASEKEY);
 			List<TestCaseDetails> totalTest = (List<TestCaseDetails>) currentSprintLeafNodeDefectDataMap
 					.get(TESTCASEKEY);
-			List<JiraIssue> allJiraIssues = (List<JiraIssue>) currentSprintLeafNodeDefectDataMap.get(ISSUE_DATA);
+			Set<JiraIssue> allJiraIssues = (Set<JiraIssue>) currentSprintLeafNodeDefectDataMap.get(ISSUE_DATA);
 
 			KPIExcelUtility.populateInSprintAutomationExcelData(sprint, totalTest, automatedTest, allJiraIssues,
 					excelData);

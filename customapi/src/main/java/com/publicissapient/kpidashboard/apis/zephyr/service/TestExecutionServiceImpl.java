@@ -168,11 +168,12 @@ public class TestExecutionServiceImpl extends ZephyrKPIService<Double, List<Obje
 		List<KPIExcelData> excelData = new ArrayList<>();
 		sprintLeafNodeList.forEach(node -> {
 			List<DataCount> resultList = new ArrayList<>();
+			String validationKey = node.getSprintFilter().getName();
 			String sprintId = node.getSprintFilter().getId();
 			String trendLineName = node.getProjectFilter().getName();
 
 			if (null != sprintWiseDataMap.get(sprintId)) {
-				setSprintNodeValue(sprintWiseDataMap.get(sprintId), resultList, trendLineName, node, excelData);
+				setSprintNodeValue(sprintWiseDataMap.get(sprintId), resultList, trendLineName, node, validationKey,excelData);
 			} else {
 				DataCount dataCount = new DataCount();
 				dataCount.setSubFilter(Constant.EMPTY_STRING);
@@ -194,15 +195,15 @@ public class TestExecutionServiceImpl extends ZephyrKPIService<Double, List<Obje
 
 	/**
 	 * * Gets the KPI value for sprint node.
-	 * 
-	 * @param executionDetail
+	 *  @param executionDetail
 	 * @param trendValueList
 	 * @param trendLineName
 	 * @param node
+	 * @param validationKey
 	 * @param excelData
 	 */
 	private void setSprintNodeValue(TestExecution executionDetail, List<DataCount> trendValueList, String trendLineName,
-			Node node, List<KPIExcelData> excelData) {
+									Node node, String validationKey, List<KPIExcelData> excelData) {
 
 		// aggregated value of all sub-filters of a project for given sprint
 		double executionPerc = Math
@@ -221,7 +222,7 @@ public class TestExecutionServiceImpl extends ZephyrKPIService<Double, List<Obje
 		trendValueList.add(dataCount);
 
 		if (getRequestTrackerId().toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-			KPIExcelUtility.populateTestExcecutionExcelData(executionDetail, executionPerc, passedPerc, excelData);
+			KPIExcelUtility.populateTestExcecutionExcelData(validationKey,executionDetail, executionPerc, passedPerc, excelData);
 		}
 
 	}

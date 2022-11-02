@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 import javax.validation.constraints.NotNull;
 
 import com.publicissapient.kpidashboard.apis.common.service.impl.KpiHelperService;
+import com.publicissapient.kpidashboard.apis.enums.KPIColumn;
 import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
 import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
 import org.apache.commons.collections4.CollectionUtils;
@@ -220,6 +221,7 @@ public class FirstTimePassRateServiceImpl extends JiraKPIService<Double, List<Ob
 			trendValueList.add(dataCount);
 		});
 		kpiElement.setExcelData(excelData);
+		kpiElement.setExcelColumns(KPIColumn.FIRST_TIME_PASS_RATE.getColumns());
 
 	}
 

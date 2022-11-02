@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.publicissapient.kpidashboard.apis.enums.KPIColumn;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bson.types.ObjectId;
@@ -159,6 +160,7 @@ public class SonarViolationsServiceImpl extends SonarKPIService<Long, List<Objec
 		});
 
 		kpiElement.setExcelData(excelData);
+		kpiElement.setExcelColumns(KPIColumn.SONAR_VIOLATIONS.getColumns());
 	}
 
 	/**

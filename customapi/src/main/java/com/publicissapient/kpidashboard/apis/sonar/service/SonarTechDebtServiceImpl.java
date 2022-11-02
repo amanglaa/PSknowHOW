@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.publicissapient.kpidashboard.apis.enums.KPIColumn;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -163,6 +164,7 @@ public class SonarTechDebtServiceImpl extends SonarKPIService<Long, List<Object>
 		});
 
 		kpiElement.setExcelData(excelData);
+		kpiElement.setExcelColumns(KPIColumn.SONAR_TECH_DEBT.getColumns());
 	}
 
 	private Map<String, Object> prepareSqualeList(Map<String, SonarHistory> history, String date, String projectNodeId,

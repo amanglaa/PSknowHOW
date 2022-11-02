@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 
 import javax.ws.rs.core.Feature;
 
+import com.publicissapient.kpidashboard.apis.enums.KPIColumn;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -339,6 +340,7 @@ public class DRRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 
 		});
 		kpiElement.setExcelData(excelData);
+		kpiElement.setExcelColumns(KPIColumn.DEFECT_REJECTION_RATE.getColumns());
 	}
 
 	/**

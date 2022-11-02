@@ -28,23 +28,22 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.publicissapient.kpidashboard.apis.appsetting.service.ConfigHelperService;
-import com.publicissapient.kpidashboard.common.model.application.FieldMapping;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.publicissapient.kpidashboard.apis.appsetting.service.ConfigHelperService;
 import com.publicissapient.kpidashboard.apis.common.service.impl.KpiHelperService;
 import com.publicissapient.kpidashboard.apis.config.CustomApiConfig;
 import com.publicissapient.kpidashboard.apis.constant.Constant;
 import com.publicissapient.kpidashboard.apis.enums.Filters;
 import com.publicissapient.kpidashboard.apis.enums.JiraFeature;
 import com.publicissapient.kpidashboard.apis.enums.KPICode;
+import com.publicissapient.kpidashboard.apis.enums.KPIColumn;
 import com.publicissapient.kpidashboard.apis.enums.KPISource;
 import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
 import com.publicissapient.kpidashboard.apis.filter.service.FilterHelperService;
@@ -59,6 +58,7 @@ import com.publicissapient.kpidashboard.apis.util.KpiDataHelper;
 import com.publicissapient.kpidashboard.common.constant.CommonConstant;
 import com.publicissapient.kpidashboard.common.constant.NormalizedJira;
 import com.publicissapient.kpidashboard.common.model.application.DataCount;
+import com.publicissapient.kpidashboard.common.model.application.FieldMapping;
 import com.publicissapient.kpidashboard.common.model.jira.JiraIssue;
 import com.publicissapient.kpidashboard.common.model.jira.SprintDetails;
 import com.publicissapient.kpidashboard.common.repository.jira.JiraIssueRepository;
@@ -82,7 +82,7 @@ public class CreatedVsResolvedServiceImpl extends JiraKPIService<Double, List<Ob
 	private static final String CREATED_DEFECTS = "createdDefects";
 	private static final String RESOLVED_DEFECTS = "resolvedDefects";
 	private static final String DEV = "DeveloperKpi";
-	private static final String PROJECT_WISE_CLOSED_STORY_STATUS= "projectWiseClosedStoryStatus";
+	private static final String PROJECT_WISE_CLOSED_STORY_STATUS = "projectWiseClosedStoryStatus";
 
 	@Autowired
 	private CustomApiConfig customApiConfig;
@@ -174,8 +174,7 @@ public class CreatedVsResolvedServiceImpl extends JiraKPIService<Double, List<Ob
 			mapOfProjectFilters.put(JiraFeature.ISSUE_TYPE.getFieldValueInFeature(), defectType);
 			uniqueProjectMap.put(basicProjectConfigId.toString(), mapOfProjectFilters);
 
-			FieldMapping fieldMapping = configHelperService.getFieldMappingMap()
-					.get(basicProjectConfigId);
+			FieldMapping fieldMapping = configHelperService.getFieldMappingMap().get(basicProjectConfigId);
 			if (Optional.ofNullable(fieldMapping.getJiraIssueDeliverdStatus()).isPresent()) {
 				projectWiseClosedStatusMap.put(basicProjectConfigId.toString(),
 						fieldMapping.getJiraIssueDeliverdStatus().stream().distinct().collect(Collectors.toList()));
@@ -203,11 +202,13 @@ public class CreatedVsResolvedServiceImpl extends JiraKPIService<Double, List<Ob
 					jiraIssueRepository.findIssueByNumber(mapOfFilters, totalIssue, uniqueProjectMap));
 			resultListMap.put(SPRINT_WISE_SPRINTDETAILS, sprintDetails);
 		} else {
-			//start : for azure board sprint details collections put is empty due to we did not have required data of issues.
+			// start : for azure board sprint details collections put is empty due to we did
+			// not have required data of issues.
 			resultListMap.put(CREATED_VS_RESOLVED_KEY,
 					jiraIssueRepository.findIssuesBySprintAndType(mapOfFilters, uniqueProjectMap));
 			resultListMap.put(SPRINT_WISE_SPRINTDETAILS, new ArrayList<>());
-			//end : for azure board sprint details collections put is empty due to we did not have required data of issues.
+			// end : for azure board sprint details collections put is empty due to we did
+			// not have required data of issues.
 		}
 		resultListMap.put(PROJECT_WISE_CLOSED_STORY_STATUS, projectWiseClosedStatusMap);
 		setDbQueryLogger((List<JiraIssue>) resultListMap.get(CREATED_VS_RESOLVED_KEY));
@@ -260,16 +261,18 @@ public class CreatedVsResolvedServiceImpl extends JiraKPIService<Double, List<Ob
 		Map<Pair<String, String>, List<JiraIssue>> sprintWiseCreatedIssues = new HashMap<>();
 		Map<Pair<String, String>, List<JiraIssue>> sprintWiseClosedIssues = new HashMap<>();
 
-		if(CollectionUtils.isNotEmpty(allJiraIssue)) {
+		if (CollectionUtils.isNotEmpty(allJiraIssue)) {
 			if (CollectionUtils.isNotEmpty(sprintDetails)) {
 				sprintDetails.forEach(sd -> {
 					List<String> availableIssues = KpiDataHelper.getIssuesIdListBasedOnTypeFromSprintDetails(sd,
 							CommonConstant.TOTAL_ISSUES);
 					List<String> completedSprintIssues = KpiDataHelper.getIssuesIdListBasedOnTypeFromSprintDetails(sd,
 							CommonConstant.COMPLETED_ISSUES);
-					List<JiraIssue> totalIssues = allJiraIssue.stream().filter(element -> availableIssues.contains(element.getNumber()))
+					List<JiraIssue> totalIssues = allJiraIssue.stream()
+							.filter(element -> availableIssues.contains(element.getNumber()))
 							.collect(Collectors.toList());
-					List<JiraIssue> completedIssues = allJiraIssue.stream().filter(element -> completedSprintIssues.contains(element.getNumber()))
+					List<JiraIssue> completedIssues = allJiraIssue.stream()
+							.filter(element -> completedSprintIssues.contains(element.getNumber()))
 							.collect(Collectors.toList());
 					sprintWiseCreatedIssues.put(Pair.of(sd.getBasicProjectConfigId().toString(), sd.getSprintID()),
 							totalIssues);
@@ -277,7 +280,8 @@ public class CreatedVsResolvedServiceImpl extends JiraKPIService<Double, List<Ob
 							completedIssues);
 				});
 			} else {
-				// for azure board sprint details collections empty so that we have to prepare data from jira issue
+				// for azure board sprint details collections empty so that we have to prepare
+				// data from jira issue
 				Map<String, List<String>> projectWiseClosedStatusMap = (Map<String, List<String>>) createdVsResolvedMap
 						.get(PROJECT_WISE_CLOSED_STORY_STATUS);
 				Map<String, List<JiraIssue>> projectWiseJiraIssues = allJiraIssue.stream()
@@ -286,8 +290,8 @@ public class CreatedVsResolvedServiceImpl extends JiraKPIService<Double, List<Ob
 					Map<String, List<JiraIssue>> sprintWiseJiraIssues = projectWiseIssuesList.stream()
 							.filter(jiraIssue -> Objects.nonNull(jiraIssue.getSprintID()))
 							.collect(Collectors.groupingBy(JiraIssue::getSprintID));
-					sprintWiseJiraIssues.forEach((sprintId, totalIssues) -> 
-						sprintWiseCreatedIssues.put(Pair.of(basicProjectConfigId, sprintId), totalIssues));
+					sprintWiseJiraIssues.forEach((sprintId, totalIssues) -> sprintWiseCreatedIssues
+							.put(Pair.of(basicProjectConfigId, sprintId), totalIssues));
 					List<String> closedStatus = projectWiseClosedStatusMap.get(basicProjectConfigId);
 					sprintWiseJiraIssues.forEach((sprintId, sprintWiseIssuesList) -> {
 						List<JiraIssue> completedIssues = sprintWiseIssuesList.stream()
@@ -340,6 +344,7 @@ public class CreatedVsResolvedServiceImpl extends JiraKPIService<Double, List<Ob
 			mapTmp.get(node.getId()).setValue(new ArrayList<DataCount>(Arrays.asList(dataCount)));
 		});
 		kpiElement.setExcelData(excelData);
+		kpiElement.setExcelColumns(KPIColumn.CREATED_VS_RESOLVED_DEFECTS.getColumns());
 	}
 
 	private void populateExcelDataObject(String requestTrackerId, List<KPIExcelData> excelData, Node node,
@@ -347,12 +352,13 @@ public class CreatedVsResolvedServiceImpl extends JiraKPIService<Double, List<Ob
 
 		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
 
-			Map<String, JiraIssue> createdTicketMap = totalCreatedTickets.stream()
-					.collect(Collectors.toMap(JiraIssue::getNumber, Function.identity()));
+			Map<String, JiraIssue> createdTicketMap = new HashMap<>();
+			totalCreatedTickets.stream()
+					.forEach(jiraIssue -> createdTicketMap.putIfAbsent(jiraIssue.getNumber(), jiraIssue));
 
 			String sprintName = node.getSprintFilter().getName();
-			KPIExcelUtility.populateStoryRelatedExcelData(sprintName, createdTicketMap, totalResolvedTickets, excelData,
-					KPICode.CREATED_VS_RESOLVED_DEFECTS.getKpiId());
+			KPIExcelUtility.populateCreatedVsResolvedExcelData(sprintName, createdTicketMap, totalResolvedTickets,
+					excelData);
 		}
 
 	}
