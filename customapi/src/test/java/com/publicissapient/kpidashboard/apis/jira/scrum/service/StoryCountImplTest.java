@@ -191,6 +191,30 @@ public class StoryCountImplTest {
 	}
 
 	@Test
+	public void testGetStoryList_EmptySprintDetails_AzureCase() throws ApplicationException {
+		TreeAggregatorDetail treeAggregatorDetail = KPIHelperUtil.getTreeLeafNodesGroupedByFilter(kpiRequest,
+				accountHierarchyDataList, new ArrayList<>(), "hierarchyLevelOne", 5);
+		when(sprintRepository.findBySprintIDIn(Mockito.any())).thenReturn(new ArrayList<>());
+		when(jiraIssueRepository.findIssuesBySprintAndType(Mockito.any(), Mockito.any()))
+				.thenReturn(totalIssueList);
+		String kpiRequestTrackerId = "Excel-Jira-5be544de025de212549176a9";
+		when(cacheService.getFromApplicationCache(Constant.KPI_REQUEST_TRACKER_ID_KEY + KPISource.JIRA.name()))
+				.thenReturn(kpiRequestTrackerId);
+		when(storyCountImpl.getRequestTrackerId()).thenReturn(kpiRequestTrackerId);
+		try {
+			KpiElement kpiElement = storyCountImpl.getKpiData(kpiRequest, kpiRequest.getKpiList().get(0),
+					treeAggregatorDetail);
+			List<DataCount> dataCountList = (List<DataCount>) kpiElement.getTrendValueList();
+
+			assertThat("Story Count : ", dataCountList.size(), equalTo(1));
+
+		} catch (ApplicationException enfe) {
+
+		}
+
+	}
+
+	@Test
 	public void testQualifierType() {
 		String kpiName = KPICode.STORY_COUNT.name();
 		String type = storyCountImpl.getQualifierType();
