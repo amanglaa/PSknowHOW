@@ -18,44 +18,6 @@
 
 package com.publicissapient.kpidashboard.jira.client.jiraissue;
 
-import java.lang.reflect.InvocationTargetException;
-import java.text.ParseException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import com.publicissapient.kpidashboard.common.model.connection.Connection;
-import com.publicissapient.kpidashboard.common.model.jira.BoardDetails;
-import com.publicissapient.kpidashboard.jira.client.sprint.SprintClient;
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.ListUtils;
-import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.text.StringEscapeUtils;
-import org.bson.types.ObjectId;
-import org.codehaus.jettison.json.JSONException;
-import org.joda.time.DateTime;
-import org.json.simple.JSONArray;
-import org.json.simple.parser.JSONParser;
-import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.atlassian.jira.rest.client.api.domain.BasicComponent;
 import com.atlassian.jira.rest.client.api.domain.ChangelogGroup;
 import com.atlassian.jira.rest.client.api.domain.ChangelogItem;
@@ -76,6 +38,8 @@ import com.publicissapient.kpidashboard.common.model.application.AdditionalFilte
 import com.publicissapient.kpidashboard.common.model.application.FieldMapping;
 import com.publicissapient.kpidashboard.common.model.application.HierarchyLevel;
 import com.publicissapient.kpidashboard.common.model.application.ProjectBasicConfig;
+import com.publicissapient.kpidashboard.common.model.connection.Connection;
+import com.publicissapient.kpidashboard.common.model.jira.BoardDetails;
 import com.publicissapient.kpidashboard.common.model.jira.JiraIssue;
 import com.publicissapient.kpidashboard.common.model.jira.JiraIssueCustomHistory;
 import com.publicissapient.kpidashboard.common.model.jira.JiraIssueSprint;
@@ -88,16 +52,50 @@ import com.publicissapient.kpidashboard.common.repository.jira.JiraIssueReposito
 import com.publicissapient.kpidashboard.common.repository.zephyr.TestCaseDetailsRepository;
 import com.publicissapient.kpidashboard.common.service.HierarchyLevelService;
 import com.publicissapient.kpidashboard.common.service.ProcessorExecutionTraceLogService;
+import com.publicissapient.kpidashboard.common.util.DateUtil;
 import com.publicissapient.kpidashboard.jira.adapter.JiraAdapter;
 import com.publicissapient.kpidashboard.jira.adapter.helper.JiraRestClientFactory;
+import com.publicissapient.kpidashboard.jira.client.sprint.SprintClient;
 import com.publicissapient.kpidashboard.jira.config.JiraProcessorConfig;
 import com.publicissapient.kpidashboard.jira.model.ProjectConfFieldMapping;
 import com.publicissapient.kpidashboard.jira.repository.JiraProcessorRepository;
 import com.publicissapient.kpidashboard.jira.util.AdditionalFilterHelper;
 import com.publicissapient.kpidashboard.jira.util.JiraConstants;
 import com.publicissapient.kpidashboard.jira.util.JiraProcessorUtil;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.text.StringEscapeUtils;
+import org.bson.types.ObjectId;
+import org.codehaus.jettison.json.JSONException;
+import org.joda.time.DateTime;
+import org.json.simple.JSONArray;
+import org.json.simple.parser.JSONParser;
+import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This is an implemented/extended storyDataClient for configured Scrum
@@ -198,7 +196,7 @@ public class ScrumJiraIssueClientImpl extends JiraIssueClient {// NOPMD
 						savedIsuesCount += issues.size();
 					}
 
-					if (!dataExist && !latestDataFetched && setForCacheClean.size() > sprintCount) {
+					if (!latestDataFetched && setForCacheClean.size() > sprintCount) {
 						latestDataFetched = cleanCache();
 						setForCacheClean.clear();
 						log.info("latest sprint fetched cache cleaned.");
@@ -212,6 +210,7 @@ public class ScrumJiraIssueClientImpl extends JiraIssueClient {// NOPMD
 						break;
 					}
 				}
+				log.info("fetching epic");
 				List<Issue> epicIssue = jiraAdapter.getEpic(projectConfig,board.getBoardId());
 				saveJiraIssueDetails(epicIssue, projectConfig, setForCacheClean,
 						jiraAdapter);
@@ -224,6 +223,8 @@ public class ScrumJiraIssueClientImpl extends JiraIssueClient {// NOPMD
 			if (!isAttemptSuccess) {
 				lastSavedJiraIssueChangedDateByType.clear();
 				processorExecutionTraceLog.setLastSuccessfulRun(null);
+			}else{
+				processorExecutionTraceLog.setLastSuccessfulRun(DateUtil.dateTimeFormatter(LocalDateTime.now(),QUERYDATEFORMAT));
 			}
 			saveExecutionTraceLog(processorExecutionTraceLog, lastSavedJiraIssueChangedDateByType, isAttemptSuccess);
 		}
@@ -282,17 +283,6 @@ public class ScrumJiraIssueClientImpl extends JiraIssueClient {// NOPMD
 		processorExecutionTraceLog.setExecutionSuccess(isSuccess);
 		processorExecutionTraceLog.setExecutionEndedAt(System.currentTimeMillis());
 		processorExecutionTraceLogService.save(processorExecutionTraceLog);
-	}
-
-	private LocalDateTime updatedDateToSave(LocalDateTime capturedDate, LocalDateTime currentIssueDate) {
-		if (capturedDate == null) {
-			return currentIssueDate;
-		}
-
-		if (currentIssueDate.isAfter(capturedDate)) {
-			return currentIssueDate;
-		}
-		return capturedDate;
 	}
 
 	private boolean cleanCache() {
@@ -383,7 +373,7 @@ public class ScrumJiraIssueClientImpl extends JiraIssueClient {// NOPMD
 			String issueNumber = JiraProcessorUtil.deodeUTF8String(issue.getKey());
 
 			JiraIssue jiraIssue= getJiraIssue(projectConfig, issueId);
-			JiraIssueCustomHistory jiraIssueHistory=getIssueCustomHistory(projectConfig, issueId);
+			JiraIssueCustomHistory jiraIssueHistory=getIssueCustomHistory(projectConfig, issueNumber);
 			TestCaseDetails testCaseDetail=getTestCaseDetail(projectConfig, issueNumber);
 
 			Map<String, IssueField> fields = JiraIssueClientUtil.buildFieldMap(issue.getFields());

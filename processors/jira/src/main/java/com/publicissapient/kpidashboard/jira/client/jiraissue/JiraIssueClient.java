@@ -579,7 +579,7 @@ public abstract class JiraIssueClient {// NOPMD //NOSONAR
 
 	public String getDeltaDate(String lastSuccessfulRun) {
 		LocalDateTime ldt = DateUtil.stringToLocalDateTime(lastSuccessfulRun,QUERYDATEFORMAT);
-		ldt.minusDays(30);
+		ldt = ldt.minusDays(30);
 		return DateUtil.dateTimeFormatter(ldt,QUERYDATEFORMAT);
 	}
 
