@@ -10,6 +10,7 @@ public class SprintIssue {
     private String priority;
     private String status;
     private String typeName;
-    private String estimate;
     private Double storyPoints;
+    private Double originalEstimate;
+    private Double remainingEstimate;
 }

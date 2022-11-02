@@ -18,6 +18,39 @@
 
 package com.publicissapient.kpidashboard.jira.adapter.impl;
 
+import com.atlassian.jira.rest.client.api.RestClientException;
+import com.atlassian.jira.rest.client.api.domain.Field;
+import com.atlassian.jira.rest.client.api.domain.Issue;
+import com.atlassian.jira.rest.client.api.domain.IssueType;
+import com.atlassian.jira.rest.client.api.domain.IssuelinksType;
+import com.atlassian.jira.rest.client.api.domain.Project;
+import com.atlassian.jira.rest.client.api.domain.SearchResult;
+import com.atlassian.jira.rest.client.api.domain.Status;
+import com.atlassian.jira.rest.client.api.domain.Version;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.publicissapient.kpidashboard.common.model.connection.Connection;
+import com.publicissapient.kpidashboard.common.model.jira.BoardDetails;
+import com.publicissapient.kpidashboard.common.model.jira.SprintDetails;
+import com.publicissapient.kpidashboard.common.model.jira.SprintIssue;
+import com.publicissapient.kpidashboard.common.service.AesEncryptionService;
+import com.publicissapient.kpidashboard.jira.adapter.JiraAdapter;
+import com.publicissapient.kpidashboard.jira.adapter.impl.async.ProcessorJiraRestClient;
+import com.publicissapient.kpidashboard.jira.client.jiraprojectmetadata.JiraIssueMetadata;
+import com.publicissapient.kpidashboard.jira.config.JiraProcessorConfig;
+import com.publicissapient.kpidashboard.jira.model.JiraToolConfig;
+import com.publicissapient.kpidashboard.jira.model.ProjectConfFieldMapping;
+import com.publicissapient.kpidashboard.jira.util.JiraConstants;
+import io.atlassian.util.concurrent.Promise;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.springframework.stereotype.Service;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,41 +72,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.atlassian.jira.rest.client.api.domain.Issue;
-import com.google.common.collect.ImmutableList;
-import com.publicissapient.kpidashboard.common.model.jira.BoardDetails;
-import com.publicissapient.kpidashboard.common.model.jira.SprintIssue;
-import com.publicissapient.kpidashboard.jira.client.jiraprojectmetadata.JiraIssueMetadata;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import org.springframework.stereotype.Service;
-
-import com.atlassian.jira.rest.client.api.RestClientException;
-import com.atlassian.jira.rest.client.api.domain.Field;
-import com.atlassian.jira.rest.client.api.domain.IssueType;
-import com.atlassian.jira.rest.client.api.domain.IssuelinksType;
-import com.atlassian.jira.rest.client.api.domain.Project;
-import com.atlassian.jira.rest.client.api.domain.SearchResult;
-import com.atlassian.jira.rest.client.api.domain.Status;
-import com.atlassian.jira.rest.client.api.domain.Version;
-import com.google.common.collect.Lists;
-import com.publicissapient.kpidashboard.common.model.connection.Connection;
-import com.publicissapient.kpidashboard.common.model.jira.SprintDetails;
-import com.publicissapient.kpidashboard.common.service.AesEncryptionService;
-import com.publicissapient.kpidashboard.jira.adapter.JiraAdapter;
-import com.publicissapient.kpidashboard.jira.adapter.impl.async.ProcessorJiraRestClient;
-import com.publicissapient.kpidashboard.jira.config.JiraProcessorConfig;
-import com.publicissapient.kpidashboard.jira.model.JiraToolConfig;
-import com.publicissapient.kpidashboard.jira.model.ProjectConfFieldMapping;
-import com.publicissapient.kpidashboard.jira.util.JiraConstants;
-
-import io.atlassian.util.concurrent.Promise;
-import lombok.extern.slf4j.Slf4j;
-
 import static com.atlassian.jira.rest.client.api.IssueRestClient.Expandos.CHANGELOG;
 import static com.atlassian.jira.rest.client.api.IssueRestClient.Expandos.NAMES;
 import static com.atlassian.jira.rest.client.api.IssueRestClient.Expandos.SCHEMA;
@@ -86,7 +84,6 @@ import static com.atlassian.jira.rest.client.api.IssueRestClient.Expandos.SCHEMA
 @Service
 public class OnlineAdapter implements JiraAdapter {
 
-	private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm";
 	private static final String MSG_JIRA_CLIENT_SETUP_FAILED = "Jira client setup failed. No results obtained. Check your jira setup.";
 	private static final String ERROR_MSG_401 = "Error 401 connecting to JIRA server, your credentials are probably wrong. Note: Ensure you are using JIRA user name not your email address.";
 	private static final String ERROR_MSG_NO_RESULT_WAS_AVAILABLE = "No result was available from Jira unexpectedly - defaulting to blank response. The reason for this fault is the following : {}";
@@ -153,7 +150,7 @@ public class OnlineAdapter implements JiraAdapter {
 		} else {
 			String query = StringUtils.EMPTY;
 			try {
-				query = "updatedDate>='"+ startDateTimeByIssueType+"'";
+				query = "updatedDate>='"+ startDateTimeByIssueType+"' order by updatedDate desc";
 
 				log.info("jql= " + query);
 				Instant start = Instant.now();
@@ -634,13 +631,34 @@ public class OnlineAdapter implements JiraAdapter {
 			issue.setStatus(getName(projectConfig,STATUSID,obj));
 			issue.setTypeName(getName(projectConfig,TYPEID,obj));
 		}
-		Object StoryPointObject = getStatistics((JSONObject) obj.get("estimateStatistic"),
-				"statFieldValue","value");
-		Object timeEstimateObject = getStatistics((JSONObject) obj.get("trackingStatistic"),
-				"statFieldValue","value");
-		issue.setEstimate(timeEstimateObject == null? null:timeEstimateObject.toString());
-		issue.setStoryPoints(StoryPointObject == null? null:Double.valueOf(StoryPointObject.toString()));
+		setEstimateStatistics(issue,obj,projectConfig);
+		setTimeTrackingStatistics(issue,obj);
 		return issue;
+	}
+
+	private void setTimeTrackingStatistics(SprintIssue issue, JSONObject obj) {
+		Object timeEstimateFieldId = getStatisticsFieldId((JSONObject) obj.get("trackingStatistic"),
+				"statFieldId");
+		if(null != timeEstimateFieldId){
+			Object timeTrackingObject = getStatistics((JSONObject) obj.get("trackingStatistic"),
+					"statFieldValue","value");
+			issue.setRemainingEstimate(timeTrackingObject == null? null:Double.valueOf(timeTrackingObject.toString()));
+		}
+	}
+
+	private void setEstimateStatistics(SprintIssue issue, JSONObject obj, ProjectConfFieldMapping projectConfig) {
+		Object currentEstimateFieldId = getStatisticsFieldId((JSONObject) obj.get("currentEstimateStatistic"),
+				"statFieldId");
+		if(null != currentEstimateFieldId){
+			Object estimateObject = getStatistics((JSONObject) obj.get("currentEstimateStatistic"),
+					"statFieldValue","value");
+			String storyPointCustomField = StringUtils.defaultIfBlank(projectConfig.getFieldMapping().getSprintName(),"");
+			if(storyPointCustomField.equalsIgnoreCase(currentEstimateFieldId.toString())){
+				issue.setStoryPoints(estimateObject == null? null:Double.valueOf(estimateObject.toString()));
+			}else{
+				issue.setOriginalEstimate(estimateObject == null? null:Double.valueOf(estimateObject.toString()));
+			}
+		}
 	}
 
 	private String getName(ProjectConfFieldMapping projectConfig,String entityDataKey,JSONObject jsonObject){
@@ -694,6 +712,14 @@ public class OnlineAdapter implements JiraAdapter {
 		return resultObj;
 	}
 
+	private Object getStatisticsFieldId(JSONObject object,String fieldName){
+		Object resultObj = null;
+		if(null != object){
+			resultObj = object.get(fieldName);
+		}
+		return resultObj;
+	}
+
 
 	public List<Issue> getEpic(ProjectConfFieldMapping projectConfig, String boardId) {
 		List<String> epicList = new ArrayList<>();
@@ -707,7 +733,7 @@ public class OnlineAdapter implements JiraAdapter {
 					URLConnection connection;
 					connection = url.openConnection();
 					String jsonResponse = getDataFromServer(projectConfig, (HttpURLConnection) connection);
-					isLast = populateData(jsonResponse, epicList, projectConfig, boardId);
+					isLast = populateData(jsonResponse, epicList, boardId);
 					startIndex = epicList.size() + 1;
 				}while(!isLast);
 			}
@@ -722,8 +748,7 @@ public class OnlineAdapter implements JiraAdapter {
 		return getEpicIssues(epicList);
 	}
 
-	private boolean populateData(String sprintReportObj, List<String> epicList,
-											 ProjectConfFieldMapping projectConfig, String boardId) {
+	private boolean populateData(String sprintReportObj, List<String> epicList, String boardId) {
 		boolean isLast = true;
 		if (StringUtils.isNotBlank(sprintReportObj)) {
 			JSONArray valuesJson = new JSONArray();
@@ -732,7 +757,7 @@ public class OnlineAdapter implements JiraAdapter {
 				if(null!=obj) {
 					valuesJson = (JSONArray)obj.get("values");
 				}
-				getEpic(valuesJson, epicList, projectConfig, boardId);
+				getEpic(valuesJson, epicList, boardId);
 				isLast = Boolean.valueOf(obj.get("isLast").toString());
 			} catch (ParseException pe) {
 				log.error("Parser exception when parsing statuses", pe);
@@ -741,11 +766,11 @@ public class OnlineAdapter implements JiraAdapter {
 		return isLast;
 	}
 
-	private void getEpic(JSONArray valuesJson,List<String> sprintDetailsSet,ProjectConfFieldMapping projectConfig,String boardId) {
+	private void getEpic(JSONArray valuesJson,List<String> epicList,String boardId) {
 		valuesJson.forEach(values -> {
 			JSONObject sprintJson = (JSONObject) values;
 			if (null != sprintJson) {
-				sprintDetailsSet.add(sprintJson.get(KEY).toString());
+				epicList.add(sprintJson.get(KEY).toString());
 			}
 		});
 	}
@@ -754,7 +779,6 @@ public class OnlineAdapter implements JiraAdapter {
 			throws MalformedURLException {
 
 		Optional<Connection> connectionOptional = projectConfig.getJira().getConnection();
-		boolean isCloudEnv = connectionOptional.map(Connection::isCloudEnv).orElse(false);
 		String serverURL = jiraProcessorConfig.getJiraEpicApi();
 
 		serverURL = serverURL.replace("{startAtIndex}",String.valueOf(startIndex)).replace("{boardId}",boardId);
