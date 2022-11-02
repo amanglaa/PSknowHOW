@@ -231,7 +231,6 @@ public class SprintClientImpl implements SprintClient {
 				SprintDetails sprintDetails = new SprintDetails();
 				sprintDetails.setSprintName(sprintJson.get(NAME).toString());
 				List<String> boardList = new ArrayList<>();
-				//boardList.add("17903");
 				boardList.add(boardId);
 				sprintDetails.setOriginBoardId(boardList);
 				sprintDetails.setOriginalSprintId(sprintJson.get(ID).toString());
