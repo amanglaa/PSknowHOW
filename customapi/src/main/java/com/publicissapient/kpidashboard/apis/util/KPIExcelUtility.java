@@ -23,7 +23,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.publicissapient.kpidashboard.apis.constant.Constant;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.publicissapient.kpidashboard.apis.enums.KPICode;
 import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
@@ -42,25 +45,30 @@ public class KPIExcelUtility {
 
 	/**
 	 * This method populate the excel data for DIR KPI
-	 *
+	 * @param sprint
 	 * @param storyIds
 	 * @param defects
+	 * @param kpiExcelData
 	 * @param issueData
-	 * 
 	 */
 	public static void populateDirExcelData(String sprint, List<String> storyIds, List<JiraIssue> defects,
-			List<KPIExcelData> kpiExcelData, Map<String, JiraIssue> issueData) {
+			List<KPIExcelData> kpiExcelData,Map<String,JiraIssue> issueData) {
 		storyIds.forEach(story -> {
 			Map<String, String> linkedDefects = defects.stream().filter(d -> d.getDefectStoryID().contains(story))
-					.collect(Collectors.toMap(JiraIssue::getNumber, JiraIssue::getUrl));
+					.map(defect -> {
+						if (StringUtils.isEmpty(defect.getUrl())) {
+							defect.setUrl(Constant.EMPTY_STRING);
+						}
+						return defect;
+					}).collect(Collectors.toMap(JiraIssue::getNumber, JiraIssue::getUrl));
 			KPIExcelData excelData = new KPIExcelData();
 			excelData.setSprintName(sprint);
 			excelData.setLinkedDefects(linkedDefects);
-			if (MapUtils.isNotEmpty(issueData)) {
-				JiraIssue jiraIssue = issueData.get(story);
-				if (null != jiraIssue) {
+			if(MapUtils.isNotEmpty(issueData)) {
+				JiraIssue jiraIssue=issueData.get(story);
+				if(null!=jiraIssue) {
 					excelData.setIssueDesc(jiraIssue.getName());
-					Map<String, String> storyId = new HashMap<>();
+					Map<String,String> storyId=new HashMap<>();
 					storyId.put(story, jiraIssue.getUrl());
 					excelData.setStoryId(storyId);
 				}
@@ -84,7 +92,7 @@ public class KPIExcelUtility {
 					excelData.setStoryId(storyId);
 				}
 			}
-			excelData.setFirstTimePass(collect.contains(story) ? "Y" : "");
+			excelData.setFirstTimePass(collect.contains(story) ? Constant.EXCEL_YES : Constant.EMPTY_STRING);
 			kpiExcelData.add(excelData);
 		});
 	}
@@ -96,14 +104,14 @@ public class KPIExcelUtility {
 			KPIExcelData excelData = new KPIExcelData();
 			excelData.setSprintName(sprint);
 			// excelData.setStoryId(story);
-			excelData.setFirstTimePass(collect.contains(story) ? "Y" : "N");
+			//excelData.setFirstTimePass(collect.contains(story) ? Constant.EXCEL_YES : "N");
 			kpiExcelData.add(excelData);
 		});
 	}
 
 	/**
-	 * TO GET "Y"/"N" from complete list of defects if defect is present in
-	 * conditional list then "Y" else "N" kpi specific
+	 * TO GET Constant.EXCEL_YES/"N" from complete list of defects if defect is present in
+	 * conditional list then Constant.EXCEL_YES else "N" kpi specific
 	 * 
 	 * @param sprint
 	 * @param totalBugList
@@ -117,7 +125,7 @@ public class KPIExcelUtility {
 
 		if (MapUtils.isNotEmpty(totalBugList)) {
 			totalBugList.forEach((defectId, jiraIssue) -> {
-				String present = conditionalList.contains(defectId) ? "Y" : "";
+				String present = conditionalList.contains(defectId) ? Constant.EXCEL_YES : Constant.EMPTY_STRING;
 				KPIExcelData excelData = new KPIExcelData();
 				excelData.setSprintName(sprint);
 				excelData.setIssueDesc(jiraIssue.getName());
@@ -169,8 +177,8 @@ public class KPIExcelUtility {
 	}
 
 	/**
-	 * TO GET "Y"/"N" from complete list of defects if defect is present in
-	 * conditional list then "Y" else "" kpi specific
+	 * TO GET Constant.EXCEL_YES/"N" from complete list of defects if defect is present in
+	 * conditional list then Constant.EXCEL_YES else Constant.EMPTY_STRING kpi specific
 	 * 
 	 * @param sprint
 	 * @param totalStoriesMap
@@ -184,7 +192,7 @@ public class KPIExcelUtility {
 
 		if (MapUtils.isNotEmpty(totalStoriesMap)) {
 			totalStoriesMap.forEach((storyId, jiraIssue) -> {
-				String present = conditionalList.contains(storyId) ? "Y" : "";
+				String present = conditionalList.contains(storyId) ? Constant.EXCEL_YES : Constant.EMPTY_STRING;
 				KPIExcelData excelData = new KPIExcelData();
 				excelData.setSprintName(sprint);
 				excelData.setIssueDesc(jiraIssue.getName());
@@ -202,10 +210,9 @@ public class KPIExcelUtility {
 			List<TestCaseDetails> conditionStories, List<KPIExcelData> kpiExcelData, String kpiId) {
 		List<String> conditionalList = conditionStories.stream().map(TestCaseDetails::getNumber)
 				.collect(Collectors.toList());
-
 		if (MapUtils.isNotEmpty(totalStoriesMap)) {
 			totalStoriesMap.forEach((storyId, jiraIssue) -> {
-				String present = conditionalList.contains(storyId) ? "Y" : "";
+				String present = conditionalList.contains(storyId) ? Constant.EXCEL_YES : Constant.EMPTY_STRING;
 				KPIExcelData excelData = new KPIExcelData();
 				excelData.setSprintName(sprint);
 				excelData.setTestCaseId(storyId);
@@ -214,5 +221,19 @@ public class KPIExcelUtility {
 			});
 		}
 	}
+
+	public static void populateUnitCoverageExcelData(String projectName, List<String> jobList, List<String> coverageList, List<String> versionDate, List<KPIExcelData> kpiExcelData) {
+		if (CollectionUtils.isNotEmpty(jobList)) {
+			for(int i=0;i<=jobList.size();i++) {
+				KPIExcelData excelData = new KPIExcelData();
+				excelData.setProject(projectName);
+				excelData.setJobName(jobList.get(i));
+				excelData.setUnitCoverage(coverageList.get(i));
+				excelData.setWeeks(versionDate.get(i));
+				kpiExcelData.add(excelData);
+			}
+		}
+	}
+
 
 }

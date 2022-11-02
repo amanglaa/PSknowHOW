@@ -86,4 +86,18 @@ public class KPIExcelData {
 	@JsonProperty("Automated")
 	private String automated;
 
+	@JsonProperty("Project")
+	private String project;
+
+	@JsonProperty("Job Name")
+	private String jobName;
+
+	@JsonProperty("Unit Coverage")
+	private String unitCoverage;
+
+	@JsonProperty("Weeks")
+	private String weeks;
+
+
+
 }

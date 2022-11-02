@@ -18,15 +18,19 @@
 
 package com.publicissapient.kpidashboard.apis.jira.scrum.service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.core.Feature;
 
-import com.publicissapient.kpidashboard.apis.common.service.impl.KpiHelperService;
-import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
-import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -36,6 +40,7 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
 import com.publicissapient.kpidashboard.apis.appsetting.service.ConfigHelperService;
+import com.publicissapient.kpidashboard.apis.common.service.impl.KpiHelperService;
 import com.publicissapient.kpidashboard.apis.config.CustomApiConfig;
 import com.publicissapient.kpidashboard.apis.constant.Constant;
 import com.publicissapient.kpidashboard.apis.enums.Filters;
@@ -45,16 +50,17 @@ import com.publicissapient.kpidashboard.apis.enums.KPISource;
 import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
 import com.publicissapient.kpidashboard.apis.filter.service.FilterHelperService;
 import com.publicissapient.kpidashboard.apis.jira.service.JiraKPIService;
+import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
 import com.publicissapient.kpidashboard.apis.model.KpiElement;
 import com.publicissapient.kpidashboard.apis.model.KpiRequest;
 import com.publicissapient.kpidashboard.apis.model.Node;
 import com.publicissapient.kpidashboard.apis.model.TreeAggregatorDetail;
 import com.publicissapient.kpidashboard.apis.util.CommonUtils;
+import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
 import com.publicissapient.kpidashboard.apis.util.KpiDataHelper;
 import com.publicissapient.kpidashboard.common.constant.NormalizedJira;
 import com.publicissapient.kpidashboard.common.model.application.DataCount;
 import com.publicissapient.kpidashboard.common.model.application.FieldMapping;
-import com.publicissapient.kpidashboard.common.model.application.ValidationData;
 import com.publicissapient.kpidashboard.common.model.jira.JiraIssue;
 import com.publicissapient.kpidashboard.common.model.jira.SprintWiseStory;
 import com.publicissapient.kpidashboard.common.repository.jira.JiraIssueRepository;
@@ -91,6 +97,37 @@ public class DRRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 	@Autowired
 	private FilterHelperService flterHelperService;
 
+	public static void getDefectsWithDrop(Map<String, Map<String, List<String>>> droppedDefects,
+										  List<JiraIssue> defectDataList, List<JiraIssue> defectListWthDrop) {
+		if (org.apache.commons.collections4.CollectionUtils.isNotEmpty(defectDataList)) {
+			Set<JiraIssue> defectListWthDropSet = new HashSet<>();
+			defectDataList.forEach(jiraIssue -> getDefectsWthDrop(droppedDefects, defectListWthDropSet, jiraIssue));
+			defectListWthDrop.addAll(defectListWthDropSet);
+		}
+	}
+
+	private static void getDefectsWthDrop(Map<String, Map<String, List<String>>> droppedDefects,
+										  Set<JiraIssue> defectListWthDropSet, JiraIssue jiraIssue) {
+		if (!StringUtils.isBlank(jiraIssue.getStatus())) {
+			Map<String, List<String>> defectStatus = droppedDefects.get(jiraIssue.getBasicProjectConfigId());
+			if (!defectStatus.isEmpty()) {
+				if ((StringUtils.isNotEmpty(jiraIssue.getResolution())
+						&& CollectionUtils.isNotEmpty(defectStatus.get(Constant.RESOLUTION_TYPE_FOR_REJECTION))
+						&& defectStatus.get(Constant.RESOLUTION_TYPE_FOR_REJECTION).contains(jiraIssue.getResolution()))
+						|| (StringUtils.isNotEmpty(jiraIssue.getStatus())
+						&& CollectionUtils.isNotEmpty(defectStatus.get(Constant.DEFECT_REJECTION_STATUS))
+						&& defectStatus.get(Constant.DEFECT_REJECTION_STATUS)
+						.contains(jiraIssue.getStatus()))) {
+					defectListWthDropSet.add(jiraIssue);
+
+				} else {
+					defectListWthDropSet.add(jiraIssue);
+				}
+			}
+		}
+
+	}
+
 	@Override
 	public String getQualifierType() {
 		return KPICode.DEFECT_REJECTION_RATE.name();
@@ -98,7 +135,7 @@ public class DRRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 
 	@Override
 	public KpiElement getKpiData(KpiRequest kpiRequest, KpiElement kpiElement,
-			TreeAggregatorDetail treeAggregatorDetail) throws ApplicationException {
+								 TreeAggregatorDetail treeAggregatorDetail) throws ApplicationException {
 
 		List<DataCount> trendValueList = new ArrayList<>();
 		Node root = treeAggregatorDetail.getRoot();
@@ -117,7 +154,7 @@ public class DRRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 
 		Map<Pair<String, String>, Node> nodeWiseKPIValue = new HashMap<>();
 		calculateAggregatedValue(root, nodeWiseKPIValue, KPICode.DEFECT_REJECTION_RATE);
-		List<DataCount> trendValues = getTrendValues(kpiRequest, nodeWiseKPIValue,KPICode.DEFECT_REJECTION_RATE);
+		List<DataCount> trendValues = getTrendValues(kpiRequest, nodeWiseKPIValue, KPICode.DEFECT_REJECTION_RATE);
 		kpiElement.setTrendValueList(trendValues);
 
 		log.debug("[DRR-AGGREGATED-VALUE][{}]. Aggregated Value at each level in the tree {}",
@@ -127,13 +164,13 @@ public class DRRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 
 	@Override
 	public Map<String, Object> fetchKPIDataFromDb(List<Node> leafNodeList, String startDate, String endDate,
-			KpiRequest kpiRequest) {
+												  KpiRequest kpiRequest) {
 		Map<String, Object> resultListMap = new HashMap<>();
 		Map<String, List<String>> mapOfFilters = new LinkedHashMap<>();
 		List<String> sprintList = new ArrayList<>();
 		List<String> basicProjectConfigIds = new ArrayList<>();
 		Map<String, Map<String, Object>> uniqueProjectMap = new HashMap<>();
-		Map<String, Map<String,List<String>>> defectResolutionRejectionMap = new HashMap<>();
+		Map<String, Map<String, List<String>>> defectResolutionRejectionMap = new HashMap<>();
 		leafNodeList.forEach(leaf -> {
 			ObjectId basicProjectConfigId = leaf.getProjectFilter().getBasicProjectConfigId();
 			Map<String, Object> mapOfProjectFilters = new LinkedHashMap<>();
@@ -197,9 +234,9 @@ public class DRRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 	}
 
 	/**
-	 * This method populates KPI value to sprint leaf nodes. It also gives the
-	 * trend analysis at sprint wise.
-	 * 
+	 * This method populates KPI value to sprint leaf nodes. It also gives the trend
+	 * analysis at sprint wise.
+	 *
 	 * @param mapTmp
 	 * @param kpiElement
 	 * @param sprintLeafNodeList
@@ -207,7 +244,7 @@ public class DRRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 	 */
 	@SuppressWarnings("unchecked")
 	private void sprintWiseLeafNodeValue(Map<String, Node> mapTmp, List<Node> sprintLeafNodeList,
-			List<DataCount> trendValueList, KpiElement kpiElement, KpiRequest kpiRequest) {
+										 List<DataCount> trendValueList, KpiElement kpiElement, KpiRequest kpiRequest) {
 
 		String requestTrackerId = getRequestTrackerId();
 
@@ -241,10 +278,10 @@ public class DRRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 			Map<String, Object> sprintWiseRejectedAndTotalDefects = new HashMap<>();
 			List<JiraIssue> sprintWiseRejectedDefects = ((List<JiraIssue>) storyDefectDataListMap
 					.get(REJECTED_DEFECT_DATA))
-							.stream()
-							.filter(f -> sprint.getKey().equals(f.getBasicProjectConfigId())
-									&& CollectionUtils.containsAny(f.getDefectStoryID(), totalStoryIdList))
-							.collect(Collectors.toList());
+					.stream()
+					.filter(f -> sprint.getKey().equals(f.getBasicProjectConfigId())
+							&& CollectionUtils.containsAny(f.getDefectStoryID(), totalStoryIdList))
+					.collect(Collectors.toList());
 			List<JiraIssue> sprintWiseTotaldDefects = ((List<JiraIssue>) storyDefectDataListMap.get(TOTAL_DEFECT_DATA))
 					.stream()
 					.filter(f -> sprint.getKey().equals(f.getBasicProjectConfigId())
@@ -263,8 +300,8 @@ public class DRRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 			sprintWiseRejectedDefectList.addAll(sprintWiseRejectedDefects);
 			sprintWiseTotaldDefectList.addAll(sprintWiseTotaldDefects);
 
-			populateExcelDataObject(requestTrackerId, storyDefectDataListMap, excelData,
-					sprint, sprintWiseRejectedDefectList, sprintWiseTotaldDefectList);
+			populateExcelDataObject(requestTrackerId, storyDefectDataListMap, excelData, sprint,
+					sprintWiseRejectedDefectList, sprintWiseTotaldDefectList);
 
 			setSprintWiseLogger(sprint, totalStoryIdList, sprintWiseTotaldDefectList, sprintWiseRejectedDefectList);
 
@@ -302,11 +339,12 @@ public class DRRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 			trendValueList.add(dataCount);
 
 		});
+		kpiElement.setExcelData(excelData);
 	}
 
 	/**
 	 * Sorts the sprint node in ascending order of sprint begin date.
-	 * 
+	 *
 	 * @param sprintLeafNodeList
 	 */
 	private void sortSprintLeafNodeListAsc(List<Node> sprintLeafNodeList) {
@@ -314,38 +352,38 @@ public class DRRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 				.compareTo(node2.getSprintFilter().getStartDate()));
 	}
 
-
-	private void populateExcelDataObject( String requestTrackerId,
-			Map<String, Object> storyDefectDataListMap, List<KPIExcelData> excelData,
-			Pair<String, String> sprint, List<JiraIssue> sprintWiseRejectedDefectList,
-			List<JiraIssue> sprintWiseTotaldDefectList) {
+	private void populateExcelDataObject(String requestTrackerId, Map<String, Object> storyDefectDataListMap,
+										 List<KPIExcelData> excelData, Pair<String, String> sprint, List<JiraIssue> sprintWiseRejectedDefectList,
+										 List<JiraIssue> sprintWiseTotaldDefectList) {
 		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
 
 			Map<String, String> sprintWiseStoryNameMap = ((List<SprintWiseStory>) storyDefectDataListMap
 					.get(SPRINT_WISE_STORY_DATA)).stream()
-							.collect(Collectors.toMap(SprintWiseStory::getSprint, SprintWiseStory::getSprintName,
-									(name1, name2) -> name1));
+					.collect(Collectors.toMap(SprintWiseStory::getSprint, SprintWiseStory::getSprintName,
+							(name1, name2) -> name1));
 
 			Map<String, JiraIssue> totalDefectList = sprintWiseTotaldDefectList.stream()
 					.collect(Collectors.toMap(JiraIssue::getNumber, Function.identity()));
 
 			String sprintName = sprintWiseStoryNameMap.get(sprint.getValue());
 			if (!sprint.getKey().equals(sprint.getValue())) {
-				sprintName = new StringBuilder().append(sprintName).append(Constant.UNDERSCORE).append(sprint.getKey()).toString();
+				sprintName = new StringBuilder().append(sprintName).append(Constant.UNDERSCORE).append(sprint.getKey())
+						.toString();
 			}
-			KPIExcelUtility.populateDefectRelatedExcelData(sprintName, totalDefectList, sprintWiseRejectedDefectList, excelData,KPICode.DEFECT_REJECTION_RATE.getKpiId());
+			KPIExcelUtility.populateDefectRelatedExcelData(sprintName, totalDefectList, sprintWiseRejectedDefectList,
+					excelData, KPICode.DEFECT_REJECTION_RATE.getKpiId());
 		}
 	}
 
 	/**
 	 * Sets logger for data fetched from DB.
-	 * 
+	 *
 	 * @param storyIdList
 	 * @param totalDefectList
 	 * @param canceledDefectList
 	 */
 	private void setDbQueryLogger(List<String> storyIdList, List<JiraIssue> totalDefectList,
-			List<JiraIssue> canceledDefectList) {
+								  List<JiraIssue> canceledDefectList) {
 
 		if (customApiConfig.getApplicationDetailedLogger().equalsIgnoreCase("on")) {
 			log.info(SEPARATOR_ASTERISK);
@@ -362,14 +400,14 @@ public class DRRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 
 	/**
 	 * Sets logger for sprint level data.
-	 * 
+	 *
 	 * @param sprint
 	 * @param storyIdList
 	 * @param sprintWiseTotaldDefectList
 	 * @param sprintWiseRejectedDefectList
 	 */
 	private void setSprintWiseLogger(Pair<String, String> sprint, List<String> storyIdList,
-			List<JiraIssue> sprintWiseTotaldDefectList, List<JiraIssue> sprintWiseRejectedDefectList) {
+									 List<JiraIssue> sprintWiseTotaldDefectList, List<JiraIssue> sprintWiseRejectedDefectList) {
 
 		if (customApiConfig.getApplicationDetailedLogger().equalsIgnoreCase("on")) {
 			log.debug(SEPARATOR_ASTERISK);
@@ -387,14 +425,14 @@ public class DRRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 
 	/**
 	 * Sets map to show on hover of sprint node.
-	 * 
+	 *
 	 * @param sprintWiseHowerMap
 	 * @param sprint
 	 * @param rejected
 	 * @param total
 	 */
 	private void setHowerMap(Map<Pair<String, String>, Map<String, Integer>> sprintWiseHowerMap,
-			Pair<String, String> sprint, List<JiraIssue> rejected, List<JiraIssue> total) {
+							 Pair<String, String> sprint, List<JiraIssue> rejected, List<JiraIssue> total) {
 		Map<String, Integer> howerMap = new LinkedHashMap<>();
 		if (CollectionUtils.isNotEmpty(rejected)) {
 			howerMap.put(REJECTED, rejected.size());
@@ -413,35 +451,4 @@ public class DRRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 	public Double calculateKpiValue(List<Double> valueList, String kpiName) {
 		return calculateKpiValueForDouble(valueList, kpiName);
 	}
-
-	public static void getDefectsWithDrop(Map<String, Map<String,List<String>>> droppedDefects, List<JiraIssue> defectDataList,
-											 List<JiraIssue> defectListWthDrop) {
-		if (org.apache.commons.collections4.CollectionUtils.isNotEmpty(defectDataList)) {
-			Set<JiraIssue> defectListWthDropSet = new HashSet<>();
-			defectDataList.forEach(jiraIssue -> {
-				getDefectsWthDrop(droppedDefects, defectListWthDropSet, jiraIssue);
-			});
-			defectListWthDrop.addAll(defectListWthDropSet);
-		}
-	}
-
-	private static void getDefectsWthDrop(Map<String, Map<String,List<String>>> droppedDefects, Set<JiraIssue> defectListWthDropSet, JiraIssue jiraIssue) {
-		if (!StringUtils.isBlank(jiraIssue.getStatus())) {
-			Map<String,List<String>> defectStatus = droppedDefects.get(jiraIssue.getBasicProjectConfigId());
-			if (!defectStatus.isEmpty()) {
-				if (StringUtils.isNotEmpty(jiraIssue.getResolution()) &&
-						CollectionUtils.isNotEmpty(defectStatus.get(Constant.RESOLUTION_TYPE_FOR_REJECTION)) &&
-						defectStatus.get(Constant.RESOLUTION_TYPE_FOR_REJECTION).contains(jiraIssue.getResolution())) {
-					defectListWthDropSet.add(jiraIssue);
-				} else if (StringUtils.isNotEmpty(jiraIssue.getStatus()) &&
-						CollectionUtils.isNotEmpty(defectStatus.get(Constant.DEFECT_REJECTION_STATUS)) &&
-						defectStatus.get(Constant.DEFECT_REJECTION_STATUS).contains(jiraIssue.getStatus())) {
-					defectListWthDropSet.add(jiraIssue);
-				}
-			} else {
-				defectListWthDropSet.add(jiraIssue);
-			}
-		}
-	}
-
 }
