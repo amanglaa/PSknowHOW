@@ -440,12 +440,18 @@ public class KpiHelperService { // NOPMD
 
 		List<SprintDetails> sprintDetails = sprintRepository.findBySprintIDIn(sprintList);
 		Set<String> totalIssue = new HashSet<>();
-		sprintDetails.stream().forEach(sprintDetail -> {
-			if (CollectionUtils.isNotEmpty(sprintDetail.getTotalIssues())) {
-				totalIssue.addAll(sprintDetail.getTotalIssues());
-			}
+		if(CollectionUtils.isNotEmpty(sprintDetails)) {
+			sprintDetails.stream().forEach(sprintDetail -> {
+				if (CollectionUtils.isNotEmpty(sprintDetail.getTotalIssues())) {
+					totalIssue.addAll(KpiDataHelper.getIssuesIdListBasedOnTypeFromSprintDetails(sprintDetail,
+							CommonConstant.TOTAL_ISSUES));
+				}
 
-		});
+			});
+		} else {
+			mapOfFilters.put(JiraFeature.SPRINT_ID.getFieldValueInFeature(),
+					sprintList.stream().distinct().collect(Collectors.toList()));
+		}
 
 		/** additional filter **/
 		KpiDataHelper.createAdditionalFilterMap(kpiRequest, mapOfFilters, Constant.SCRUM, DEV, flterHelperService);
@@ -453,9 +459,18 @@ public class KpiHelperService { // NOPMD
 		mapOfFilters.put(JiraFeature.BASIC_PROJECT_CONFIG_ID.getFieldValueInFeature(),
 				basicProjectConfigIds.stream().distinct().collect(Collectors.toList()));
 
-		resultListMap.put(SPRINTVELOCITYKEY,
-				jiraIssueRepository.findIssueByNumber(mapOfFilters, totalIssue, uniqueProjectMap));
-		resultListMap.put(SPRINT_WISE_SPRINTDETAILS, sprintDetails);
+		if (CollectionUtils.isNotEmpty(totalIssue)) {
+			resultListMap.put(SPRINTVELOCITYKEY,
+					jiraIssueRepository.findIssueByNumber(mapOfFilters, totalIssue, uniqueProjectMap));
+			resultListMap.put(SPRINT_WISE_SPRINTDETAILS, sprintDetails);
+		} else {
+			//start: for azure board sprint details collections put is empty due to we did not have required data of issues.
+			List<JiraIssue> sprintVelocityList = jiraIssueRepository.findIssuesBySprintAndType(mapOfFilters,
+					uniqueProjectMap);
+			resultListMap.put(SPRINTVELOCITYKEY, sprintVelocityList);
+			resultListMap.put(SPRINT_WISE_SPRINTDETAILS, null);
+		}
+		//end: for azure board sprint details collections put is empty due to we did not have required data of issues.
 
 		return resultListMap;
 
