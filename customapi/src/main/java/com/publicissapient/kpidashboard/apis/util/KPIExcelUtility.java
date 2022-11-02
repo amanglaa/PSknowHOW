@@ -29,8 +29,10 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.publicissapient.kpidashboard.apis.constant.Constant;
 import com.publicissapient.kpidashboard.apis.enums.KPICode;
+import com.publicissapient.kpidashboard.apis.model.ChangeFailureRateInfo;
 import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
 import com.publicissapient.kpidashboard.common.model.jira.JiraIssue;
+import com.publicissapient.kpidashboard.common.model.testexecution.TestExecution;
 import com.publicissapient.kpidashboard.common.model.zephyr.TestCaseDetails;
 
 /**
@@ -52,16 +54,12 @@ public class KPIExcelUtility {
 	 * @param kpiExcelData
 	 * @param issueData
 	 */
-	public static void populateDirExcelData(String sprint, List<String> storyIds, List<JiraIssue> defects,
+	public static void populateDirOrDensityExcelData(String sprint, List<String> storyIds, List<JiraIssue> defects,
 			List<KPIExcelData> kpiExcelData, Map<String, JiraIssue> issueData) {
 		storyIds.forEach(story -> {
-			Map<String, String> linkedDefects = defects.stream().filter(d -> d.getDefectStoryID().contains(story))
-					.map(defect -> {
-						if (StringUtils.isEmpty(defect.getUrl())) {
-							defect.setUrl(Constant.EMPTY_STRING);
-						}
-						return defect;
-					}).collect(Collectors.toMap(JiraIssue::getNumber, JiraIssue::getUrl));
+			Map<String, String> linkedDefects = new HashMap<>();
+			defects.stream().filter(d -> d.getDefectStoryID().contains(story))
+					.forEach(defect -> linkedDefects.putIfAbsent(defect.getNumber(), checkEmptyURL(defect)));
 			KPIExcelData excelData = new KPIExcelData();
 			excelData.setSprintName(sprint);
 			excelData.setLinkedDefects(linkedDefects);
@@ -249,34 +247,30 @@ public class KPIExcelUtility {
 	}
 
 	public static void populateInSprintAutomationExcelData(String sprint, List<TestCaseDetails> allTestList,
-			List<TestCaseDetails> automatedList, List<JiraIssue> linkedStories, List<KPIExcelData> kpiExcelData,
-			String kpiId) {
-		List<String> conditionalList = automatedList.stream().map(TestCaseDetails::getNumber)
-				.collect(Collectors.toList());
+			List<TestCaseDetails> automatedList, List<JiraIssue> linkedStories, List<KPIExcelData> kpiExcelData) {
 
-		/*
-		 * if (CollectionUtils.isNotEmpty(allTestList)) {
-		 * allTestList.forEach((testIssue) -> { String present =
-		 * conditionalList.contains(testIssue) ? Constant.EXCEL_YES :
-		 * Constant.EMPTY_STRING; linkedStories.computeIfPresent((story,issue)->{
-		 * testIssue.getDefectStoryID().contains(story) }); Map<String, String>
-		 * linkedDefects = defects.stream().filter(d ->
-		 * d.getDefectStoryID().contains(story)) .map(defect -> { if
-		 * (StringUtils.isEmpty(defect.getUrl())) {
-		 * defect.setUrl(Constant.EMPTY_STRING); } return defect;
-		 * }).collect(Collectors.toMap(JiraIssue::getNumber, JiraIssue::getUrl));
-		 * 
-		 * KPIExcelData excelData = new KPIExcelData(); excelData.setSprintName(sprint);
-		 * excelData.setTestCaseId(testIssue.getNumber()); Map<String, String>
-		 * linkedStory=new HashMap<>();
-		 * 
-		 * linkedStory.put()
-		 * 
-		 * excelData.setLinkedStory(linkedStory);
-		 * 
-		 * excelData.setAutomated(present); kpiExcelData.add(excelData); }); }
-		 *
-		 */
+		if (CollectionUtils.isNotEmpty(allTestList)) {
+			List<String> conditionalList = automatedList.stream().map(TestCaseDetails::getNumber)
+					.collect(Collectors.toList());
+			allTestList.forEach((testIssue) -> {
+				String present = conditionalList.contains(testIssue) ? Constant.EXCEL_YES : Constant.EMPTY_STRING;
+				Map<String, String> linkedStoriesMap = linkedStories.stream()
+						.filter(story -> testIssue.getDefectStoryID().contains(story)).map(defect -> {
+							if (StringUtils.isEmpty(defect.getUrl())) {
+								defect.setUrl(Constant.EMPTY_STRING);
+							}
+							return defect;
+						}).collect(Collectors.toMap(JiraIssue::getNumber, JiraIssue::getUrl));
+
+				KPIExcelData excelData = new KPIExcelData();
+				excelData.setSprintName(sprint);
+				excelData.setTestCaseId(testIssue.getNumber());
+				excelData.setLinkedStory(linkedStoriesMap);
+				excelData.setAutomated(present);
+				kpiExcelData.add(excelData);
+			});
+		}
+
 	}
 
 	private static String checkEmptyName(JiraIssue jiraIssue) {
@@ -285,6 +279,39 @@ public class KPIExcelUtility {
 
 	private static String checkEmptyURL(JiraIssue jiraIssue) {
 		return StringUtils.isEmpty(jiraIssue.getUrl()) ? Constant.EMPTY_STRING : jiraIssue.getUrl();
+	}
+
+	public static void populateChangeFailureRateExcelData(String projectName,
+			ChangeFailureRateInfo changeFailureRateInfo, List<KPIExcelData> kpiExcelData) {
+		List<String> buildJobNameList = changeFailureRateInfo.getBuildJobNameList();
+		if (CollectionUtils.isNotEmpty(buildJobNameList)) {
+			for (int i = 0; i < changeFailureRateInfo.getBuildJobNameList().size(); i++) {
+				KPIExcelData excelData = new KPIExcelData();
+				excelData.setProject(projectName);
+				excelData.setJobName(buildJobNameList.get(i));
+				excelData.setWeeks(changeFailureRateInfo.getDateList().get(i));
+				excelData.setBuildCount(changeFailureRateInfo.getTotalBuildCountList().get(i).toString());
+				excelData.setBuildFailureCount(changeFailureRateInfo.getTotalBuildFailureCountList().get(i).toString());
+				excelData.setBuildFailurePercentage(
+						changeFailureRateInfo.getBuildFailurePercentageList().get(i).toString());
+				kpiExcelData.add(excelData);
+			}
+		}
+
+	}
+
+	public static void populateTestExcecutionExcelData(TestExecution testDetail, double executionPercentage,
+			double passPercentage, List<KPIExcelData> kpiExcelData) {
+		if (testDetail != null) {
+			KPIExcelData excelData = new KPIExcelData();
+			excelData.setSprintName(testDetail.getSprintName());
+			excelData.setTotalTest(testDetail.getTotalTestCases().toString());
+			excelData.setExecutedTest(testDetail.getExecutedTestCase().toString());
+			excelData.setExecutionPercentage(String.valueOf(executionPercentage));
+			excelData.setPassedTest(testDetail.getPassedTestCase().toString());
+			excelData.setPassedPercentage(String.valueOf(passPercentage));
+			kpiExcelData.add(excelData);
+		}
 	}
 
 }

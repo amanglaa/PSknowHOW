@@ -104,6 +104,17 @@ public class KpiElement implements Serializable { // NOPMD
 	@JsonIgnore
 	private transient List<KPIExcelData> excelData;
 
+	public List<String> getExcelColumns() {
+		return excelColumns;
+	}
+
+	public void setExcelColumns(List<String> excelColumns) {
+		this.excelColumns = excelColumns;
+	}
+
+	@JsonIgnore
+	private transient List<String> excelColumns;
+
 	public Integer getGroupId() {
 		return groupId;
 	}

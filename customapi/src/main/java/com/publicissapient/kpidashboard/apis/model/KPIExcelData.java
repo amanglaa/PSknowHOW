@@ -107,6 +107,30 @@ public class KPIExcelData {
 	@JsonProperty("Linked Story ID")
 	private Map<String,String> linkedStory;
 
+	@JsonProperty("Total Build Count")
+	private String buildCount;
+
+	@JsonProperty("Total Build Failure Count")
+	private String buildFailureCount;
+
+	@JsonProperty("Build Failure Percentage")
+	private String buildFailurePercentage;
+
+	@JsonProperty("Total Test")
+	private String totalTest;
+
+	@JsonProperty("Executed Test")
+	private String executedTest;
+
+	@JsonProperty("Execution %")
+	private String executionPercentage;
+
+	@JsonProperty("Passed Test")
+	private String passedTest;
+
+	@JsonProperty("Passed %")
+	private String passedPercentage;
+
 
 
 }
