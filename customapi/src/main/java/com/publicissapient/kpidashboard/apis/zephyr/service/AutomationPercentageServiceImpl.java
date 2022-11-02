@@ -22,9 +22,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -93,6 +96,7 @@ public final class AutomationPercentageServiceImpl extends ZephyrKPIService<Doub
 	private FilterHelperService flterHelperService;
 
 	private static final String TESTCASEKEY = "testCaseData";
+	private static final String ISSUE_DATA = "issues";
 	private static final String AUTOMATEDTESTCASEKEY = "automatedTestCaseData";
 	private static final String SPRINTSTORIES = "storyData";
 	private static final String AUTOMATED = "In-Sprint test cases automated";
@@ -200,10 +204,12 @@ public final class AutomationPercentageServiceImpl extends ZephyrKPIService<Doub
 				uniqueProjectMap, kpiRequest.getFilterToShowOnTrend(), DEV);
 
 		Map<String, List<String>> projectStoryNumberMap = new HashMap<>();
+		Set<String> storyIdList = new HashSet<>();
 		sprintWiseStoryList.forEach(s -> {
 			String basicProjConfId = sprintProjectIdMap.get(s.getSprint());
 			projectStoryNumberMap.putIfAbsent(basicProjConfId, new ArrayList<>());
 			projectStoryNumberMap.get(basicProjConfId).addAll(s.getStoryList());
+			storyIdList.addAll(s.getStoryList());
 		});
 
 		projectStoryNumberMap.forEach((k, v) -> {
@@ -223,9 +229,15 @@ public final class AutomationPercentageServiceImpl extends ZephyrKPIService<Doub
 
 		List<TestCaseDetails> testCasesList = testCaseDetailsRepository.findTestDetails(mapOfFiltersStoryQuery,
 				uniqueProjectMapFolder,uniqueProjectMapNotIn);
+		//fetch jira issue based on jira number
+		Set<JiraIssue> issueData=jiraIssueRepository.findIssueAndDescByNumber(new ArrayList<>(storyIdList));
+		Map<String, JiraIssue> issueMapping = issueData.stream()
+				.collect(Collectors.toMap(JiraIssue::getNumber, Function.identity()));
 
 		resultListMap.put(SPRINTSTORIES, sprintWiseStoryList);
 		resultListMap.put(TESTCASEKEY, testCasesList);
+		resultListMap.put(ISSUE_DATA, issueData);
+
 		return resultListMap;
 
 	}
@@ -262,6 +274,9 @@ public final class AutomationPercentageServiceImpl extends ZephyrKPIService<Doub
 		Map<String, Object> defectDataListMap = fetchKPIDataFromDb(sprintLeafNodeList, null, null, kpiRequest);
 
 		List<SprintWiseStory> sprintWiseStoryList = (List<SprintWiseStory>) defectDataListMap.get(SPRINTSTORIES);
+		List<JiraIssue> allJiraIssues= (List<JiraIssue>) defectDataListMap.get(ISSUE_DATA);
+		Map<String, List<JiraIssue>> projectWiseIssues = allJiraIssues.stream().collect(
+				Collectors.groupingBy(issue -> issue.getBasicProjectConfigId(), Collectors.toList()));
 
 		Map<Pair<String, String>, List<SprintWiseStory>> sprintWiseMap = sprintWiseStoryList.stream().collect(Collectors
 				.groupingBy(sws -> Pair.of(sws.getBasicProjectConfigId(), sws.getSprint()), Collectors.toList()));
@@ -301,13 +316,14 @@ public final class AutomationPercentageServiceImpl extends ZephyrKPIService<Doub
 			currentSprintLeafNodeDefectDataMap.put(AUTOMATEDTESTCASEKEY,
 					sprintWiseAutoTestMap.get(currentNodeIdentifier));
 			currentSprintLeafNodeDefectDataMap.put(TESTCASEKEY, sprintWiseTotalTestMap.get(currentNodeIdentifier));
+			currentSprintLeafNodeDefectDataMap.put(ISSUE_DATA, projectWiseIssues.get(node.getProjectFilter().getBasicProjectConfigId().toString()));
 			double automationForCurrentLeaf = 0.0;
 			if (null != sprintWisePercentage.get(currentNodeIdentifier)) {
 				automationForCurrentLeaf = sprintWisePercentage.get(currentNodeIdentifier);
 			}
 			mapTmp.get(node.getId()).setValue(automationForCurrentLeaf);
 
-			populateValidationDataObject(kpiElement, requestTrackerId, currentSprintLeafNodeDefectDataMap,
+			populateExcelDataObject(kpiElement, requestTrackerId, currentSprintLeafNodeDefectDataMap,
 					validationDataMap, validationKey);
 			log.debug("[TEST-AUTOMATION-SPRINT-WISE][{}]. TEST-AUTOMATION for sprint {}  is {}", requestTrackerId,
 					node.getSprintFilter().getName(), automationForCurrentLeaf);
@@ -365,7 +381,7 @@ public final class AutomationPercentageServiceImpl extends ZephyrKPIService<Doub
 	 * @param sprint
 	 */
 	@SuppressWarnings("unchecked")
-	private void populateValidationDataObject(KpiElement kpiElement, String requestTrackerId,
+	private void populateExcelDataObject(KpiElement kpiElement, String requestTrackerId,
 			Map<String, Object> currentSprintLeafNodeDefectDataMap, Map<String, ValidationData> validationDataMap,
 			String sprint) {
 
@@ -375,6 +391,12 @@ public final class AutomationPercentageServiceImpl extends ZephyrKPIService<Doub
 					.get(AUTOMATEDTESTCASEKEY);
 			List<TestCaseDetails> totalTest = (List<TestCaseDetails>) currentSprintLeafNodeDefectDataMap
 					.get(TESTCASEKEY);
+			List<JiraIssue> allJiraIssues = (List<JiraIssue>) currentSprintLeafNodeDefectDataMap
+					.get(ISSUE_DATA);
+
+
+
+
 
 			ValidationData validationData = new ValidationData();
 			if (CollectionUtils.isNotEmpty(automatedTest)) {

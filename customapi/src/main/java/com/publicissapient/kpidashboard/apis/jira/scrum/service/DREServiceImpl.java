@@ -27,12 +27,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.publicissapient.kpidashboard.apis.common.service.impl.KpiHelperService;
-import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
-import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bson.types.ObjectId;
@@ -40,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.publicissapient.kpidashboard.apis.appsetting.service.ConfigHelperService;
+import com.publicissapient.kpidashboard.apis.common.service.impl.KpiHelperService;
 import com.publicissapient.kpidashboard.apis.config.CustomApiConfig;
 import com.publicissapient.kpidashboard.apis.constant.Constant;
 import com.publicissapient.kpidashboard.apis.enums.Filters;
@@ -49,16 +46,17 @@ import com.publicissapient.kpidashboard.apis.enums.KPISource;
 import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
 import com.publicissapient.kpidashboard.apis.filter.service.FilterHelperService;
 import com.publicissapient.kpidashboard.apis.jira.service.JiraKPIService;
+import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
 import com.publicissapient.kpidashboard.apis.model.KpiElement;
 import com.publicissapient.kpidashboard.apis.model.KpiRequest;
 import com.publicissapient.kpidashboard.apis.model.Node;
 import com.publicissapient.kpidashboard.apis.model.TreeAggregatorDetail;
 import com.publicissapient.kpidashboard.apis.util.CommonUtils;
+import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
 import com.publicissapient.kpidashboard.apis.util.KpiDataHelper;
 import com.publicissapient.kpidashboard.common.constant.NormalizedJira;
 import com.publicissapient.kpidashboard.common.model.application.DataCount;
 import com.publicissapient.kpidashboard.common.model.application.FieldMapping;
-import com.publicissapient.kpidashboard.common.model.application.ValidationData;
 import com.publicissapient.kpidashboard.common.model.jira.JiraIssue;
 import com.publicissapient.kpidashboard.common.model.jira.SprintWiseStory;
 import com.publicissapient.kpidashboard.common.repository.jira.JiraIssueRepository;
@@ -76,25 +74,20 @@ import lombok.extern.slf4j.Slf4j;
 public class DREServiceImpl extends JiraKPIService<Double, List<Object>, Map<String, Object>> {
 
 	private static final String SEPARATOR_ASTERISK = "*************************************";
-
-	@Autowired
-	private JiraIssueRepository jiraIssueRepository;
-
-	@Autowired
-	private ConfigHelperService configHelperService;
-
-	@Autowired
-	private CustomApiConfig customApiConfig;
-
-	@Autowired
-	private FilterHelperService flterHelperService;
-
 	private static final String CLOSED_DEFECT_DATA = "closedBugKey";
 	private static final String TOTAL_DEFECT_DATA = "totalBugKey";
 	private static final String SPRINT_WISE_STORY_DATA = "storyData";
 	private static final String REMOVED = "Closed Defects";
 	private static final String TOTAL = "Total Defects";
 	private static final String DEV = "DeveloperKpi";
+	@Autowired
+	private JiraIssueRepository jiraIssueRepository;
+	@Autowired
+	private ConfigHelperService configHelperService;
+	@Autowired
+	private CustomApiConfig customApiConfig;
+	@Autowired
+	private FilterHelperService flterHelperService;
 
 	@Override
 	public String getQualifierType() {
@@ -121,7 +114,7 @@ public class DREServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 
 		Map<Pair<String, String>, Node> nodeWiseKPIValue = new HashMap<>();
 		calculateAggregatedValue(root, nodeWiseKPIValue, KPICode.DEFECT_REMOVAL_EFFICIENCY);
-		List<DataCount> trendValues = getTrendValues(kpiRequest, nodeWiseKPIValue,KPICode.DEFECT_REMOVAL_EFFICIENCY);
+		List<DataCount> trendValues = getTrendValues(kpiRequest, nodeWiseKPIValue, KPICode.DEFECT_REMOVAL_EFFICIENCY);
 		kpiElement.setTrendValueList(trendValues);
 
 		log.debug("[DRE-AGGREGATED-VALUE][{}]. Aggregated Value at each level in the tree {}",
@@ -139,7 +132,7 @@ public class DREServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 		List<String> basicProjectConfigIds = new ArrayList<>();
 		Map<String, List<String>> projectWiseDefectRemovelStatus = new HashMap<>();
 		Map<String, Map<String, Object>> uniqueProjectMap = new HashMap<>();
-		Map<String, Map<String,List<String>>> droppedDefects = new HashMap<>();
+		Map<String, Map<String, List<String>>> droppedDefects = new HashMap<>();
 
 		leafNodeList.forEach(leaf -> {
 
@@ -212,8 +205,8 @@ public class DREServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 	}
 
 	/**
-	 * This method populates KPI value to sprint leaf nodes. It also gives the
-	 * trend analysis at sprint wise.
+	 * This method populates KPI value to sprint leaf nodes. It also gives the trend
+	 * analysis at sprint wise.
 	 * 
 	 * @param mapTmp
 	 * @param sprintLeafNodeList
@@ -284,8 +277,8 @@ public class DREServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 			subCategoryWiseDREList.add(dreForCurrentLeaf);
 			sprintWiseClosedDefectList.addAll(subCategoryWiseClosedDefectList);
 			sprintWiseTotaldDefectList.addAll(subCategoryWiseTotaldDefectList);
-			populateExcelDataObject(requestTrackerId, storyDefectDataListMap, excelData,
-					sprint, sprintWiseClosedDefectList, sprintWiseTotaldDefectList);
+			populateExcelDataObject(requestTrackerId, storyDefectDataListMap, excelData, sprint,
+					sprintWiseClosedDefectList, sprintWiseTotaldDefectList);
 
 			setSprintWiseLogger(sprint, totalStoryIdList, sprintWiseTotaldDefectList, sprintWiseClosedDefectList);
 
@@ -326,26 +319,26 @@ public class DREServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 		kpiElement.setExcelData(excelData);
 	}
 
-
-	private void populateExcelDataObject( String requestTrackerId,
-											  Map<String, Object> storyDefectDataListMap, List<KPIExcelData> excelData,
-											  Pair<String, String> sprint, List<JiraIssue> sprintWiseClosedDefectList,
-											  List<JiraIssue> sprintWiseTotaldDefectList) {
+	private void populateExcelDataObject(String requestTrackerId, Map<String, Object> storyDefectDataListMap,
+			List<KPIExcelData> excelData, Pair<String, String> sprint, List<JiraIssue> sprintWiseClosedDefectList,
+			List<JiraIssue> sprintWiseTotaldDefectList) {
 		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
 
 			Map<String, String> sprintWiseStoryNameMap = ((List<SprintWiseStory>) storyDefectDataListMap
 					.get(SPRINT_WISE_STORY_DATA)).stream()
-					.collect(Collectors.toMap(SprintWiseStory::getSprint, SprintWiseStory::getSprintName,
-							(name1, name2) -> name1));
+							.collect(Collectors.toMap(SprintWiseStory::getSprint, SprintWiseStory::getSprintName,
+									(name1, name2) -> name1));
 
-				Map<String, JiraIssue> totalDefectList = sprintWiseTotaldDefectList.stream()
-						.collect(Collectors.toMap(JiraIssue::getNumber, Function.identity()));
+			Map<String, JiraIssue> totalDefectList = new HashMap<>();
+			sprintWiseTotaldDefectList.stream().forEach(bugs -> totalDefectList.putIfAbsent(bugs.getNumber(), bugs));
 
-				String sprintName = sprintWiseStoryNameMap.get(sprint.getValue());
-				if (!sprint.getKey().equals(sprint.getValue())) {
-					sprintName = new StringBuilder().append(sprintName).append(Constant.UNDERSCORE).append(sprint.getKey()).toString();
-				}
-				KPIExcelUtility.populateDefectRelatedExcelData(sprintName, totalDefectList, sprintWiseClosedDefectList, excelData,KPICode.DEFECT_REMOVAL_EFFICIENCY.getKpiId());
+			String sprintName = sprintWiseStoryNameMap.get(sprint.getValue());
+			if (!sprint.getKey().equals(sprint.getValue())) {
+				sprintName = new StringBuilder().append(sprintName).append(Constant.UNDERSCORE).append(sprint.getKey())
+						.toString();
+			}
+			KPIExcelUtility.populateDefectRelatedExcelData(sprintName, totalDefectList, sprintWiseClosedDefectList,
+					excelData, KPICode.DEFECT_REMOVAL_EFFICIENCY.getKpiId());
 
 		}
 	}

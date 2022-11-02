@@ -28,12 +28,10 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.publicissapient.kpidashboard.apis.common.service.impl.KpiHelperService;
-import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
-import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
+import com.publicissapient.kpidashboard.common.model.application.ValidationData;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -42,6 +40,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.publicissapient.kpidashboard.apis.appsetting.service.ConfigHelperService;
+import com.publicissapient.kpidashboard.apis.common.service.impl.KpiHelperService;
 import com.publicissapient.kpidashboard.apis.config.CustomApiConfig;
 import com.publicissapient.kpidashboard.apis.constant.Constant;
 import com.publicissapient.kpidashboard.apis.enums.Filters;
@@ -51,11 +50,13 @@ import com.publicissapient.kpidashboard.apis.enums.KPISource;
 import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
 import com.publicissapient.kpidashboard.apis.filter.service.FilterHelperService;
 import com.publicissapient.kpidashboard.apis.jira.service.JiraKPIService;
+import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
 import com.publicissapient.kpidashboard.apis.model.KpiElement;
 import com.publicissapient.kpidashboard.apis.model.KpiRequest;
 import com.publicissapient.kpidashboard.apis.model.Node;
 import com.publicissapient.kpidashboard.apis.model.TreeAggregatorDetail;
 import com.publicissapient.kpidashboard.apis.util.CommonUtils;
+import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
 import com.publicissapient.kpidashboard.apis.util.KpiDataHelper;
 import com.publicissapient.kpidashboard.common.constant.NormalizedJira;
 import com.publicissapient.kpidashboard.common.model.application.DataCount;
@@ -76,18 +77,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DSRServiceImpl extends JiraKPIService<Double, List<Object>, Map<String, Object>> {
 
-	@Autowired
-	private JiraIssueRepository jiraIssueRepository;
-
-	@Autowired
-	private ConfigHelperService configHelperService;
-
-	@Autowired
-	private FilterHelperService flterHelperService;
-
-	@Autowired
-	private CustomApiConfig customApiConfig;
-
 	private static final String UATBUGKEY = "uatBugData";
 	private static final String TOTALBUGKEY = "totalBugData";
 	private static final String SPRINTSTORIES = "storyData";
@@ -95,6 +84,14 @@ public class DSRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 	private static final String TOTAL = "Total Defects";
 	private static final String QA = "QaKpi";
 	private static final String PROJFMAPPING = "projectFieldMapping";
+	@Autowired
+	private JiraIssueRepository jiraIssueRepository;
+	@Autowired
+	private ConfigHelperService configHelperService;
+	@Autowired
+	private FilterHelperService flterHelperService;
+	@Autowired
+	private CustomApiConfig customApiConfig;
 
 	@Override
 	public String getQualifierType() {
@@ -136,7 +133,7 @@ public class DSRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 		List<String> basicProjectConfigIds = new ArrayList<>();
 		Map<String, Map<String, Object>> uniqueProjectMap = new HashMap<>();
 		Map<String, FieldMapping> projFieldMapping = new HashMap<>();
-		Map<String, Map<String,List<String>>> droppedDefects = new HashMap<>();
+		Map<String, Map<String, List<String>>> droppedDefects = new HashMap<>();
 		leafNodeList.forEach(leaf -> {
 			ObjectId basicProjectConfigId = leaf.getProjectFilter().getBasicProjectConfigId();
 			Map<String, Object> mapOfProjectFilters = new LinkedHashMap<>();
@@ -203,8 +200,8 @@ public class DSRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 	}
 
 	/**
-	 * This method populates KPI value to sprint leaf nodes. It also gives the
-	 * trend analysis at sprint wise.
+	 * This method populates KPI value to sprint leaf nodes. It also gives the trend
+	 * analysis at sprint wise.
 	 * 
 	 * @param mapTmp
 	 * @param kpiElement
@@ -250,7 +247,8 @@ public class DSRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 					.collect(Collectors.toList());
 			List<JiraIssue> subCategoryWiseUatBugList = new ArrayList<>();
 			if (CollectionUtils.isNotEmpty(subCategoryWiseTotalBugList)) {
-				subCategoryWiseUatBugList = checkUATDefect(subCategoryWiseTotalBugList, projFieldMapping);
+				subCategoryWiseUatBugList = checkUATDefect(subCategoryWiseTotalBugList,
+						projFieldMapping);
 			}
 			Map<String, Object> currentSprintLeafNodeDefectDataMap = new HashMap<>();
 			currentSprintLeafNodeDefectDataMap.put(UATBUGKEY, subCategoryWiseUatBugList);
@@ -260,12 +258,13 @@ public class DSRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 			sprintWiseUatDefectList.addAll(subCategoryWiseUatBugList);
 			sprintWiseTotaldDefectList.addAll(subCategoryWiseTotalBugList);
 
-			//if for populating excel data
+			// if for populating excel data
 			if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-				Map<String, JiraIssue> totalBugList = subCategoryWiseTotalBugList.stream()
-						.collect(Collectors.toMap(JiraIssue::getNumber, Function.identity()));
+				Map<String, JiraIssue> totalBugList = new HashMap<>();
+				subCategoryWiseTotalBugList.stream().forEach(bugs -> totalBugList.putIfAbsent(bugs.getNumber(), bugs));
 				String sprintName = sprintIdSprintNameMap.get(sprint.getValue());
-				KPIExcelUtility.populateDefectRelatedExcelData(sprintName, totalBugList, subCategoryWiseUatBugList, excelData, KPICode.DEFECT_SEEPAGE_RATE.getKpiId());
+				KPIExcelUtility.populateDefectRelatedExcelData(sprintName, totalBugList, subCategoryWiseUatBugList,
+						excelData, KPICode.DEFECT_SEEPAGE_RATE.getKpiId());
 			}
 			sprintWiseDsrMap.put(sprint, dSRForCurrentLeaf);
 			setHowerMap(sprintWiseHowerMap, sprint, sprintWiseUatDefectList, sprintWiseTotaldDefectList);
@@ -350,7 +349,6 @@ public class DSRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 		}
 		sprintWiseHowerMap.put(sprint, howerMap);
 	}
-
 
 	@Override
 	public Double calculateKpiValue(List<Double> valueList, String kpiName) {

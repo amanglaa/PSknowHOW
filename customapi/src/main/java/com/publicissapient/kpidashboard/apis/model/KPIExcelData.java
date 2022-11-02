@@ -95,8 +95,17 @@ public class KPIExcelData {
 	@JsonProperty("Unit Coverage")
 	private String unitCoverage;
 
+	@JsonProperty("Tech Debt (in days)")
+	private String techDebt;
+
+	@JsonProperty("Sonar Violations")
+	private String sonarViolation;
+
 	@JsonProperty("Weeks")
 	private String weeks;
+
+	@JsonProperty("Linked Story ID")
+	private Map<String,String> linkedStory;
 
 
 
