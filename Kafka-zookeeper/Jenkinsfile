@@ -11,8 +11,9 @@ pipeline {
        }
    parameters {
                  gitParameter defaultValue: 'origin/master', name: 'SBRANCH', type: 'PT_BRANCH_TAG',quickFilterEnabled:true ,description: 'Select Branch'
-	               booleanParam(name: 'BUILD_IMAGE', defaultValue: 'false', description: 'BUILD_IMAGE')
+                 booleanParam(name: 'BUILD_IMAGE', defaultValue: 'false', description: 'BUILD_IMAGE')
                  booleanParam(name: 'PUSH_REGISTRY', defaultValue: 'false', description: 'PUSH_REGISTRY')
+                 booleanParam(name:'SCAN_DOCKER_IMAGE', defaultValue: 'false', description: 'SCAN-Docker-image')
                  
    }
    stages {

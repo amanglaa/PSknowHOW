@@ -14,8 +14,9 @@ pipeline {
            booleanParam(name: 'BUILD', defaultValue: 'false', description: 'BUILD')
            booleanParam(name: 'SKIP_UNIT_TEST', defaultValue: 'false', description: 'SKIP UNIT TEST Cases')
            booleanParam(name: 'PUSH_REGISTRY', defaultValue: 'false', description: 'PUSH_REGISTRY')
+           booleanParam(name:'SCAN_DOCKER_IMAGE', defaultValue: 'false', description: 'SCAN-Docker-image')
            choice(name: 'DEPLOY', choices: ['', 'OPENSOURCE', 'PS-INTERNAL'], description: '')
-	       string(name: 'DNS_NAME', defaultValue: '', description: 'If have provide')
+           string(name: 'DNS_NAME', defaultValue: '', description: 'If have provide')
 
    }
    stages {
