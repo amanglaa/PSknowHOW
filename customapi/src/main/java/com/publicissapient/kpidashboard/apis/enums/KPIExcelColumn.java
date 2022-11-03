@@ -26,6 +26,13 @@ import java.util.List;
  */
 public enum KPIExcelColumn {
 
+	AVERAGE_RESOLUTION_TIME("kpi83", Arrays.asList("Sprint Name","Story ID","Issue Description","Issue Type","Resolution Time(In Days)")),
+	LEAD_TIME("kpi3", Arrays.asList("Project Name","Intake to DOR(In Days)","DOR to DOD (In Days)","DOD TO Live (In Days)","Lead Time (In Days)")),
+	SPRINT_VELOCITY("kpi39", Arrays.asList("Sprint Name","Story ID","Issue Description","Story Size(In story point)")),
+	SPRINT_CAPACITY_UTILIZATION("kpi46", Arrays.asList("Sprint Name","Story ID","Issue Description","Original Time Estimate (in hours)","Total Time Spent (in hours)")),
+	COMMITMENT_RELIABILITY("kpi72",Arrays.asList("Sprint Name","Story ID","Closed")),
+
+
 	DEFECT_INJECTION_RATE("kpi14", Arrays.asList("Sprint Name","Story ID","Issue Description","Linked Defects")),
 
 	FIRST_TIME_PASS_RATE("kpi82", Arrays.asList("Sprint Name","Story ID","Issue Description","First Time Pass")),
