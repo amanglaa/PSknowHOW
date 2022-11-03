@@ -1912,7 +1912,6 @@ describe('ExecutiveComponent', () => {
         const excelData = {
             kpiName: 'Defect Injection Rate',
             kpiId: 'kpi14',
-            columns: ['sprintName','storyID','issueDescription','linkedDefects'],
             excelData: [
                 {
                     // eslint-disable-next-line @typescript-eslint/naming-convention
