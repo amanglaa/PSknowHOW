@@ -29,48 +29,51 @@ export class ExcelService {
     constructor(private datePipe: DatePipe) {
     }
 
-    generateExcelModalData(kpiData){
+    generateExcelModalData(kpiData) {
         const headerNames = [];
         const excelData = [];
 
-        for(const column of kpiData.columns){
-            headerNames.push({ header: column, key:column, width: 25 });
-        }
-
-        for (const data of kpiData.excelData) {
-            const rowData = {};
-            for(const key in data){
-                if(!(typeof(data[key])== 'object')){
-                    rowData[key] = data[key];
-                }else{
-                    const appendedRowData = [];
-                    if(Array.isArray(data[key])){
-                        for(const cellData of data[key]){
-                            appendedRowData.push(cellData);
-                        }
-                    }else{
-                        for (const datakey in data[key]) {
-                            if (data[key][datakey]) {
-                                appendedRowData.push({ text: datakey, hyperlink: data[key][datakey] });
-                            } else {
-                                appendedRowData.push(datakey);
+        if (kpiData['excelData'] && kpiData['columns']) {
+            for (const column of kpiData['columns']) {
+                headerNames.push({ header: column, key: column, width: 25 });
+            }
+            for (const data of kpiData.excelData) {
+                const rowData = {};
+                for (const key in data) {
+                    if (!(typeof (data[key]) == 'object')) {
+                        rowData[key] = data[key];
+                    } else {
+                        const appendedRowData = [];
+                        if (Array.isArray(data[key])) {
+                            for (const cellData of data[key]) {
+                                appendedRowData.push(cellData);
+                            }
+                        } else {
+                            for (const datakey in data[key]) {
+                                if (data[key][datakey]) {
+                                    appendedRowData.push({ text: datakey, hyperlink: data[key][datakey] });
+                                } else {
+                                    appendedRowData.push(datakey);
+                                }
                             }
                         }
-                    }
-                    if (appendedRowData.length === 0) {
-                        rowData[key] = '';
-                    } else if (appendedRowData.length === 1) {
-                        rowData[key] = appendedRowData[0];
-                    } else {
-                        rowData['rowSpan'] = appendedRowData.length;
-                        rowData[key] = appendedRowData;
-                    }
+                        if (appendedRowData.length === 0) {
+                            rowData[key] = '';
+                        } else if (appendedRowData.length === 1) {
+                            rowData[key] = appendedRowData[0];
+                        } else {
+                            rowData['rowSpan'] = appendedRowData.length;
+                            rowData[key] = appendedRowData;
+                        }
 
+                    }
                 }
+                excelData.push(rowData);
             }
-            excelData.push(rowData);
+            return { headerNames, excelData };
+        } else {
+            return { headerNames: [], excelData: [] };
         }
-        return {headerNames, excelData};
     }
 
     generateExcel(kpiData, kpiName) {
