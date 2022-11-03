@@ -251,7 +251,7 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 	 * 
 
 	 * @param requestTrackerId
-	
+
 	 * @param jiraIssues
 	 * @param node
 	 */
