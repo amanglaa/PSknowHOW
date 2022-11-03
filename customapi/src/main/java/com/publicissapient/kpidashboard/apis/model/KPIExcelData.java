@@ -44,13 +44,10 @@ public class KPIExcelData {
 	private String sprintName;
 	
 	@JsonProperty("Story ID")
-	private String storyId;
+	private Map<String,String> storyId;
 	
 	@JsonProperty("Issue Description")
 	private String issueDesc;
-	
-	@JsonProperty("url")
-	private String issueUrl;
 	
 	@JsonProperty("Linked Defects")
 	private Map<String,String> linkedDefects;
