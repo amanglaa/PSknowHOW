@@ -144,7 +144,7 @@ public class SprintClientImpl implements SprintClient {
 					sprintToSave.add(sprint);
 				}
 			});
-			//sprintRepository.saveAll(sprintToSave);
+			sprintRepository.saveAll(sprintToSave);
 			log.info("{} sprints found", sprintDetailsSet.size());
 		}
 	}
