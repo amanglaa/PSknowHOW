@@ -349,9 +349,10 @@ public class CommittmentReliabilityServiceImpl extends JiraKPIService<Long, List
 			if (CollectionUtils.isNotEmpty(validationDataList)) {
 				validationDataList.stream().forEach(data -> {
 
-					Map<String, JiraIssue> totalIssueMap = data.getTotalIssueNumbers().stream().collect(toMap(JiraIssue::getNumber, Function.identity()));
-
-					KPIExcelUtility.populateCommittmentReliability(sprintName,totalIssueMap,data.getCompletedIssueNumber(),excelData);
+					Map<String, JiraIssue> totalSprintStoryMap = new HashMap<>();
+					data.getTotalIssueNumbers().stream().
+							forEach(issue -> totalSprintStoryMap.putIfAbsent(issue.getNumber(), issue));
+					KPIExcelUtility.populateCommittmentReliability(sprintName,totalSprintStoryMap,data.getCompletedIssueNumber(),excelData);
 
 				});
 
