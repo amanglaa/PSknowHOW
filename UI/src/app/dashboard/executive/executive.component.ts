@@ -384,7 +384,7 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
                 this.modalDetails['tableValues'] = this.kpiExcelData.excelData;
                 this.modalDetails['header'] = kpiName;
                 this.displayModal = true;
-            }else if(getData['validationData']){
+            }else{
                 if (getData['kpiId'] === 'kpi83') {
                     let dynamicKeys = [];
                     for (const key in getData['validationData']) {
