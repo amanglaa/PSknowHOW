@@ -29,6 +29,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.publicissapient.kpidashboard.common.model.ToolCredential;
+import com.publicissapient.kpidashboard.common.service.ToolCredentialProvider;
 import com.publicissapient.kpidashboard.jira.client.sprint.SprintClient;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.MDC;
@@ -119,6 +121,10 @@ public class OnlineDataProcessorImpl extends ModeBasedProcessor {
 	@Autowired
 	private SprintClient sprintClient;
 
+	@Autowired
+	private ToolCredentialProvider toolCredentialProvider;
+
+
 	/**
 	 * Validates and collects Jira issues using JIA API for projects with onlinemode
 	 * 
@@ -188,6 +194,22 @@ public class OnlineDataProcessorImpl extends ModeBasedProcessor {
 
 	private ProcessorJiraRestClient getProcessorJiraRestClient(List<ProjectBasicConfig> projectConfigList, Map.Entry<String, ProjectConfFieldMapping> entry, boolean isOauth, Connection conn) {
 		ProcessorJiraRestClient client;
+
+		String username = "";
+		String password = "";
+		if (conn.isVault()) {
+			ToolCredential toolCredential = toolCredentialProvider.findCredential(conn.getUsername());
+			if(toolCredential != null){
+				username = toolCredential.getUsername();
+				password = toolCredential.getPassword();
+			}
+
+		} else {
+			username = conn.getUsername();
+			password = decryptJiraPassword(conn.getPassword());
+		}
+
+
 		if (isOauth) {
 			// Sets Jira OAuth properties
 			jiraOAuthProperties.setJiraBaseURL(conn.getBaseUrl());
@@ -199,16 +221,16 @@ public class OnlineDataProcessorImpl extends ModeBasedProcessor {
 			jiraOAuthProperties.setAccessToken(conn.getAccessToken());
 
 			client = jiraRestClientFactory.getJiraOAuthClient(JiraInfo.builder()
-					.jiraConfigBaseUrl(conn.getBaseUrl()).username(conn.getUsername())
-					.password(decryptJiraPassword(conn.getPassword()))
+					.jiraConfigBaseUrl(conn.getBaseUrl()).username(username)
+					.password(password)
 					.jiraConfigAccessToken(conn.getAccessToken()).jiraConfigProxyUrl(null)
 					.jiraConfigProxyPort(null).build());
 
 		} else {
 
 			client = jiraRestClientFactory.getJiraClient(JiraInfo.builder()
-					.jiraConfigBaseUrl(conn.getBaseUrl()).username(conn.getUsername())
-					.password(decryptJiraPassword(conn.getPassword())).jiraConfigProxyUrl(null)
+					.jiraConfigBaseUrl(conn.getBaseUrl()).username(username)
+					.password(password).jiraConfigProxyUrl(null)
 					.jiraConfigProxyPort(null).build());
 
 		}

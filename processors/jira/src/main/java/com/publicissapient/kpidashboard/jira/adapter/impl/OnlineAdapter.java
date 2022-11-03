@@ -65,6 +65,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -468,7 +469,7 @@ public class OnlineAdapter implements JiraAdapter {
 	 */
 	@Override
 	public void getSprintReport(ProjectConfFieldMapping projectConfig, String sprintId, String boardId,
-			SprintDetails sprintDetails) {
+			SprintDetails sprintDetails,SprintDetails dbSprintDetails) {
 		log.info("Start Calling sprint report api. Sprint Id : {} , Board Id : {}",sprintId,boardId);
 		try {
 			JiraToolConfig jiraToolConfig = projectConfig.getJira();
@@ -478,7 +479,7 @@ public class OnlineAdapter implements JiraAdapter {
 				URLConnection connection;
 
 				connection = url.openConnection();
-				getSprintReport(getDataFromServer(projectConfig, (HttpURLConnection) connection),sprintDetails,projectConfig);
+				getReport(getDataFromServer(projectConfig, (HttpURLConnection) connection),sprintDetails,projectConfig,dbSprintDetails,boardId);
 			}
 		log.info("End sprint report api. Sprint Id : {} , Board Id : {}",sprintId,boardId);
 		} catch (RestClientException rce) {
@@ -506,7 +507,8 @@ public class OnlineAdapter implements JiraAdapter {
 
 	}
 	
-	private void getSprintReport(String sprintReportObj,SprintDetails sprintDetails,ProjectConfFieldMapping projectConfig) {
+	private void getReport(String sprintReportObj,SprintDetails sprintDetails,ProjectConfFieldMapping projectConfig,
+								 SprintDetails dbSprintDetails,String boardId) {
 		if (StringUtils.isNotBlank(sprintReportObj)) {
 			JSONArray completedIssuesJson = new JSONArray();
 			JSONArray notCompletedIssuesJson = new JSONArray();
@@ -515,15 +517,18 @@ public class OnlineAdapter implements JiraAdapter {
 			JSONObject addedIssuesJson = new JSONObject();
 			JSONObject entityDataJson = new JSONObject();
 
-
-
-			List<SprintIssue> completedIssues = Optional.ofNullable(sprintDetails.getCompletedIssues()).orElse(new ArrayList<>());
-			List<SprintIssue> notCompletedIssues = Optional.ofNullable(sprintDetails.getNotCompletedIssues()).orElse(new ArrayList<>());
-			List<SprintIssue> puntedIssues = Optional.ofNullable(sprintDetails.getPuntedIssues()).orElse(new ArrayList<>());
-			List<SprintIssue> completedIssuesAnotherSprint = Optional.ofNullable(sprintDetails.getCompletedIssuesAnotherSprint())
-					.orElse(new ArrayList<>());
-			List<String> addedIssues = Optional.ofNullable(sprintDetails.getAddedIssues()).orElse(new ArrayList<>());
-			List<SprintIssue> totalIssues = Optional.ofNullable(sprintDetails.getTotalIssues()).orElse(new ArrayList<>());
+			boolean otherBoardExist = findIfOtherBoardExist(dbSprintDetails);
+			Set<SprintIssue> completedIssues = initializeIssues(null == dbSprintDetails ? new HashSet<>()
+					: dbSprintDetails.getCompletedIssues(), boardId, otherBoardExist);
+			Set<SprintIssue> notCompletedIssues = initializeIssues(null == dbSprintDetails ? new HashSet<>()
+					: dbSprintDetails.getNotCompletedIssues(), boardId, otherBoardExist);
+			Set<SprintIssue> puntedIssues = initializeIssues(null == dbSprintDetails ? new HashSet<>()
+					: dbSprintDetails.getPuntedIssues(), boardId, otherBoardExist);
+			Set<SprintIssue> completedIssuesAnotherSprint = initializeIssues(null == dbSprintDetails ? new HashSet<>()
+					: dbSprintDetails.getCompletedIssuesAnotherSprint(), boardId, otherBoardExist);
+			Set<SprintIssue> totalIssues = initializeIssues(null == dbSprintDetails ? new HashSet<>()
+					: dbSprintDetails.getTotalIssues(), boardId, otherBoardExist);
+			Set<String> addedIssues = initializeAddedIssues(totalIssues, otherBoardExist);
 			try {
 				JSONObject obj = (JSONObject)new JSONParser().parse(sprintReportObj);
 				if(null!=obj) {
@@ -538,13 +543,14 @@ public class OnlineAdapter implements JiraAdapter {
 
 				populateMetaData(entityDataJson,projectConfig);
 
-				setIssues(completedIssuesJson, completedIssues, totalIssues, projectConfig);
+				setIssues(completedIssuesJson, completedIssues, totalIssues, projectConfig, boardId);
 				
-				setIssues(notCompletedIssuesJson, notCompletedIssues, totalIssues, projectConfig);
+				setIssues(notCompletedIssuesJson, notCompletedIssues, totalIssues, projectConfig, boardId);
 				
-				setPuntedCompletedAnotherSprint(puntedIssuesJson, puntedIssues, projectConfig);
+				setPuntedCompletedAnotherSprint(puntedIssuesJson, puntedIssues, projectConfig, boardId);
 				
-				setPuntedCompletedAnotherSprint(completedIssuesAnotherSprintJson, completedIssuesAnotherSprint, projectConfig);
+				setPuntedCompletedAnotherSprint(completedIssuesAnotherSprintJson, completedIssuesAnotherSprint,
+						projectConfig, boardId);
 				
 				addedIssues = setAddedIssues(addedIssuesJson, addedIssues);
 
@@ -559,6 +565,33 @@ public class OnlineAdapter implements JiraAdapter {
 				log.error("Parser exception when parsing statuses", pe);
 			}
 		}
+	}
+
+	private Set<SprintIssue> initializeIssues(Set<SprintIssue> sprintIssues, String boardId, boolean otherBoardExist) {
+		if (otherBoardExist) {
+			return CollectionUtils.emptyIfNull(sprintIssues).stream().filter(issue -> null != issue.getOriginBoardId() &&
+							!issue.getOriginBoardId().equalsIgnoreCase(boardId))
+					.collect(Collectors.toSet());
+		} else {
+			return new HashSet<>();
+		}
+	}
+
+
+	private Set<String> initializeAddedIssues(Set<SprintIssue> totalIssues, boolean otherBoardExist) {
+		if (otherBoardExist) {
+			return totalIssues.stream().map(issue->issue.getNumber()).collect(Collectors.toSet());
+		} else {
+			return new HashSet<>();
+		}
+	}
+
+	private boolean findIfOtherBoardExist(SprintDetails dbSprintDetails) {
+		boolean exist = false;
+		if(null != dbSprintDetails && dbSprintDetails.getOriginBoardId().size() > 1){
+			exist = true;
+		}
+		return exist;
 	}
 
 	private void populateMetaData(JSONObject entityDataJson, ProjectConfFieldMapping projectConfig) {
@@ -592,10 +625,10 @@ public class OnlineAdapter implements JiraAdapter {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private List<String> setAddedIssues(JSONObject addedIssuesJson, List<String> addedIssues) {
+	private Set<String> setAddedIssues(JSONObject addedIssuesJson, Set<String> addedIssues) {
 		Set<String> keys = addedIssuesJson.keySet();
 		if(CollectionUtils.isNotEmpty(keys)) {
-			addedIssues=keys.stream().collect(Collectors.toList());
+			addedIssues=keys.stream().collect(Collectors.toSet());
 		}
 		return addedIssues;
 	}
@@ -605,21 +638,23 @@ public class OnlineAdapter implements JiraAdapter {
 	 * @param puntedIssues
 	 */
 	@SuppressWarnings("unchecked")
-	private void setPuntedCompletedAnotherSprint(JSONArray puntedIssuesJson, List<SprintIssue> puntedIssues
-			,ProjectConfFieldMapping projectConfig) {
+	private void setPuntedCompletedAnotherSprint(JSONArray puntedIssuesJson, Set<SprintIssue> puntedIssues
+			,ProjectConfFieldMapping projectConfig, String boardId) {
 		puntedIssuesJson.forEach(puntedObj->{
 			JSONObject punObj = (JSONObject) puntedObj;
 			if(null!=punObj) {
-				SprintIssue issue = getSprintIssue(punObj,projectConfig);
+				SprintIssue issue = getSprintIssue(punObj,projectConfig, boardId);
+				puntedIssues.remove(issue);
 				puntedIssues.add(issue);
 			}
 		});
 	}
 
-	private SprintIssue getSprintIssue(JSONObject obj, ProjectConfFieldMapping projectConfig) {
+	private SprintIssue getSprintIssue(JSONObject obj, ProjectConfFieldMapping projectConfig,
+									   String boardId) {
 		SprintIssue issue = new SprintIssue();
 		issue.setNumber(obj.get(KEY).toString());
-
+		issue.setOriginBoardId(boardId);
 		Optional<Connection> connectionOptional = projectConfig.getJira().getConnection();
 		boolean isCloudEnv = connectionOptional.map(Connection::isCloudEnv).orElse(false);
 		if(isCloudEnv){
@@ -652,7 +687,7 @@ public class OnlineAdapter implements JiraAdapter {
 		if(null != currentEstimateFieldId){
 			Object estimateObject = getStatistics((JSONObject) obj.get("currentEstimateStatistic"),
 					"statFieldValue","value");
-			String storyPointCustomField = StringUtils.defaultIfBlank(projectConfig.getFieldMapping().getSprintName(),"");
+			String storyPointCustomField = StringUtils.defaultIfBlank(projectConfig.getFieldMapping().getJiraStoryPointsCustomField(),"");
 			if(storyPointCustomField.equalsIgnoreCase(currentEstimateFieldId.toString())){
 				issue.setStoryPoints(estimateObject == null? null:Double.valueOf(estimateObject.toString()));
 			}else{
@@ -689,13 +724,16 @@ public class OnlineAdapter implements JiraAdapter {
 	 * @param totalIssues
 	 */
 	@SuppressWarnings("unchecked")
-	private void setIssues(JSONArray issuesJson, List<SprintIssue> issues,
-			List<SprintIssue> totalIssues,ProjectConfFieldMapping projectConfig) {
+	private void setIssues(JSONArray issuesJson, Set<SprintIssue> issues,
+						   Set<SprintIssue> totalIssues,ProjectConfFieldMapping projectConfig,
+						   String boardId) {
 		issuesJson.forEach(jsonObj->{
 			JSONObject obj = (JSONObject) jsonObj;
 			if(null!=obj) {
-				SprintIssue issue = getSprintIssue(obj,projectConfig);
+				SprintIssue issue = getSprintIssue(obj, projectConfig, boardId);
+				issues.remove(issue);
 				issues.add(issue);
+				totalIssues.remove(issue);
 				totalIssues.add(issue);
 			}
 		});
