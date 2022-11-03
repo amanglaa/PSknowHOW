@@ -29,6 +29,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.publicissapient.kpidashboard.apis.enums.KPIColumn;
+import com.publicissapient.kpidashboard.apis.model.*;
+import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
+import com.publicissapient.kpidashboard.common.model.jira.JiraIssue;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -43,11 +47,6 @@ import com.publicissapient.kpidashboard.apis.enums.KPICode;
 import com.publicissapient.kpidashboard.apis.enums.KPISource;
 import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
 import com.publicissapient.kpidashboard.apis.jira.service.JiraKPIService;
-import com.publicissapient.kpidashboard.apis.model.CustomDateRange;
-import com.publicissapient.kpidashboard.apis.model.KpiElement;
-import com.publicissapient.kpidashboard.apis.model.KpiRequest;
-import com.publicissapient.kpidashboard.apis.model.Node;
-import com.publicissapient.kpidashboard.apis.model.TreeAggregatorDetail;
 import com.publicissapient.kpidashboard.apis.util.KpiDataHelper;
 import com.publicissapient.kpidashboard.common.constant.CommonConstant;
 import com.publicissapient.kpidashboard.common.constant.NormalizedJira;
@@ -151,7 +150,7 @@ public class CostOfDelayKanbanServiceImpl extends JiraKPIService<Double, List<Ob
 	}
 
 	/**
-	 * 
+	 *
 	 * @param projectandDayWiseDelay
 	 * @param mapTmp
 	 * @param projectList
@@ -161,6 +160,8 @@ public class CostOfDelayKanbanServiceImpl extends JiraKPIService<Double, List<Ob
 			Map<String, Node> mapTmp, List<Node> projectList, KpiElement kpiElement) {
 		String requestTrackerId = getKanbanRequestTrackerId();
 		Map<String, ValidationData> validationDataMap = new HashMap<>();
+		List<KPIExcelData> excelData = new ArrayList<>();
+		Map<String, String> dateList = new HashMap<>();
 		projectList.forEach(node -> {
 			LocalDate currentDate = LocalDate.now();
 			String projectNodeId = node.getProjectFilter().getBasicProjectConfigId().toString();
@@ -179,12 +180,18 @@ public class CostOfDelayKanbanServiceImpl extends JiraKPIService<Double, List<Ob
 					dataCount.add(getDataCountObject(cod, projectName, date));
 					currentDate = currentDate.minusMonths(1);
 				}
+
 				mapTmp.get(node.getId()).setValue(dataCount);
-				populateValidationDataObject(requestTrackerId, kanbanJiraIssueList, validationDataMap, projectName);
+//				populateValidationDataObject(requestTrackerId, kanbanJiraIssueList, validationDataMap, projectName);
+				if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
+					KPIExcelUtility.populateKanbanCODExcelData(projectName, kanbanJiraIssueList, excelData);
+				}
 			}
 
 		});
-		kpiElement.setMapOfSprintAndData(validationDataMap);
+		kpiElement.setExcelData(excelData);
+		kpiElement.setExcelColumns(KPIColumn.COST_OF_DELAY.getColumns());
+
 	}
 
 	private DataCount getDataCountObject(Double value, String projectName, String date) {

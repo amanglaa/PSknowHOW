@@ -4,13 +4,11 @@ import com.publicissapient.kpidashboard.apis.appsetting.service.ConfigHelperServ
 import com.publicissapient.kpidashboard.apis.config.CustomApiConfig;
 import com.publicissapient.kpidashboard.apis.constant.Constant;
 import com.publicissapient.kpidashboard.apis.enums.KPICode;
+import com.publicissapient.kpidashboard.apis.enums.KPIColumn;
 import com.publicissapient.kpidashboard.apis.enums.KPISource;
 import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
-import com.publicissapient.kpidashboard.apis.model.DeploymentFrequencyInfo;
-import com.publicissapient.kpidashboard.apis.model.KpiElement;
-import com.publicissapient.kpidashboard.apis.model.KpiRequest;
-import com.publicissapient.kpidashboard.apis.model.Node;
-import com.publicissapient.kpidashboard.apis.model.TreeAggregatorDetail;
+import com.publicissapient.kpidashboard.apis.model.*;
+import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
 import com.publicissapient.kpidashboard.common.constant.CommonConstant;
 import com.publicissapient.kpidashboard.common.constant.DeploymentStatus;
 import com.publicissapient.kpidashboard.common.constant.ProcessorConstants;
@@ -18,7 +16,6 @@ import com.publicissapient.kpidashboard.common.model.application.DataCount;
 import com.publicissapient.kpidashboard.common.model.application.DataCountGroup;
 import com.publicissapient.kpidashboard.common.model.application.Deployment;
 import com.publicissapient.kpidashboard.common.model.application.ProjectToolConfig;
-import com.publicissapient.kpidashboard.common.model.application.ValidationData;
 import com.publicissapient.kpidashboard.common.repository.application.DeploymentRepository;
 import com.publicissapient.kpidashboard.common.util.DateUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -132,7 +129,7 @@ public class DeploymentFrequencyServiceImpl extends JenkinsKPIService<Long, Long
         DateTimeFormatter formatterMonth = DateTimeFormatter.ofPattern(DateUtil.TIME_FORMAT);
         String startDate = localStartDate.format(formatterMonth);
         String endDate = localEndDate.format(formatterMonth);
-
+        List<KPIExcelData> excelData = new ArrayList<>();
         Map<ObjectId, List<Deployment>> deploymentGroup = fetchKPIDataFromDb(projectLeafNodeList, startDate, endDate,
                 null);
 
@@ -140,15 +137,14 @@ public class DeploymentFrequencyServiceImpl extends JenkinsKPIService<Long, Long
             return;
         }
 
-        Map<String, ValidationData> validationDataMap = new HashMap<>();
         DeploymentFrequencyInfo deploymentFrequencyInfo = new DeploymentFrequencyInfo();
-
         projectLeafNodeList.forEach(node -> {
             Map<String, List<DataCount>> trendValueMap = new HashMap<>();
             List<DataCount> dataCountAggList = new ArrayList<>();
             String trendLineName = node.getProjectFilter().getName();
             ObjectId basicProjectConfigId = node.getProjectFilter().getBasicProjectConfigId();
-
+            String projectNodeId = node.getProjectFilter().getId();
+            String projectName = projectNodeId.substring(0, projectNodeId.lastIndexOf(CommonConstant.UNDERSCORE));
             List<Deployment> deploymentListProjectWise = deploymentGroup.get(basicProjectConfigId);
 
             if (CollectionUtils.isNotEmpty(deploymentListProjectWise)) {
@@ -164,11 +160,14 @@ public class DeploymentFrequencyServiceImpl extends JenkinsKPIService<Long, Long
                 trendValueMap.put(CommonConstant.OVERALL, aggData);
             }
             mapTmp.get(node.getId()).setValue(trendValueMap);
-            ValidationData validationData = createValidationDataForNode(deploymentFrequencyInfo);
-            populateValidationDataObject(kpiElement, requestTrackerId, validationDataMap, validationData,
-                    trendLineName);
 
+            if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
+                KPIExcelUtility.populateDeploymentFrequencyExcelData(projectName, deploymentFrequencyInfo, excelData);
+            }
         });
+        kpiElement.setExcelData(excelData);
+        kpiElement.setExcelColumns(KPIColumn.DEPLOYMENT_FREQUENCY.getColumns());
+
     }
 
     @Override
@@ -256,6 +255,7 @@ public class DeploymentFrequencyServiceImpl extends JenkinsKPIService<Long, Long
                     DataCount dataCount = createDataCount(trendLineName, envName, month, deploymentListCurrentMonth);
                     dataCountList.add(dataCount);
                     setDeploymentFrequencyInfoForExcel(deploymentFrequencyInfo, deploymentListCurrentMonth, month);
+
                 });
                 aggDataCountList.addAll(dataCountList);
                 trendValueMap.putIfAbsent(envName + CommonConstant.ARROW + trendLineName, new ArrayList<>());
@@ -292,20 +292,7 @@ public class DeploymentFrequencyServiceImpl extends JenkinsKPIService<Long, Long
         return dataCount;
     }
 
-    /**
-     * Creates validation data for node.
-     *
-     * @param deploymentFrequencyInfo
-     * @return ValidationData object
-     */
-    private ValidationData createValidationDataForNode(DeploymentFrequencyInfo deploymentFrequencyInfo) {
-        ValidationData validationData = new ValidationData();
-        validationData.setJobName(deploymentFrequencyInfo.getJobNameList());
-        validationData.setDateList(deploymentFrequencyInfo.getDeploymentDateList());
-        validationData.setEnvironmentList(deploymentFrequencyInfo.getEnvironmentList());
-        validationData.setMonthList(deploymentFrequencyInfo.getMonthList());
-        return validationData;
-    }
+
 
     /**
      * Set KPI data list for excel
@@ -330,26 +317,6 @@ public class DeploymentFrequencyServiceImpl extends JenkinsKPIService<Long, Long
         }
     }
 
-    /**
-     * Populates data for validation.
-     *
-     * @param kpiElement
-     * @param requestTrackerId
-     * @param validationDataMap
-     * @param validationData
-     * @param projectName
-     */
-    private void populateValidationDataObject(KpiElement kpiElement, String requestTrackerId,
-                                              Map<String, ValidationData> validationDataMap, ValidationData validationData, String projectName) {
-
-        if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-
-            validationDataMap.put(projectName, validationData);
-
-            kpiElement.setMapOfSprintAndData(validationDataMap);
-
-        }
-    }
 
     /**
      * prepare month list of last N(count) month

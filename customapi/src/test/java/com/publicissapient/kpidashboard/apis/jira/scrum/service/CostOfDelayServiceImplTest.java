@@ -22,13 +22,11 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.*;
 
 import org.bson.types.ObjectId;
+import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -74,6 +72,7 @@ public class CostOfDelayServiceImplTest {
 	public Map<String, ProjectBasicConfig> projectConfigMap = new HashMap<>();
 	public Map<ObjectId, FieldMapping> fieldMappingMap = new HashMap<>();
 	private List<JiraIssue> codList = new ArrayList<>();
+	private List<JiraIssue> jiraIssuesList = new ArrayList<>();
 	private Map<String, String> kpiWiseAggregation = new HashMap<>();
 
 	private KpiRequest kpiRequest;
@@ -131,8 +130,8 @@ public class CostOfDelayServiceImplTest {
 		configHelperService.setFieldMappingMap(fieldMappingMap);
 
 		JiraIssueDataFactory jiraIssueDataFactory = JiraIssueDataFactory.newInstance();
-
 		codList = jiraIssueDataFactory.getJiraIssues();
+		codList.stream().forEach(f -> f.setChangeDate(LocalDateTime.now().minusDays(2).toString()));
 
 	}
 
@@ -167,6 +166,7 @@ public class CostOfDelayServiceImplTest {
 				.thenReturn(kpiRequestTrackerId);
 		when(customApiSetting.getJiraXaxisMonthCount()).thenReturn(5);
 		when(costOfDelayServiceImpl.getRequestTrackerId()).thenReturn(kpiRequestTrackerId);
+
 
 		try {
 			KpiElement kpiElement = costOfDelayServiceImpl.getKpiData(kpiRequest, kpiRequest.getKpiList().get(0),
