@@ -18,6 +18,29 @@
 
 package com.publicissapient.kpidashboard.apis.jira.scrum.service;
 
+import com.publicissapient.kpidashboard.apis.common.service.impl.KpiHelperService;
+import com.publicissapient.kpidashboard.apis.config.CustomApiConfig;
+import com.publicissapient.kpidashboard.apis.enums.Filters;
+import com.publicissapient.kpidashboard.apis.enums.KPICode;
+import com.publicissapient.kpidashboard.apis.enums.KPIExcelColumn;
+import com.publicissapient.kpidashboard.apis.enums.KPISource;
+import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
+import com.publicissapient.kpidashboard.apis.jira.service.JiraKPIService;
+import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
+import com.publicissapient.kpidashboard.apis.model.KpiElement;
+import com.publicissapient.kpidashboard.apis.model.KpiRequest;
+import com.publicissapient.kpidashboard.apis.model.Node;
+import com.publicissapient.kpidashboard.apis.model.TreeAggregatorDetail;
+import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
+import com.publicissapient.kpidashboard.common.model.application.DataCount;
+import com.publicissapient.kpidashboard.common.model.excel.CapacityKpiData;
+import com.publicissapient.kpidashboard.common.model.jira.JiraIssue;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,32 +49,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import com.publicissapient.kpidashboard.apis.enums.KPIColumn;
-import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
-import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import com.publicissapient.kpidashboard.apis.common.service.impl.KpiHelperService;
-import com.publicissapient.kpidashboard.apis.config.CustomApiConfig;
-import com.publicissapient.kpidashboard.apis.enums.Filters;
-import com.publicissapient.kpidashboard.apis.enums.KPICode;
-import com.publicissapient.kpidashboard.apis.enums.KPISource;
-import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
-import com.publicissapient.kpidashboard.apis.jira.service.JiraKPIService;
-import com.publicissapient.kpidashboard.apis.model.KpiElement;
-import com.publicissapient.kpidashboard.apis.model.KpiRequest;
-import com.publicissapient.kpidashboard.apis.model.Node;
-import com.publicissapient.kpidashboard.apis.model.TreeAggregatorDetail;
-import com.publicissapient.kpidashboard.common.model.application.DataCount;
-import com.publicissapient.kpidashboard.common.model.application.ValidationData;
-import com.publicissapient.kpidashboard.common.model.excel.CapacityKpiData;
-import com.publicissapient.kpidashboard.common.model.jira.JiraIssue;
-
-import lombok.extern.slf4j.Slf4j;
 
 import static java.util.stream.Collectors.toMap;
 
@@ -64,23 +61,15 @@ import static java.util.stream.Collectors.toMap;
 @Slf4j
 public class SprintCapacityServiceImpl extends JiraKPIService<Double, List<Object>, Map<String, Object>> {
 
-    private static final String SEPARATOR_ASTERISK = "*************************************";
-
     public static final String UNCHECKED = "unchecked";
-
+    private static final String SEPARATOR_ASTERISK = "*************************************";
+    private static final String SPRINTCAPACITYKEY = "sprintCapacityKey";
+    private static final String ESTIMATE_TIME = "Estimate_Time";
+    private static final String ESTIMATED_HOURS = "Estimated Hours";
+    private static final String LOGGED_HOURS = "Logged Work";
+    private final DecimalFormat df2 = new DecimalFormat(".##");
     @Autowired
     private KpiHelperService kpiHelperService;
-
-    private static final String SPRINTCAPACITYKEY = "sprintCapacityKey";
-
-    private static final String ESTIMATE_TIME = "Estimate_Time";
-
-    private static final String ESTIMATED_HOURS = "Estimated Hours";
-
-    private static final String LOGGED_HOURS = "Logged Work";
-
-    private final DecimalFormat df2 = new DecimalFormat(".##");
-
     @Autowired
     private CustomApiConfig customApiConfig;
 
@@ -242,7 +231,7 @@ public class SprintCapacityServiceImpl extends JiraKPIService<Double, List<Objec
             mapTmp.get(node.getId()).setValue(new ArrayList<>(Arrays.asList(dataCount)));
         });
         kpiElement.setExcelData(excelData);
-        kpiElement.setExcelColumns(KPIColumn.SPRINT_CAPACITY_UTILIZATION.getColumns());
+        kpiElement.setExcelColumns(KPIExcelColumn.SPRINT_CAPACITY_UTILIZATION.getColumns());
     }
 
     /**
@@ -291,9 +280,22 @@ public class SprintCapacityServiceImpl extends JiraKPIService<Double, List<Objec
 
             String sprintName = node.getSprintFilter().getName();
 
-            Map<String, JiraIssue> totalSprintStoryMap = sprintCapacityList.stream()
+            List<String> loggedTimeList = new ArrayList<>();
+            List<String> estimateTimeList = new ArrayList<>();
+            estimateTimeList.add(df2.format(estimateTime));
+            sprintCapacityList.stream()
                     .collect(toMap(JiraIssue::getNumber, Function.identity()));
-            KPIExcelUtility.populateSprintCapacity(sprintName, totalSprintStoryMap, excelData, estimateTime);
+
+            for (JiraIssue jiraIssue : sprintCapacityList) {
+
+                Double daysLogged = 0.0d;
+                if (jiraIssue.getTimeSpentInMinutes() != null) {
+                    daysLogged = Double.valueOf(jiraIssue.getTimeSpentInMinutes()) / 60;
+                }
+                loggedTimeList.add(df2.format(daysLogged));
+            }
+
+            KPIExcelUtility.populateSprintCapacity(sprintName, sprintCapacityList, loggedTimeList, excelData, estimateTimeList);
         }
     }
 
