@@ -438,6 +438,7 @@ export class FilterComponent implements OnInit {
     }
 
     filterAdditionalFilters() {
+        this.filteredAddFilters = {};
         const selectedLevel = this.filterForm.get('selectedLevel')?.value;
         if (selectedLevel == 'project') {
             const selectedProjects = this.filterForm?.get('selectedTrendValue')?.value;
