@@ -39,51 +39,51 @@ import lombok.Setter;
 @Setter
 public class KPIExcelData {
 
-	@JsonProperty("Sprint Name")
-	private String sprintName;
+    @JsonProperty("Sprint Name")
+    private String sprintName;
 
-	@JsonProperty("Story ID")
-	private Map<String,String> storyId;
+    @JsonProperty("Story ID")
+    private Map<String, String> storyId;
 
-	@JsonProperty("Issue Description")
-	private String issueDesc;
+    @JsonProperty("Issue Description")
+    private String issueDesc;
 
-	@JsonProperty("Linked Defects")
-	private Map<String,String> linkedDefects;
+    @JsonProperty("Linked Defects")
+    private Map<String, String> linkedDefects;
 
-	@JsonProperty("Project Name")
-	private String projectName;
+    @JsonProperty("Project Name")
+    private String projectName;
 
-	@JsonProperty("Epic ID")
-	private Map<String,String> epicID;
+    @JsonProperty("Epic ID")
+    private Map<String, String> epicID;
 
-	@JsonProperty("Cost of Delay")
-	private Double costOfDelay;
+    @JsonProperty("Cost of Delay")
+    private Double costOfDelay;
 
-	@JsonProperty("Epic Name")
-	private String epicName;
+    @JsonProperty("Epic Name")
+    private String epicName;
 
-	@JsonProperty("Epic End Date")
-	private String epicEndDate;
+    @JsonProperty("Epic End Date")
+    private String epicEndDate;
 
-	@JsonProperty("Release Name")
-	private String releaseName;
+    @JsonProperty("Release Name")
+    private String releaseName;
 
-	@JsonProperty("Release Description")
-	private String releaseDesc;
+    @JsonProperty("Release Description")
+    private String releaseDesc;
 
-	@JsonProperty("Release End Date")
-	private String releaseEndDate;
+    @JsonProperty("Release End Date")
+    private String releaseEndDate;
 
-	@JsonProperty("Date")
-	private String deploymentDate;
+    @JsonProperty("Date")
+    private String deploymentDate;
 
-	@JsonProperty("Job Name")
-	private String deploymentJobName;
+    @JsonProperty("Job Name")
+    private String deploymentJobName;
 
-	@JsonProperty("Environment")
-	private String deploymentEnvironment;
+    @JsonProperty("Environment")
+    private String deploymentEnvironment;
 
-	@JsonProperty("Month")
-	private String month;
+    @JsonProperty("Month")
+    private String month;
 }
