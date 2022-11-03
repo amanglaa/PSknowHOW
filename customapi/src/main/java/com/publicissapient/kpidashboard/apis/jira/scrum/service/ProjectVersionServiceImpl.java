@@ -18,43 +18,44 @@
 
 package com.publicissapient.kpidashboard.apis.jira.scrum.service;
 
+
+import com.google.common.collect.Lists;
+import com.publicissapient.kpidashboard.apis.config.CustomApiConfig;
+import com.publicissapient.kpidashboard.apis.enums.Filters;
+import com.publicissapient.kpidashboard.apis.enums.KPICode;
+import com.publicissapient.kpidashboard.apis.enums.KPISource;
+import com.publicissapient.kpidashboard.apis.enums.KPIExcelColumn;
+import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
+import com.publicissapient.kpidashboard.apis.jira.service.JiraKPIService;
+import com.publicissapient.kpidashboard.apis.model.KpiElement;
+import com.publicissapient.kpidashboard.apis.model.KpiRequest;
+import com.publicissapient.kpidashboard.apis.model.Node;
+import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
+import com.publicissapient.kpidashboard.apis.model.TreeAggregatorDetail;
+import com.publicissapient.kpidashboard.common.model.application.DataCount;
+import com.publicissapient.kpidashboard.common.model.application.ProjectRelease;
+import com.publicissapient.kpidashboard.common.model.application.ProjectVersion;
+import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
+import com.publicissapient.kpidashboard.common.repository.application.ProjectReleaseRepo;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
+import org.bson.types.ObjectId;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.bson.types.ObjectId;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.publicissapient.kpidashboard.apis.config.CustomApiConfig;
-import com.publicissapient.kpidashboard.apis.constant.Constant;
-import com.publicissapient.kpidashboard.apis.enums.Filters;
-import com.publicissapient.kpidashboard.apis.enums.KPICode;
-import com.publicissapient.kpidashboard.apis.enums.KPISource;
-import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
-import com.publicissapient.kpidashboard.apis.jira.service.JiraKPIService;
-import com.publicissapient.kpidashboard.apis.model.KpiElement;
-import com.publicissapient.kpidashboard.apis.model.KpiRequest;
-import com.publicissapient.kpidashboard.apis.model.Node;
-import com.publicissapient.kpidashboard.apis.model.TreeAggregatorDetail;
-import com.publicissapient.kpidashboard.common.model.application.DataCount;
-import com.publicissapient.kpidashboard.common.model.application.ProjectRelease;
-import com.publicissapient.kpidashboard.common.model.application.ProjectVersion;
-import com.publicissapient.kpidashboard.common.model.application.ValidationData;
-import com.publicissapient.kpidashboard.common.repository.application.ProjectReleaseRepo;
-
-import lombok.extern.slf4j.Slf4j;
-
 @Service
 @Slf4j
 public class ProjectVersionServiceImpl extends JiraKPIService<Double, List<Object>, Map<String, Object>> {
 
 	private static final String PROJECT_RELEASE_DETAIL = "projectReleaseDetail";
+
+	private static final String MONTH_YEAR_FORMAT = "MMM yyyy";
 
 	@Autowired
 	private CustomApiConfig customApiConfig;
@@ -128,19 +129,20 @@ public class ProjectVersionServiceImpl extends JiraKPIService<Double, List<Objec
 		Map<String, Object> resultMap = fetchKPIDataFromDb(projectLeafNodeList, null, null, kpiRequest);
 		Map<String, ProjectRelease> filterWiseDataMap = createProjectWiseRelease(
 				(List<ProjectRelease>) resultMap.get(PROJECT_RELEASE_DETAIL));
-
-		Map<String, ValidationData> validationDataMap = Maps.newHashMap();
+		List<KPIExcelData> excelData = new ArrayList<>();
 		projectLeafNodeList.forEach(node -> {
 			String currentProjectId = node.getProjectFilter().getBasicProjectConfigId().toString();
 			String projectName = node.getProjectFilter().getName();
 
 			ProjectRelease releaseDetail = filterWiseDataMap.get(currentProjectId);
 			if (releaseDetail != null) {
-				setProjectNodeValue(mapTmp, node, kpiElement, releaseDetail, trendValueList, projectName,
-						requestTrackerId, validationDataMap);
+				setProjectNodeValue(mapTmp, node, releaseDetail, trendValueList, projectName,
+						requestTrackerId, excelData);
 			}
 
 		});
+		kpiElement.setExcelData(excelData);
+		kpiElement.setExcelColumns(KPIExcelColumn.RELEASE_FREQUENCY.getColumns());
 	}
 
 	/**
@@ -152,18 +154,20 @@ public class ProjectVersionServiceImpl extends JiraKPIService<Double, List<Objec
 	 * @param projectName
 	 * @return
 	 */
-	private void setProjectNodeValue(Map<String, Node> mapTmp, Node node, KpiElement kpiElement,
-			ProjectRelease projectRelease, List<DataCount> trendValueList, String projectName, String requestTrackerId,
-			Map<String, ValidationData> validationDataMap) {
+	private void setProjectNodeValue(Map<String, Node> mapTmp, Node node, ProjectRelease projectRelease, List<DataCount> trendValueList, String projectName, String requestTrackerId,
+			 List<KPIExcelData> excelData) {
 		Map<String, Double> dateCount = getLastNMonth(customApiConfig.getSprintCountForFilters());
 		List<ProjectVersion> projectVersionList = Lists.newArrayList();
 		List<String> dateList = Lists.newArrayList();
+
+		Map<Long, String> dateMap = new HashMap<>();
 		for (ProjectVersion pv : projectRelease.getListProjectVersion()) {
 			if (pv.getReleaseDate() != null) {
-				String yearMonth = pv.getReleaseDate().getYear() + Constant.DASH + pv.getReleaseDate().getMonthOfYear();
+				String yearMonth = pv.getReleaseDate().toString(MONTH_YEAR_FORMAT);
 				if (dateCount.keySet().contains(yearMonth)) {
 					projectVersionList.add(pv);
 					dateList.add(yearMonth);
+					dateMap.put(pv.getId(), yearMonth);
 					dateCount.put(yearMonth, dateCount.get(yearMonth) + 1);
 				}
 			}
@@ -171,8 +175,11 @@ public class ProjectVersionServiceImpl extends JiraKPIService<Double, List<Objec
 		List<DataCount> dcList = new ArrayList<>();
 		dateCount.forEach((k, v) -> setDataCount(trendValueList, projectName, dcList, k, v));
 		mapTmp.get(node.getId()).setValue(dcList);
-		populateValidationDataObject(kpiElement, requestTrackerId, projectVersionList, validationDataMap, projectName,
-				dateList);
+
+		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
+			KPIExcelUtility.populateReleaseFreqExcelData(projectVersionList, projectName, dateMap, excelData);
+		}
+
 	}
 
 	/**
@@ -204,38 +211,7 @@ public class ProjectVersionServiceImpl extends JiraKPIService<Double, List<Objec
 		return resultList.stream().collect(Collectors.toMap(pr -> pr.getConfigId().toString(), data -> data));
 	}
 
-	/**
-	 * This method check for API request source. If it is Excel it populates the
-	 * validation data node of the KPI element.
-	 *
-	 * @param kpiElement
-	 * @param requestTrackerId
-	 * @param projectVersionList
-	 * @param validationDataMap
-	 * @param validationKey
-	 */
-	private void populateValidationDataObject(KpiElement kpiElement, String requestTrackerId,
-			List<ProjectVersion> projectVersionList, Map<String, ValidationData> validationDataMap,
-			String validationKey, List<String> dateList) {
-		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-			List<String> releaseNameList = Lists.newArrayList();
-			List<String> releaseDateList = Lists.newArrayList();
-			List<String> releaseDiscription = Lists.newArrayList();
-			projectVersionList.forEach(pv -> {
-				releaseNameList.add(pv.getName());
-				releaseDateList.add(pv.getReleaseDate().toString());
-				releaseDiscription.add(pv.getDescription());
-			});
-			ValidationData validationData = new ValidationData();
-			validationData.setMonthList(dateList);
-			validationData.setVersionDate(releaseDateList);
-			validationData.setReleaseNameList(releaseNameList);
-			validationData.setDescriptionList(releaseDiscription);
-			validationDataMap.put(validationKey, validationData);
 
-			kpiElement.setMapOfSprintAndData(validationDataMap);
-		}
-	}
 
 	@Override
 	public Double calculateKpiValue(List<Double> valueList, String kpiName) {

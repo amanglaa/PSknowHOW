@@ -18,6 +18,15 @@
 
 package com.publicissapient.kpidashboard.apis.util;
 
+import com.publicissapient.kpidashboard.apis.model.DeploymentFrequencyInfo;
+import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
+import com.publicissapient.kpidashboard.common.model.application.ProjectVersion;
+import com.publicissapient.kpidashboard.common.model.jira.JiraIssue;
+import com.publicissapient.kpidashboard.common.model.jira.KanbanJiraIssue;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,8 +55,12 @@ import com.publicissapient.kpidashboard.common.model.zephyr.TestCaseDetails;
  */
 public class KPIExcelUtility {
 
-    private KPIExcelUtility() {
-    }
+	private static final String MONTH_YEAR_FORMAT = "MMM yyyy";
+
+	private static final String DATE_YEAR_MONTH_FORMAT = "dd-MMM-yy";
+
+	private KPIExcelUtility() {
+	}
 
     private static final String LEAD_TIME = "Lead Time";
     private static final String INTAKE_TO_DOR = "Intake - DoR";
@@ -442,8 +455,80 @@ public class KPIExcelUtility {
 
 
                 kpiExcelData.add(excelData);
+
             });
         }
     }
+
+	public static void populateCODExcelData(String projectName, List<JiraIssue> epicList, Map<String, String> dateList, List<KPIExcelData> kpiExcelData) {
+
+		epicList.forEach(epic -> {
+			if(null!=epic) {
+				Map<String, String> epicLink = new HashMap<>();
+				epicLink.put(epic.getNumber(), epic.getUrl());
+				KPIExcelData excelData = new KPIExcelData();
+				excelData.setProjectName(projectName);
+				excelData.setEpicID(epicLink);
+				excelData.setEpicName(epic.getName());
+				excelData.setCostOfDelay(epic.getCostOfDelay());
+				excelData.setMonth(dateList.get(epic.getNumber()));
+				DateTime dateValue = DateTime.parse(epic.getChangeDate());
+				excelData.setEpicEndDate(dateValue.toString(DATE_YEAR_MONTH_FORMAT));
+				kpiExcelData.add(excelData);
+			}
+		});
+	}
+
+	public static void populateKanbanCODExcelData(String projectName, List<KanbanJiraIssue> epicList, List<KPIExcelData> kpiExcelData) {
+
+		epicList.forEach(epic -> {
+			if (!epic.getProjectName().isEmpty()) {
+				Map<String, String> epicLink = new HashMap<>();
+				epicLink.put(epic.getNumber(), epic.getUrl());
+				KPIExcelData excelData = new KPIExcelData();
+				excelData.setProjectName(projectName);
+				excelData.setEpicID(epicLink);
+				excelData.setEpicName(epic.getName());
+				excelData.setCostOfDelay(epic.getCostOfDelay());
+				DateTime dateValue = DateTime.parse(epic.getChangeDate());
+				excelData.setMonth(dateValue.toString(MONTH_YEAR_FORMAT));
+				excelData.setEpicEndDate(dateValue.toString(DATE_YEAR_MONTH_FORMAT));
+				kpiExcelData.add(excelData);
+			}
+		});
+	}
+
+
+	public static void populateReleaseFreqExcelData(List<ProjectVersion> projectVersionList, String projectName, Map<Long, String> dateMap, List<KPIExcelData> kpiExcelData) {
+
+		projectVersionList.forEach(pv -> {
+			KPIExcelData excelData = new KPIExcelData();
+			excelData.setProjectName(projectName);
+			excelData.setReleaseName(pv.getDescription());
+			excelData.setReleaseDesc(pv.getName());
+			excelData.setReleaseEndDate(pv.getReleaseDate().toString(DATE_YEAR_MONTH_FORMAT));
+			excelData.setMonth(dateMap.get(pv.getId()));
+			kpiExcelData.add(excelData);
+
+		});
+
+	}
+
+	// incomplete for this pr
+	public static void populateDeploymentFrequencyExcelData(String projectName, DeploymentFrequencyInfo dfi, List<KPIExcelData> kpiExcelData) {
+
+		for (int i=0; i < dfi.getJobNameList().size(); i++) {
+			KPIExcelData excelData = new KPIExcelData();
+			excelData.setProjectName(projectName);
+			excelData.setDeploymentDate(dfi.getDeploymentDateList().get(i));
+			excelData.setJobName(dfi.getJobNameList().get(i));
+			excelData.setMonth(dfi.getMonthList().get(i));
+			excelData.setDeploymentEnvironment(dfi.getEnvironmentList().get(i));
+			excelData.setMonth(dfi.getMonthList().get(i));
+			kpiExcelData.add(excelData);
+
+		}
+
+	}
 
 }

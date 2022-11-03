@@ -26,6 +26,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+
+import com.publicissapient.kpidashboard.apis.enums.Filters;
+import com.publicissapient.kpidashboard.apis.enums.JiraFeature;
+import com.publicissapient.kpidashboard.apis.enums.KPICode;
+import com.publicissapient.kpidashboard.apis.enums.KPISource;
+import com.publicissapient.kpidashboard.apis.enums.KPIExcelColumn;
+import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
+import com.publicissapient.kpidashboard.apis.jira.service.JiraKPIService;
+import com.publicissapient.kpidashboard.apis.model.KpiElement;
+import com.publicissapient.kpidashboard.apis.model.KpiRequest;
+import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
+import com.publicissapient.kpidashboard.apis.model.Node;
+import com.publicissapient.kpidashboard.apis.model.TreeAggregatorDetail;
+import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.DateTime;
@@ -33,20 +47,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.publicissapient.kpidashboard.apis.config.CustomApiConfig;
-import com.publicissapient.kpidashboard.apis.constant.Constant;
-import com.publicissapient.kpidashboard.apis.enums.Filters;
-import com.publicissapient.kpidashboard.apis.enums.JiraFeature;
-import com.publicissapient.kpidashboard.apis.enums.KPICode;
-import com.publicissapient.kpidashboard.apis.enums.KPISource;
-import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
-import com.publicissapient.kpidashboard.apis.jira.service.JiraKPIService;
-import com.publicissapient.kpidashboard.apis.model.KpiElement;
-import com.publicissapient.kpidashboard.apis.model.KpiRequest;
-import com.publicissapient.kpidashboard.apis.model.Node;
-import com.publicissapient.kpidashboard.apis.model.TreeAggregatorDetail;
 import com.publicissapient.kpidashboard.common.constant.NormalizedJira;
 import com.publicissapient.kpidashboard.common.model.application.DataCount;
-import com.publicissapient.kpidashboard.common.model.application.ValidationData;
 import com.publicissapient.kpidashboard.common.model.jira.JiraIssue;
 import com.publicissapient.kpidashboard.common.repository.jira.JiraIssueRepository;
 
@@ -65,11 +67,13 @@ public class CostOfDelayServiceImpl extends JiraKPIService<Double, List<Object>,
 
 	private static final String COD_DATA = "costOfDelayData";
 
+	private static final String MONTH_YEAR_FORMAT = "MMM yyyy";
+
 	@Override
 	public Double calculateKPIMetrics(Map<String, Object> subCategoryMap) {
 		return null;
 	}
-	
+
 	@Override
 	public KpiElement getKpiData(KpiRequest kpiRequest, KpiElement kpiElement,
 			TreeAggregatorDetail treeAggregatorDetail) throws ApplicationException {
@@ -98,7 +102,7 @@ public class CostOfDelayServiceImpl extends JiraKPIService<Double, List<Object>,
 		return kpiElement;
 	}
 
-	
+
 
 	@Override
 	public Map<String, Object> fetchKPIDataFromDb(List<Node> leafNodeList, String startDate, String endDate,
@@ -128,7 +132,7 @@ public class CostOfDelayServiceImpl extends JiraKPIService<Double, List<Object>,
 		return KPICode.COST_OF_DELAY.name();
 	}
 
-	
+
 	/**
 	 * Calculate KPI value for selected project nodes.
 	 *
@@ -148,18 +152,18 @@ public class CostOfDelayServiceImpl extends JiraKPIService<Double, List<Object>,
 		Map<String, Object> resultMap = fetchKPIDataFromDb(projectLeafNodeList, null, null, kpiRequest);
 		Map<String, List<JiraIssue>> filterWiseDataMap = createProjectWiseDelay(
 				(List<JiraIssue>) resultMap.get(COD_DATA));
-
-		Map<String, ValidationData> validationDataMap = new HashMap<>();
+		List<KPIExcelData> excelData = new ArrayList<>();
 
 		projectLeafNodeList.forEach(node -> {
 			String currentProjectId = node.getProjectFilter().getBasicProjectConfigId().toString();
 			List<JiraIssue> delayDetail = filterWiseDataMap.get(currentProjectId);
 			if (CollectionUtils.isNotEmpty(delayDetail)) {
-				setProjectNodeValue(mapTmp, node, kpiElement, delayDetail, trendValueList, requestTrackerId,
-						validationDataMap);
+				setProjectNodeValue(mapTmp, node, delayDetail, trendValueList, requestTrackerId, excelData);
 			}
 
 		});
+		kpiElement.setExcelData(excelData);
+		kpiElement.setExcelColumns(KPIExcelColumn.COST_OF_DELAY.getColumns());
 	}
 
 	/**
@@ -170,23 +174,23 @@ public class CostOfDelayServiceImpl extends JiraKPIService<Double, List<Object>,
 	 * @param trendValueList
 	 * @return
 	 */
-	private void setProjectNodeValue(Map<String, Node> mapTmp, Node node, KpiElement kpiElement,
-			List<JiraIssue> jiraIssues, List<DataCount> trendValueList, String requestTrackerId,
-			Map<String, ValidationData> validationDataMap) {
+	private void setProjectNodeValue(Map<String, Node> mapTmp, Node node,
+			List<JiraIssue> jiraIssues, List<DataCount> trendValueList, String requestTrackerId, List<KPIExcelData> excelData) {
 		Map<String, Double> lastNMonthMap = getLastNMonth(customApiConfig.getJiraXaxisMonthCount());
 		String projectName = node.getProjectFilter().getName();
 		List<JiraIssue> epicList = new ArrayList<>();
-		List<String> dateList = new ArrayList<>();
+		Map<String, String> dateList = new HashMap<>();
 		Map<String, Map<String, Integer>> howerMap = new HashMap<>();
+
 		for (JiraIssue js : jiraIssues) {
 			String number = js.getNumber();
 			String dateTime = js.getChangeDate() == null ? js.getUpdateDate() : js.getChangeDate();
 			if (dateTime != null) {
 				DateTime dateValue = DateTime.parse(dateTime);
 				epicList.add(js);
-				String date = dateValue.getYear() + Constant.DASH + dateValue.getMonthOfYear();
+				String date = dateValue.toString(MONTH_YEAR_FORMAT);
 				// dateValue.getM
-				dateList.add(date);
+				dateList.put(js.getNumber(), date);
 				lastNMonthMap.computeIfPresent(date, (key, value) -> {
 					Integer costOfDelay = (int) js.getCostOfDelay();
 					Map<String, Integer> epicWiseCost = new HashMap<>();
@@ -217,7 +221,11 @@ public class CostOfDelayServiceImpl extends JiraKPIService<Double, List<Object>,
 
 		});
 		mapTmp.get(node.getId()).setValue(dcList);
-		populateValidationDataObject(kpiElement, requestTrackerId, epicList, validationDataMap, projectName, dateList);
+
+		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
+			KPIExcelUtility.populateCODExcelData(projectName, epicList, dateList, excelData);
+		}
+
 	}
 
 	/**
@@ -232,40 +240,6 @@ public class CostOfDelayServiceImpl extends JiraKPIService<Double, List<Object>,
 				.collect(Collectors.groupingBy(JiraIssue::getBasicProjectConfigId));
 	}
 
-	/**
-	 * This method check for API request source. If it is Excel it populates the
-	 * validation data node of the KPI element.
-	 *
-	 * @param kpiElement
-	 * @param requestTrackerId
-	 * @param validationDataMap
-	 * @param validationKey
-	 */
-	private void populateValidationDataObject(KpiElement kpiElement, String requestTrackerId, List<JiraIssue> epicList,
-			Map<String, ValidationData> validationDataMap, String validationKey, List<String> dateList) {
-		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-			List<Double> codValueList = new ArrayList<>();
-			List<String> epicDateList = new ArrayList<>();
-			List<String> epicIdList = new ArrayList<>();
-			List<String> epicNameList = new ArrayList<>();
-			epicList.forEach(el -> {
-				codValueList.add(el.getCostOfDelay());
-				epicDateList.add(el.getChangeDate());
-				epicIdList.add(el.getNumber());
-				epicNameList.add(el.getName());
-			});
-
-			ValidationData validationData = new ValidationData();
-			validationData.setMonthList(dateList);
-			validationData.setEpicIdList(epicIdList);
-			validationData.setEpicNameList(epicNameList);
-			validationData.setEpicEndDateList(epicDateList);
-			validationData.setCostOfDelayList(codValueList);
-			validationDataMap.put(validationKey, validationData);
-
-			kpiElement.setMapOfSprintAndData(validationDataMap);
-		}
-	}
 
 	@Override
 	public Double calculateKpiValue(List<Double> valueList, String kpiName) {
