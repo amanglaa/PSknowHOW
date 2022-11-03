@@ -84,7 +84,7 @@ export class ExcelService {
             filename = kpiData.kpiName;
         }
 
-        if (kpiData === undefined || Object.keys(kpiData).length === 0) {
+        if (kpiData === undefined) {
             const noData = worksheet.addRow(['NO Data Available']);
             noData.font = {
                 name: 'Comic Sans MS',

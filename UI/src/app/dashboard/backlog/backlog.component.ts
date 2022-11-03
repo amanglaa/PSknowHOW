@@ -463,17 +463,14 @@ export class BacklogComponent implements OnInit, OnDestroy{
   downloadExcel(kpiId, kpiName, isKanban) {
     const sprintIncluded = ['CLOSED'];
     this.helperService.downloadExcel(kpiId, kpiName, isKanban, this.filterApplyData, this.filterData, sprintIncluded).subscribe(getData => {
-        this.kpiExcelData=this.excelService.generateExcelModalData(getData);
-        this.modalDetails['tableHeadings'] = this.kpiExcelData.headerNames;
-        this.modalDetails['header'] = kpiName;
-        this.modalDetails['tableValues'] = JSON.parse(JSON.stringify(this.kpiExcelData.excelData)).map(data => {
-            if(data.hasOwnProperty('rowSpan')){
-                delete data.rowSpan;
-            }
-            return Object.values(data);
-        });
-        this.displayModal = true;
-    });
+      if (getData['excelData'] && getData['excelData'].length > 0) {
+          this.kpiExcelData = this.excelService.generateExcelModalData(getData);
+          this.modalDetails['tableHeadings'] = this.kpiExcelData.headerNames.map(column => column.header);
+          this.modalDetails['tableValues'] = this.kpiExcelData.excelData;
+      }
+      this.modalDetails['header'] = kpiName;
+      this.displayModal = true;
+  });
 }
 
 exportExcel(kpiName){
@@ -481,7 +478,16 @@ this.excelService.generateExcel(this.kpiExcelData,kpiName);
 }
 
 checkIfArray(arr){
-    return Array.isArray(arr);
+  return Array.isArray(arr);
+}
+
+clearModalDataOnClose(){
+  this.displayModal=false;
+  this.modalDetails = {
+      header: '',
+      tableHeadings: [],
+      tableValues: []
+  };
 }
 
   ngOnDestroy() {

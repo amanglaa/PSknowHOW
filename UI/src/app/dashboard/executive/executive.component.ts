@@ -378,10 +378,12 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
     downloadExcel(kpiId, kpiName, isKanban) {
         const sprintIncluded = ['CLOSED'];
         this.helperService.downloadExcel(kpiId, kpiName, isKanban, this.filterApplyData, this.filterData, sprintIncluded).subscribe(getData => {
-            this.kpiExcelData=this.excelService.generateExcelModalData(getData);
-            this.modalDetails['tableHeadings'] = this.kpiExcelData.headerNames.map(column => column.header);
+            if (getData['excelData'] && getData['excelData'].length > 0) {
+                this.kpiExcelData = this.excelService.generateExcelModalData(getData);
+                this.modalDetails['tableHeadings'] = this.kpiExcelData.headerNames.map(column => column.header);
+                this.modalDetails['tableValues'] = this.kpiExcelData.excelData;
+            }
             this.modalDetails['header'] = kpiName;
-            this.modalDetails['tableValues'] = this.kpiExcelData.excelData;
             this.displayModal = true;
         });
     }
@@ -392,6 +394,15 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
 
     checkIfArray(arr){
         return Array.isArray(arr);
+    }
+
+    clearModalDataOnClose(){
+        this.displayModal=false;
+        this.modalDetails = {
+            header: '',
+            tableHeadings: [],
+            tableValues: []
+        };
     }
     // Used for grouping all Sonar kpi from master data and calling Sonar kpi.
     groupSonarKpi(kpiIdsForCurrentBoard) {
