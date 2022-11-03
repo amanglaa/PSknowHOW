@@ -117,6 +117,7 @@ public class SprintClientImpl implements SprintClient {
 				sprint.setBasicProjectConfigId(projectConfig.getBasicProjectConfigId());
 				if (null != dbSprintDetailMap.get(sprint.getSprintID())) {
 					SprintDetails dbSprintDetails =  dbSprintDetailMap.get(sprint.getSprintID());
+					sprint.setId(dbSprintDetails.getId());
 					//case 1 : same sprint different board id
 					if (!dbSprintDetails.getOriginBoardId().containsAll(sprint.getOriginBoardId())) {
 						sprint.getOriginBoardId().addAll(sprint.getOriginBoardId());
