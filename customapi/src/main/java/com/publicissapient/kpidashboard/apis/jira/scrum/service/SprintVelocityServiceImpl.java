@@ -262,8 +262,8 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
         if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
             String sprintName = node.getSprintFilter().getName();
 
-            Map<String, JiraIssue> totalSprintStoryMap = jiraIssues.stream()
-                    .collect(toMap(JiraIssue::getNumber, Function.identity()));
+            Map<String, JiraIssue> totalSprintStoryMap = new HashMap<>();
+            jiraIssues.stream().forEach(issue -> totalSprintStoryMap.putIfAbsent(issue.getNumber(), issue));
             KPIExcelUtility.populateSprintVelocity(sprintName, totalSprintStoryMap, excelData);
         }
     }
