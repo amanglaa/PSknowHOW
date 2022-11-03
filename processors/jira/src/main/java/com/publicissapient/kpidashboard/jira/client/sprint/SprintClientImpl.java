@@ -117,7 +117,9 @@ public class SprintClientImpl implements SprintClient {
 				if (null != dbSprintDetailMap.get(sprint.getSprintID())) {
 
 					SprintDetails dbSprintDetails =  dbSprintDetailMap.get(sprint.getSprintID());
-					sprint.setId(dbSprintDetails.getId());
+					dbSprintDetails.setState(sprint.getState().toUpperCase());
+					dbSprintDetails.setGoal(sprint.getGoal());
+					dbSprintDetails.setCompleteDate(sprint.getCompleteDate());
 					//case 1 : same sprint different board id
 					if (!dbSprintDetails.getOriginBoardId().containsAll(sprint.getOriginBoardId())) {
 						dbSprintDetails.getOriginBoardId().add(boardId);
@@ -142,7 +144,7 @@ public class SprintClientImpl implements SprintClient {
 					sprintToSave.add(sprint);
 				}
 			});
-			sprintRepository.saveAll(sprintToSave);
+			//sprintRepository.saveAll(sprintToSave);
 			log.info("{} sprints found", sprintDetailsSet.size());
 		}
 	}
