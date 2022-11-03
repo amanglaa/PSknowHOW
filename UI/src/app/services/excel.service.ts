@@ -33,8 +33,8 @@ export class ExcelService {
         const headerNames = [];
         const excelData = [];
 
-        for(const column of kpiData.columns){
-            headerNames.push({ header: column, key:column, width: 25 });
+        for(const key in kpiData.excelData[0]){
+            headerNames.push({ header: key, key, width: 25 });
         }
 
         for (const data of kpiData.excelData) {
@@ -44,17 +44,11 @@ export class ExcelService {
                     rowData[key] = data[key];
                 }else{
                     const appendedRowData = [];
-                    if(Array.isArray(data[key])){
-                        for(const cellData of data[key]){
-                            appendedRowData.push(cellData);
-                        }
-                    }else{
-                        for (const datakey in data[key]) {
-                            if (data[key][datakey]) {
-                                appendedRowData.push({ text: datakey, hyperlink: data[key][datakey] });
-                            } else {
-                                appendedRowData.push(datakey);
-                            }
+                    for (const datakey in data[key]) {
+                        if (data[key][datakey]) {
+                            appendedRowData.push({ text: datakey, hyperlink: data[key][datakey] });
+                        } else {
+                            appendedRowData.push(datakey);
                         }
                     }
                     if (appendedRowData.length === 0) {
