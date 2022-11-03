@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author dayshank2
  */
 @RestController
-@RequestMapping("/fieldMappingData")
+@RequestMapping("/kpiFieldMapping")
 public class KPIFieldMappingController {
     private final KpiHelperService kPIHelperService;
 
