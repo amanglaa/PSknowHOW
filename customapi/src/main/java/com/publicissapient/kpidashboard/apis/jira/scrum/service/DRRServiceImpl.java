@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 
 import javax.ws.rs.core.Feature;
 
-import com.publicissapient.kpidashboard.apis.enums.KPIColumn;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -46,6 +45,7 @@ import com.publicissapient.kpidashboard.apis.constant.Constant;
 import com.publicissapient.kpidashboard.apis.enums.Filters;
 import com.publicissapient.kpidashboard.apis.enums.JiraFeature;
 import com.publicissapient.kpidashboard.apis.enums.KPICode;
+import com.publicissapient.kpidashboard.apis.enums.KPIExcelColumn;
 import com.publicissapient.kpidashboard.apis.enums.KPISource;
 import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
 import com.publicissapient.kpidashboard.apis.filter.service.FilterHelperService;
@@ -96,37 +96,6 @@ public class DRRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 
 	@Autowired
 	private FilterHelperService flterHelperService;
-
-	public static void getDefectsWithDrop(Map<String, Map<String, List<String>>> droppedDefects,
-			List<JiraIssue> defectDataList, List<JiraIssue> defectListWthDrop) {
-		if (org.apache.commons.collections4.CollectionUtils.isNotEmpty(defectDataList)) {
-			Set<JiraIssue> defectListWthDropSet = new HashSet<>();
-			defectDataList.forEach(jiraIssue -> getDefectsWthDrop(droppedDefects, defectListWthDropSet, jiraIssue));
-			defectListWthDrop.addAll(defectListWthDropSet);
-		}
-	}
-
-	private static void getDefectsWthDrop(Map<String, Map<String, List<String>>> droppedDefects,
-			Set<JiraIssue> defectListWthDropSet, JiraIssue jiraIssue) {
-		if (!StringUtils.isBlank(jiraIssue.getStatus())) {
-			Map<String, List<String>> defectStatus = droppedDefects.get(jiraIssue.getBasicProjectConfigId());
-			if (!defectStatus.isEmpty()) {
-				if ((StringUtils.isNotEmpty(jiraIssue.getResolution())
-						&& CollectionUtils.isNotEmpty(defectStatus.get(Constant.RESOLUTION_TYPE_FOR_REJECTION))
-						&& defectStatus.get(Constant.RESOLUTION_TYPE_FOR_REJECTION).contains(jiraIssue.getResolution()))
-						|| (StringUtils.isNotEmpty(jiraIssue.getStatus())
-								&& CollectionUtils.isNotEmpty(defectStatus.get(Constant.DEFECT_REJECTION_STATUS))
-								&& defectStatus.get(Constant.DEFECT_REJECTION_STATUS)
-										.contains(jiraIssue.getStatus()))) {
-					defectListWthDropSet.add(jiraIssue);
-
-				} else {
-					defectListWthDropSet.add(jiraIssue);
-				}
-			}
-		}
-
-	}
 
 	@Override
 	public String getQualifierType() {
@@ -340,7 +309,7 @@ public class DRRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 
 		});
 		kpiElement.setExcelData(excelData);
-		kpiElement.setExcelColumns(KPIColumn.DEFECT_REJECTION_RATE.getColumns());
+		kpiElement.setExcelColumns(KPIExcelColumn.DEFECT_REJECTION_RATE.getColumns());
 	}
 
 	/**
@@ -452,4 +421,35 @@ public class DRRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 	public Double calculateKpiValue(List<Double> valueList, String kpiName) {
 		return calculateKpiValueForDouble(valueList, kpiName);
 	}
+
+	public static void getDefectsWithDrop(Map<String, Map<String,List<String>>> droppedDefects, List<JiraIssue> defectDataList,
+											 List<JiraIssue> defectListWthDrop) {
+		if (org.apache.commons.collections4.CollectionUtils.isNotEmpty(defectDataList)) {
+			Set<JiraIssue> defectListWthDropSet = new HashSet<>();
+			defectDataList.forEach(jiraIssue -> {
+				getDefectsWthDrop(droppedDefects, defectListWthDropSet, jiraIssue);
+			});
+			defectListWthDrop.addAll(defectListWthDropSet);
+		}
+	}
+
+	private static void getDefectsWthDrop(Map<String, Map<String,List<String>>> droppedDefects, Set<JiraIssue> defectListWthDropSet, JiraIssue jiraIssue) {
+		if (!StringUtils.isBlank(jiraIssue.getStatus())) {
+			Map<String,List<String>> defectStatus = droppedDefects.get(jiraIssue.getBasicProjectConfigId());
+			if (!defectStatus.isEmpty()) {
+				if (StringUtils.isNotEmpty(jiraIssue.getResolution()) &&
+						CollectionUtils.isNotEmpty(defectStatus.get(Constant.RESOLUTION_TYPE_FOR_REJECTION)) &&
+						defectStatus.get(Constant.RESOLUTION_TYPE_FOR_REJECTION).contains(jiraIssue.getResolution())) {
+					defectListWthDropSet.add(jiraIssue);
+				} else if (StringUtils.isNotEmpty(jiraIssue.getStatus()) &&
+						CollectionUtils.isNotEmpty(defectStatus.get(Constant.DEFECT_REJECTION_STATUS)) &&
+						defectStatus.get(Constant.DEFECT_REJECTION_STATUS).contains(jiraIssue.getStatus())) {
+					defectListWthDropSet.add(jiraIssue);
+				}
+			} else {
+				defectListWthDropSet.add(jiraIssue);
+			}
+		}
+	}
+
 }

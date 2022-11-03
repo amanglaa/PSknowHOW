@@ -28,11 +28,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.publicissapient.kpidashboard.apis.enums.KPIColumn;
-import com.publicissapient.kpidashboard.common.model.application.ValidationData;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -47,6 +44,7 @@ import com.publicissapient.kpidashboard.apis.constant.Constant;
 import com.publicissapient.kpidashboard.apis.enums.Filters;
 import com.publicissapient.kpidashboard.apis.enums.JiraFeature;
 import com.publicissapient.kpidashboard.apis.enums.KPICode;
+import com.publicissapient.kpidashboard.apis.enums.KPIExcelColumn;
 import com.publicissapient.kpidashboard.apis.enums.KPISource;
 import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
 import com.publicissapient.kpidashboard.apis.filter.service.FilterHelperService;
@@ -248,8 +246,7 @@ public class DSRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 					.collect(Collectors.toList());
 			List<JiraIssue> subCategoryWiseUatBugList = new ArrayList<>();
 			if (CollectionUtils.isNotEmpty(subCategoryWiseTotalBugList)) {
-				subCategoryWiseUatBugList = checkUATDefect(subCategoryWiseTotalBugList,
-						projFieldMapping);
+				subCategoryWiseUatBugList = checkUATDefect(subCategoryWiseTotalBugList, projFieldMapping);
 			}
 			Map<String, Object> currentSprintLeafNodeDefectDataMap = new HashMap<>();
 			currentSprintLeafNodeDefectDataMap.put(UATBUGKEY, subCategoryWiseUatBugList);
@@ -302,7 +299,7 @@ public class DSRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 
 		});
 		kpiElement.setExcelData(excelData);
-		kpiElement.setExcelColumns(KPIColumn.DEFECT_SEEPAGE_RATE.getColumns());
+		kpiElement.setExcelColumns(KPIExcelColumn.DEFECT_SEEPAGE_RATE.getColumns());
 	}
 
 	private List<JiraIssue> checkUATDefect(List<JiraIssue> testCaseList, Map<String, FieldMapping> projFieldMapping) {

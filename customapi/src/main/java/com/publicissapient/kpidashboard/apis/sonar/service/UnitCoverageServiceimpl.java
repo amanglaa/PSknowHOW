@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.publicissapient.kpidashboard.apis.enums.KPIColumn;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -42,6 +41,7 @@ import org.springframework.stereotype.Component;
 import com.publicissapient.kpidashboard.apis.config.CustomApiConfig;
 import com.publicissapient.kpidashboard.apis.constant.Constant;
 import com.publicissapient.kpidashboard.apis.enums.KPICode;
+import com.publicissapient.kpidashboard.apis.enums.KPIExcelColumn;
 import com.publicissapient.kpidashboard.apis.enums.KPISource;
 import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
 import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
@@ -53,7 +53,6 @@ import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
 import com.publicissapient.kpidashboard.common.constant.CommonConstant;
 import com.publicissapient.kpidashboard.common.model.application.DataCount;
 import com.publicissapient.kpidashboard.common.model.application.DataCountGroup;
-import com.publicissapient.kpidashboard.common.model.application.ValidationData;
 import com.publicissapient.kpidashboard.common.model.sonar.SonarDetails;
 import com.publicissapient.kpidashboard.common.model.sonar.SonarHistory;
 import com.publicissapient.kpidashboard.common.model.sonar.SonarMetric;
@@ -166,15 +165,14 @@ public class UnitCoverageServiceimpl extends SonarKPIService<Double, List<Object
 				}
 				tempMap.get(projectNodeId).setValue(projectWiseDataMap);
 				if (getRequestTrackerId().toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-					KPIExcelUtility.populateSonarScrumExcelData(
-							tempMap.get(projectNodeId).getProjectFilter().getName(), projectList, coverageList,
-							versionDate, excelData,KPICode.UNIT_TEST_COVERAGE.getKpiId());
+					KPIExcelUtility.populateSonarScrumExcelData(tempMap.get(projectNodeId).getProjectFilter().getName(),
+							projectList, coverageList, versionDate, excelData, KPICode.UNIT_TEST_COVERAGE.getKpiId());
 				}
 			}
 		});
 
 		kpiElement.setExcelData(excelData);
-		kpiElement.setExcelColumns(KPIColumn.UNIT_TEST_COVERAGE.getColumns());
+		kpiElement.setExcelColumns(KPIExcelColumn.UNIT_TEST_COVERAGE.getColumns());
 	}
 
 	private void prepareCoverageList(Map<String, SonarHistory> history, String date, String projectNodeId,

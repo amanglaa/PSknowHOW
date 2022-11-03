@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.publicissapient.kpidashboard.apis.enums.KPIColumn;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -31,6 +30,7 @@ import org.springframework.stereotype.Component;
 import com.publicissapient.kpidashboard.apis.appsetting.service.ConfigHelperService;
 import com.publicissapient.kpidashboard.apis.config.CustomApiConfig;
 import com.publicissapient.kpidashboard.apis.enums.KPICode;
+import com.publicissapient.kpidashboard.apis.enums.KPIExcelColumn;
 import com.publicissapient.kpidashboard.apis.enums.KPISource;
 import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
 import com.publicissapient.kpidashboard.apis.model.ChangeFailureRateInfo;
@@ -48,7 +48,6 @@ import com.publicissapient.kpidashboard.common.model.application.Build;
 import com.publicissapient.kpidashboard.common.model.application.DataCount;
 import com.publicissapient.kpidashboard.common.model.application.DataCountGroup;
 import com.publicissapient.kpidashboard.common.model.application.Tool;
-import com.publicissapient.kpidashboard.common.model.application.ValidationData;
 import com.publicissapient.kpidashboard.common.repository.application.BuildRepository;
 import com.publicissapient.kpidashboard.common.util.DateUtil;
 
@@ -232,13 +231,18 @@ public class ChangeFailureRateServiceImpl extends JenkinsKPIService<Double, List
 				trendValueMap.put(CommonConstant.OVERALL, aggData);
 			}
 			mapTmp.get(node.getId()).setValue(trendValueMap);
-			if (getRequestTrackerId().toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-				KPIExcelUtility.populateChangeFailureRateExcelData(trendLineName, changeFailureRateInfo, excelData);
-			}
+			populateExcelDataObject(requestTrackerId, excelData, trendLineName, changeFailureRateInfo);
 
 		});
 		kpiElement.setExcelData(excelData);
-		kpiElement.setExcelColumns(KPIColumn.CHANGE_FAILURE_RATE.getColumns());
+		kpiElement.setExcelColumns(KPIExcelColumn.CHANGE_FAILURE_RATE.getColumns());
+	}
+
+	private void populateExcelDataObject(String requestTrackerId, List<KPIExcelData> excelData, String trendLineName,
+			ChangeFailureRateInfo changeFailureRateInfo) {
+		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
+			KPIExcelUtility.populateChangeFailureRateExcelData(trendLineName, changeFailureRateInfo, excelData);
+		}
 	}
 
 	/**
@@ -496,43 +500,6 @@ public class ChangeFailureRateServiceImpl extends JenkinsKPIService<Double, List
 			aggregatedDataCount.add(dataCount);
 		});
 		return aggregatedDataCount;
-	}
-
-	/**
-	 * Creates validation data for node.
-	 *
-	 * @param changeFailureRateInfo
-	 * @return ValidationData object
-	 */
-	private ValidationData createValidationDataForNode(ChangeFailureRateInfo changeFailureRateInfo) {
-		ValidationData validationData = new ValidationData();
-		validationData.setJobName(changeFailureRateInfo.getBuildJobNameList());
-		validationData.setWeeksList(changeFailureRateInfo.getDateList());
-		validationData.setTotalBuildFailureCountList(changeFailureRateInfo.getTotalBuildFailureCountList());
-		validationData.setTotalBuildCountList(changeFailureRateInfo.getTotalBuildCountList());
-		validationData.setBuildFailurePercentageList(changeFailureRateInfo.getBuildFailurePercentageList());
-		return validationData;
-	}
-
-	/**
-	 * Populates data for validation.
-	 *
-	 * @param kpiElement
-	 * @param requestTrackerId
-	 * @param validationDataMap
-	 * @param validationData
-	 * @param projectName
-	 */
-	private void populateValidationDataObject(KpiElement kpiElement, String requestTrackerId,
-			Map<String, ValidationData> validationDataMap, ValidationData validationData, String projectName) {
-
-		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-
-			validationDataMap.put(projectName, validationData);
-
-			kpiElement.setMapOfSprintAndData(validationDataMap);
-
-		}
 	}
 
 	@Override

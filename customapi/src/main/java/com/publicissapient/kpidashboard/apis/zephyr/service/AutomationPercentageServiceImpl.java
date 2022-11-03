@@ -27,10 +27,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.publicissapient.kpidashboard.apis.enums.KPIColumn;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bson.types.ObjectId;
@@ -44,6 +42,7 @@ import com.publicissapient.kpidashboard.apis.config.CustomApiConfig;
 import com.publicissapient.kpidashboard.apis.enums.Filters;
 import com.publicissapient.kpidashboard.apis.enums.JiraFeature;
 import com.publicissapient.kpidashboard.apis.enums.KPICode;
+import com.publicissapient.kpidashboard.apis.enums.KPIExcelColumn;
 import com.publicissapient.kpidashboard.apis.enums.KPISource;
 import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
 import com.publicissapient.kpidashboard.apis.filter.service.FilterHelperService;
@@ -306,8 +305,7 @@ public final class AutomationPercentageServiceImpl extends ZephyrKPIService<Doub
 			currentSprintLeafNodeDefectDataMap.put(AUTOMATEDTESTCASEKEY,
 					sprintWiseAutoTestMap.get(currentNodeIdentifier));
 			currentSprintLeafNodeDefectDataMap.put(TESTCASEKEY, sprintWiseTotalTestMap.get(currentNodeIdentifier));
-			currentSprintLeafNodeDefectDataMap.put(ISSUE_DATA,
-					allJiraIssues);
+			currentSprintLeafNodeDefectDataMap.put(ISSUE_DATA, allJiraIssues);
 			double automationForCurrentLeaf = 0.0;
 			if (null != sprintWisePercentage.get(currentNodeIdentifier)) {
 				automationForCurrentLeaf = sprintWisePercentage.get(currentNodeIdentifier);
@@ -332,7 +330,7 @@ public final class AutomationPercentageServiceImpl extends ZephyrKPIService<Doub
 
 		});
 		kpiElement.setExcelData(excelData);
-		kpiElement.setExcelColumns(KPIColumn.INSPRINT_AUTOMATION_COVERAGE.getColumns());
+		kpiElement.setExcelColumns(KPIExcelColumn.INSPRINT_AUTOMATION_COVERAGE.getColumns());
 	}
 
 	/**

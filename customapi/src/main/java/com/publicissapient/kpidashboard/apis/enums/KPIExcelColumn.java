@@ -22,11 +22,9 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * The enum Kpi code.
- *
- * @author tauakram Mapping of MasterData KPI Code with KPI Name.
+ * to order the headings of excel columns
  */
-public enum KPIColumn {
+public enum KPIExcelColumn {
 
 	DEFECT_INJECTION_RATE("kpi14", Arrays.asList("Sprint Name","Story ID","Issue Description","Linked Defects")),
 
@@ -59,9 +57,7 @@ public enum KPIColumn {
 	CHANGE_FAILURE_RATE("kpi116", Arrays.asList("Project","Job Name","Total Build Count","Total Build Failure Count","Build Failure Percentage","Weeks")),
 
 	TEST_EXECUTION_AND_PASS_PERCENTAGE("kpi70", Arrays.asList("Sprint Name","Total Test","Executed Test","Execution %","Passed Test","Passed %")),
-		/**
-	 * Invalid kpi code.
-	 */
+
 	INVALID("INVALID_KPI", Arrays.asList("Invalid"));
 
 	// @formatter:on
@@ -70,7 +66,7 @@ public enum KPIColumn {
 
 	private List<String> columns;
 
-	KPIColumn(String kpiID, List<String> columns) {
+	KPIExcelColumn(String kpiID, List<String> columns) {
 		this.kpiId = kpiID;
 		this.setColumns(columns);
 	}

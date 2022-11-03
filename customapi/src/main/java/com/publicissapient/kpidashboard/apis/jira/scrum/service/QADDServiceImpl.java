@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.publicissapient.kpidashboard.apis.enums.KPIColumn;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bson.types.ObjectId;
@@ -41,6 +40,7 @@ import com.publicissapient.kpidashboard.apis.common.service.impl.KpiHelperServic
 import com.publicissapient.kpidashboard.apis.config.CustomApiConfig;
 import com.publicissapient.kpidashboard.apis.enums.Filters;
 import com.publicissapient.kpidashboard.apis.enums.KPICode;
+import com.publicissapient.kpidashboard.apis.enums.KPIExcelColumn;
 import com.publicissapient.kpidashboard.apis.enums.KPISource;
 import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
 import com.publicissapient.kpidashboard.apis.jira.service.JiraKPIService;
@@ -174,7 +174,7 @@ public class QADDServiceImpl extends JiraKPIService<Double, List<Object>, Map<St
 		processSprintNodelist(sprintLeafNodeList, sprintWiseQADDMap, trendValueList, requestTrackerId,
 				sprintWiseHowerMap, mapTmp);
 		kpiElement.setExcelData(excelData);
-		kpiElement.setExcelColumns(KPIColumn.DEFECT_INJECTION_RATE.getColumns());
+		kpiElement.setExcelColumns(KPIExcelColumn.DEFECT_INJECTION_RATE.getColumns());
 
 	}
 

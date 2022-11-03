@@ -235,7 +235,7 @@ public class KPIExcelUtility {
 	}
 
 	public static void populateInSprintAutomationExcelData(String sprint, List<TestCaseDetails> allTestList,
-														   List<TestCaseDetails> automatedList, Set<JiraIssue> linkedStories, List<KPIExcelData> kpiExcelData) {
+			List<TestCaseDetails> automatedList, Set<JiraIssue> linkedStories, List<KPIExcelData> kpiExcelData) {
 
 		if (CollectionUtils.isNotEmpty(allTestList)) {
 			List<String> conditionalList = automatedList.stream().map(TestCaseDetails::getNumber)
@@ -285,8 +285,8 @@ public class KPIExcelUtility {
 
 	}
 
-	public static void populateTestExcecutionExcelData(String sprintName,TestExecution testDetail, double executionPercentage,
-			double passPercentage, List<KPIExcelData> kpiExcelData) {
+	public static void populateTestExcecutionExcelData(String sprintName, TestExecution testDetail,
+			double executionPercentage, double passPercentage, List<KPIExcelData> kpiExcelData) {
 		if (testDetail != null) {
 			KPIExcelData excelData = new KPIExcelData();
 			excelData.setSprintName(sprintName);

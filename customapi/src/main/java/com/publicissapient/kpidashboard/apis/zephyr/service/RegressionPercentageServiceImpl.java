@@ -25,10 +25,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.publicissapient.kpidashboard.apis.enums.KPIColumn;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -41,6 +39,7 @@ import org.springframework.stereotype.Service;
 import com.publicissapient.kpidashboard.apis.config.CustomApiConfig;
 import com.publicissapient.kpidashboard.apis.enums.Filters;
 import com.publicissapient.kpidashboard.apis.enums.KPICode;
+import com.publicissapient.kpidashboard.apis.enums.KPIExcelColumn;
 import com.publicissapient.kpidashboard.apis.enums.KPISource;
 import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
 import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
@@ -189,7 +188,7 @@ public class RegressionPercentageServiceImpl extends ZephyrKPIService<Double, Li
 
 		});
 		kpiElement.setExcelData(excelData);
-		kpiElement.setExcelColumns(KPIColumn.REGRESSION_AUTOMATION_COVERAGE.getColumns());
+		kpiElement.setExcelColumns(KPIExcelColumn.REGRESSION_AUTOMATION_COVERAGE.getColumns());
 	}
 
 	/**
@@ -214,12 +213,13 @@ public class RegressionPercentageServiceImpl extends ZephyrKPIService<Double, Li
 
 		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
 
-			Map<String, TestCaseDetails> totalTestCaseMap =new HashMap<>();
-			if(CollectionUtils.isNotEmpty(totalTest)){
+			Map<String, TestCaseDetails> totalTestCaseMap = new HashMap<>();
+			if (CollectionUtils.isNotEmpty(totalTest)) {
 				totalTest.stream().forEach(test -> totalTestCaseMap.putIfAbsent(test.getNumber(), test));
 			}
 
-			KPIExcelUtility.populateRegressionAutomationExcelData(sprintName, totalTestCaseMap, automatedTest, excelData);
+			KPIExcelUtility.populateRegressionAutomationExcelData(sprintName, totalTestCaseMap, automatedTest,
+					excelData);
 
 		}
 	}
