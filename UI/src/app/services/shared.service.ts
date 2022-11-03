@@ -56,6 +56,7 @@ export class SharedService implements OnInit {
   public activateKanban;
   public selectedTypeObs = new BehaviorSubject('scrum');
   public boardId = 1;
+  public isDownloadExcel;
 
   // make filterdata and masterdata persistent across dashboards
   private filterData = {};
@@ -87,7 +88,7 @@ export class SharedService implements OnInit {
     this.passAllProjectsData = new EventEmitter();
     this.passEventToNav = new EventEmitter();
     this.activateKanban = new EventEmitter();
-    // this.engineeringMaturityExcelData = new EventEmitter();
+    this.isDownloadExcel = new EventEmitter();
   }
 
 
@@ -281,6 +282,9 @@ export class SharedService implements OnInit {
   }
   setShowTableView(val){
     this.showTableView.next(val);
+  }
+  setGlobalDownload(val){
+    this.isDownloadExcel.emit(val);
   }
 }
 

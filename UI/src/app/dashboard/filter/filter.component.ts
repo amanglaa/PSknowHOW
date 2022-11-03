@@ -983,4 +983,9 @@ isDisabled = null;
         this.showChart = val;
         this.service.setShowTableView(this.showChart);
     }
+
+    exportToExcel($event = null) {
+        this.disableDownloadBtn = true;
+        this.service.setGlobalDownload(true);
+    }
 }

@@ -183,9 +183,8 @@
       </div>
       <div class="position-relative p-ml-2" *ngIf="selectedTab?.toLowerCase() !== 'maturity'"
          [ngClass]="noAccessMsg ? 'hide-filter':'show-filter'">
-         <div class="btn-custom p-d-flex p-align-center p-text-uppercase p-p-2 rounded filter-dropdown filter-btn"
+         <div class="btn-custom p-d-flex p-align-center p-text-uppercase p-p-2 rounded filter-dropdown filter-btn p-mr-2"
             #toggleButton [ngClass]="{'active': toggleDropdown}" (click)="toggleDropdown = !toggleDropdown">
-            <!-- <em class="pi pi-sliders-h p-mr-2" style="font-size: 1.3rem"></em> -->
             Show/Hide
          </div>
          <div *ngIf="toggleDropdown && showKpisList && showKpisList?.length > 0" class="position-absolute kpi-dropdown"
@@ -217,8 +216,15 @@
          </div>
       </div>
       <!-- /show/hide kpi's ends -->
-
-
+      
+      <!-- Download button start -->
+       <!--*ngIf="isSuperAdmin && ( selectedTab == 'mydashboard' || selectedTab == 'EngineeringMaturity')"-->
+      <div class="btn-custom p-p-2 rounded p-mr-3 filter-btn" id="Filter-Download-Btn" (click)="exportToExcel($event)"
+         [ngClass]="{'disable-downloadbtn': disableDownloadBtn}" disabled=""
+         >
+         <img src="../../../assets/img/ico-download.svg" alt="Download" />
+      </div> 
+      <!-- Download button end -->
       <!-- Download excel Button error message start -->
       <span class="float-right errMsz alert alert-danger" style="padding: 6px 17px;"
          *ngIf="( enginneringMaturityErrorMessage !== '' ) && ( selectedTab === 'EngineeringMaturity' )">{{
