@@ -40,6 +40,7 @@
 :host::ng-deep .p-dialog{
     width: auto !important;
     max-width: 90vw !important;
+    min-width: 544px;
 }
 
 :host ::ng-deep.p-dialog-header-icons{

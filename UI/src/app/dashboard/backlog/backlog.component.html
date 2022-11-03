@@ -89,34 +89,34 @@
     <app-no-access [selectedTab]="''" [userEnable]='enableByUser'></app-no-access>
   </div>
 </ng-template>
-<p-dialog [(visible)]="displayModal" [modal]="true" [draggable]="true" [resizable]="true">
+<p-dialog [(visible)]="displayModal" [modal]="true" [draggable]="true" [resizable]="true"  (onHide)="clearModalDataOnClose()">
   <p-header>
     {{modalDetails['header']}}
-    <button pButton pRipple label="Export" class="p-button-secondary p-p-2 export-button"
+    <button *ngIf="modalDetails['tableValues'].length > 0"  pButton pRipple label="Export" class="p-button-secondary p-p-2 export-button"
       (click)="exportExcel(modalDetails['header'])"></button>
   </p-header>
 
   <div class="dialog-body p-mb-4">
-    <p-table [value]="modalDetails['tableValues']" styleClass="p-datatable-gridlines" loadingIcon="loading-img"
+    <p-table *ngIf="modalDetails['tableValues'].length > 0 ; else showNoDataMessage"  [value]="modalDetails['tableValues']" styleClass="p-datatable-gridlines" loadingIcon="loading-img"
       [autoLayout]="true">
       <ng-template pTemplate="header">
         <tr>
-          <th *ngFor="let item of modalDetails['tableHeadings'];let i = index;">{{item.header}}</th>
+          <th *ngFor="let col of modalDetails['tableHeadings']">{{col}}</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-rowData>
         <tr>
-          <td class="font-small" *ngFor="let cellData of rowData">
-            <ng-container *ngIf="!checkIfArray(cellData); else displayArrayData">
-              <a *ngIf="cellData.hasOwnProperty('hyperlink') ; else displayCellData" [href]="cellData['hyperlink']"
-                class="text-blue" target="_blank">{{cellData['text']}}</a>
-              <ng-template #displayCellData>{{cellData.length > 60 ? (cellData.slice(0,60)+'...') : cellData}}
+          <td class="font-small" *ngFor="let column of modalDetails['tableHeadings']">
+            <ng-container *ngIf="!checkIfArray(rowData[column]); else displayArrayData">
+              <a *ngIf="rowData[column]?.hasOwnProperty('hyperlink') ; else displayCellData" [href]="rowData[column]['hyperlink']"
+                class="text-blue" target="_blank">{{rowData[column]['text']}}</a>
+              <ng-template #displayCellData>{{rowData[column]?.length > 60 ? (rowData[column].slice(0,60)+'...') : rowData[column]}}
               </ng-template>
             </ng-container>
 
             <ng-template #displayArrayData>
-              <ng-container *ngFor="let data of cellData">
-                <a *ngIf="data.hasOwnProperty('hyperlink') ; else displayData" [href]="data['hyperlink']"
+              <ng-container *ngFor="let data of rowData[column]">
+                <a *ngIf="data?.hasOwnProperty('hyperlink') ; else displayData" [href]="data['hyperlink']"
                   class="text-blue column-content-spacing" target="_blank">{{data['text']}}</a>
                 <ng-template #displayData>
                   <p class="column-content-spacing">{{data}}</p>
@@ -128,6 +128,10 @@
         </tr>
       </ng-template>
     </p-table>
+    <ng-template #showNoDataMessage>
+      <hr>
+      <h2 class="p-text-center">No Data Available</h2>
+    </ng-template>
   </div>
 
 </p-dialog>
