@@ -55,7 +55,6 @@
     "events": "^3.0.0",
     "exceljs": "^4.3.0",
     "file-saver": "^2.0.0-rc.3",
-    "force": "0.0.3",
     "jsencrypt": "3.2.1",
     "primeflex": "^2.0.0",
     "primeicons": "^6.0.1",
