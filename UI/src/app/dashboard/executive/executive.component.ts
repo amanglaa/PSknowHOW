@@ -378,13 +378,38 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
     downloadExcel(kpiId, kpiName, isKanban) {
         const sprintIncluded = ['CLOSED'];
         this.helperService.downloadExcel(kpiId, kpiName, isKanban, this.filterApplyData, this.filterData, sprintIncluded).subscribe(getData => {
-            if (getData['excelData'] && getData['excelData'].length > 0) {
+            if (getData['excelData']) {
                 this.kpiExcelData = this.excelService.generateExcelModalData(getData);
                 this.modalDetails['tableHeadings'] = this.kpiExcelData.headerNames.map(column => column.header);
                 this.modalDetails['tableValues'] = this.kpiExcelData.excelData;
+                this.modalDetails['header'] = kpiName;
+                this.displayModal = true;
+            }else if(getData['validationData']){
+                if (getData['kpiId'] === 'kpi83') {
+                    let dynamicKeys = [];
+                    for (const key in getData['validationData']) {
+                        if (dynamicKeys.length === 0) {
+                            dynamicKeys = Object.keys(getData['validationData'][key][kpiName][0]);
+                        }
+                        for (const x in dynamicKeys) {
+                            getData['validationData'][key][dynamicKeys[x]] = [];
+                        }
+
+                        const arr = getData['validationData'][key][kpiName];
+                        // eslint-disable-next-line @typescript-eslint/prefer-for-of
+                        for (let i = 0; i < arr.length; i++) {
+                            for (const item in arr[i]) {
+                                getData['validationData'][key][item].push(arr[i][item]);
+                            }
+                        }
+                        delete getData['validationData'][key][kpiName];
+
+                    }
+                }
+
+                this.excelService.exportExcel(getData, 'individual', kpiName, isKanban);
             }
-            this.modalDetails['header'] = kpiName;
-            this.displayModal = true;
+
         });
     }
 
