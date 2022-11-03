@@ -141,7 +141,7 @@ public class OfflineAdapter implements JiraAdapter {
     
 	@Override
 	public void getSprintReport(ProjectConfFieldMapping projectConfig, String sprintId, String boardId,
-			SprintDetails sprintDetails) {
+			SprintDetails sprintDetails,SprintDetails dbSprintDetails) {
 		log.info(sprintId);
 		log.info(boardId);
 	}

@@ -9,6 +9,7 @@ import java.util.Objects;
 @NoArgsConstructor
 public class SprintIssue {
     private String number;
+    private String originBoardId;
     private String priority;
     private String status;
     private String typeName;
