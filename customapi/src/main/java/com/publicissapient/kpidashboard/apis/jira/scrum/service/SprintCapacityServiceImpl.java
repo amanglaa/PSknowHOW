@@ -24,8 +24,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.publicissapient.kpidashboard.apis.enums.KPIColumn;
+import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
+import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,286 +53,272 @@ import com.publicissapient.kpidashboard.common.model.jira.JiraIssue;
 
 import lombok.extern.slf4j.Slf4j;
 
+import static java.util.stream.Collectors.toMap;
+
 /**
  * This class calculates the Sprint capacity.
- * 
- * @author pkum34
  *
+ * @author pkum34
  */
 @Component
 @Slf4j
 public class SprintCapacityServiceImpl extends JiraKPIService<Double, List<Object>, Map<String, Object>> {
 
-	private static final String SEPARATOR_ASTERISK = "*************************************";
+    private static final String SEPARATOR_ASTERISK = "*************************************";
 
-	public static final String UNCHECKED = "unchecked";
+    public static final String UNCHECKED = "unchecked";
 
-	@Autowired
-	private KpiHelperService kpiHelperService;
+    @Autowired
+    private KpiHelperService kpiHelperService;
 
-	private static final String SPRINTCAPACITYKEY = "sprintCapacityKey";
+    private static final String SPRINTCAPACITYKEY = "sprintCapacityKey";
 
-	private static final String ESTIMATE_TIME = "Estimate_Time";
+    private static final String ESTIMATE_TIME = "Estimate_Time";
 
-	private static final String ESTIMATED_HOURS = "Estimated Hours";
+    private static final String ESTIMATED_HOURS = "Estimated Hours";
 
-	private static final String LOGGED_HOURS = "Logged Work";
+    private static final String LOGGED_HOURS = "Logged Work";
 
-	private final DecimalFormat df2 = new DecimalFormat(".##");
+    private final DecimalFormat df2 = new DecimalFormat(".##");
 
-	@Autowired
-	private CustomApiConfig customApiConfig;
+    @Autowired
+    private CustomApiConfig customApiConfig;
 
-	/**
-	 * Gets Qualifier Type
-	 * 
-	 * @return KPICode's <tt>SPRINT_CAPACITY</tt> enum
-	 */
-	@Override
-	public String getQualifierType() {
-		return KPICode.SPRINT_CAPACITY_UTILIZATION.name();
-	}
+    /**
+     * Gets Qualifier Type
+     *
+     * @return KPICode's <tt>SPRINT_CAPACITY</tt> enum
+     */
+    @Override
+    public String getQualifierType() {
+        return KPICode.SPRINT_CAPACITY_UTILIZATION.name();
+    }
 
-	/**
-	 * Gets KPI Data
-	 * 
-	 * @param kpiRequest
-	 * @param kpiElement
-	 * @param treeAggregatorDetail
-	 * @return KpiElement
-	 * @throws ApplicationException
-	 */
-	@Override
-	public KpiElement getKpiData(KpiRequest kpiRequest, KpiElement kpiElement,
-			TreeAggregatorDetail treeAggregatorDetail) throws ApplicationException {
+    /**
+     * Gets KPI Data
+     *
+     * @param kpiRequest
+     * @param kpiElement
+     * @param treeAggregatorDetail
+     * @return KpiElement
+     * @throws ApplicationException
+     */
+    @Override
+    public KpiElement getKpiData(KpiRequest kpiRequest, KpiElement kpiElement,
+                                 TreeAggregatorDetail treeAggregatorDetail) throws ApplicationException {
 
-		List<DataCount> trendValueList = new ArrayList<>();
-		Node root = treeAggregatorDetail.getRoot();
-		Map<String, Node> mapTmp = treeAggregatorDetail.getMapTmp();
-		treeAggregatorDetail.getMapOfListOfLeafNodes().forEach((k, v) -> {
-			if (Filters.getFilter(k) == Filters.SPRINT) {
-				sprintWiseLeafNodeValue(mapTmp, v, trendValueList, kpiElement, kpiRequest);
-			}
-		});
+        List<DataCount> trendValueList = new ArrayList<>();
+        Node root = treeAggregatorDetail.getRoot();
+        Map<String, Node> mapTmp = treeAggregatorDetail.getMapTmp();
+        treeAggregatorDetail.getMapOfListOfLeafNodes().forEach((k, v) -> {
+            if (Filters.getFilter(k) == Filters.SPRINT) {
+                sprintWiseLeafNodeValue(mapTmp, v, trendValueList, kpiElement, kpiRequest);
+            }
+        });
 
-		log.debug("[SPRINT-CAPACITY-LEAF-NODE-VALUE][{}]. Values of leaf node after KPI calculation {}",
-				kpiRequest.getRequestTrackerId(), root);
+        log.debug("[SPRINT-CAPACITY-LEAF-NODE-VALUE][{}]. Values of leaf node after KPI calculation {}",
+                kpiRequest.getRequestTrackerId(), root);
 
-		Map<Pair<String, String>, Node> nodeWiseKPIValue = new HashMap<>();
-		calculateAggregatedValue(root, nodeWiseKPIValue, KPICode.SPRINT_CAPACITY_UTILIZATION);
-		// 3rd change : remove code to set trendValuelist and call
-		// getTrendValues method
-		List<DataCount> trendValues = getTrendValues(kpiRequest, nodeWiseKPIValue,KPICode.SPRINT_CAPACITY_UTILIZATION);
-		kpiElement.setTrendValueList(trendValues);
-		return kpiElement;
-	}
+        Map<Pair<String, String>, Node> nodeWiseKPIValue = new HashMap<>();
+        calculateAggregatedValue(root, nodeWiseKPIValue, KPICode.SPRINT_CAPACITY_UTILIZATION);
+        // 3rd change : remove code to set trendValuelist and call
+        // getTrendValues method
+        List<DataCount> trendValues = getTrendValues(kpiRequest, nodeWiseKPIValue, KPICode.SPRINT_CAPACITY_UTILIZATION);
+        kpiElement.setTrendValueList(trendValues);
+        return kpiElement;
+    }
 
-	/**
-	 * Fetches KPI Data from DB
-	 * 
-	 * @param leafNodeList
-	 * @param startDate
-	 * @param endDate
-	 * @param kpiRequest
-	 * @return {@code Map<String, Object>}
-	 */
-	@Override
-	public Map<String, Object> fetchKPIDataFromDb(List<Node> leafNodeList, String startDate, String endDate,
-			KpiRequest kpiRequest) {
+    /**
+     * Fetches KPI Data from DB
+     *
+     * @param leafNodeList
+     * @param startDate
+     * @param endDate
+     * @param kpiRequest
+     * @return {@code Map<String, Object>}
+     */
+    @Override
+    public Map<String, Object> fetchKPIDataFromDb(List<Node> leafNodeList, String startDate, String endDate,
+                                                  KpiRequest kpiRequest) {
 
-		Map<String, Object> resultListMap = new HashMap<>();
-		List<JiraIssue> sprintCapacityList = kpiHelperService.fetchSprintCapacityDataFromDb(leafNodeList);
-		List<CapacityKpiData> estimateTimeList = kpiHelperService.fetchCapacityDataFromDB(leafNodeList);
-		setDbQueryLogger(sprintCapacityList);
-		resultListMap.put(SPRINTCAPACITYKEY, sprintCapacityList);
-		resultListMap.put(ESTIMATE_TIME, estimateTimeList);
-		return resultListMap;
+        Map<String, Object> resultListMap = new HashMap<>();
+        List<JiraIssue> sprintCapacityList = kpiHelperService.fetchSprintCapacityDataFromDb(leafNodeList);
+        List<CapacityKpiData> estimateTimeList = kpiHelperService.fetchCapacityDataFromDB(leafNodeList);
+        setDbQueryLogger(sprintCapacityList);
+        resultListMap.put(SPRINTCAPACITYKEY, sprintCapacityList);
+        resultListMap.put(ESTIMATE_TIME, estimateTimeList);
+        return resultListMap;
 
-	}
+    }
 
-	/**
-	 * @param sprintCapacityMap
-	 * @return timeLogged in seconds
-	 */
-	@SuppressWarnings(UNCHECKED)
-	@Override
-	public Double calculateKPIMetrics(Map<String, Object> sprintCapacityMap) {
-		String requestTrackerId = getRequestTrackerId();
-		Double timeLoggedInMinutes = 0.0d;
-		List<JiraIssue> sprintCapacityList = (List<JiraIssue>) sprintCapacityMap.get(SPRINTCAPACITYKEY);
-		log.debug("[SPRINT-CAPACITY][{}]. Stories Count: {}", requestTrackerId, sprintCapacityList.size());
-		if (CollectionUtils.isNotEmpty(sprintCapacityList)) {
-			for (JiraIssue jiraIssue : sprintCapacityList) {
-				if (jiraIssue.getTimeSpentInMinutes() != null) {
-					timeLoggedInMinutes = timeLoggedInMinutes + jiraIssue.getTimeSpentInMinutes();
-				}
-			}
-		}
-		log.debug("[SPRINT-CAPACITY][{}]. Logged time: {}", requestTrackerId, timeLoggedInMinutes / 60);
-		return timeLoggedInMinutes / 60;
-	}
+    /**
+     * @param sprintCapacityMap
+     * @return timeLogged in seconds
+     */
+    @SuppressWarnings(UNCHECKED)
+    @Override
+    public Double calculateKPIMetrics(Map<String, Object> sprintCapacityMap) {
+        String requestTrackerId = getRequestTrackerId();
+        Double timeLoggedInMinutes = 0.0d;
+        List<JiraIssue> sprintCapacityList = (List<JiraIssue>) sprintCapacityMap.get(SPRINTCAPACITYKEY);
+        log.debug("[SPRINT-CAPACITY][{}]. Stories Count: {}", requestTrackerId, sprintCapacityList.size());
+        if (CollectionUtils.isNotEmpty(sprintCapacityList)) {
+            for (JiraIssue jiraIssue : sprintCapacityList) {
+                if (jiraIssue.getTimeSpentInMinutes() != null) {
+                    timeLoggedInMinutes = timeLoggedInMinutes + jiraIssue.getTimeSpentInMinutes();
+                }
+            }
+        }
+        log.debug("[SPRINT-CAPACITY][{}]. Logged time: {}", requestTrackerId, timeLoggedInMinutes / 60);
+        return timeLoggedInMinutes / 60;
+    }
 
-	/**
-	 * Populates KPI value to sprint leaf nodes and gives the trend analysis at
-	 * sprint wise.
-	 * 
-	 * @param mapTmp
-	 * @param kpiElement
-	 * @param sprintLeafNodeList
-	 * @param trendValueList
-	 * @param kpiRequest
-	 */
-	private void sprintWiseLeafNodeValue(Map<String, Node> mapTmp, List<Node> sprintLeafNodeList,
-			List<DataCount> trendValueList, KpiElement kpiElement, KpiRequest kpiRequest) {
+    /**
+     * Populates KPI value to sprint leaf nodes and gives the trend analysis at
+     * sprint wise.
+     *
+     * @param mapTmp
+     * @param kpiElement
+     * @param sprintLeafNodeList
+     * @param trendValueList
+     * @param kpiRequest
+     */
+    private void sprintWiseLeafNodeValue(Map<String, Node> mapTmp, List<Node> sprintLeafNodeList,
+                                         List<DataCount> trendValueList, KpiElement kpiElement, KpiRequest kpiRequest) {
 
-		String requestTrackerId = getRequestTrackerId();
+        String requestTrackerId = getRequestTrackerId();
 
-		sprintLeafNodeList.sort((node1, node2) -> node1.getSprintFilter().getStartDate()
-				.compareTo(node2.getSprintFilter().getStartDate()));
+        sprintLeafNodeList.sort((node1, node2) -> node1.getSprintFilter().getStartDate()
+                .compareTo(node2.getSprintFilter().getStartDate()));
 
-		Map<String, Object> sprintCapacityStoryMap = fetchKPIDataFromDb(sprintLeafNodeList, null, null, kpiRequest);
+        Map<String, Object> sprintCapacityStoryMap = fetchKPIDataFromDb(sprintLeafNodeList, null, null, kpiRequest);
 
-		Map<Pair<String, String>, Double> sprintWiseEstimateTimeMap = new HashMap<>();
+        Map<Pair<String, String>, Double> sprintWiseEstimateTimeMap = new HashMap<>();
 
-		Map<Pair<String, String>, List<JiraIssue>> sprintWiseLoggedTimeMap = prepareMapForSprintAndFilters(
-				sprintWiseEstimateTimeMap, kpiRequest, sprintCapacityStoryMap);
+        Map<Pair<String, String>, List<JiraIssue>> sprintWiseLoggedTimeMap = prepareMapForSprintAndFilters(
+                sprintWiseEstimateTimeMap, kpiRequest, sprintCapacityStoryMap);
 
-		Map<String, ValidationData> validationDataMap = new HashMap<>();
 
-		sprintLeafNodeList.forEach(node -> {
-			// Leaf node wise data
-			String currentSprintComponentId = node.getSprintFilter().getId();
-			String trendLineName = node.getProjectFilter().getName();
-			String validationDataKey = node.getSprintFilter().getName();
-			Map<String, Integer> hoverValue = new HashMap<>();
-			Pair<String, String> currentNodeIdentifier = Pair
-					.of(node.getProjectFilter().getBasicProjectConfigId().toString(), currentSprintComponentId);
-			Pair<String, String> currentNodeEstimateTime = Pair.of(node.getProjectFilter().getBasicProjectConfigId().toString(),
-					currentSprintComponentId.toLowerCase());
+        List<KPIExcelData> excelData = new ArrayList<>();
 
-			double estimateTimeForCurrentLeaf = 0.0d;
-			if (null != sprintWiseEstimateTimeMap.get(currentNodeEstimateTime)) {
-				estimateTimeForCurrentLeaf = sprintWiseEstimateTimeMap.get(currentNodeEstimateTime);
-			}
-			double loggedTimeForCurrentLeaf = 0.0;
-			if (CollectionUtils.isNotEmpty(sprintWiseLoggedTimeMap.get(currentNodeIdentifier))) {
-				Map<String, Object> currentSprintLeafCapacityMap = new HashMap<>();
-				currentSprintLeafCapacityMap.put(SPRINTCAPACITYKEY, sprintWiseLoggedTimeMap.get(currentNodeIdentifier));
-				loggedTimeForCurrentLeaf = Double
-						.valueOf(df2.format(calculateKPIMetrics(currentSprintLeafCapacityMap)));
+        sprintLeafNodeList.forEach(node -> {
+            // Leaf node wise data
+            String currentSprintComponentId = node.getSprintFilter().getId();
+            String trendLineName = node.getProjectFilter().getName();
 
-				populateValidationDataObject(kpiElement, requestTrackerId, validationDataMap,
-						sprintWiseLoggedTimeMap.get(currentNodeIdentifier), estimateTimeForCurrentLeaf,
-						validationDataKey);
-			}
-			hoverValue.put(ESTIMATED_HOURS, (int) estimateTimeForCurrentLeaf);
-			hoverValue.put(LOGGED_HOURS, (int) loggedTimeForCurrentLeaf);
-			DataCount dataCount = new DataCount();
-			dataCount.setData(String.valueOf(estimateTimeForCurrentLeaf));
-			dataCount.setSProjectName(trendLineName);
-			dataCount.setSSprintID(node.getSprintFilter().getId());
-			dataCount.setSSprintName(node.getSprintFilter().getName());
-			dataCount.setValue(estimateTimeForCurrentLeaf);
-			dataCount.setSprintIds(new ArrayList<>(Arrays.asList(node.getSprintFilter().getId())));
-			dataCount.setSprintNames(new ArrayList<>(Arrays.asList(node.getSprintFilter().getName())));
-			dataCount.setLineValue(loggedTimeForCurrentLeaf);
-			dataCount.setHoverValue(hoverValue);
-			trendValueList.add(dataCount);
-			mapTmp.get(node.getId()).setValue(new ArrayList<>(Arrays.asList(dataCount)));
-		});
-	}
+            Map<String, Integer> hoverValue = new HashMap<>();
+            Pair<String, String> currentNodeIdentifier = Pair
+                    .of(node.getProjectFilter().getBasicProjectConfigId().toString(), currentSprintComponentId);
+            Pair<String, String> currentNodeEstimateTime = Pair.of(node.getProjectFilter().getBasicProjectConfigId().toString(),
+                    currentSprintComponentId.toLowerCase());
 
-	/**
-	 * Prepares Map for Sprint and Filters
-	 * 
-	 * @param sprintWiseEstimateTimeMap
-	 * @param kpiRequest
-	 * @param sprintCapacityStoryMap
-	 * @return Map<Pair<String, String>, List<Feature>>
-	 */
-	@SuppressWarnings(UNCHECKED)
-	private Map<Pair<String, String>, List<JiraIssue>> prepareMapForSprintAndFilters(
-			Map<Pair<String, String>, Double> sprintWiseEstimateTimeMap, KpiRequest kpiRequest,
-			Map<String, Object> sprintCapacityStoryMap) {
+            double estimateTimeForCurrentLeaf = 0.0d;
+            if (null != sprintWiseEstimateTimeMap.get(currentNodeEstimateTime)) {
+                estimateTimeForCurrentLeaf = sprintWiseEstimateTimeMap.get(currentNodeEstimateTime);
+            }
+            double loggedTimeForCurrentLeaf = 0.0;
+            if (CollectionUtils.isNotEmpty(sprintWiseLoggedTimeMap.get(currentNodeIdentifier))) {
+                Map<String, Object> currentSprintLeafCapacityMap = new HashMap<>();
+                currentSprintLeafCapacityMap.put(SPRINTCAPACITYKEY, sprintWiseLoggedTimeMap.get(currentNodeIdentifier));
+                loggedTimeForCurrentLeaf = Double
+                        .valueOf(df2.format(calculateKPIMetrics(currentSprintLeafCapacityMap)));
 
-		Map<Pair<String, String>, List<JiraIssue>> loggedTimeMap;
-		Map<Pair<String, String>, Double> estimateTimeMap;
+                List<JiraIssue> sprintJiraIssues = sprintWiseLoggedTimeMap.get(currentNodeIdentifier);
+                populateExcelDataObject(requestTrackerId, excelData, sprintJiraIssues, estimateTimeForCurrentLeaf, node);
+            }
+            hoverValue.put(ESTIMATED_HOURS, (int) estimateTimeForCurrentLeaf);
+            hoverValue.put(LOGGED_HOURS, (int) loggedTimeForCurrentLeaf);
+            DataCount dataCount = new DataCount();
+            dataCount.setData(String.valueOf(estimateTimeForCurrentLeaf));
+            dataCount.setSProjectName(trendLineName);
+            dataCount.setSSprintID(node.getSprintFilter().getId());
+            dataCount.setSSprintName(node.getSprintFilter().getName());
+            dataCount.setValue(estimateTimeForCurrentLeaf);
+            dataCount.setSprintIds(new ArrayList<>(Arrays.asList(node.getSprintFilter().getId())));
+            dataCount.setSprintNames(new ArrayList<>(Arrays.asList(node.getSprintFilter().getName())));
+            dataCount.setLineValue(loggedTimeForCurrentLeaf);
+            dataCount.setHoverValue(hoverValue);
+            trendValueList.add(dataCount);
+            mapTmp.get(node.getId()).setValue(new ArrayList<>(Arrays.asList(dataCount)));
+        });
+        kpiElement.setExcelData(excelData);
+        kpiElement.setExcelColumns(KPIColumn.SPRINT_CAPACITY_UTILIZATION.getColumns());
+    }
 
-		loggedTimeMap = ((List<JiraIssue>) sprintCapacityStoryMap.get(SPRINTCAPACITYKEY)).stream()
-				.collect(Collectors.groupingBy(
-						feature -> Pair.of(feature.getBasicProjectConfigId(), feature.getSprintID()),
-						Collectors.toList()));
-		estimateTimeMap = ((List<CapacityKpiData>) sprintCapacityStoryMap.get(ESTIMATE_TIME)).stream()
-				.collect(Collectors.toMap(
-						key -> Pair.of(key.getBasicProjectConfigId().toString(), key.getSprintID().toLowerCase()),
-						CapacityKpiData::getCapacityPerSprint, (val1, val2) -> val1 + val2));
+    /**
+     * Prepares Map for Sprint and Filters
+     *
+     * @param sprintWiseEstimateTimeMap
+     * @param kpiRequest
+     * @param sprintCapacityStoryMap
+     * @return Map<Pair < String, String>, List<Feature>>
+     */
+    @SuppressWarnings(UNCHECKED)
+    private Map<Pair<String, String>, List<JiraIssue>> prepareMapForSprintAndFilters(
+            Map<Pair<String, String>, Double> sprintWiseEstimateTimeMap, KpiRequest kpiRequest,
+            Map<String, Object> sprintCapacityStoryMap) {
 
-		sprintWiseEstimateTimeMap.putAll(estimateTimeMap);
-		return loggedTimeMap;
-	}
+        Map<Pair<String, String>, List<JiraIssue>> loggedTimeMap;
+        Map<Pair<String, String>, Double> estimateTimeMap;
 
-	/**
-	 * Populates validation data node of the KPI element.
-	 * 
-	 * @param kpiElement
-	 * @param requestTrackerId
-	 * @param validationDataMap
-	 * @param sprintCapacityList
-	 * @param estimateTime
-	 * @param validationDataKey
-	 */
-	private void populateValidationDataObject(KpiElement kpiElement, String requestTrackerId,
-			Map<String, ValidationData> validationDataMap, List<JiraIssue> sprintCapacityList, Double estimateTime,
-			String validationDataKey) {
+        loggedTimeMap = ((List<JiraIssue>) sprintCapacityStoryMap.get(SPRINTCAPACITYKEY)).stream()
+                .collect(Collectors.groupingBy(
+                        feature -> Pair.of(feature.getBasicProjectConfigId(), feature.getSprintID()),
+                        Collectors.toList()));
+        estimateTimeMap = ((List<CapacityKpiData>) sprintCapacityStoryMap.get(ESTIMATE_TIME)).stream()
+                .collect(Collectors.toMap(
+                        key -> Pair.of(key.getBasicProjectConfigId().toString(), key.getSprintID().toLowerCase()),
+                        CapacityKpiData::getCapacityPerSprint, (val1, val2) -> val1 + val2));
 
-		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
+        sprintWiseEstimateTimeMap.putAll(estimateTimeMap);
+        return loggedTimeMap;
+    }
 
-			List<String> storyKeyList = new ArrayList<>();
-			List<String> estimateTimeList = new ArrayList<>();
-			List<String> loggedTimeList = new ArrayList<>();
+    /**
+     * Populates validation data node of the KPI element.
+     *
+     * @param requestTrackerId
+     * @param excelData
+     * @param sprintCapacityList
+     * @param estimateTime
+     * @param node
+     */
+    private void populateExcelDataObject(String requestTrackerId,
+                                         List<KPIExcelData> excelData, List<JiraIssue> sprintCapacityList, Double estimateTime, Node node
+    ) {
 
-			for (JiraIssue jiraIssue : sprintCapacityList) {
-				storyKeyList.add(jiraIssue.getNumber());
-				Double daysLogged = 0.0d;
-				if (jiraIssue.getTimeSpentInMinutes() != null) {
-					daysLogged = Double.valueOf(jiraIssue.getTimeSpentInMinutes()) / 60;
-				}
-				loggedTimeList.add(df2.format(daysLogged));
-			}
-			estimateTimeList.add(df2.format(estimateTime));
-			ValidationData validationData = new ValidationData();
-			validationData.setStoryKeyList(storyKeyList);
-			validationData.setEstimateTimeList(estimateTimeList);
-			validationData.setLoggedTimeList(loggedTimeList);
+        if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
 
-			validationDataMap.put(validationDataKey, validationData);
+            String sprintName = node.getSprintFilter().getName();
 
-			kpiElement.setMapOfSprintAndData(validationDataMap);
-		}
-	}
+            Map<String, JiraIssue> totalSprintStoryMap = sprintCapacityList.stream()
+                    .collect(toMap(JiraIssue::getNumber, Function.identity()));
+            KPIExcelUtility.populateSprintCapacity(sprintName, totalSprintStoryMap, excelData, estimateTime);
+        }
+    }
 
-	/**
-	 * Sets DB Query log
-	 * 
-	 * @param storyFeatureList
-	 */
-	private void setDbQueryLogger(List<JiraIssue> storyFeatureList) {
+    /**
+     * Sets DB Query log
+     *
+     * @param storyFeatureList
+     */
+    private void setDbQueryLogger(List<JiraIssue> storyFeatureList) {
 
-		if (customApiConfig.getApplicationDetailedLogger().equalsIgnoreCase("on")) {
-			log.info(SEPARATOR_ASTERISK);
-			log.info("************* Sprint Capacity (dB) *******************");
-			if (null != storyFeatureList && !storyFeatureList.isEmpty()) {
-				List<String> storyIdList = storyFeatureList.stream().map(JiraIssue::getNumber)
-						.collect(Collectors.toList());
-				log.info("Story[{}]: {}", storyIdList.size(), storyIdList);
-			}
-			log.info(SEPARATOR_ASTERISK);
-			log.info("******************X----X*******************");
-		}
-	}
+        if (customApiConfig.getApplicationDetailedLogger().equalsIgnoreCase("on")) {
+            log.info(SEPARATOR_ASTERISK);
+            log.info("************* Sprint Capacity (dB) *******************");
+            if (null != storyFeatureList && !storyFeatureList.isEmpty()) {
+                List<String> storyIdList = storyFeatureList.stream().map(JiraIssue::getNumber)
+                        .collect(Collectors.toList());
+                log.info("Story[{}]: {}", storyIdList.size(), storyIdList);
+            }
+            log.info(SEPARATOR_ASTERISK);
+            log.info("******************X----X*******************");
+        }
+    }
 
-	@Override
-	public Double calculateKpiValue(List<Double> valueList, String kpiName) {
-		return calculateKpiValueForDouble(valueList, kpiName);
-	}
+    @Override
+    public Double calculateKpiValue(List<Double> valueList, String kpiName) {
+        return calculateKpiValueForDouble(valueList, kpiName);
+    }
 }

@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.publicissapient.kpidashboard.apis.enums.KPIColumn;
 import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
 import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
 import com.publicissapient.kpidashboard.common.model.jira.JiraIssue;
@@ -229,6 +230,7 @@ public class LeadTimeServiceImpl extends JiraKPIService<Long, List<Object>, Map<
 			}
 		});
 		kpiElement.setExcelData(excelData);
+		kpiElement.setExcelColumns(KPIColumn.LEAD_TIME.getColumns());
 	}
 
 	private Map<String, List<DataCount>> getDataCountMap(String trendLineName, Map<String, Long> cycleMap) {

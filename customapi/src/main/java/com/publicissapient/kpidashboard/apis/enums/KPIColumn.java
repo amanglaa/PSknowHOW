@@ -32,6 +32,11 @@ public enum KPIColumn {
 	/**
 	 * Invalid kpi code.
 	 */
+	AVERAGE_RESOLUTION_TIME("kpi83", Arrays.asList("Sprint Name","Story ID","Issue Description","Issue Type","Resolution Time(In Days)")),
+	LEAD_TIME("kpi3", Arrays.asList("Project Name","Intake to DOR(In Days)","DOR to DOD (In Days)","DOD TO Live (In Days)","Lead Time (In Days)")),
+	SPRINT_VELOCITY("kpi39", Arrays.asList("Sprint Name","Story ID","Issue Description","Story Size(In story point)")),
+	SPRINT_CAPACITY_UTILIZATION("kpi46", Arrays.asList("Sprint Name","Story ID","Issue Description","Original Time Estimate (in hours)","Total Time Spent (in hours)")),
+	COMMITMENT_RELIABILITY("kpi72",Arrays.asList("Sprint Name","Story ID","Closed")),
 	INVALID("INVALID_KPI", Arrays.asList("Invalid"));
 
 	// @formatter:on

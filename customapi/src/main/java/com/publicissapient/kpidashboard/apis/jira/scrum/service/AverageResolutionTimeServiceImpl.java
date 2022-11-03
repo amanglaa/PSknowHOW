@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import javax.validation.constraints.NotNull;
 
 import com.publicissapient.kpidashboard.apis.common.service.impl.KpiHelperService;
+import com.publicissapient.kpidashboard.apis.enums.KPIColumn;
 import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
 import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
 import org.apache.commons.collections4.CollectionUtils;
@@ -174,7 +175,7 @@ public class AverageResolutionTimeServiceImpl extends JiraKPIService<Double, Lis
 		// Jira Issues
 		List<JiraIssue> jiraIssues = (List<JiraIssue>) resultMap.get(JIRA_ISSUE_LIST);
 
-		Map<String, ValidationData> validationDataMap = new HashMap<>();
+		//Map<String, ValidationData> validationDataMap = new HashMap<>();
 		List<KPIExcelData> excelData = new ArrayList<>();
 		// create sprint wise map of resolution time with issue type
 		Map<String, List<ResolutionTimeValidation>> sprintWiseResolution = groupSprintWiseIssues(jiraIssues,
@@ -253,6 +254,7 @@ public class AverageResolutionTimeServiceImpl extends JiraKPIService<Double, Lis
 			mapTmp.get(node.getId()).setValue(dataCountMap);
 		});
 		kpiElement.setExcelData(excelData);
+		kpiElement.setExcelColumns(KPIColumn.AVERAGE_RESOLUTION_TIME.getColumns());
 	}
 
 	private Map<String, Double> getResolutionTime(List<JiraIssueCustomHistory> jiraIssueCustomHistories,
@@ -399,7 +401,7 @@ public class AverageResolutionTimeServiceImpl extends JiraKPIService<Double, Lis
 		Map<String, List<JiraIssue>> sprintAndFilterDataMap = jiraIssues.stream()
 				.collect(Collectors.groupingBy(JiraIssue::getSprintID, Collectors.toList()));
 		sprintAndFilterDataMap.forEach((sprint, sprintWiseIssue) -> {
-			ValidationData validationData = new ValidationData();
+
 			List<ResolutionTimeValidation> resolutionTimes = new ArrayList<>();
 			sprintWiseIssue.forEach(issue -> {
 				ResolutionTimeValidation resolutionTimeValidation = new ResolutionTimeValidation();
