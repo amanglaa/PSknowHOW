@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -302,19 +302,19 @@ public final class KpiDataHelper {
 	public static List<String> getIssuesIdListBasedOnTypeFromSprintDetails(SprintDetails sprintDetails,
 			String issueType) {
 		if (issueType.equalsIgnoreCase(CommonConstant.COMPLETED_ISSUES)) {
-			return sprintDetails.getCompletedIssues().stream().filter(Objects::nonNull).map(SprintIssue::getNumber)
+			return CollectionUtils.emptyIfNull(sprintDetails.getCompletedIssues()).stream().filter(Objects::nonNull).map(SprintIssue::getNumber)
 					.distinct().collect(Collectors.toList());
 		} else if (issueType.equalsIgnoreCase(CommonConstant.NOT_COMPLETED_ISSUES)) {
-			return sprintDetails.getNotCompletedIssues().stream().filter(Objects::nonNull).map(SprintIssue::getNumber)
+			return CollectionUtils.emptyIfNull(sprintDetails.getNotCompletedIssues()).stream().filter(Objects::nonNull).map(SprintIssue::getNumber)
 					.distinct().collect(Collectors.toList());
 		} else if (issueType.equalsIgnoreCase(CommonConstant.PUNTED_ISSUES)) {
-			return sprintDetails.getPuntedIssues().stream().filter(Objects::nonNull).map(SprintIssue::getNumber)
+			return CollectionUtils.emptyIfNull(sprintDetails.getPuntedIssues()).stream().filter(Objects::nonNull).map(SprintIssue::getNumber)
 					.distinct().collect(Collectors.toList());
 		} else if (issueType.equalsIgnoreCase(CommonConstant.COMPLETED_ISSUES_ANOTHER_SPRINT)) {
-			return sprintDetails.getCompletedIssuesAnotherSprint().stream().filter(Objects::nonNull)
+			return CollectionUtils.emptyIfNull(sprintDetails.getCompletedIssuesAnotherSprint()).stream().filter(Objects::nonNull)
 					.map(SprintIssue::getNumber).distinct().collect(Collectors.toList());
 		} else if (issueType.equalsIgnoreCase(CommonConstant.TOTAL_ISSUES)) {
-			return sprintDetails.getTotalIssues().stream().filter(Objects::nonNull).map(SprintIssue::getNumber)
+			return CollectionUtils.emptyIfNull(sprintDetails.getTotalIssues()).stream().filter(Objects::nonNull).map(SprintIssue::getNumber)
 					.distinct().collect(Collectors.toList());
 		} else {
 			return new ArrayList<>();
