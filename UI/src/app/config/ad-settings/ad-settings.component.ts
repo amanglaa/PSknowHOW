@@ -185,7 +185,7 @@ export class AdSettingsComponent implements OnInit {
       if (response && response['success']) {
         this.messenger.add({
           severity: 'success',
-          summary: 'Saved successfully!',
+          summary: 'Saved successfully!! Custom API restart is required for changes to take effect.',
           detail: ''
         });
       } else {
