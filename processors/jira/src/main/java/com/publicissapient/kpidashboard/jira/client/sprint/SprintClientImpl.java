@@ -124,7 +124,7 @@ public class SprintClientImpl implements SprintClient {
 					}//case 2 : sprint state is active or changed which is present in db
 					else if (sprint.getState().equalsIgnoreCase(SprintDetails.SPRINT_STATE_ACTIVE) ||
 							!sprint.getState().equalsIgnoreCase(dbSprintDetails.getState())) {
-						sprint.getOriginBoardId().addAll(sprint.getOriginBoardId());
+						sprint.setOriginBoardId(dbSprintDetails.getOriginBoardId());
 						fetchReport = true;
 					}else {
 						log.info("Sprint not to be saved again : {}, status: {} ", sprint.getOriginalSprintId(),
