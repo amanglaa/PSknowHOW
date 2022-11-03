@@ -4,7 +4,7 @@ import com.publicissapient.kpidashboard.apis.appsetting.service.ConfigHelperServ
 import com.publicissapient.kpidashboard.apis.config.CustomApiConfig;
 import com.publicissapient.kpidashboard.apis.constant.Constant;
 import com.publicissapient.kpidashboard.apis.enums.KPICode;
-import com.publicissapient.kpidashboard.apis.enums.KPIColumn;
+import com.publicissapient.kpidashboard.apis.enums.KPIExcelColumn;
 import com.publicissapient.kpidashboard.apis.enums.KPISource;
 import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
 import com.publicissapient.kpidashboard.apis.model.KpiElement;
@@ -171,7 +171,7 @@ public class DeploymentFrequencyServiceImpl extends JenkinsKPIService<Long, Long
             }
         });
         kpiElement.setExcelData(excelData);
-        kpiElement.setExcelColumns(KPIColumn.DEPLOYMENT_FREQUENCY.getColumns());
+        kpiElement.setExcelColumns(KPIExcelColumn.DEPLOYMENT_FREQUENCY.getColumns());
 
     }
 

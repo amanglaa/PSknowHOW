@@ -22,7 +22,7 @@ import com.google.common.collect.Lists;
 import com.publicissapient.kpidashboard.apis.config.CustomApiConfig;
 import com.publicissapient.kpidashboard.apis.constant.Constant;
 import com.publicissapient.kpidashboard.apis.enums.KPICode;
-import com.publicissapient.kpidashboard.apis.enums.KPIColumn;
+import com.publicissapient.kpidashboard.apis.enums.KPIExcelColumn;
 import com.publicissapient.kpidashboard.apis.enums.KPISource;
 import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
 import com.publicissapient.kpidashboard.apis.jira.service.JiraKPIService;
@@ -93,7 +93,6 @@ public class ProjectVersionKanbanServiceImpl extends JiraKPIService<Double, List
         List<Node> projectList = treeAggregatorDetail.getMapOfListOfProjectNodes().get(CommonConstant.HIERARCHY_LEVEL_ID_PROJECT);
 
         projectWiseLeafNodeValue(mapTmp, projectList, kpiElement, kpiRequest, excelData);
-        kpiElement.setExcelColumns(KPIColumn.RELEASE_FREQUENCY.getColumns());
         log.debug("[PROJECT-RELEASE-KANBAN-LEAF-NODE-VALUE][{}]. Values of leaf node after KPI calculation {}",
                 kpiRequest.getRequestTrackerId(), root);
 
@@ -155,7 +154,7 @@ public class ProjectVersionKanbanServiceImpl extends JiraKPIService<Double, List
             }
         });
         kpiElement.setExcelData(excelData);
-        kpiElement.setExcelColumns(KPIColumn.RELEASE_FREQUENCY.getColumns());
+        kpiElement.setExcelColumns(KPIExcelColumn.RELEASE_FREQUENCY.getColumns());
 
     }
 

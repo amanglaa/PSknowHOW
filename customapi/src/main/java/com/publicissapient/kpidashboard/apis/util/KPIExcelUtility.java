@@ -456,8 +456,9 @@ public class KPIExcelUtility {
 
                 kpiExcelData.add(excelData);
 
-		});
-	}
+            });
+        }
+    }
 
 	public static void populateCODExcelData(String projectName, List<JiraIssue> epicList, Map<String, String> dateList, List<KPIExcelData> kpiExcelData) {
 
@@ -497,38 +498,6 @@ public class KPIExcelUtility {
 		});
 	}
 
-	public static void populateReleaseFreqExcelData(List<ProjectVersion> projectVersionList, String projectName, Map<Long, String> dateMap, List<KPIExcelData> kpiExcelData) {
-
-		projectVersionList.forEach(pv -> {
-			KPIExcelData excelData = new KPIExcelData();
-			excelData.setProjectName(projectName);
-			excelData.setReleaseName(pv.getDescription());
-			excelData.setReleaseDesc(pv.getName());
-			excelData.setReleaseEndDate(pv.getReleaseDate().toString(DATE_YEAR_MONTH_FORMAT));
-			excelData.setMonth(dateMap.get(pv.getId()));
-			kpiExcelData.add(excelData);
-
-            });
-
-	}
-
-	// incomplete for this pr
-	public static void populateDeploymentFrequencyExcelData(String projectName, DeploymentFrequencyInfo dfi, List<KPIExcelData> kpiExcelData) {
-
-		for (int i=0; i < dfi.getJobNameList().size(); i++) {
-			KPIExcelData excelData = new KPIExcelData();
-			excelData.setProjectName(projectName);
-			excelData.setDeploymentDate(dfi.getDeploymentDateList().get(i));
-			excelData.setDeploymentJobName(dfi.getJobNameList().get(i));
-			excelData.setMonth(dfi.getMonthList().get(i));
-			excelData.setDeploymentEnvironment(dfi.getEnvironmentList().get(i));
-			excelData.setMonth(dfi.getMonthList().get(i));
-			kpiExcelData.add(excelData);
-
-		}
-
-        }
-    }
 
 	public static void populateReleaseFreqExcelData(List<ProjectVersion> projectVersionList, String projectName, Map<Long, String> dateMap, List<KPIExcelData> kpiExcelData) {
 
@@ -552,7 +521,7 @@ public class KPIExcelUtility {
 			KPIExcelData excelData = new KPIExcelData();
 			excelData.setProjectName(projectName);
 			excelData.setDeploymentDate(dfi.getDeploymentDateList().get(i));
-			excelData.setDeploymentJobName(dfi.getJobNameList().get(i));
+			excelData.setJobName(dfi.getJobNameList().get(i));
 			excelData.setMonth(dfi.getMonthList().get(i));
 			excelData.setDeploymentEnvironment(dfi.getEnvironmentList().get(i));
 			excelData.setMonth(dfi.getMonthList().get(i));

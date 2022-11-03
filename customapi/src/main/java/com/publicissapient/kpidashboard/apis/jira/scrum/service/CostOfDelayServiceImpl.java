@@ -31,7 +31,7 @@ import com.publicissapient.kpidashboard.apis.enums.Filters;
 import com.publicissapient.kpidashboard.apis.enums.JiraFeature;
 import com.publicissapient.kpidashboard.apis.enums.KPICode;
 import com.publicissapient.kpidashboard.apis.enums.KPISource;
-import com.publicissapient.kpidashboard.apis.enums.KPIColumn;
+import com.publicissapient.kpidashboard.apis.enums.KPIExcelColumn;
 import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
 import com.publicissapient.kpidashboard.apis.jira.service.JiraKPIService;
 import com.publicissapient.kpidashboard.apis.model.KpiElement;
@@ -163,7 +163,7 @@ public class CostOfDelayServiceImpl extends JiraKPIService<Double, List<Object>,
 
 		});
 		kpiElement.setExcelData(excelData);
-		kpiElement.setExcelColumns(KPIColumn.COST_OF_DELAY.getColumns());
+		kpiElement.setExcelColumns(KPIExcelColumn.COST_OF_DELAY.getColumns());
 	}
 
 	/**

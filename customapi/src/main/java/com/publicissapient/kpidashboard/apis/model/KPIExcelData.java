@@ -165,5 +165,34 @@ public class KPIExcelData {
     @JsonProperty("Passed %")
     private String passedPercentage;
 
+    @JsonProperty("Epic ID")
+    private Map<String, String> epicID;
+
+    @JsonProperty("Cost of Delay")
+    private Double costOfDelay;
+
+    @JsonProperty("Epic Name")
+    private String epicName;
+
+    @JsonProperty("Epic End Date")
+    private String epicEndDate;
+
+    @JsonProperty("Release Name")
+    private String releaseName;
+
+    @JsonProperty("Release Description")
+    private String releaseDesc;
+
+    @JsonProperty("Release End Date")
+    private String releaseEndDate;
+
+    @JsonProperty("Date")
+    private String deploymentDate;
+
+    @JsonProperty("Environment")
+    private String deploymentEnvironment;
+
+    @JsonProperty("Month")
+    private String month;
 
 }

@@ -21,7 +21,7 @@ package com.publicissapient.kpidashboard.apis.jira.kanban.service;
 import com.publicissapient.kpidashboard.apis.config.CustomApiConfig;
 import com.publicissapient.kpidashboard.apis.enums.JiraFeature;
 import com.publicissapient.kpidashboard.apis.enums.KPICode;
-import com.publicissapient.kpidashboard.apis.enums.KPIColumn;
+import com.publicissapient.kpidashboard.apis.enums.KPIExcelColumn;
 import com.publicissapient.kpidashboard.apis.enums.KPISource;
 import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
 import com.publicissapient.kpidashboard.apis.jira.service.JiraKPIService;
@@ -187,7 +187,7 @@ public class CostOfDelayKanbanServiceImpl extends JiraKPIService<Double, List<Ob
 
         });
         kpiElement.setExcelData(excelData);
-        kpiElement.setExcelColumns(KPIColumn.COST_OF_DELAY.getColumns());
+        kpiElement.setExcelColumns(KPIExcelColumn.COST_OF_DELAY.getColumns());
 
     }
 
