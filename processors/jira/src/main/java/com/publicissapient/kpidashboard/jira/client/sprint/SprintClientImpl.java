@@ -120,7 +120,7 @@ public class SprintClientImpl implements SprintClient {
 					sprint.setId(dbSprintDetails.getId());
 					//case 1 : same sprint different board id
 					if (!dbSprintDetails.getOriginBoardId().containsAll(sprint.getOriginBoardId())) {
-						sprint.getOriginBoardId().addAll(sprint.getOriginBoardId());
+						sprint.getOriginBoardId().addAll(dbSprintDetails.getOriginBoardId());
 						fetchReport = true;
 					}//case 2 : sprint state is active or changed which is present in db
 					else if (sprint.getState().equalsIgnoreCase(SprintDetails.SPRINT_STATE_ACTIVE) ||

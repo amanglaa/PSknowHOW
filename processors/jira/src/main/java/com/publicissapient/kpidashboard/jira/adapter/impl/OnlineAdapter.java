@@ -182,11 +182,15 @@ public class OnlineAdapter implements JiraAdapter {
 
 	public List<Issue> getEpicIssues(List<String> epicKeyList) {
 		List<Issue> issueList = new ArrayList<>();
-		epicKeyList.forEach(epicKey -> {
-			Promise<Issue> promise = client.getCustomIssueClient().
-					getIssue(epicKey, ImmutableList.of(SCHEMA, NAMES, CHANGELOG));
-			issueList.add(promise.claim());
-		});
+		try {
+			epicKeyList.forEach(epicKey -> {
+				Promise<Issue> promise = client.getCustomIssueClient().
+						getIssue(epicKey, ImmutableList.of(SCHEMA, NAMES, CHANGELOG));
+				issueList.add(promise.claim());
+			});
+		} catch (RestClientException e) {
+			log.error("error fetching epic", e.getCause());
+		}
 		return issueList;
 	}
 
