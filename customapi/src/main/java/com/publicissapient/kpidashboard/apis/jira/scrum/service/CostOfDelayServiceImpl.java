@@ -18,6 +18,10 @@
 
 package com.publicissapient.kpidashboard.apis.jira.scrum.service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -27,6 +31,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 
+import com.publicissapient.kpidashboard.apis.constant.Constant;
 import com.publicissapient.kpidashboard.apis.enums.Filters;
 import com.publicissapient.kpidashboard.apis.enums.JiraFeature;
 import com.publicissapient.kpidashboard.apis.enums.KPICode;
@@ -40,9 +45,9 @@ import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
 import com.publicissapient.kpidashboard.apis.model.Node;
 import com.publicissapient.kpidashboard.apis.model.TreeAggregatorDetail;
 import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
+import com.publicissapient.kpidashboard.common.util.DateUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -59,190 +64,181 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CostOfDelayServiceImpl extends JiraKPIService<Double, List<Object>, Map<String, Object>> {
 
-	@Autowired
-	private JiraIssueRepository jiraIssueRepository;
+    private static final String COD_DATA = "costOfDelayData";
+    @Autowired
+    private JiraIssueRepository jiraIssueRepository;
+    @Autowired
+    private CustomApiConfig customApiConfig;
 
-	@Autowired
-	private CustomApiConfig customApiConfig;
+    @Override
+    public Double calculateKPIMetrics(Map<String, Object> subCategoryMap) {
+        return null;
+    }
 
-	private static final String COD_DATA = "costOfDelayData";
+    @Override
+    public KpiElement getKpiData(KpiRequest kpiRequest, KpiElement kpiElement,
+                                 TreeAggregatorDetail treeAggregatorDetail) throws ApplicationException {
+        List<DataCount> trendValueList = new ArrayList<>();
+        Node root = treeAggregatorDetail.getRoot();
+        Map<String, Node> mapTmp = treeAggregatorDetail.getMapTmp();
+        treeAggregatorDetail.getMapOfListOfProjectNodes().forEach((k, v) -> {
 
-	private static final String MONTH_YEAR_FORMAT = "MMM yyyy";
+            Filters filters = Filters.getFilter(k);
+            if (Filters.PROJECT == filters) {
+                projectWiseLeafNodeValue(mapTmp, v, trendValueList, kpiElement, getRequestTrackerId(), kpiRequest);
+            }
 
-	@Override
-	public Double calculateKPIMetrics(Map<String, Object> subCategoryMap) {
-		return null;
-	}
+        });
 
-	@Override
-	public KpiElement getKpiData(KpiRequest kpiRequest, KpiElement kpiElement,
-			TreeAggregatorDetail treeAggregatorDetail) throws ApplicationException {
-		List<DataCount> trendValueList = new ArrayList<>();
-		Node root = treeAggregatorDetail.getRoot();
-		Map<String, Node> mapTmp = treeAggregatorDetail.getMapTmp();
-		treeAggregatorDetail.getMapOfListOfProjectNodes().forEach((k, v) -> {
+        log.debug("[PROJECT-WISE][{}]. Values of leaf node after KPI calculation {}", kpiRequest.getRequestTrackerId(),
+                root);
 
-			Filters filters = Filters.getFilter(k);
-			if (Filters.PROJECT == filters) {
-				projectWiseLeafNodeValue(mapTmp, v, trendValueList, kpiElement, getRequestTrackerId(), kpiRequest);
-			}
+        Map<Pair<String, String>, Node> nodeWiseKPIValue = new HashMap<>();
+        calculateAggregatedValue(root, nodeWiseKPIValue, KPICode.COST_OF_DELAY);
+        // 3rd change : remove code to set trendValuelist and call
+        // getTrendValues method
+        List<DataCount> trendValues = getTrendValues(kpiRequest, nodeWiseKPIValue, KPICode.COST_OF_DELAY);
+        kpiElement.setTrendValueList(trendValues);
 
-		});
-
-		log.debug("[PROJECT-WISE][{}]. Values of leaf node after KPI calculation {}", kpiRequest.getRequestTrackerId(),
-				root);
-
-		Map<Pair<String, String>, Node> nodeWiseKPIValue = new HashMap<>();
-		calculateAggregatedValue(root, nodeWiseKPIValue, KPICode.COST_OF_DELAY);
-		// 3rd change : remove code to set trendValuelist and call
-		// getTrendValues method
-		List<DataCount> trendValues = getTrendValues(kpiRequest, nodeWiseKPIValue,KPICode.COST_OF_DELAY);
-		kpiElement.setTrendValueList(trendValues);
-
-		return kpiElement;
-	}
+        return kpiElement;
+    }
 
 
+    @Override
+    public Map<String, Object> fetchKPIDataFromDb(List<Node> leafNodeList, String startDate, String endDate,
+                                                  KpiRequest kpiRequest) {
 
-	@Override
-	public Map<String, Object> fetchKPIDataFromDb(List<Node> leafNodeList, String startDate, String endDate,
-			KpiRequest kpiRequest) {
+        Map<String, Object> resultListMap = new HashMap<>();
+        Map<String, List<String>> mapOfFilters = new LinkedHashMap<>();
+        List<String> basicProjectConfigIds = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(leafNodeList)) {
 
-		Map<String, Object> resultListMap = new HashMap<>();
-		Map<String, List<String>> mapOfFilters = new LinkedHashMap<>();
-		List<String> basicProjectConfigIds = new ArrayList<>();
-		if (CollectionUtils.isNotEmpty(leafNodeList)) {
+            leafNodeList.forEach(leaf -> basicProjectConfigIds.add(leaf.getProjectFilter().getBasicProjectConfigId().toString()));
+        }
 
-			leafNodeList.forEach(leaf -> basicProjectConfigIds.add(leaf.getProjectFilter().getBasicProjectConfigId().toString()));
-		}
+        mapOfFilters.put(JiraFeature.BASIC_PROJECT_CONFIG_ID.getFieldValueInFeature(),
+                basicProjectConfigIds.stream().distinct().collect(Collectors.toList()));
 
-		mapOfFilters.put(JiraFeature.BASIC_PROJECT_CONFIG_ID.getFieldValueInFeature(),
-				basicProjectConfigIds.stream().distinct().collect(Collectors.toList()));
+        mapOfFilters.put(JiraFeature.ISSUE_TYPE.getFieldValueInFeature(),
+                Arrays.asList(NormalizedJira.ISSUE_TYPE.getValue()));
+        mapOfFilters.put(JiraFeature.STATUS.getFieldValueInFeature(), Arrays.asList(NormalizedJira.STATUS.getValue()));
+        List<JiraIssue> codList = jiraIssueRepository.findCostOfDelayByType(mapOfFilters);
+        resultListMap.put(COD_DATA, codList);
+        return resultListMap;
+    }
 
-		mapOfFilters.put(JiraFeature.ISSUE_TYPE.getFieldValueInFeature(),
-				Arrays.asList(NormalizedJira.ISSUE_TYPE.getValue()));
-		mapOfFilters.put(JiraFeature.STATUS.getFieldValueInFeature(), Arrays.asList(NormalizedJira.STATUS.getValue()));
-		List<JiraIssue> codList = jiraIssueRepository.findCostOfDelayByType(mapOfFilters);
-		resultListMap.put(COD_DATA, codList);
-		return resultListMap;
-	}
-
-	@Override
-	public String getQualifierType() {
-		return KPICode.COST_OF_DELAY.name();
-	}
-
-
-	/**
-	 * Calculate KPI value for selected project nodes.
-	 *
-	 * @param projectLeafNodeList
-	 *            list of sprint leaf nodes
-	 * @param trendValueList
-	 *            list containing data to show on KPI
-	 * @param kpiElement
-	 *            kpiElement
-	 * @param kpiRequest
-	 *            KpiRequest
-	 */
-	@SuppressWarnings("unchecked")
-	private void projectWiseLeafNodeValue(Map<String, Node> mapTmp, List<Node> projectLeafNodeList,
-			List<DataCount> trendValueList, KpiElement kpiElement, String requestTrackerId, KpiRequest kpiRequest) {
-
-		Map<String, Object> resultMap = fetchKPIDataFromDb(projectLeafNodeList, null, null, kpiRequest);
-		Map<String, List<JiraIssue>> filterWiseDataMap = createProjectWiseDelay(
-				(List<JiraIssue>) resultMap.get(COD_DATA));
-		List<KPIExcelData> excelData = new ArrayList<>();
-
-		projectLeafNodeList.forEach(node -> {
-			String currentProjectId = node.getProjectFilter().getBasicProjectConfigId().toString();
-			List<JiraIssue> delayDetail = filterWiseDataMap.get(currentProjectId);
-			if (CollectionUtils.isNotEmpty(delayDetail)) {
-				setProjectNodeValue(mapTmp, node, delayDetail, trendValueList, requestTrackerId, excelData);
-			}
-
-		});
-		kpiElement.setExcelData(excelData);
-		kpiElement.setExcelColumns(KPIExcelColumn.COST_OF_DELAY.getColumns());
-	}
-
-	/**
-	 * Gets the KPI value for project node.
-	 *
-	 * @param kpiElement
-	 * @param jiraIssues
-	 * @param trendValueList
-	 * @return
-	 */
-	private void setProjectNodeValue(Map<String, Node> mapTmp, Node node,
-			List<JiraIssue> jiraIssues, List<DataCount> trendValueList, String requestTrackerId, List<KPIExcelData> excelData) {
-		Map<String, Double> lastNMonthMap = getLastNMonth(customApiConfig.getJiraXaxisMonthCount());
-		String projectName = node.getProjectFilter().getName();
-		List<JiraIssue> epicList = new ArrayList<>();
-		Map<String, String> dateList = new HashMap<>();
-		Map<String, Map<String, Integer>> howerMap = new HashMap<>();
-
-		for (JiraIssue js : jiraIssues) {
-			String number = js.getNumber();
-			String dateTime = js.getChangeDate() == null ? js.getUpdateDate() : js.getChangeDate();
-			if (dateTime != null) {
-				DateTime dateValue = DateTime.parse(dateTime);
-				epicList.add(js);
-				String date = dateValue.toString(MONTH_YEAR_FORMAT);
-				// dateValue.getM
-				dateList.put(js.getNumber(), date);
-				lastNMonthMap.computeIfPresent(date, (key, value) -> {
-					Integer costOfDelay = (int) js.getCostOfDelay();
-					Map<String, Integer> epicWiseCost = new HashMap<>();
-					epicWiseCost.put(number, costOfDelay);
-					if (howerMap.containsKey(date)) {
-						epicWiseCost.putAll(howerMap.get(date));
-						howerMap.put(date, epicWiseCost);
-					} else {
-						howerMap.put(date, epicWiseCost);
-					}
-					return value + costOfDelay;
-				});
-
-			}
-
-		}
-
-		List<DataCount> dcList = new ArrayList<>();
-		lastNMonthMap.forEach((k, v) -> {
-			DataCount dataCount = new DataCount();
-			dataCount.setDate(k);
-			dataCount.setValue(v);
-			dataCount.setData(v.toString());
-			dataCount.setSProjectName(projectName);
-			dataCount.setHoverValue(new HashMap<>());
-			dcList.add(dataCount);
-			trendValueList.add(dataCount);
-
-		});
-		mapTmp.get(node.getId()).setValue(dcList);
-
-		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-			KPIExcelUtility.populateCODExcelData(projectName, epicList, dateList, excelData);
-		}
-
-	}
-
-	/**
-	 * Group list of data by project.
-	 *
-	 * @param resultList
-	 * @return
-	 */
-
-	private Map<String, List<JiraIssue>> createProjectWiseDelay(List<JiraIssue> resultList) {
-		return resultList.stream().filter(p -> p.getBasicProjectConfigId() != null)
-				.collect(Collectors.groupingBy(JiraIssue::getBasicProjectConfigId));
-	}
+    @Override
+    public String getQualifierType() {
+        return KPICode.COST_OF_DELAY.name();
+    }
 
 
-	@Override
-	public Double calculateKpiValue(List<Double> valueList, String kpiName) {
-		return calculateKpiValueForDouble(valueList, kpiName);
-	}
+    /**
+     * Calculate KPI value for selected project nodes.
+     *
+     * @param projectLeafNodeList list of sprint leaf nodes
+     * @param trendValueList      list containing data to show on KPI
+     * @param kpiElement          kpiElement
+     * @param kpiRequest          KpiRequest
+     */
+    @SuppressWarnings("unchecked")
+    private void projectWiseLeafNodeValue(Map<String, Node> mapTmp, List<Node> projectLeafNodeList,
+                                          List<DataCount> trendValueList, KpiElement kpiElement, String requestTrackerId, KpiRequest kpiRequest) {
+
+        Map<String, Object> resultMap = fetchKPIDataFromDb(projectLeafNodeList, null, null, kpiRequest);
+        Map<String, List<JiraIssue>> filterWiseDataMap = createProjectWiseDelay(
+                (List<JiraIssue>) resultMap.get(COD_DATA));
+        List<KPIExcelData> excelData = new ArrayList<>();
+
+        projectLeafNodeList.forEach(node -> {
+            String currentProjectId = node.getProjectFilter().getBasicProjectConfigId().toString();
+            List<JiraIssue> delayDetail = filterWiseDataMap.get(currentProjectId);
+            if (CollectionUtils.isNotEmpty(delayDetail)) {
+                setProjectNodeValue(mapTmp, node, delayDetail, trendValueList, requestTrackerId, excelData);
+            }
+
+        });
+        kpiElement.setExcelData(excelData);
+        kpiElement.setExcelColumns(KPIExcelColumn.COST_OF_DELAY.getColumns());
+    }
+
+    /**
+     * Gets the KPI value for project node.
+     *
+     * @param kpiElement
+     * @param jiraIssues
+     * @param trendValueList
+     * @return
+     */
+    private void setProjectNodeValue(Map<String, Node> mapTmp, Node node,
+                                     List<JiraIssue> jiraIssues, List<DataCount> trendValueList, String requestTrackerId, List<KPIExcelData> excelData) {
+        Map<String, Double> lastNMonthMap = getLastNMonth(customApiConfig.getJiraXaxisMonthCount());
+        String projectName = node.getProjectFilter().getName();
+        List<JiraIssue> epicList = new ArrayList<>();
+        Map<String, String> dateList = new HashMap<>();
+        Map<String, Map<String, Integer>> howerMap = new HashMap<>();
+
+        for (JiraIssue js : jiraIssues) {
+            String number = js.getNumber();
+            String dateTime = js.getChangeDate() == null ? js.getUpdateDate() : js.getChangeDate();
+            if (dateTime != null) {
+                DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendPattern(DateUtil.TIME_FORMAT).optionalStart().appendPattern(".")
+                        .appendFraction(ChronoField.MICRO_OF_SECOND, 1, 9, false).optionalEnd().toFormatter();
+                LocalDateTime dateValue = LocalDateTime.parse(dateTime, formatter);
+                String date = dateValue.getYear() + Constant.DASH + dateValue.getMonthValue();
+                epicList.add(js);
+                lastNMonthMap.computeIfPresent(date, (key, value) -> {
+                    Integer costOfDelay = (int) js.getCostOfDelay();
+                    Map<String, Integer> epicWiseCost = new HashMap<>();
+                    epicWiseCost.put(number, costOfDelay);
+                    if (howerMap.containsKey(date)) {
+                        epicWiseCost.putAll(howerMap.get(date));
+                        howerMap.put(date, epicWiseCost);
+                    } else {
+                        howerMap.put(date, epicWiseCost);
+                    }
+                    return value + costOfDelay;
+                });
+
+            }
+
+        }
+
+        List<DataCount> dcList = new ArrayList<>();
+        lastNMonthMap.forEach((k, v) -> {
+            DataCount dataCount = new DataCount();
+            dataCount.setDate(k);
+            dataCount.setValue(v);
+            dataCount.setData(v.toString());
+            dataCount.setSProjectName(projectName);
+            dataCount.setHoverValue(new HashMap<>());
+            dcList.add(dataCount);
+            trendValueList.add(dataCount);
+
+        });
+        mapTmp.get(node.getId()).setValue(dcList);
+
+        if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
+            KPIExcelUtility.populateCODExcelData(projectName, epicList, dateList, excelData);
+        }
+
+    }
+
+    /**
+     * Group list of data by project.
+     *
+     * @param resultList
+     * @return
+     */
+
+    private Map<String, List<JiraIssue>> createProjectWiseDelay(List<JiraIssue> resultList) {
+        return resultList.stream().filter(p -> p.getBasicProjectConfigId() != null)
+                .collect(Collectors.groupingBy(JiraIssue::getBasicProjectConfigId));
+    }
+
+
+    @Override
+    public Double calculateKpiValue(List<Double> valueList, String kpiName) {
+        return calculateKpiValueForDouble(valueList, kpiName);
+    }
 }

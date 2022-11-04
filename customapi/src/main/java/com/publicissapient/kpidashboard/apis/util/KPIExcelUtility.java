@@ -18,35 +18,32 @@
 
 package com.publicissapient.kpidashboard.apis.util;
 
+import com.publicissapient.kpidashboard.apis.constant.Constant;
+import com.publicissapient.kpidashboard.apis.enums.KPICode;
+import com.publicissapient.kpidashboard.apis.model.ChangeFailureRateInfo;
 import com.publicissapient.kpidashboard.apis.model.DeploymentFrequencyInfo;
 import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
 import com.publicissapient.kpidashboard.common.model.application.ProjectVersion;
+import com.publicissapient.kpidashboard.common.model.application.ResolutionTimeValidation;
 import com.publicissapient.kpidashboard.common.model.jira.JiraIssue;
 import com.publicissapient.kpidashboard.common.model.jira.KanbanJiraIssue;
+import com.publicissapient.kpidashboard.common.model.testexecution.TestExecution;
+import com.publicissapient.kpidashboard.common.model.zephyr.TestCaseDetails;
+import com.publicissapient.kpidashboard.common.util.DateUtil;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import com.publicissapient.kpidashboard.apis.constant.Constant;
-import com.publicissapient.kpidashboard.common.model.application.ResolutionTimeValidation;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.StringUtils;
-
-import com.publicissapient.kpidashboard.apis.enums.KPICode;
-import com.publicissapient.kpidashboard.apis.model.ChangeFailureRateInfo;
-import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
-import com.publicissapient.kpidashboard.common.model.jira.JiraIssue;
-import com.publicissapient.kpidashboard.common.model.testexecution.TestExecution;
-import com.publicissapient.kpidashboard.common.model.zephyr.TestCaseDetails;
 
 /**
  * The class contains mapping of kpi and Excel columns.
@@ -55,19 +52,16 @@ import com.publicissapient.kpidashboard.common.model.zephyr.TestCaseDetails;
  */
 public class KPIExcelUtility {
 
-	private static final String MONTH_YEAR_FORMAT = "MMM yyyy";
-
-	private static final String DATE_YEAR_MONTH_FORMAT = "dd-MMM-yy";
-
-	private KPIExcelUtility() {
-	}
-
+    private static final String MONTH_YEAR_FORMAT = "MMM yyyy";
+    private static final String DATE_YEAR_MONTH_FORMAT = "dd-MMM-yy";
     private static final String LEAD_TIME = "Lead Time";
     private static final String INTAKE_TO_DOR = "Intake - DoR";
     private static final String DOR_TO_DOD = "DoR - DoD";
     private static final String DOD_TO_LIVE = "DoD - Live";
     private static final DecimalFormat df2 = new DecimalFormat(".##");
 
+    private KPIExcelUtility() {
+    }
 
     /**
      * This method populate the excel data for DIR KPI
@@ -78,12 +72,10 @@ public class KPIExcelUtility {
      * @param kpiExcelData
      * @param issueData
      */
-    public static void populateDirOrDensityExcelData(String sprint, List<String> storyIds, List<JiraIssue> defects,
-                                                     List<KPIExcelData> kpiExcelData, Map<String, JiraIssue> issueData) {
+    public static void populateDirOrDensityExcelData(String sprint, List<String> storyIds, List<JiraIssue> defects, List<KPIExcelData> kpiExcelData, Map<String, JiraIssue> issueData) {
         storyIds.forEach(story -> {
             Map<String, String> linkedDefects = new HashMap<>();
-            defects.stream().filter(d -> d.getDefectStoryID().contains(story))
-                    .forEach(defect -> linkedDefects.putIfAbsent(defect.getNumber(), checkEmptyURL(defect)));
+            defects.stream().filter(d -> d.getDefectStoryID().contains(story)).forEach(defect -> linkedDefects.putIfAbsent(defect.getNumber(), checkEmptyURL(defect)));
             KPIExcelData excelData = new KPIExcelData();
             excelData.setSprintName(sprint);
             excelData.setLinkedDefects(linkedDefects);
@@ -100,8 +92,7 @@ public class KPIExcelUtility {
         });
     }
 
-    public static void populateFTPRExcelData(String sprint, List<String> storyIds, List<JiraIssue> ftprStories,
-                                             List<KPIExcelData> kpiExcelData, Map<String, JiraIssue> issueData) {
+    public static void populateFTPRExcelData(String sprint, List<String> storyIds, List<JiraIssue> ftprStories, List<KPIExcelData> kpiExcelData, Map<String, JiraIssue> issueData) {
         List<String> collect = ftprStories.stream().map(JiraIssue::getNumber).collect(Collectors.toList());
         storyIds.forEach(story -> {
             KPIExcelData excelData = new KPIExcelData();
@@ -130,12 +121,10 @@ public class KPIExcelUtility {
      * @param kpiExcelData
      * @param kpiId
      */
-    public static void populateDefectRelatedExcelData(String sprint, Map<String, JiraIssue> totalBugList,
-                                                      List<JiraIssue> conditionDefects, List<KPIExcelData> kpiExcelData, String kpiId) {
+    public static void populateDefectRelatedExcelData(String sprint, Map<String, JiraIssue> totalBugList, List<JiraIssue> conditionDefects, List<KPIExcelData> kpiExcelData, String kpiId) {
 
         if (MapUtils.isNotEmpty(totalBugList)) {
-            List<String> conditionalList = conditionDefects.stream().map(JiraIssue::getNumber)
-                    .collect(Collectors.toList());
+            List<String> conditionalList = conditionDefects.stream().map(JiraIssue::getNumber).collect(Collectors.toList());
             totalBugList.forEach((defectId, jiraIssue) -> {
                 String present = conditionalList.contains(defectId) ? Constant.EXCEL_YES : Constant.EMPTY_STRING;
                 KPIExcelData excelData = new KPIExcelData();
@@ -168,8 +157,7 @@ public class KPIExcelUtility {
      * @param kpiExcelData
      * @param kpiId
      */
-    public static void populateDefectRelatedExcelData(String sprint, List<JiraIssue> jiraIssues,
-                                                      List<KPIExcelData> kpiExcelData, String kpiId) {
+    public static void populateDefectRelatedExcelData(String sprint, List<JiraIssue> jiraIssues, List<KPIExcelData> kpiExcelData, String kpiId) {
         jiraIssues.stream().forEach(jiraIssue -> {
             KPIExcelData excelData = new KPIExcelData();
             excelData.setSprintName(sprint);
@@ -198,11 +186,9 @@ public class KPIExcelUtility {
      * @param conditionStories
      * @param kpiExcelData
      */
-    public static void populateCreatedVsResolvedExcelData(String sprint, Map<String, JiraIssue> totalStoriesMap,
-                                                          List<JiraIssue> conditionStories, List<KPIExcelData> kpiExcelData) {
+    public static void populateCreatedVsResolvedExcelData(String sprint, Map<String, JiraIssue> totalStoriesMap, List<JiraIssue> conditionStories, List<KPIExcelData> kpiExcelData) {
         if (MapUtils.isNotEmpty(totalStoriesMap)) {
-            List<String> conditionalList = conditionStories.stream().map(JiraIssue::getNumber)
-                    .collect(Collectors.toList());
+            List<String> conditionalList = conditionStories.stream().map(JiraIssue::getNumber).collect(Collectors.toList());
             totalStoriesMap.forEach((storyId, jiraIssue) -> {
                 String present = conditionalList.contains(storyId) ? Constant.EXCEL_YES : Constant.EMPTY_STRING;
                 KPIExcelData excelData = new KPIExcelData();
@@ -218,12 +204,9 @@ public class KPIExcelUtility {
         }
     }
 
-    public static void populateRegressionAutomationExcelData(String sprint,
-                                                             Map<String, TestCaseDetails> totalStoriesMap, List<TestCaseDetails> conditionStories,
-                                                             List<KPIExcelData> kpiExcelData) {
+    public static void populateRegressionAutomationExcelData(String sprint, Map<String, TestCaseDetails> totalStoriesMap, List<TestCaseDetails> conditionStories, List<KPIExcelData> kpiExcelData) {
         if (MapUtils.isNotEmpty(totalStoriesMap)) {
-            List<String> conditionalList = conditionStories.stream().map(TestCaseDetails::getNumber)
-                    .collect(Collectors.toList());
+            List<String> conditionalList = conditionStories.stream().map(TestCaseDetails::getNumber).collect(Collectors.toList());
             totalStoriesMap.forEach((storyId, jiraIssue) -> {
                 String present = conditionalList.contains(storyId) ? Constant.EXCEL_YES : Constant.EMPTY_STRING;
                 KPIExcelData excelData = new KPIExcelData();
@@ -235,8 +218,7 @@ public class KPIExcelUtility {
         }
     }
 
-    public static void populateSonarScrumExcelData(String projectName, List<String> jobList,
-                                                   List<String> kpiSpecificDataList, List<String> versionDate, List<KPIExcelData> kpiExcelData, String kpiId) {
+    public static void populateSonarScrumExcelData(String projectName, List<String> jobList, List<String> kpiSpecificDataList, List<String> versionDate, List<KPIExcelData> kpiExcelData, String kpiId) {
         if (CollectionUtils.isNotEmpty(jobList)) {
             for (int i = 0; i < jobList.size(); i++) {
                 KPIExcelData excelData = new KPIExcelData();
@@ -257,18 +239,14 @@ public class KPIExcelUtility {
         }
     }
 
-    public static void populateInSprintAutomationExcelData(String sprint, List<TestCaseDetails> allTestList,
-                                                           List<TestCaseDetails> automatedList, Set<JiraIssue> linkedStories, List<KPIExcelData> kpiExcelData) {
+    public static void populateInSprintAutomationExcelData(String sprint, List<TestCaseDetails> allTestList, List<TestCaseDetails> automatedList, Set<JiraIssue> linkedStories, List<KPIExcelData> kpiExcelData) {
 
         if (CollectionUtils.isNotEmpty(allTestList)) {
-            List<String> conditionalList = automatedList.stream().map(TestCaseDetails::getNumber)
-                    .collect(Collectors.toList());
+            List<String> conditionalList = automatedList.stream().map(TestCaseDetails::getNumber).collect(Collectors.toList());
             allTestList.forEach(testIssue -> {
-                String present = conditionalList.contains(testIssue.getNumber()) ? Constant.EXCEL_YES
-                        : Constant.EMPTY_STRING;
+                String present = conditionalList.contains(testIssue.getNumber()) ? Constant.EXCEL_YES : Constant.EMPTY_STRING;
                 Map<String, String> linkedStoriesMap = new HashMap<>();
-                linkedStories.stream().filter(story -> testIssue.getDefectStoryID().contains(story.getNumber()))
-                        .forEach(story -> linkedStoriesMap.putIfAbsent(story.getNumber(), checkEmptyURL(story)));
+                linkedStories.stream().filter(story -> testIssue.getDefectStoryID().contains(story.getNumber())).forEach(story -> linkedStoriesMap.putIfAbsent(story.getNumber(), checkEmptyURL(story)));
 
                 KPIExcelData excelData = new KPIExcelData();
                 excelData.setSprintName(sprint);
@@ -289,8 +267,7 @@ public class KPIExcelUtility {
         return StringUtils.isEmpty(jiraIssue.getUrl()) ? Constant.EMPTY_STRING : jiraIssue.getUrl();
     }
 
-    public static void populateChangeFailureRateExcelData(String projectName,
-                                                          ChangeFailureRateInfo changeFailureRateInfo, List<KPIExcelData> kpiExcelData) {
+    public static void populateChangeFailureRateExcelData(String projectName, ChangeFailureRateInfo changeFailureRateInfo, List<KPIExcelData> kpiExcelData) {
         List<String> buildJobNameList = changeFailureRateInfo.getBuildJobNameList();
         if (CollectionUtils.isNotEmpty(buildJobNameList)) {
             for (int i = 0; i < changeFailureRateInfo.getBuildJobNameList().size(); i++) {
@@ -300,16 +277,14 @@ public class KPIExcelUtility {
                 excelData.setWeeks(changeFailureRateInfo.getDateList().get(i));
                 excelData.setBuildCount(changeFailureRateInfo.getTotalBuildCountList().get(i).toString());
                 excelData.setBuildFailureCount(changeFailureRateInfo.getTotalBuildFailureCountList().get(i).toString());
-                excelData.setBuildFailurePercentage(
-                        changeFailureRateInfo.getBuildFailurePercentageList().get(i).toString());
+                excelData.setBuildFailurePercentage(changeFailureRateInfo.getBuildFailurePercentageList().get(i).toString());
                 kpiExcelData.add(excelData);
             }
         }
 
     }
 
-    public static void populateTestExcecutionExcelData(String sprintName, TestExecution testDetail,
-                                                       double executionPercentage, double passPercentage, List<KPIExcelData> kpiExcelData) {
+    public static void populateTestExcecutionExcelData(String sprintName, TestExecution testDetail, double executionPercentage, double passPercentage, List<KPIExcelData> kpiExcelData) {
         if (testDetail != null) {
             KPIExcelData excelData = new KPIExcelData();
             excelData.setSprintName(sprintName);
@@ -322,8 +297,7 @@ public class KPIExcelUtility {
         }
     }
 
-    public static void populateSprintVelocity(String sprint, Map<String, JiraIssue> totalStoriesMap,
-                                              List<KPIExcelData> kpiExcelData) {
+    public static void populateSprintVelocity(String sprint, Map<String, JiraIssue> totalStoriesMap, List<KPIExcelData> kpiExcelData) {
 
 
         if (MapUtils.isNotEmpty(totalStoriesMap)) {
@@ -343,8 +317,7 @@ public class KPIExcelUtility {
         }
     }
 
-    public static void populateSprintCapacity(String sprint, List<JiraIssue> totalStoriesList,
-                                              List<String> loggedTimeList, List<KPIExcelData> kpiExcelData, List<String> estimateTimeList) {
+    public static void populateSprintCapacity(String sprint, List<JiraIssue> totalStoriesList, List<String> loggedTimeList, List<KPIExcelData> kpiExcelData, List<String> estimateTimeList) {
 
 
         if (CollectionUtils.isNotEmpty(totalStoriesList)) {
@@ -359,12 +332,11 @@ public class KPIExcelUtility {
                 excelData.setOriginalTimeEstimate(estimateTimeList.get(0));
                 excelData.setTotalTimeSpent(loggedTimeList.get(i));
                 kpiExcelData.add(excelData);
-            };
+            }
         }
     }
 
-    public static void populateAverageResolutionTime(Map<String, List<ResolutionTimeValidation>> sprintWiseResolution,
-                                                     List<KPIExcelData> kpiExcelData) {
+    public static void populateAverageResolutionTime(Map<String, List<ResolutionTimeValidation>> sprintWiseResolution, List<KPIExcelData> kpiExcelData) {
 
 
         if (MapUtils.isNotEmpty(sprintWiseResolution)) {
@@ -389,8 +361,7 @@ public class KPIExcelUtility {
     }
 
 
-    public static void populateSprintCountExcelData(String sprint, Map<String, JiraIssue> totalStoriesMap,
-                                                    List<KPIExcelData> kpiExcelData) {
+    public static void populateSprintCountExcelData(String sprint, Map<String, JiraIssue> totalStoriesMap, List<KPIExcelData> kpiExcelData) {
 
 
         if (MapUtils.isNotEmpty(totalStoriesMap)) {
@@ -398,7 +369,6 @@ public class KPIExcelUtility {
 
                 KPIExcelData excelData = new KPIExcelData();
                 excelData.setSprintName(sprint);
-
                 Map<String, String> storyDetails = new HashMap<>();
                 storyDetails.put(storyId, jiraIssue.getUrl());
                 excelData.setStoryId(storyDetails);
@@ -410,8 +380,7 @@ public class KPIExcelUtility {
         }
     }
 
-    public static void populateLeadTime(
-            List<KPIExcelData> kpiExcelData, String projectName, Map<String, Long> cycleMap) {
+    public static void populateLeadTime(List<KPIExcelData> kpiExcelData, String projectName, Map<String, Long> cycleMap) {
 
 
         if (MapUtils.isNotEmpty(cycleMap)) {
@@ -438,11 +407,9 @@ public class KPIExcelUtility {
      * @param kpiExcelData
      */
 
-    public static void populateCommittmentReliability(String sprint, Map<String, JiraIssue> totalStoriesMap,
-                                                      List<JiraIssue> conditionStories, List<KPIExcelData> kpiExcelData) {
+    public static void populateCommittmentReliability(String sprint, Map<String, JiraIssue> totalStoriesMap, List<JiraIssue> conditionStories, List<KPIExcelData> kpiExcelData) {
         if (MapUtils.isNotEmpty(totalStoriesMap)) {
-            List<String> conditionalList = conditionStories.stream().map(JiraIssue::getNumber)
-                    .collect(Collectors.toList());
+            List<String> conditionalList = conditionStories.stream().map(JiraIssue::getNumber).collect(Collectors.toList());
             totalStoriesMap.forEach((storyId, jiraIssue) -> {
                 String present = conditionalList.contains(storyId) ? Constant.EXCEL_YES : Constant.EMPTY_STRING;
                 KPIExcelData excelData = new KPIExcelData();
@@ -460,75 +427,78 @@ public class KPIExcelUtility {
         }
     }
 
-	public static void populateCODExcelData(String projectName, List<JiraIssue> epicList, Map<String, String> dateList, List<KPIExcelData> kpiExcelData) {
+    public static void populateCODExcelData(String projectName, List<JiraIssue> epicList, Map<String, String> dateList, List<KPIExcelData> kpiExcelData) {
 
-		epicList.forEach(epic -> {
-			if(null!=epic) {
-				Map<String, String> epicLink = new HashMap<>();
-				epicLink.put(epic.getNumber(), epic.getUrl());
-				KPIExcelData excelData = new KPIExcelData();
-				excelData.setProjectName(projectName);
-				excelData.setEpicID(epicLink);
-				excelData.setEpicName(epic.getName());
-				excelData.setCostOfDelay(epic.getCostOfDelay());
-				excelData.setMonth(dateList.get(epic.getNumber()));
-				DateTime dateValue = DateTime.parse(epic.getChangeDate());
-				excelData.setEpicEndDate(dateValue.toString(DATE_YEAR_MONTH_FORMAT));
-				kpiExcelData.add(excelData);
-			}
-		});
-	}
+        epicList.forEach(epic -> {
+            if (null != epic) {
+                Map<String, String> epicLink = new HashMap<>();
+                epicLink.put(epic.getNumber(), epic.getUrl());
+                KPIExcelData excelData = new KPIExcelData();
+                excelData.setProjectName(projectName);
+                excelData.setEpicID(epicLink);
+                excelData.setEpicName(epic.getName());
+                excelData.setCostOfDelay(epic.getCostOfDelay());
+                DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendPattern(DateUtil.TIME_FORMAT).optionalStart().appendPattern(".")
+                        .appendFraction(ChronoField.MICRO_OF_SECOND, 1, 9, false).optionalEnd().toFormatter();
+                LocalDateTime dateTime = LocalDateTime.parse(epic.getChangeDate(), formatter);
+                excelData.setMonth(dateTime.format(DateTimeFormatter.ofPattern(MONTH_YEAR_FORMAT)));
+                excelData.setEpicEndDate(dateTime.format(DateTimeFormatter.ofPattern(DATE_YEAR_MONTH_FORMAT)));
+                kpiExcelData.add(excelData);
+            }
+        });
+    }
 
-	public static void populateKanbanCODExcelData(String projectName, List<KanbanJiraIssue> epicList, List<KPIExcelData> kpiExcelData) {
+    public static void populateKanbanCODExcelData(String projectName, List<KanbanJiraIssue> epicList, List<KPIExcelData> kpiExcelData) {
 
-		epicList.forEach(epic -> {
-			if (!epic.getProjectName().isEmpty()) {
-				Map<String, String> epicLink = new HashMap<>();
-				epicLink.put(epic.getNumber(), epic.getUrl());
-				KPIExcelData excelData = new KPIExcelData();
-				excelData.setProjectName(projectName);
-				excelData.setEpicID(epicLink);
-				excelData.setEpicName(epic.getName());
-				excelData.setCostOfDelay(epic.getCostOfDelay());
-				DateTime dateValue = DateTime.parse(epic.getChangeDate());
-				excelData.setMonth(dateValue.toString(MONTH_YEAR_FORMAT));
-				excelData.setEpicEndDate(dateValue.toString(DATE_YEAR_MONTH_FORMAT));
-				kpiExcelData.add(excelData);
-			}
-		});
-	}
+        epicList.forEach(epic -> {
+            if (!epic.getProjectName().isEmpty()) {
+                Map<String, String> epicLink = new HashMap<>();
+                epicLink.put(epic.getNumber(), epic.getUrl());
+                KPIExcelData excelData = new KPIExcelData();
+                excelData.setProjectName(projectName);
+                excelData.setEpicID(epicLink);
+                excelData.setEpicName(epic.getName());
+                excelData.setCostOfDelay(epic.getCostOfDelay());
+                DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendPattern(DateUtil.TIME_FORMAT).optionalStart().appendPattern(".")
+                        .appendFraction(ChronoField.MICRO_OF_SECOND, 1, 9, false).optionalEnd().toFormatter();
+                LocalDateTime dateTime = LocalDateTime.parse(epic.getChangeDate(), formatter);
+                excelData.setMonth(dateTime.format(DateTimeFormatter.ofPattern(MONTH_YEAR_FORMAT)));
+                excelData.setEpicEndDate(dateTime.toString());
+                kpiExcelData.add(excelData);
+            }
+        });
+    }
 
 
-	public static void populateReleaseFreqExcelData(List<ProjectVersion> projectVersionList, String projectName, Map<Long, String> dateMap, List<KPIExcelData> kpiExcelData) {
+    public static void populateReleaseFreqExcelData(List<ProjectVersion> projectVersionList, String projectName, Map<Long, String> dateMap, List<KPIExcelData> kpiExcelData) {
 
-		projectVersionList.forEach(pv -> {
-			KPIExcelData excelData = new KPIExcelData();
-			excelData.setProjectName(projectName);
-			excelData.setReleaseName(pv.getDescription());
-			excelData.setReleaseDesc(pv.getName());
-			excelData.setReleaseEndDate(pv.getReleaseDate().toString(DATE_YEAR_MONTH_FORMAT));
-			excelData.setMonth(dateMap.get(pv.getId()));
-			kpiExcelData.add(excelData);
+        projectVersionList.forEach(pv -> {
+            KPIExcelData excelData = new KPIExcelData();
+            excelData.setProjectName(projectName);
+            excelData.setReleaseName(pv.getDescription());
+            excelData.setReleaseDesc(pv.getName());
+            excelData.setReleaseEndDate(pv.getReleaseDate().toString(DATE_YEAR_MONTH_FORMAT));
+            excelData.setMonth(pv.getReleaseDate().toString(MONTH_YEAR_FORMAT));
+            kpiExcelData.add(excelData);
 
-		});
+        });
 
-	}
+    }
 
-	// incomplete for this pr
-	public static void populateDeploymentFrequencyExcelData(String projectName, DeploymentFrequencyInfo dfi, List<KPIExcelData> kpiExcelData) {
+    public static void populateDeploymentFrequencyExcelData(String projectName, DeploymentFrequencyInfo dfi, List<KPIExcelData> kpiExcelData) {
 
-		for (int i=0; i < dfi.getJobNameList().size(); i++) {
-			KPIExcelData excelData = new KPIExcelData();
-			excelData.setProjectName(projectName);
-			excelData.setDeploymentDate(dfi.getDeploymentDateList().get(i));
-			excelData.setJobName(dfi.getJobNameList().get(i));
-			excelData.setMonth(dfi.getMonthList().get(i));
-			excelData.setDeploymentEnvironment(dfi.getEnvironmentList().get(i));
-			excelData.setMonth(dfi.getMonthList().get(i));
-			kpiExcelData.add(excelData);
+        for (int i = 0; i < dfi.getJobNameList().size(); i++) {
+            KPIExcelData excelData = new KPIExcelData();
+            excelData.setProjectName(projectName);
+            excelData.setDeploymentDate(dfi.getDeploymentDateList().get(i));
+            excelData.setJobName(dfi.getJobNameList().get(i));
+            excelData.setMonth(dfi.getMonthList().get(i));
+            excelData.setDeploymentEnvironment(dfi.getEnvironmentList().get(i));
+            excelData.setMonth(dfi.getMonthList().get(i));
+            kpiExcelData.add(excelData);
 
-		}
+        }
 
-	}
+    }
 
 }

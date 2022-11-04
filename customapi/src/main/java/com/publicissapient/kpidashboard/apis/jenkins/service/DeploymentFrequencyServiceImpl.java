@@ -29,7 +29,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bson.types.ObjectId;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -56,17 +55,15 @@ import static com.publicissapient.kpidashboard.common.constant.CommonConstant.HI
 @Slf4j
 public class DeploymentFrequencyServiceImpl extends JenkinsKPIService<Long, Long, Map<ObjectId, List<Deployment>>> {
 
-    @Autowired
-    private ConfigHelperService configHelperService;
-
-    @Autowired
-    private DeploymentRepository deploymentRepository;
-
-    @Autowired
-    private CustomApiConfig customApiConfig;
-
+    private static final String MONTH_YEAR_FORMAT = "MMM yyyy";
     private final List<String> toolList = Arrays.asList(ProcessorConstants.BAMBOO, ProcessorConstants.JENKINS,
             ProcessorConstants.TEAMCITY, ProcessorConstants.AZUREPIPELINE);
+    @Autowired
+    private ConfigHelperService configHelperService;
+    @Autowired
+    private DeploymentRepository deploymentRepository;
+    @Autowired
+    private CustomApiConfig customApiConfig;
 
     @Override
     public Long calculateKPIMetrics(Map<ObjectId, List<Deployment>> objectIdListMap) {
@@ -259,7 +256,7 @@ public class DeploymentFrequencyServiceImpl extends JenkinsKPIService<Long, Long
                 deploymentMapMonthWise.forEach((month, deploymentListCurrentMonth) -> {
                     DataCount dataCount = createDataCount(trendLineName, envName, month, deploymentListCurrentMonth);
                     dataCountList.add(dataCount);
-                    setDeploymentFrequencyInfoForExcel(deploymentFrequencyInfo, deploymentListCurrentMonth, month);
+                    setDeploymentFrequencyInfoForExcel(deploymentFrequencyInfo, deploymentListCurrentMonth);
 
                 });
                 aggDataCountList.addAll(dataCountList);
@@ -298,7 +295,6 @@ public class DeploymentFrequencyServiceImpl extends JenkinsKPIService<Long, Long
     }
 
 
-
     /**
      * Set KPI data list for excel
      *
@@ -307,7 +303,7 @@ public class DeploymentFrequencyServiceImpl extends JenkinsKPIService<Long, Long
      * @return
      */
     private void setDeploymentFrequencyInfoForExcel(DeploymentFrequencyInfo deploymentFrequencyInfo,
-                                                    List<Deployment> deploymentListCurrentMonth, String month) {
+                                                    List<Deployment> deploymentListCurrentMonth) {
         if (null != deploymentFrequencyInfo && CollectionUtils.isNotEmpty(deploymentListCurrentMonth)) {
             deploymentListCurrentMonth.stream().forEach(deployment -> {
                 deploymentFrequencyInfo.addEnvironmentList(deployment.getEnvName());
@@ -317,7 +313,9 @@ public class DeploymentFrequencyServiceImpl extends JenkinsKPIService<Long, Long
                     deploymentFrequencyInfo.addJobNameList(deployment.getJobName());
                 }
                 deploymentFrequencyInfo.addDeploymentDateList(deployment.getStartTime());
-                deploymentFrequencyInfo.addMonthList(month);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DateUtil.TIME_FORMAT);
+                LocalDateTime dateTime = LocalDateTime.parse(deployment.getStartTime(), formatter);
+                deploymentFrequencyInfo.addMonthList(dateTime.format(DateTimeFormatter.ofPattern(MONTH_YEAR_FORMAT)));
             });
         }
     }
@@ -330,13 +328,13 @@ public class DeploymentFrequencyServiceImpl extends JenkinsKPIService<Long, Long
      */
     private Map<String, List<Deployment>> getLastNMonth(int count) {
         Map<String, List<Deployment>> lastNMonth = new LinkedHashMap<>();
-        DateTime currentDate = DateTime.now();
-        String currentDateStr = currentDate.getYear() + Constant.DASH + currentDate.getMonthOfYear();
+        LocalDateTime currentDate = LocalDateTime.now();
+        String currentDateStr = currentDate.getYear() + Constant.DASH + currentDate.getMonthValue();
         lastNMonth.put(currentDateStr, new ArrayList<>());
-        DateTime lastMonth = DateTime.now();
+        LocalDateTime lastMonth = LocalDateTime.now();
         for (int i = 1; i < count; i++) {
             lastMonth = lastMonth.minusMonths(1);
-            String lastMonthStr = lastMonth.getYear() + Constant.DASH + lastMonth.getMonthOfYear();
+            String lastMonthStr = lastMonth.getYear() + Constant.DASH + lastMonth.getMonthValue();
             lastNMonth.put(lastMonthStr, new ArrayList<>());
 
         }
