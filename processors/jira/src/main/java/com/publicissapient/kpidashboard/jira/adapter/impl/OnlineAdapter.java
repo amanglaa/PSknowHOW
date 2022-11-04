@@ -182,11 +182,15 @@ public class OnlineAdapter implements JiraAdapter {
 
 	public List<Issue> getEpicIssues(List<String> epicKeyList) {
 		List<Issue> issueList = new ArrayList<>();
-		epicKeyList.forEach(epicKey -> {
-			Promise<Issue> promise = client.getCustomIssueClient().
-					getIssue(epicKey, ImmutableList.of(SCHEMA, NAMES, CHANGELOG));
-			issueList.add(promise.claim());
-		});
+		try {
+			epicKeyList.forEach(epicKey -> {
+				Promise<Issue> promise = client.getCustomIssueClient().
+						getIssue(epicKey, ImmutableList.of(SCHEMA, NAMES, CHANGELOG));
+				issueList.add(promise.claim());
+			});
+		} catch (RestClientException e) {
+			log.error("error fetching epic", e.getCause());
+		}
 		return issueList;
 	}
 
@@ -469,7 +473,7 @@ public class OnlineAdapter implements JiraAdapter {
 	 */
 	@Override
 	public void getSprintReport(ProjectConfFieldMapping projectConfig, String sprintId, String boardId,
-			SprintDetails sprintDetails,SprintDetails dbSprintDetails) {
+			SprintDetails sprint,SprintDetails dbSprintDetails) {
 		log.info("Start Calling sprint report api. Sprint Id : {} , Board Id : {}",sprintId,boardId);
 		try {
 			JiraToolConfig jiraToolConfig = projectConfig.getJira();
@@ -479,7 +483,7 @@ public class OnlineAdapter implements JiraAdapter {
 				URLConnection connection;
 
 				connection = url.openConnection();
-				getReport(getDataFromServer(projectConfig, (HttpURLConnection) connection),sprintDetails,projectConfig,dbSprintDetails,boardId);
+				getReport(getDataFromServer(projectConfig, (HttpURLConnection) connection),sprint,projectConfig,dbSprintDetails,boardId);
 			}
 		log.info("End sprint report api. Sprint Id : {} , Board Id : {}",sprintId,boardId);
 		} catch (RestClientException rce) {
@@ -507,7 +511,7 @@ public class OnlineAdapter implements JiraAdapter {
 
 	}
 	
-	private void getReport(String sprintReportObj,SprintDetails sprintDetails,ProjectConfFieldMapping projectConfig,
+	private void getReport(String sprintReportObj,SprintDetails sprint,ProjectConfFieldMapping projectConfig,
 								 SprintDetails dbSprintDetails,String boardId) {
 		if (StringUtils.isNotBlank(sprintReportObj)) {
 			JSONArray completedIssuesJson = new JSONArray();
@@ -517,7 +521,7 @@ public class OnlineAdapter implements JiraAdapter {
 			JSONObject addedIssuesJson = new JSONObject();
 			JSONObject entityDataJson = new JSONObject();
 
-			boolean otherBoardExist = findIfOtherBoardExist(dbSprintDetails);
+			boolean otherBoardExist = findIfOtherBoardExist(sprint);
 			Set<SprintIssue> completedIssues = initializeIssues(null == dbSprintDetails ? new HashSet<>()
 					: dbSprintDetails.getCompletedIssues(), boardId, otherBoardExist);
 			Set<SprintIssue> notCompletedIssues = initializeIssues(null == dbSprintDetails ? new HashSet<>()
@@ -528,7 +532,8 @@ public class OnlineAdapter implements JiraAdapter {
 					: dbSprintDetails.getCompletedIssuesAnotherSprint(), boardId, otherBoardExist);
 			Set<SprintIssue> totalIssues = initializeIssues(null == dbSprintDetails ? new HashSet<>()
 					: dbSprintDetails.getTotalIssues(), boardId, otherBoardExist);
-			Set<String> addedIssues = initializeAddedIssues(totalIssues, otherBoardExist);
+			Set<String> addedIssues = initializeAddedIssues(null == dbSprintDetails ? new HashSet<>()
+					: dbSprintDetails.getAddedIssues(),totalIssues,puntedIssues, otherBoardExist);
 			try {
 				JSONObject obj = (JSONObject)new JSONParser().parse(sprintReportObj);
 				if(null!=obj) {
@@ -554,12 +559,12 @@ public class OnlineAdapter implements JiraAdapter {
 				
 				addedIssues = setAddedIssues(addedIssuesJson, addedIssues);
 
-				sprintDetails.setCompletedIssues(completedIssues);
-				sprintDetails.setNotCompletedIssues(notCompletedIssues);
-				sprintDetails.setCompletedIssuesAnotherSprint(completedIssuesAnotherSprint);
-				sprintDetails.setPuntedIssues(puntedIssues);
-				sprintDetails.setAddedIssues(addedIssues);
-				sprintDetails.setTotalIssues(totalIssues);
+				sprint.setCompletedIssues(completedIssues);
+				sprint.setNotCompletedIssues(notCompletedIssues);
+				sprint.setCompletedIssuesAnotherSprint(completedIssuesAnotherSprint);
+				sprint.setPuntedIssues(puntedIssues);
+				sprint.setAddedIssues(addedIssues);
+				sprint.setTotalIssues(totalIssues);
 
 			} catch (ParseException pe) {
 				log.error("Parser exception when parsing statuses", pe);
@@ -578,17 +583,23 @@ public class OnlineAdapter implements JiraAdapter {
 	}
 
 
-	private Set<String> initializeAddedIssues(Set<SprintIssue> totalIssues, boolean otherBoardExist) {
+	private Set<String> initializeAddedIssues(Set<String> addedIssue, Set<SprintIssue> totalIssues,
+											  Set<SprintIssue> puntedIssues, boolean otherBoardExist) {
 		if (otherBoardExist) {
-			return totalIssues.stream().map(issue->issue.getNumber()).collect(Collectors.toSet());
+			Set<String> keySet = CollectionUtils.emptyIfNull(totalIssues).stream().map(issue -> issue.getNumber())
+					.collect(Collectors.toSet());
+			keySet.addAll(CollectionUtils.emptyIfNull(puntedIssues).stream().map(issue -> issue.getNumber())
+					.collect(Collectors.toSet()));
+			addedIssue.retainAll(keySet);
+			return addedIssue;
 		} else {
 			return new HashSet<>();
 		}
 	}
 
-	private boolean findIfOtherBoardExist(SprintDetails dbSprintDetails) {
+	private boolean findIfOtherBoardExist(SprintDetails sprint) {
 		boolean exist = false;
-		if(null != dbSprintDetails && dbSprintDetails.getOriginBoardId().size() > 1){
+		if(null != sprint && sprint.getOriginBoardId().size() > 1){
 			exist = true;
 		}
 		return exist;

@@ -116,7 +116,7 @@ public interface JiraAdapter {
 	 * @param SprintDetails sprintdetails object
 	 */
 	public void getSprintReport(ProjectConfFieldMapping projectConfig, String sprintId, String boardId,
-			SprintDetails sprintDetails, SprintDetails dbSprintDetails);
+			SprintDetails sprint, SprintDetails dbSprintDetails);
 
 	List<Issue> getEpic(ProjectConfFieldMapping projectConfig, String boardId);
 
