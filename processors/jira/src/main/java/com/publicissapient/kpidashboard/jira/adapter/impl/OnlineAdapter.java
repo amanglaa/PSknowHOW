@@ -466,10 +466,11 @@ public class OnlineAdapter implements JiraAdapter {
 	/**
 	 * Gets the sprint report based on sprint id and board id
 	 *
-	 * @param projectConfig
-	 * @param sprintId
-	 * @param boardId
-	 * @param sprintDetails
+	 * @param projectConfig projectConfig
+	 * @param sprintId sprintId
+	 * @param boardId boardId
+	 * @param sprint sprint
+	 * @param dbSprintDetails old dbSprintDetails
 	 */
 	@Override
 	public void getSprintReport(ProjectConfFieldMapping projectConfig, String sprintId, String boardId,
@@ -631,9 +632,9 @@ public class OnlineAdapter implements JiraAdapter {
 	}
 
 	/**
-	 * @param addedIssuesJson
-	 * @param addedIssues
-	 * @return
+	 * @param addedIssuesJson addedIssuesJson
+	 * @param addedIssues addedIssues
+	 * @return added issues
 	 */
 	@SuppressWarnings("unchecked")
 	private Set<String> setAddedIssues(JSONObject addedIssuesJson, Set<String> addedIssues) {
@@ -729,10 +730,10 @@ public class OnlineAdapter implements JiraAdapter {
 		return name;
 	}
 	/**
-	 * @param projectConfig
-	 * @param issues
-	 * @param projectConfig
-	 * @param totalIssues
+	 * @param projectConfig projectConfig
+	 * @param issues issues
+	 * @param projectConfig projectConfig
+	 * @param totalIssues totalIssues
 	 */
 	@SuppressWarnings("unchecked")
 	private void setIssues(JSONArray issuesJson, Set<SprintIssue> issues,
@@ -782,7 +783,7 @@ public class OnlineAdapter implements JiraAdapter {
 					URLConnection connection;
 					connection = url.openConnection();
 					String jsonResponse = getDataFromServer(projectConfig, (HttpURLConnection) connection);
-					isLast = populateData(jsonResponse, epicList, boardId);
+					isLast = populateData(jsonResponse, epicList);
 					startIndex = epicList.size() + 1;
 				}while(!isLast);
 			}
@@ -797,7 +798,7 @@ public class OnlineAdapter implements JiraAdapter {
 		return getEpicIssues(epicList);
 	}
 
-	private boolean populateData(String sprintReportObj, List<String> epicList, String boardId) {
+	private boolean populateData(String sprintReportObj, List<String> epicList) {
 		boolean isLast = true;
 		if (StringUtils.isNotBlank(sprintReportObj)) {
 			JSONArray valuesJson = new JSONArray();
@@ -806,7 +807,7 @@ public class OnlineAdapter implements JiraAdapter {
 				if(null!=obj) {
 					valuesJson = (JSONArray)obj.get("values");
 				}
-				getEpic(valuesJson, epicList, boardId);
+				getEpic(valuesJson, epicList);
 				isLast = Boolean.valueOf(obj.get("isLast").toString());
 			} catch (ParseException pe) {
 				log.error("Parser exception when parsing statuses", pe);
@@ -815,7 +816,7 @@ public class OnlineAdapter implements JiraAdapter {
 		return isLast;
 	}
 
-	private void getEpic(JSONArray valuesJson,List<String> epicList,String boardId) {
+	private void getEpic(JSONArray valuesJson,List<String> epicList) {
 		valuesJson.forEach(values -> {
 			JSONObject sprintJson = (JSONObject) values;
 			if (null != sprintJson) {

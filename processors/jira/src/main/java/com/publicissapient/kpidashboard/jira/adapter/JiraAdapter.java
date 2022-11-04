@@ -35,7 +35,9 @@ public interface JiraAdapter {
 
 	/**
 	 * Gets all issues from JIRA
-	 * 
+	 *
+	 * @param boardDetails
+	 * 			  boardDetails
 	 * @param projectConfig
 	 *            projectConfig Object
 	 * @param startDateTimeByIssueType
