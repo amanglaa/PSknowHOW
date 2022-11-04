@@ -427,7 +427,7 @@ public class KPIExcelUtility {
         }
     }
 
-    public static void populateCODExcelData(String projectName, List<JiraIssue> epicList, Map<String, String> dateList, List<KPIExcelData> kpiExcelData) {
+    public static void populateCODExcelData(String projectName, List<JiraIssue> epicList, List<KPIExcelData> kpiExcelData) {
 
         epicList.forEach(epic -> {
             if (null != epic) {
@@ -470,7 +470,7 @@ public class KPIExcelUtility {
     }
 
 
-    public static void populateReleaseFreqExcelData(List<ProjectVersion> projectVersionList, String projectName, Map<Long, String> dateMap, List<KPIExcelData> kpiExcelData) {
+    public static void populateReleaseFreqExcelData(List<ProjectVersion> projectVersionList, String projectName, List<KPIExcelData> kpiExcelData) {
 
         projectVersionList.forEach(pv -> {
             KPIExcelData excelData = new KPIExcelData();
