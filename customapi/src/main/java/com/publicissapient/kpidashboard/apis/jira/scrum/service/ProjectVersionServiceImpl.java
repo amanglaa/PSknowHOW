@@ -155,14 +155,12 @@ public class ProjectVersionServiceImpl extends JiraKPIService<Double, List<Objec
         List<ProjectVersion> projectVersionList = Lists.newArrayList();
         List<String> dateList = Lists.newArrayList();
 
-        Map<Long, String> dateMap = new HashMap<>();
         for (ProjectVersion pv : projectRelease.getListProjectVersion()) {
             if (pv.getReleaseDate() != null) {
                 String yearMonth = pv.getReleaseDate().getYear() + Constant.DASH + pv.getReleaseDate().getMonthOfYear();
                 if (dateCount.keySet().contains(yearMonth)) {
                     projectVersionList.add(pv);
                     dateList.add(yearMonth);
-                    dateMap.put(pv.getId(), yearMonth);
                     dateCount.put(yearMonth, dateCount.get(yearMonth) + 1);
                 }
             }
@@ -172,7 +170,7 @@ public class ProjectVersionServiceImpl extends JiraKPIService<Double, List<Objec
         mapTmp.get(node.getId()).setValue(dcList);
 
         if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-            KPIExcelUtility.populateReleaseFreqExcelData(projectVersionList, projectName, dateMap, excelData);
+            KPIExcelUtility.populateReleaseFreqExcelData(projectVersionList, projectName, excelData);
         }
 
     }
