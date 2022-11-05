@@ -19,16 +19,15 @@
 package com.publicissapient.kpidashboard.apis.model;
 
 
-import java.util.List;
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Represents the Excel Data for KPIs
@@ -194,5 +193,42 @@ public class KPIExcelData {
 
     @JsonProperty("Month")
     private String month;
+
+    @JsonProperty("Start Time")
+    private String startTime;
+
+    @JsonProperty("End Time")
+    private String endTime;
+
+    @JsonProperty("Duration")
+    private String duration;
+
+    @JsonProperty("Build Status")
+    private String buildStatus;
+
+    @JsonProperty("Started By")
+    private String startedBy;
+
+    @JsonProperty("Build Url")
+    private String buildUrl;
+
+    @JsonProperty("Repository Url")
+    private String repositoryURL;
+
+    @JsonProperty("Branch")
+    private String branch;
+
+    @JsonProperty("Mean Time To Merge (In Hours)")
+    private String meanTimetoMerge;
+
+    @JsonProperty("Day")
+    private String days;
+
+    @JsonProperty("No. Of Commit")
+    private String numberOfCommit;
+
+    @JsonProperty("No. of Merge")
+    private String numberOfMerge;
+
 
 }

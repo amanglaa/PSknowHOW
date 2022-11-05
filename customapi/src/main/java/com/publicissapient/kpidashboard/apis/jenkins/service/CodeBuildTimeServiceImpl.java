@@ -22,15 +22,18 @@ import com.publicissapient.kpidashboard.apis.appsetting.service.ConfigHelperServ
 import com.publicissapient.kpidashboard.apis.config.CustomApiConfig;
 import com.publicissapient.kpidashboard.apis.constant.Constant;
 import com.publicissapient.kpidashboard.apis.enums.KPICode;
+import com.publicissapient.kpidashboard.apis.enums.KPIExcelColumn;
 import com.publicissapient.kpidashboard.apis.enums.KPISource;
 import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
 import com.publicissapient.kpidashboard.apis.model.CodeBuildTimeInfo;
+import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
 import com.publicissapient.kpidashboard.apis.model.KpiElement;
 import com.publicissapient.kpidashboard.apis.model.KpiRequest;
 import com.publicissapient.kpidashboard.apis.model.Node;
 import com.publicissapient.kpidashboard.apis.model.ProjectFilter;
 import com.publicissapient.kpidashboard.apis.model.TreeAggregatorDetail;
 import com.publicissapient.kpidashboard.apis.util.AggregationUtils;
+import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
 import com.publicissapient.kpidashboard.common.constant.BuildStatus;
 import com.publicissapient.kpidashboard.common.constant.CommonConstant;
 import com.publicissapient.kpidashboard.common.constant.ProcessorConstants;
@@ -79,19 +82,15 @@ import static com.publicissapient.kpidashboard.common.constant.CommonConstant.HI
 @Slf4j
 public class CodeBuildTimeServiceImpl extends JenkinsKPIService<Long, List<Object>, Map<ObjectId, List<Build>>> {
 
-    @Autowired
-    private ConfigHelperService configHelperService;
-
-    @Autowired
-    private BuildRepository buildRepository;
-
-    @Autowired
-    private CustomApiConfig customApiConfig;
-
+    private static final long DAYS_IN_WEEKS = 7;
     private final List<String> processorsList = Arrays.asList(ProcessorConstants.BAMBOO, ProcessorConstants.JENKINS,
             ProcessorConstants.TEAMCITY, ProcessorConstants.AZUREPIPELINE);
-
-    private static final long DAYS_IN_WEEKS = 7;
+    @Autowired
+    private ConfigHelperService configHelperService;
+    @Autowired
+    private BuildRepository buildRepository;
+    @Autowired
+    private CustomApiConfig customApiConfig;
 
     @Override
     public String getQualifierType() {
@@ -166,8 +165,8 @@ public class CodeBuildTimeServiceImpl extends JenkinsKPIService<Long, List<Objec
         if (MapUtils.isEmpty(buildGroup)) {
             return;
         }
-        Map<String, ValidationData> mapOfSprintAndData = new HashMap<>();
 
+        List<KPIExcelData> excelData = new ArrayList<>();
         projectLeafNodeList.forEach(node -> {
             String trendLineName = node.getProjectFilter().getName();
             CodeBuildTimeInfo codeBuildTimeInfo = new CodeBuildTimeInfo();
@@ -206,11 +205,13 @@ public class CodeBuildTimeServiceImpl extends JenkinsKPIService<Long, List<Objec
             prepareInfoForBuild(codeBuildTimeInfo, end, aggBuildList, trendLineName, trendValueMap,
                     Constant.AGGREGATED_VALUE, aggDataMap);
             mapTmp.get(node.getId()).setValue(aggDataMap);
-            ValidationData validationData = createValidationDataForNode(codeBuildTimeInfo);
-            populateValidationDataObject(kpiElement, requestTrackerId, mapOfSprintAndData, validationData,
+
+            populateValidationDataObject(requestTrackerId, excelData,
                     trendLineName);
 
         });
+        kpiElement.setExcelData(excelData);
+        kpiElement.setExcelColumns(KPIExcelColumn.CODE_BUILD_TIME.getColumns());
     }
 
     private boolean isValidJob(Tool job) {
@@ -431,20 +432,16 @@ public class CodeBuildTimeServiceImpl extends JenkinsKPIService<Long, List<Objec
     /**
      * Populates data for validation.
      *
-     * @param kpiElement
+     *
      * @param requestTrackerId
-     * @param validationDataMap
-     * @param validationData
+     * @param excelData
      * @param projectName
      */
-    private void populateValidationDataObject(KpiElement kpiElement, String requestTrackerId,
-                                              Map<String, ValidationData> validationDataMap, ValidationData validationData, String projectName) {
+    private void populateValidationDataObject(String requestTrackerId,
+                                              List<KPIExcelData> excelData, String projectName) {
 
         if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-
-            validationDataMap.put(projectName, validationData);
-
-            kpiElement.setMapOfSprintAndData(validationDataMap);
+            KPIExcelUtility.populateCodeBuildTime(excelData, projectName);
 
         }
     }

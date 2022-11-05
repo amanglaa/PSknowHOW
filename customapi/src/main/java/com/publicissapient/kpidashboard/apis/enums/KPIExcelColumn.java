@@ -26,44 +26,49 @@ import java.util.List;
  */
 public enum KPIExcelColumn {
 
-    AVERAGE_RESOLUTION_TIME("kpi83", Arrays.asList("Sprint Name","Story ID","Issue Description","Issue Type","Resolution Time(In Days)")),
-    LEAD_TIME("kpi3", Arrays.asList("Project Name","Intake to DOR(In Days)","DOR to DOD (In Days)","DOD TO Live (In Days)","Lead Time (In Days)")),
-    SPRINT_VELOCITY("kpi39", Arrays.asList("Sprint Name","Story ID","Issue Description","Story Size(In story point)")),
-    SPRINT_CAPACITY_UTILIZATION("kpi46", Arrays.asList("Sprint Name","Story ID","Issue Description","Original Time Estimate (in hours)","Total Time Spent (in hours)")),
-    COMMITMENT_RELIABILITY("kpi72",Arrays.asList("Sprint Name","Story ID","Closed")),
+    CODE_BUILD_TIME("kpi8", Arrays.asList("Project Name", "Job Name", "Start Time", "End Time", "Duration", "Build Status", "Started By", "Build Url", "Weeks")),
+    STORY_COUNT("kpi40", Arrays.asList("Sprint Name", "Story ID", "Issue Description")),
+    CODE_COMMIT("kpi11", Arrays.asList("Project Name", "Repository Url", "Branch", "Day", "No. Of Commit", "No. of Merge")),
+
+    MEAN_TIME_TO_MERGE("kpi84", Arrays.asList("Project Name", "Repository Url", "Branch", "Weeks", "Mean Time To Merge (In Hours)")),
+    AVERAGE_RESOLUTION_TIME("kpi83", Arrays.asList("Sprint Name", "Story ID", "Issue Description", "Issue Type", "Resolution Time(In Days)")),
+    LEAD_TIME("kpi3", Arrays.asList("Project Name", "Intake to DOR(In Days)", "DOR to DOD (In Days)", "DOD TO Live (In Days)", "Lead Time (In Days)")),
+    SPRINT_VELOCITY("kpi39", Arrays.asList("Sprint Name", "Story ID", "Issue Description", "Story Size(In story point)")),
+    SPRINT_CAPACITY_UTILIZATION("kpi46", Arrays.asList("Sprint Name", "Story ID", "Issue Description", "Original Time Estimate (in hours)", "Total Time Spent (in hours)")),
+    COMMITMENT_RELIABILITY("kpi72", Arrays.asList("Sprint Name", "Story ID", "Closed")),
 
 
-    DEFECT_INJECTION_RATE("kpi14", Arrays.asList("Sprint Name","Story ID","Issue Description","Linked Defects")),
+    DEFECT_INJECTION_RATE("kpi14", Arrays.asList("Sprint Name", "Story ID", "Issue Description", "Linked Defects")),
 
-    FIRST_TIME_PASS_RATE("kpi82", Arrays.asList("Sprint Name","Story ID","Issue Description","First Time Pass")),
+    FIRST_TIME_PASS_RATE("kpi82", Arrays.asList("Sprint Name", "Story ID", "Issue Description", "First Time Pass")),
 
-    DEFECT_DENSITY("kpi111",  Arrays.asList("Sprint Name","Story ID","Issue Description","Linked Defects")),
+    DEFECT_DENSITY("kpi111", Arrays.asList("Sprint Name", "Story ID", "Issue Description", "Linked Defects")),
 
-    DEFECT_SEEPAGE_RATE("kpi35", Arrays.asList("Sprint Name","Defect ID","Issue Description","Escaped Defect")),
+    DEFECT_SEEPAGE_RATE("kpi35", Arrays.asList("Sprint Name", "Defect ID", "Issue Description", "Escaped Defect")),
 
-    DEFECT_REMOVAL_EFFICIENCY("kpi34", Arrays.asList("Sprint Name","Defect ID","Issue Description","Defect Removed")),
+    DEFECT_REMOVAL_EFFICIENCY("kpi34", Arrays.asList("Sprint Name", "Defect ID", "Issue Description", "Defect Removed")),
 
-    DEFECT_REJECTION_RATE("kpi37", Arrays.asList("Sprint Name","Defect ID","Issue Description","Defect Rejected")),
+    DEFECT_REJECTION_RATE("kpi37", Arrays.asList("Sprint Name", "Defect ID", "Issue Description", "Defect Rejected")),
 
-    DEFECT_COUNT_BY_PRIORITY("kpi28", Arrays.asList("Sprint Name","Defect ID","Issue Description","Priority")),
+    DEFECT_COUNT_BY_PRIORITY("kpi28", Arrays.asList("Sprint Name", "Defect ID", "Issue Description", "Priority")),
 
-    DEFECT_COUNT_BY_RCA("kpi36",  Arrays.asList("Sprint Name","Defect ID","Issue Description","Root Cause")),
+    DEFECT_COUNT_BY_RCA("kpi36", Arrays.asList("Sprint Name", "Defect ID", "Issue Description", "Root Cause")),
 
-    CREATED_VS_RESOLVED_DEFECTS("kpi126", Arrays.asList("Sprint Name","Created Defect ID","Issue Description","Resolved")),
+    CREATED_VS_RESOLVED_DEFECTS("kpi126", Arrays.asList("Sprint Name", "Created Defect ID", "Issue Description", "Resolved")),
 
-    REGRESSION_AUTOMATION_COVERAGE("kpi42", Arrays.asList("Sprint Name","Test Case ID","Automated")),
+    REGRESSION_AUTOMATION_COVERAGE("kpi42", Arrays.asList("Sprint Name", "Test Case ID", "Automated")),
 
-    INSPRINT_AUTOMATION_COVERAGE("kpi16", Arrays.asList("Sprint Name","Test Case ID","Linked Story ID","Automated")),
+    INSPRINT_AUTOMATION_COVERAGE("kpi16", Arrays.asList("Sprint Name", "Test Case ID", "Linked Story ID", "Automated")),
 
-    UNIT_TEST_COVERAGE("kpi17", Arrays.asList("Project","Job Name","Unit Coverage","Weeks")),
+    UNIT_TEST_COVERAGE("kpi17", Arrays.asList("Project", "Job Name", "Unit Coverage", "Weeks")),
 
-    SONAR_VIOLATIONS("kpi38", Arrays.asList("Project","Job Name","Sonar Violations","Weeks")),
+    SONAR_VIOLATIONS("kpi38", Arrays.asList("Project", "Job Name", "Sonar Violations", "Weeks")),
 
-    SONAR_TECH_DEBT("kpi27", Arrays.asList("Project","Job Name","Tech Debt (in days)","Weeks")),
+    SONAR_TECH_DEBT("kpi27", Arrays.asList("Project", "Job Name", "Tech Debt (in days)", "Weeks")),
 
-    CHANGE_FAILURE_RATE("kpi116", Arrays.asList("Project","Job Name","Total Build Count","Total Build Failure Count","Build Failure Percentage","Weeks")),
+    CHANGE_FAILURE_RATE("kpi116", Arrays.asList("Project", "Job Name", "Total Build Count", "Total Build Failure Count", "Build Failure Percentage", "Weeks")),
 
-    TEST_EXECUTION_AND_PASS_PERCENTAGE("kpi70", Arrays.asList("Sprint Name","Total Test","Executed Test","Execution %","Passed Test","Passed %")),
+    TEST_EXECUTION_AND_PASS_PERCENTAGE("kpi70", Arrays.asList("Sprint Name", "Total Test", "Executed Test", "Execution %", "Passed Test", "Passed %")),
 
     COST_OF_DELAY("kpi113", Arrays.asList("Project Name", "Cost of Delay", "Epic ID", "Epic Name", "Epic End Date", "Month")),
 
