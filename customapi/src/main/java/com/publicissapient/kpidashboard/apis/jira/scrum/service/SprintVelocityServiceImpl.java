@@ -18,44 +18,38 @@
 
 package com.publicissapient.kpidashboard.apis.jira.scrum.service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
+import com.publicissapient.kpidashboard.apis.common.service.impl.KpiHelperService;
+import com.publicissapient.kpidashboard.apis.config.CustomApiConfig;
+import com.publicissapient.kpidashboard.apis.enums.Filters;
+import com.publicissapient.kpidashboard.apis.enums.KPICode;
 import com.publicissapient.kpidashboard.apis.enums.KPIExcelColumn;
+import com.publicissapient.kpidashboard.apis.enums.KPISource;
+import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
+import com.publicissapient.kpidashboard.apis.jira.service.JiraKPIService;
 import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
+import com.publicissapient.kpidashboard.apis.model.KpiElement;
+import com.publicissapient.kpidashboard.apis.model.KpiRequest;
+import com.publicissapient.kpidashboard.apis.model.Node;
+import com.publicissapient.kpidashboard.apis.model.TreeAggregatorDetail;
 import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
+import com.publicissapient.kpidashboard.apis.util.KpiDataHelper;
+import com.publicissapient.kpidashboard.common.constant.CommonConstant;
+import com.publicissapient.kpidashboard.common.model.application.DataCount;
+import com.publicissapient.kpidashboard.common.model.jira.JiraIssue;
+import com.publicissapient.kpidashboard.common.model.jira.SprintDetails;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.publicissapient.kpidashboard.apis.common.service.impl.KpiHelperService;
-import com.publicissapient.kpidashboard.apis.config.CustomApiConfig;
-import com.publicissapient.kpidashboard.apis.enums.Filters;
-import com.publicissapient.kpidashboard.apis.enums.KPICode;
-import com.publicissapient.kpidashboard.apis.enums.KPISource;
-import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
-import com.publicissapient.kpidashboard.apis.jira.service.JiraKPIService;
-import com.publicissapient.kpidashboard.apis.model.KpiElement;
-import com.publicissapient.kpidashboard.apis.model.KpiRequest;
-import com.publicissapient.kpidashboard.apis.model.Node;
-import com.publicissapient.kpidashboard.apis.model.TreeAggregatorDetail;
-import com.publicissapient.kpidashboard.apis.util.KpiDataHelper;
-import com.publicissapient.kpidashboard.common.constant.CommonConstant;
-import com.publicissapient.kpidashboard.common.model.application.DataCount;
-import com.publicissapient.kpidashboard.common.model.application.ValidationData;
-import com.publicissapient.kpidashboard.common.model.jira.JiraIssue;
-import com.publicissapient.kpidashboard.common.model.jira.SprintDetails;
-
-import lombok.extern.slf4j.Slf4j;
-
-import static java.util.stream.Collectors.toMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * This class calculates the DRR and trend analysis of the DRR.
@@ -184,29 +178,29 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 
         List<SprintDetails> sprintDetails = (List<SprintDetails>) sprintVelocityStoryMap.get(SPRINT_WISE_SPRINTDETAILS);
 
-		if(CollectionUtils.isNotEmpty(allJiraIssue)) {
-			if (CollectionUtils.isNotEmpty(sprintDetails)) {
-				sprintDetails.forEach(sd -> {
-					List<String> totalIssues = KpiDataHelper.getIssuesIdListBasedOnTypeFromSprintDetails(sd,
-							CommonConstant.TOTAL_ISSUES);
-					List<JiraIssue> sprintIssues = allJiraIssue.stream().filter(element -> totalIssues.contains(element.getNumber())).collect(Collectors.toList());
-					sprintWiseIssues.put(Pair.of(sd.getBasicProjectConfigId().toString(), sd.getSprintID()),
-							sprintIssues);
-				});
-			} else {
-				//start : for azure board sprint details collections empty so that we have to prepare data from jira issue
-				Map<String, List<JiraIssue>> projectWiseJiraIssues = allJiraIssue.stream()
-						.collect(Collectors.groupingBy(JiraIssue::getBasicProjectConfigId));
-				projectWiseJiraIssues.forEach((basicProjectConfigId, projectWiseIssuesList) -> {
-					Map<String, List<JiraIssue>> sprintWiseJiraIssues = projectWiseIssuesList.stream()
-							.filter(jiraIssue -> Objects.nonNull(jiraIssue.getSprintID()))
-							.collect(Collectors.groupingBy(JiraIssue::getSprintID));
-					sprintWiseJiraIssues.forEach((sprintId, sprintWiseIssuesList) -> sprintWiseIssues
-							.put(Pair.of(basicProjectConfigId, sprintId), sprintWiseIssuesList));
-				});
-			}
-			// end : for azure board sprint details collections empty so that we have to prepare data from jira issue.
-		}
+        if (CollectionUtils.isNotEmpty(allJiraIssue)) {
+            if (CollectionUtils.isNotEmpty(sprintDetails)) {
+                sprintDetails.forEach(sd -> {
+                    List<String> totalIssues = KpiDataHelper.getIssuesIdListBasedOnTypeFromSprintDetails(sd,
+                            CommonConstant.TOTAL_ISSUES);
+                    List<JiraIssue> sprintIssues = allJiraIssue.stream().filter(element -> totalIssues.contains(element.getNumber())).collect(Collectors.toList());
+                    sprintWiseIssues.put(Pair.of(sd.getBasicProjectConfigId().toString(), sd.getSprintID()),
+                            sprintIssues);
+                });
+            } else {
+                //start : for azure board sprint details collections empty so that we have to prepare data from jira issue
+                Map<String, List<JiraIssue>> projectWiseJiraIssues = allJiraIssue.stream()
+                        .collect(Collectors.groupingBy(JiraIssue::getBasicProjectConfigId));
+                projectWiseJiraIssues.forEach((basicProjectConfigId, projectWiseIssuesList) -> {
+                    Map<String, List<JiraIssue>> sprintWiseJiraIssues = projectWiseIssuesList.stream()
+                            .filter(jiraIssue -> Objects.nonNull(jiraIssue.getSprintID()))
+                            .collect(Collectors.groupingBy(JiraIssue::getSprintID));
+                    sprintWiseJiraIssues.forEach((sprintId, sprintWiseIssuesList) -> sprintWiseIssues
+                            .put(Pair.of(basicProjectConfigId, sprintId), sprintWiseIssuesList));
+                });
+            }
+            // end : for azure board sprint details collections empty so that we have to prepare data from jira issue.
+        }
 
         //Map<String, ValidationData> validationDataMap = new HashMap<>();
         List<KPIExcelData> excelData = new ArrayList<>();
@@ -217,15 +211,15 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
             Pair<String, String> currentNodeIdentifier = Pair
                     .of(node.getProjectFilter().getBasicProjectConfigId().toString(), currentSprintComponentId);
 
-			Map<String, List<JiraIssue>> currentSprintLeafVelocityMap = new HashMap<>();
-			double sprintVelocityForCurrentLeaf = 0.0d;
-			if (CollectionUtils.isNotEmpty(sprintWiseIssues.get(currentNodeIdentifier))) {
-				List<JiraIssue> sprintJiraIssues = sprintWiseIssues.get(currentNodeIdentifier);
-				sprintVelocityForCurrentLeaf = sprintJiraIssues.stream()
-						.mapToDouble(ji -> Double.valueOf(ji.getEstimate())).sum();
-				populateExcelDataObject(requestTrackerId, excelData, sprintJiraIssues,
-						node);
-			}
+            Map<String, List<JiraIssue>> currentSprintLeafVelocityMap = new HashMap<>();
+            double sprintVelocityForCurrentLeaf = 0.0d;
+            if (CollectionUtils.isNotEmpty(sprintWiseIssues.get(currentNodeIdentifier))) {
+                List<JiraIssue> sprintJiraIssues = sprintWiseIssues.get(currentNodeIdentifier);
+                sprintVelocityForCurrentLeaf = sprintJiraIssues.stream()
+                        .mapToDouble(ji -> Double.valueOf(ji.getEstimate())).sum();
+                populateExcelDataObject(requestTrackerId, excelData, sprintJiraIssues,
+                        node);
+            }
 
             setSprintWiseLogger(node.getSprintFilter().getName(), currentSprintLeafVelocityMap.get(SPRINTVELOCITYKEY),
                     sprintVelocityForCurrentLeaf);
@@ -246,18 +240,16 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
         kpiElement.setExcelColumns(KPIExcelColumn.SPRINT_VELOCITY.getColumns());
     }
 
-	/**
-	 * Populates Validation Data Object
-	 * 
-
-	 * @param requestTrackerId
-
-	 * @param jiraIssues
-	 * @param node
-	 */
-	private void populateExcelDataObject(String requestTrackerId,
-										 List<KPIExcelData> excelData, List<JiraIssue> jiraIssues,
-										 Node node) {
+    /**
+     * Populates Validation Data Object
+     *
+     * @param requestTrackerId
+     * @param jiraIssues
+     * @param node
+     */
+    private void populateExcelDataObject(String requestTrackerId,
+                                         List<KPIExcelData> excelData, List<JiraIssue> jiraIssues,
+                                         Node node) {
 
         if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
             String sprintName = node.getSprintFilter().getName();
@@ -268,51 +260,51 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
         }
     }
 
-	/**
-	 * Sets DB query Logger
-	 * 
-	 * @param jiraIssues
-	 */
-	private void setDbQueryLogger(List<JiraIssue> jiraIssues) {
+    /**
+     * Sets DB query Logger
+     *
+     * @param jiraIssues
+     */
+    private void setDbQueryLogger(List<JiraIssue> jiraIssues) {
 
-		if (customApiConfig.getApplicationDetailedLogger().equalsIgnoreCase("on")) {
-			log.info(SEPARATOR_ASTERISK);
-			log.info("************* Sprint Velocity (dB) *******************");
-			if (null != jiraIssues && !jiraIssues.isEmpty()) {
-				List<String> storyIdList = jiraIssues.stream().map(JiraIssue::getNumber).collect(Collectors.toList());
-				log.info("Story[{}]: {}", storyIdList.size(), storyIdList);
-			}
-			log.info(SEPARATOR_ASTERISK);
-			log.info("******************X----X*******************");
-		}
-	}
+        if (customApiConfig.getApplicationDetailedLogger().equalsIgnoreCase("on")) {
+            log.info(SEPARATOR_ASTERISK);
+            log.info("************* Sprint Velocity (dB) *******************");
+            if (null != jiraIssues && !jiraIssues.isEmpty()) {
+                List<String> storyIdList = jiraIssues.stream().map(JiraIssue::getNumber).collect(Collectors.toList());
+                log.info("Story[{}]: {}", storyIdList.size(), storyIdList);
+            }
+            log.info(SEPARATOR_ASTERISK);
+            log.info("******************X----X*******************");
+        }
+    }
 
-	/**
-	 * Sets Sprint wise Logger
-	 * 
-	 * @param sprint
-	 * @param storyFeatureList
-	 * @param sprintVelocity
-	 */
-	private void setSprintWiseLogger(String sprint, List<JiraIssue> storyFeatureList, Double sprintVelocity) {
+    /**
+     * Sets Sprint wise Logger
+     *
+     * @param sprint
+     * @param storyFeatureList
+     * @param sprintVelocity
+     */
+    private void setSprintWiseLogger(String sprint, List<JiraIssue> storyFeatureList, Double sprintVelocity) {
 
-		if (customApiConfig.getApplicationDetailedLogger().equalsIgnoreCase("on")) {
-			log.info(SEPARATOR_ASTERISK);
-			log.info("************* SPRINT WISE Sprint Velocity *******************");
-			log.info("Sprint: {}", sprint);
-			if (null != storyFeatureList && !storyFeatureList.isEmpty()) {
-				List<String> storyIdList = storyFeatureList.stream().map(JiraIssue::getNumber)
-						.collect(Collectors.toList());
-				log.info("Story[{}]: {}", storyIdList.size(), storyIdList);
-			}
-			log.info("Sprint Velocity: {}", sprintVelocity);
-			log.info(SEPARATOR_ASTERISK);
-			log.info(SEPARATOR_ASTERISK);
-		}
-	}
+        if (customApiConfig.getApplicationDetailedLogger().equalsIgnoreCase("on")) {
+            log.info(SEPARATOR_ASTERISK);
+            log.info("************* SPRINT WISE Sprint Velocity *******************");
+            log.info("Sprint: {}", sprint);
+            if (null != storyFeatureList && !storyFeatureList.isEmpty()) {
+                List<String> storyIdList = storyFeatureList.stream().map(JiraIssue::getNumber)
+                        .collect(Collectors.toList());
+                log.info("Story[{}]: {}", storyIdList.size(), storyIdList);
+            }
+            log.info("Sprint Velocity: {}", sprintVelocity);
+            log.info(SEPARATOR_ASTERISK);
+            log.info(SEPARATOR_ASTERISK);
+        }
+    }
 
-	@Override
-	public Double calculateKpiValue(List<Double> valueList, String kpiName) {
-		return calculateKpiValueForDouble(valueList, kpiName);
-	}
+    @Override
+    public Double calculateKpiValue(List<Double> valueList, String kpiName) {
+        return calculateKpiValueForDouble(valueList, kpiName);
+    }
 }
