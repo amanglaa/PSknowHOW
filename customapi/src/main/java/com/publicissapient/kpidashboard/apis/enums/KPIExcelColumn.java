@@ -36,6 +36,7 @@ public enum KPIExcelColumn {
 
 	COMMITMENT_RELIABILITY("kpi72",Arrays.asList("Sprint Name","Story ID","Closed")),
 
+
 	DEFECT_INJECTION_RATE("kpi14", Arrays.asList("Sprint Name","Story ID","Issue Description","Linked Defects")),
 
 	FIRST_TIME_PASS_RATE("kpi82", Arrays.asList("Sprint Name","Story ID","Issue Description","First Time Pass")),
@@ -67,6 +68,12 @@ public enum KPIExcelColumn {
 	CHANGE_FAILURE_RATE("kpi116", Arrays.asList("Project","Job Name","Total Build Count","Total Build Failure Count","Build Failure Percentage","Weeks")),
 
 	TEST_EXECUTION_AND_PASS_PERCENTAGE("kpi70", Arrays.asList("Sprint Name","Total Test","Executed Test","Execution %","Passed Test","Passed %")),
+
+    COST_OF_DELAY("kpi113", Arrays.asList("Project Name", "Cost of Delay", "Epic ID", "Epic Name", "Epic End Date", "Month")),
+
+    RELEASE_FREQUENCY("kpi73", Arrays.asList("Project Name", "Release Name", "Release Description", "Release End Date", "Month")),
+
+    DEPLOYMENT_FREQUENCY("kpi118", Arrays.asList("Project Name", "Date", "Job Name", "Month", "Environment")),
 
 	UNIT_TEST_COVERAGE_KANBAN("kpi62", Arrays.asList("Project","Job Name","Unit Coverage","Weeks")),
 

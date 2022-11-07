@@ -326,8 +326,8 @@ public class FirstTimePassRateServiceImpl extends JiraKPIService<Double, List<Ob
 		List<String> storyIdList = new ArrayList<>();
 		sprintWiseStories.forEach(s -> storyIdList.addAll(s.getStoryList()));
 		Set<JiraIssue> issueData = jiraIssueRepository.findIssueAndDescByNumber(storyIdList);
-		Map<String, JiraIssue> issueMapping = issueData.stream()
-				.collect(Collectors.toMap(JiraIssue::getNumber, Function.identity()));
+		Map<String, JiraIssue> issueMapping = new HashMap<>();
+		issueData.stream().forEach(issue -> issueMapping.putIfAbsent(issue.getNumber(), issue));
 
 		resultListMap.put(SPRINT_WISE_CLOSED_STORIES, sprintWiseStories);
 		resultListMap.put(FIRST_TIME_PASS_STORIES, defectListWoDrop);

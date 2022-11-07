@@ -40,11 +40,12 @@ import java.util.stream.Collectors;
 import com.atlassian.jira.rest.client.api.RestClientException;
 import com.publicissapient.kpidashboard.common.model.connection.Connection;
 import com.publicissapient.kpidashboard.common.model.jira.BoardDetails;
+import com.publicissapient.kpidashboard.common.model.jira.SprintIssue;
 import com.publicissapient.kpidashboard.common.service.AesEncryptionService;
 import com.publicissapient.kpidashboard.jira.config.JiraProcessorConfig;
 import com.publicissapient.kpidashboard.jira.model.JiraToolConfig;
 import com.publicissapient.kpidashboard.jira.util.JiraConstants;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.json.simple.JSONArray;
@@ -108,28 +109,26 @@ public class SprintClientImpl implements SprintClient {
 			List<SprintDetails> dbSprints = sprintRepository.findBySprintIDIn(sprintIds);
 			Map<String, SprintDetails> dbSprintDetailMap = dbSprints.stream()
 					.collect(Collectors.toMap(SprintDetails::getSprintID, Function.identity()));
-			List<SprintDetails> sprintToRemove = new ArrayList<>();
+			List<SprintDetails> sprintToSave = new ArrayList<>();
 			sprintDetailsSet.forEach(sprint -> {
 				boolean fetchReport = false;
 				String boardId = sprint.getOriginBoardId().get(0);
 				sprint.setProcessorId(jiraProcessorId);
 				sprint.setBasicProjectConfigId(projectConfig.getBasicProjectConfigId());
 				if (null != dbSprintDetailMap.get(sprint.getSprintID())) {
-
 					SprintDetails dbSprintDetails =  dbSprintDetailMap.get(sprint.getSprintID());
-					sprint.setId(dbSprintDetails.getId());
-					//sprint change in db record.
-					if (sprint.getState().equalsIgnoreCase(SprintDetails.SPRINT_STATE_ACTIVE) ||
+					//case 1 : same sprint different board id
+					if (!dbSprintDetails.getOriginBoardId().containsAll(sprint.getOriginBoardId())) {
+						sprint.getOriginBoardId().addAll(sprint.getOriginBoardId());
+						fetchReport = true;
+					}//case 2 : sprint state is active or changed which is present in db
+					else if (sprint.getState().equalsIgnoreCase(SprintDetails.SPRINT_STATE_ACTIVE) ||
 							!sprint.getState().equalsIgnoreCase(dbSprintDetails.getState())) {
+						sprint.getOriginBoardId().addAll(sprint.getOriginBoardId());
 						fetchReport = true;
-					}else if (!dbSprintDetails.getOriginBoardId().containsAll(sprint.getOriginBoardId())) {
-						dbSprintDetails.getOriginBoardId().add(boardId);
-						sprint = dbSprintDetails;
-						fetchReport = true;
-					} else {
+					}else {
 						log.info("Sprint not to be saved again : {}, status: {} ", sprint.getOriginalSprintId(),
 								sprint.getState());
-						sprintToRemove.add(sprint);
 						fetchReport = false;
 					}
 				} else {
@@ -137,21 +136,21 @@ public class SprintClientImpl implements SprintClient {
 				}
 
 				if(fetchReport){
-					getSprintReport(sprint, jiraAdapter, projectConfig, boardId);
+					getSprintReport(sprint, jiraAdapter, projectConfig, boardId,
+							dbSprintDetailMap.get(sprint.getSprintID()));
+					sprintToSave.add(sprint);
 				}
 			});
-			if (CollectionUtils.isNotEmpty(sprintToRemove)) {
-				sprintDetailsSet.removeAll(sprintToRemove);
-			}
-			sprintRepository.saveAll(sprintDetailsSet);
+			sprintRepository.saveAll(sprintToSave);
 			log.info("{} sprints found", sprintDetailsSet.size());
 		}
 	}
 
-	private void getSprintReport(SprintDetails sprint, JiraAdapter jiraAdapter, ProjectConfFieldMapping projectConfig, String boardId) {
+	private void getSprintReport(SprintDetails sprint, JiraAdapter jiraAdapter, ProjectConfFieldMapping projectConfig,
+								 String boardId,SprintDetails dbSprintDetails) {
 		if(sprint.getOriginalSprintId() != null && sprint.getOriginBoardId() != null){
 			jiraAdapter.getSprintReport(projectConfig, sprint.getOriginalSprintId(),
-					boardId, sprint);
+					boardId, sprint, dbSprintDetails);
 		}
 	}
 
@@ -162,7 +161,7 @@ public class SprintClientImpl implements SprintClient {
 			List<SprintDetails> sprintDetailsList = getSprints(projectConfig,boardDetails.getBoardId());
 			if (CollectionUtils.isNotEmpty(sprintDetailsList)) {
 				Set<SprintDetails> sprintDetailSet = limitSprint(sprintDetailsList);
-				 processSprints(projectConfig, sprintDetailSet, jiraAdapter);
+				processSprints(projectConfig, sprintDetailSet, jiraAdapter);
 			}
 		});
 	}
@@ -215,7 +214,7 @@ public class SprintClientImpl implements SprintClient {
 				if(null!=obj) {
 					valuesJson = (JSONArray)obj.get("values");
 				}
-				setIssues(valuesJson, sprintDetailsSet, projectConfig, boardId);
+				setSprintDetails(valuesJson, sprintDetailsSet, projectConfig, boardId);
 				isLast = Boolean.valueOf(obj.get("isLast").toString());
 			} catch (ParseException pe) {
 				log.error("Parser exception when parsing statuses", pe);
@@ -224,13 +223,16 @@ public class SprintClientImpl implements SprintClient {
 		return isLast;
 	}
 
-	private void setIssues(JSONArray valuesJson,List<SprintDetails> sprintDetailsSet,ProjectConfFieldMapping projectConfig,String boardId) {
+	private void setSprintDetails(JSONArray valuesJson,List<SprintDetails> sprintDetailsSet,
+								  ProjectConfFieldMapping projectConfig,String boardId) {
 		valuesJson.forEach(values->{
 			JSONObject sprintJson = (JSONObject) values;
-			if(null!=sprintJson) {
+			if(null != sprintJson) {
 				SprintDetails sprintDetails = new SprintDetails();
 				sprintDetails.setSprintName(sprintJson.get(NAME).toString());
-				sprintDetails.setOriginBoardId(Arrays.asList(boardId));
+				List<String> boardList = new ArrayList<>();
+				boardList.add(boardId);
+				sprintDetails.setOriginBoardId(boardList);
 				sprintDetails.setOriginalSprintId(sprintJson.get(ID).toString());
 				sprintDetails.setState(sprintJson.get(STATE).toString().toUpperCase());
 				String sprintId = sprintDetails.getOriginalSprintId() + JiraConstants.COMBINE_IDS_SYMBOL
