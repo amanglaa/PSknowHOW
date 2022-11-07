@@ -467,11 +467,11 @@ export class JiraConfigComponent implements OnInit {
             summary:
               'No boards found for the selected Project Key.',
           });
+          this.boardsData = [];
+          this.toolForm.controls['boards'].setValue([]);
         }
         this.hideLoadingOnFormElement('boards');
         this.isLoading = false;
-        this.boardsData = [];
-        this.toolForm.controls['boards'].setValue([]);
       });
 
     } else {
