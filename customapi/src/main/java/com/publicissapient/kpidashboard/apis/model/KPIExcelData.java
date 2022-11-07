@@ -187,12 +187,21 @@ public class KPIExcelData {
     private String releaseEndDate;
 
     @JsonProperty("Date")
-    private String deploymentDate;
+    private String date;
 
     @JsonProperty("Environment")
     private String deploymentEnvironment;
 
     @JsonProperty("Month")
     private String month;
+
+    @JsonProperty("Defects Without Story Link")
+    private Map<String, String> defectWithoutStoryLink;
+
+    @JsonProperty("Linked to Story")
+    private String isTestLinkedToStory;
+
+    @JsonProperty("Status")
+    private String defectStatus;
 
 }
