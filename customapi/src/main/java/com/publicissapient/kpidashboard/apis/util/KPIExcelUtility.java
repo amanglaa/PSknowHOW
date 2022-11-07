@@ -519,9 +519,8 @@ public class KPIExcelUtility {
 
     }
 
-
     public static void populateTestWithoutStoryExcelData(String projectName, Map<String, TestCaseDetails> totalTestMap,
-                                                List<TestCaseDetails> testWithoutStory, List<KPIExcelData> kpiExcelData) {
+                                                         List<TestCaseDetails> testWithoutStory, List<KPIExcelData> kpiExcelData) {
         if (MapUtils.isNotEmpty(totalTestMap)) {
             List<String> testWithoutStoryIdList = testWithoutStory.stream().map(TestCaseDetails::getNumber).collect(Collectors.toList());
             totalTestMap.forEach((testId, testCaseDetails) -> {
