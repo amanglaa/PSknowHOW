@@ -157,7 +157,7 @@ public class SonarTechDebtServiceImpl extends SonarKPIService<Long, List<Object>
 				}
 				tempMap.get(projectNodeId).setValue(projectWiseDataMap);
 				if (getRequestTrackerId().toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-					KPIExcelUtility.populateSonarScrumExcelData(tempMap.get(projectNodeId).getProjectFilter().getName(),
+					KPIExcelUtility.populateSonarKpisExcelData(tempMap.get(projectNodeId).getProjectFilter().getName(),
 							projectList, debtList, versionDate, excelData, KPICode.SONAR_TECH_DEBT.getKpiId());
 				}
 			}
