@@ -19,6 +19,7 @@
 package com.publicissapient.kpidashboard.apis.model;
 
 
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -40,15 +41,158 @@ import lombok.Setter;
 @Setter
 public class KPIExcelData {
 
-	@JsonProperty("Sprint Name")
-	private String sprintName;
-	
-	@JsonProperty("Story ID")
-	private Map<String,String> storyId;
-	
-	@JsonProperty("Issue Description")
-	private String issueDesc;
-	
-	@JsonProperty("Linked Defects")
-	private Map<String,String> linkedDefects;
+    @JsonProperty("Sprint Name")
+    private String sprintName;
+
+    @JsonProperty("Original Time Estimate (in hours)")
+    private String originalTimeEstimate;
+
+    @JsonProperty("Total Time Spent (in hours)")
+    private String totalTimeSpent;
+
+    @JsonProperty("Closed")
+    private String status;
+
+    @JsonProperty("Project Name")
+    private String projectName;
+
+    @JsonProperty("Issue Type")
+    private String issueType;
+
+    @JsonProperty("Resolution Time(In Days)")
+    private String resolutionTime;
+
+
+    @JsonProperty("Story ID")
+    private Map<String, String> storyId;
+
+    @JsonProperty("Issue Description")
+    private String issueDesc;
+
+    @JsonProperty("Story Size(In story point)")
+    private String storyPoints;
+
+    @JsonProperty("Intake to DOR(In Days)")
+    private String intakeToDOR;
+
+    @JsonProperty("DOR to DOD (In Days)")
+    private String dorToDod;
+
+    @JsonProperty("DOD TO Live (In Days)")
+    private String dodToLive;
+
+    @JsonProperty("Lead Time (In Days)")
+    private String leadTime;
+
+    @JsonProperty("Linked Defects")
+    private Map<String, String> linkedDefects;
+
+    @JsonProperty("First Time Pass")
+    private String firstTimePass;
+
+    @JsonProperty("Escaped Defect")
+    private String escapedDefect;
+
+    @JsonProperty("Defect Removed")
+    private String removedDefect;
+
+    @JsonProperty("Defect Rejected")
+    private String rejectedDefect;
+
+    @JsonProperty("Priority")
+    private String priority;
+
+    @JsonProperty("Root Cause")
+    private List<String> rootCause;
+
+    @JsonProperty("Resolved")
+    private String resolvedTickets;
+
+    @JsonProperty("Defect ID")
+    private Map<String, String> defectId;
+
+    @JsonProperty("Created Defect ID")
+    private Map<String, String> createdDefectId;
+
+    @JsonProperty("Test Case ID")
+    private String testCaseId;
+
+    @JsonProperty("Automated")
+    private String automated;
+
+    @JsonProperty("Project")
+    private String project;
+
+    @JsonProperty("Job Name")
+    private String jobName;
+
+    @JsonProperty("Unit Coverage")
+    private String unitCoverage;
+
+    @JsonProperty("Tech Debt (in days)")
+    private String techDebt;
+
+    @JsonProperty("Sonar Violations")
+    private String sonarViolation;
+
+    @JsonProperty("Weeks")
+    private String weeks;
+
+    @JsonProperty("Linked Story ID")
+    private Map<String, String> linkedStory;
+
+    @JsonProperty("Total Build Count")
+    private String buildCount;
+
+    @JsonProperty("Total Build Failure Count")
+    private String buildFailureCount;
+
+    @JsonProperty("Build Failure Percentage")
+    private String buildFailurePercentage;
+
+    @JsonProperty("Total Test")
+    private String totalTest;
+
+    @JsonProperty("Executed Test")
+    private String executedTest;
+
+    @JsonProperty("Execution %")
+    private String executionPercentage;
+
+    @JsonProperty("Passed Test")
+    private String passedTest;
+
+    @JsonProperty("Passed %")
+    private String passedPercentage;
+
+    @JsonProperty("Epic ID")
+    private Map<String, String> epicID;
+
+    @JsonProperty("Cost of Delay")
+    private Double costOfDelay;
+
+    @JsonProperty("Epic Name")
+    private String epicName;
+
+    @JsonProperty("Epic End Date")
+    private String epicEndDate;
+
+    @JsonProperty("Release Name")
+    private String releaseName;
+
+    @JsonProperty("Release Description")
+    private String releaseDesc;
+
+    @JsonProperty("Release End Date")
+    private String releaseEndDate;
+
+    @JsonProperty("Date")
+    private String deploymentDate;
+
+    @JsonProperty("Environment")
+    private String deploymentEnvironment;
+
+    @JsonProperty("Month")
+    private String month;
+
 }

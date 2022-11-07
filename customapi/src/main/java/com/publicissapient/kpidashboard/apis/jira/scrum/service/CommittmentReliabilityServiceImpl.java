@@ -11,8 +11,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.publicissapient.kpidashboard.apis.enums.KPIExcelColumn;
+import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
+import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -47,6 +51,8 @@ import com.publicissapient.kpidashboard.common.repository.jira.JiraIssueReposito
 import com.publicissapient.kpidashboard.common.repository.jira.SprintRepository;
 
 import lombok.extern.slf4j.Slf4j;
+
+import static java.util.stream.Collectors.toMap;
 
 @Component
 @Slf4j
@@ -191,7 +197,8 @@ public class CommittmentReliabilityServiceImpl extends JiraKPIService<Long, List
 		}
 		
 		
-		Map<String, ValidationData> validationDataMap = new HashMap<>();
+		//Map<String, ValidationData> validationDataMap = new HashMap<>();
+		List<KPIExcelData> excelData = new ArrayList<>();
 
 		sprintLeafNodeList.forEach(node -> {
 			String validationKey = node.getProjectFilter().getName() + Constant.UNDERSCORE
@@ -215,8 +222,8 @@ public class CommittmentReliabilityServiceImpl extends JiraKPIService<Long, List
 			Map<String, Double> commitmentHowerMap = new HashMap<>();
 			Map<String, Long> commitmentMap = getCommitmentMap(totalPresentJiraIssue, totalPresentCompletedIssue,
 					validationDataList, commitmentHowerMap);
-			populateValidationDataObject(kpiElement, requestTrackerId, validationDataMap, validationDataList,
-					validationKey);
+			populateExcelData( requestTrackerId, excelData, validationDataList,
+					node);
 
 			Map<String, List<DataCount>> dataCountMap = new HashMap<>();
 
@@ -234,7 +241,8 @@ public class CommittmentReliabilityServiceImpl extends JiraKPIService<Long, List
 			mapTmp.get(node.getId()).setValue(dataCountMap);
 
 		});
-
+		kpiElement.setExcelData(excelData);
+		kpiElement.setExcelColumns(KPIExcelColumn.COMMITMENT_RELIABILITY.getColumns());
 	}
 
 	@Override
@@ -327,31 +335,28 @@ public class CommittmentReliabilityServiceImpl extends JiraKPIService<Long, List
 	/**
 	 * generate Excel
 	 * 
-	 * @param kpiElement
+
 	 * @param requestTrackerId
-	 * @param validationDataMap
-	 * @param validationDataList
-	 * @param validationKey
+
+
+
 	 */
-	private void populateValidationDataObject(KpiElement kpiElement, String requestTrackerId,
-			Map<String, ValidationData> validationDataMap, List<CommitmentReliabilityValidationData> validationDataList,
-			String validationKey) {
+	private void populateExcelData(String requestTrackerId,List<KPIExcelData> excelData
+			, List<CommitmentReliabilityValidationData> validationDataList,Node node
+			) {
 		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-			ValidationData validationData = new ValidationData();
+			String sprintName = node.getSprintFilter().getName();
 			if (CollectionUtils.isNotEmpty(validationDataList)) {
 				validationDataList.stream().forEach(data -> {
-					validationData.setTotalStories(data.getTotalIssueNumbers().stream().map(JiraIssue::getNumber)
-							.collect(Collectors.toList()));
-					validationData.setStoryPointList(data.getTotalIssueNumbers().stream()
-							.map(num -> String.valueOf(num.getStoryPoints())).collect(Collectors.toList()));
-					validationData.setClosedStoryKeyList(data.getCompletedIssueNumber().stream()
-							.map(JiraIssue::getNumber).collect(Collectors.toList()));
+
+					Map<String, JiraIssue> totalSprintStoryMap = new HashMap<>();
+					data.getTotalIssueNumbers().stream().
+							forEach(issue -> totalSprintStoryMap.putIfAbsent(issue.getNumber(), issue));
+					KPIExcelUtility.populateCommittmentReliability(sprintName,totalSprintStoryMap,data.getCompletedIssueNumber(),excelData);
+
 				});
 
-				validationDataMap.put(validationKey, validationData);
-			}
-			kpiElement.setMapOfSprintAndData(validationDataMap);
-
+				}
 		}
 
 	}
@@ -398,9 +403,20 @@ public class CommittmentReliabilityServiceImpl extends JiraKPIService<Long, List
 		return calculateKpiValueForLong(valueList, kpiId);
 	}
 
-	private class CommitmentReliabilityValidationData {
+	public class CommitmentReliabilityValidationData {
 		private List<JiraIssue> totalIssueNumbers;
+		private String url;
+		private String issueDescription;
 		private List<JiraIssue> completedIssueNumber;
+
+		public String getUrl(){return url;}
+		public String getIssueDescription(){return issueDescription;}
+        public void setIssueDescription(String issueDescription){
+			this.issueDescription=issueDescription;
+		}
+		public void setUrl(String url) {
+			this.url = url;
+		}
 
 		public List<JiraIssue> getTotalIssueNumbers() {
 			return totalIssueNumbers;
