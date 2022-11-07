@@ -40,11 +40,12 @@ import java.util.stream.Collectors;
 import com.atlassian.jira.rest.client.api.RestClientException;
 import com.publicissapient.kpidashboard.common.model.connection.Connection;
 import com.publicissapient.kpidashboard.common.model.jira.BoardDetails;
+import com.publicissapient.kpidashboard.common.model.jira.SprintIssue;
 import com.publicissapient.kpidashboard.common.service.AesEncryptionService;
 import com.publicissapient.kpidashboard.jira.config.JiraProcessorConfig;
 import com.publicissapient.kpidashboard.jira.model.JiraToolConfig;
 import com.publicissapient.kpidashboard.jira.util.JiraConstants;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.json.simple.JSONArray;
@@ -115,18 +116,16 @@ public class SprintClientImpl implements SprintClient {
 				sprint.setProcessorId(jiraProcessorId);
 				sprint.setBasicProjectConfigId(projectConfig.getBasicProjectConfigId());
 				if (null != dbSprintDetailMap.get(sprint.getSprintID())) {
-
 					SprintDetails dbSprintDetails =  dbSprintDetailMap.get(sprint.getSprintID());
 					sprint.setId(dbSprintDetails.getId());
 					//case 1 : same sprint different board id
 					if (!dbSprintDetails.getOriginBoardId().containsAll(sprint.getOriginBoardId())) {
-						dbSprintDetails.getOriginBoardId().add(boardId);
-						sprint = dbSprintDetails;
+						sprint.getOriginBoardId().addAll(dbSprintDetails.getOriginBoardId());
 						fetchReport = true;
 					}//case 2 : sprint state is active or changed which is present in db
 					else if (sprint.getState().equalsIgnoreCase(SprintDetails.SPRINT_STATE_ACTIVE) ||
 							!sprint.getState().equalsIgnoreCase(dbSprintDetails.getState())) {
-						sprint = dbSprintDetails;
+						sprint.setOriginBoardId(dbSprintDetails.getOriginBoardId());
 						fetchReport = true;
 					}else {
 						log.info("Sprint not to be saved again : {}, status: {} ", sprint.getOriginalSprintId(),
@@ -138,7 +137,8 @@ public class SprintClientImpl implements SprintClient {
 				}
 
 				if(fetchReport){
-					getSprintReport(sprint, jiraAdapter, projectConfig, boardId);
+					getSprintReport(sprint, jiraAdapter, projectConfig, boardId,
+							dbSprintDetailMap.get(sprint.getSprintID()));
 					sprintToSave.add(sprint);
 				}
 			});
@@ -147,10 +147,11 @@ public class SprintClientImpl implements SprintClient {
 		}
 	}
 
-	private void getSprintReport(SprintDetails sprint, JiraAdapter jiraAdapter, ProjectConfFieldMapping projectConfig, String boardId) {
+	private void getSprintReport(SprintDetails sprint, JiraAdapter jiraAdapter, ProjectConfFieldMapping projectConfig,
+								 String boardId,SprintDetails dbSprintDetails) {
 		if(sprint.getOriginalSprintId() != null && sprint.getOriginBoardId() != null){
 			jiraAdapter.getSprintReport(projectConfig, sprint.getOriginalSprintId(),
-					boardId, sprint);
+					boardId, sprint, dbSprintDetails);
 		}
 	}
 

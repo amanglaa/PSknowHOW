@@ -19,6 +19,7 @@
 package com.publicissapient.kpidashboard.jira.client.jiraissue;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -581,6 +582,22 @@ public abstract class JiraIssueClient {// NOPMD //NOSONAR
 		LocalDateTime ldt = DateUtil.stringToLocalDateTime(lastSuccessfulRun,QUERYDATEFORMAT);
 		ldt = ldt.minusDays(30);
 		return DateUtil.dateTimeFormatter(ldt,QUERYDATEFORMAT);
+	}
+
+	public void setStartDate(JiraProcessorConfig jiraProcessorConfig) {
+		LocalDateTime localDateTime = null;
+		if(jiraProcessorConfig.isConsiderStartDate()){
+			try{
+				localDateTime = DateUtil.stringToLocalDateTime(jiraProcessorConfig.getStartDate(),QUERYDATEFORMAT);
+			} catch (DateTimeParseException ex) {
+				log.error("exception while parsing start date provided from property file picking last 6 months data.."
+						+ ex.getMessage());
+				localDateTime = LocalDateTime.now().minusMonths(6);
+			}
+		}else{
+			localDateTime = LocalDateTime.now().minusMonths(6);
+		}
+		jiraProcessorConfig.setStartDate(DateUtil.dateTimeFormatter(localDateTime, QUERYDATEFORMAT));
 	}
 
 }
