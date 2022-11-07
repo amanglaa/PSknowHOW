@@ -1105,17 +1105,11 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
         worksheet = workbook.addWorksheet('Kpi Data');
         let level = this.service.getSelectedLevel();
         let trends = this.service.getSelectedTrends();
-        // const header = [{header: level['hierarchyLevelName'], key: 'hierarchyLevelId'}];
         let firstRow = [level['hierarchyLevelName']];
-        // const header = [];
-        // header.push({header: "KPI Name", key: 'kpiName'}); 
         let headerNames = ["KPI Name"];
         let headerKeys = [{key: 'kpiName', width: 35}];
         for(let i = 0; i<trends.length; i++){
-            let start, end;
-            
             firstRow.push(trends[i]['nodeName']);
-            // worksheet.mergeCells('B1', 'D1')
             headerNames.push("Latest("+trends[i]['nodeName'] +")");
             headerNames.push("Trend("+trends[i]['nodeName'] +")");
             headerNames.push("Maturity("+trends[i]['nodeName'] +")");
@@ -1123,44 +1117,28 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
             headerKeys.push({key: trends[i]['nodeName'] + '_trend', width: 15});
             headerKeys.push({key: trends[i]['nodeName'] + '_maturity', width: 15});
         }
-        // worksheet.insertRow(1, {});
-        console.log(worksheet.getColumn(2));
         
         // worksheet.getRow(1).values = [firstRow[0]];
         for(let i = 1; i<firstRow?.length; i++){
             worksheet.mergeCells(1, i+1, 1, i+3);
-            worksheet.getCell(worksheet.getColumn(i+1)).value = firstRow[i+1];
+            // worksheet.getCell(worksheet.getColumn(i+1)).value = firstRow[i+1];
             // worksheet.getCell().value = firstRow[i+1];
         }
         worksheet.getRow(1).values = [...firstRow];
         worksheet.getRow(2).values = [...headerNames];
-
-        // worksheet.columns = [...header];
-        // console.log(header);
         worksheet.columns = [...headerKeys];
-        // console.log(worksheet.getColumn('hierarchyLevelId'));
         for(let kpi of this.updatedConfigGlobalData){
-            // let row = {};
             let kpiId = kpi.kpiId;
             let obj = {};
             obj['kpiName'] = kpi?.kpiName;
-            // const row = []
             for(let i = 0; i< this.kpiTrendsObj[kpiId]?.length;i++){
                 obj[this.kpiTrendsObj[kpiId][i]?.hierarchyName +'_latest'] = this.kpiTrendsObj[kpiId][i]?.latest;
                 obj[this.kpiTrendsObj[kpiId][i]?.hierarchyName +'_maturity'] = this.kpiTrendsObj[kpiId][i]?.maturity;
                 obj[this.kpiTrendsObj[kpiId][i]?.hierarchyName +'_trend'] = this.kpiTrendsObj[kpiId][i]?.trend;
-                // {
-                //     'latest': this.kpiTrendsObj[kpiId][i]?.latest,
-                //     'maturity': this.kpiTrendsObj[kpiId][i]?.maturity,
-                //     'trend': this.kpiTrendsObj[kpiId][i]?.trend
-                // }
             }
-            // row(obj);
-            console.log(obj);
-            
             worksheet.addRow(obj);
         }
-        console.log(worksheet.getColumn(1));
+
         worksheet.eachRow(function(row, rowNumber) {
             if (rowNumber === 1 || rowNumber === 2) {
                 row.eachCell({
@@ -1211,7 +1189,6 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
         });
         fs.saveAs(blob, 'Kpi Data' + '.xlsx');
     });
-        console.log(worksheet);
     }
 
     checkMaturity(item) {
@@ -1238,7 +1215,7 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
         if(item?.value?.length > 0){
             let tempVal = item?.value[item?.value?.length - 1]?.lineValue ? item?.value[item?.value?.length - 1]?.lineValue : item?.value[item?.value?.length - 1]?.value; 
             let unit = kpiData?.kpiDetail?.kpiUnit?.toLowerCase() != 'number' ? kpiData?.kpiDetail?.kpiUnit : '';
-            latest = tempVal + (unit ? ' ' + unit : '');
+            latest = tempVal > 0 ? tempVal.toFixed(2) + (unit ? ' ' + unit : '') : tempVal + (unit ? ' ' + unit : '');
         }
         if(item?.value?.length > 1 && kpiData?.kpiDetail?.showTrend) {
             if(kpiData?.kpiDetail?.trendCalculative){
