@@ -172,7 +172,7 @@ public class ProjectVersionServiceImpl extends JiraKPIService<Double, List<Objec
         mapTmp.get(node.getId()).setValue(dcList);
 
         if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-            KPIExcelUtility.populateReleaseFreqExcelData(projectVersionList, projectName, dateMap, excelData);
+            KPIExcelUtility.populateReleaseFreqExcelData(projectVersionList, projectName, excelData);
         }
 
     }

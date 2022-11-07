@@ -175,7 +175,6 @@ public class CostOfDelayServiceImpl extends JiraKPIService<Double, List<Object>,
         Map<String, Double> lastNMonthMap = getLastNMonth(customApiConfig.getJiraXaxisMonthCount());
         String projectName = node.getProjectFilter().getName();
         List<JiraIssue> epicList = new ArrayList<>();
-        Map<String, String> dateList = new HashMap<>();
         Map<String, Map<String, Integer>> howerMap = new HashMap<>();
 
         for (JiraIssue js : jiraIssues) {
@@ -219,7 +218,7 @@ public class CostOfDelayServiceImpl extends JiraKPIService<Double, List<Object>,
         mapTmp.get(node.getId()).setValue(dcList);
 
         if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-            KPIExcelUtility.populateCODExcelData(projectName, epicList, dateList, excelData);
+            KPIExcelUtility.populateCODExcelData(projectName, epicList, excelData);
         }
 
     }

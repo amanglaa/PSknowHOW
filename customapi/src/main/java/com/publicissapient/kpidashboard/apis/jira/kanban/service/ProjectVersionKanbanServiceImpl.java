@@ -54,7 +54,6 @@ import java.util.stream.Collectors;
 public class ProjectVersionKanbanServiceImpl extends JiraKPIService<Double, List<Object>, Map<String, Object>> {
 
     private static final String PROJECT_RELEASE_DETAIL = "projectReleaseDetail";
-    private static final String MONTH_YEAR_FORMAT = "MMM yyyy";
     @Autowired
     private CustomApiConfig customApiConfig;
     @Autowired
@@ -119,7 +118,6 @@ public class ProjectVersionKanbanServiceImpl extends JiraKPIService<Double, List
 
         Map<String, ProjectRelease> filterWiseDataMap = createProjectWiseRelease(
                 (List<ProjectRelease>) resultMap.get(PROJECT_RELEASE_DETAIL));
-        Map<Long, String> dateMap = new HashMap<>();
         leafNodeList.forEach(node -> {
             String projectNodeId = node.getProjectFilter().getId();
             ProjectRelease projectRelease = filterWiseDataMap.get(projectNodeId);
@@ -133,7 +131,6 @@ public class ProjectVersionKanbanServiceImpl extends JiraKPIService<Double, List
                         String yearMonth = pv.getReleaseDate().getYear() + Constant.DASH + pv.getReleaseDate().getMonthOfYear();
 
                         projectVersionList.add(pv);
-                        dateMap.put(pv.getId(), pv.getReleaseDate().toString(MONTH_YEAR_FORMAT));
                         dateCount.put(yearMonth, dateCount.get(yearMonth) + 1);
 
                     }
@@ -148,7 +145,7 @@ public class ProjectVersionKanbanServiceImpl extends JiraKPIService<Double, List
                     dc.add(dataCount);
                 });
                 if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-                    KPIExcelUtility.populateReleaseFreqExcelData(projectVersionList, projectName, dateMap, excelData);
+                    KPIExcelUtility.populateReleaseFreqExcelData(projectVersionList, projectName, excelData);
                 }
                 mapTmp.get(node.getId()).setValue(dc);
             }

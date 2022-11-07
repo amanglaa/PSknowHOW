@@ -26,6 +26,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.publicissapient.kpidashboard.apis.enums.*;
+import com.publicissapient.kpidashboard.apis.model.*;
+import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -38,16 +41,8 @@ import org.springframework.stereotype.Component;
 import com.google.common.collect.Lists;
 import com.publicissapient.kpidashboard.apis.appsetting.service.ConfigHelperService;
 import com.publicissapient.kpidashboard.apis.constant.Constant;
-import com.publicissapient.kpidashboard.apis.enums.Filters;
-import com.publicissapient.kpidashboard.apis.enums.JiraFeature;
-import com.publicissapient.kpidashboard.apis.enums.KPICode;
-import com.publicissapient.kpidashboard.apis.enums.KPISource;
 import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
 import com.publicissapient.kpidashboard.apis.jira.service.JiraKPIService;
-import com.publicissapient.kpidashboard.apis.model.KpiElement;
-import com.publicissapient.kpidashboard.apis.model.KpiRequest;
-import com.publicissapient.kpidashboard.apis.model.Node;
-import com.publicissapient.kpidashboard.apis.model.TreeAggregatorDetail;
 import com.publicissapient.kpidashboard.apis.util.CommonUtils;
 import com.publicissapient.kpidashboard.common.constant.CommonConstant;
 import com.publicissapient.kpidashboard.common.constant.NormalizedJira;
@@ -199,7 +194,7 @@ public class DefectsWithoutStoryLinkServiceImpl extends JiraKPIService<Integer, 
 		Optional.ofNullable(latestSprint).ifPresent(latestSprintNode::add);
 
 		Map<String, Object> resultMap = fetchKPIDataFromDb(latestSprintNode, null, null, kpiRequest);
-
+		List<KPIExcelData> excelData = new ArrayList<>();
 		List<JiraIssue> totalDefects = checkPriority((List<JiraIssue>) resultMap.get(DEFECT_LIST));
 		List<JiraIssue> totalStories = (List<JiraIssue>) resultMap.get(STORY_LIST);
 		List<JiraIssue> defectWithoutStory = new ArrayList<>();
@@ -222,10 +217,12 @@ public class DefectsWithoutStoryLinkServiceImpl extends JiraKPIService<Integer, 
 				priorityWiseTDMap.put(priority.getKey(), Long.valueOf(priority.getValue().size()));
 			});
 
-			if (CollectionUtils.isNotEmpty(defectWithoutStory)) {
-				populateValidationDataObject(kpiElement, requestTrackerId, defectWithoutStory, validationDataMap,
-						latestSprint);
+			if (CollectionUtils.isNotEmpty(defectWithoutStory) && requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
+				KPIExcelUtility.populateDefectWithoutIssueLinkExcelData(defectWithoutStory, excelData, latestSprint.getProjectFilter().getName());
 			}
+
+			kpiElement.setExcelData(excelData);
+			kpiElement.setExcelColumns(KPIExcelColumn.DEFECTS_WITHOUT_STORY_LINK.getColumns());
 
 			LOGGER.debug(
 					"[DEFECTS-WITHOUT-STORYLINK-PROJECT-WISE][{}]. Total defect without story link for project {}  is {}",

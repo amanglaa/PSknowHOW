@@ -14,6 +14,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.publicissapient.kpidashboard.apis.enums.KPIExcelColumn;
+import com.publicissapient.kpidashboard.apis.model.*;
+import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -31,11 +34,6 @@ import com.publicissapient.kpidashboard.apis.enums.KPICode;
 import com.publicissapient.kpidashboard.apis.enums.KPISource;
 import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
 import com.publicissapient.kpidashboard.apis.jira.service.JiraKPIService;
-import com.publicissapient.kpidashboard.apis.model.CustomDateRange;
-import com.publicissapient.kpidashboard.apis.model.KpiElement;
-import com.publicissapient.kpidashboard.apis.model.KpiRequest;
-import com.publicissapient.kpidashboard.apis.model.Node;
-import com.publicissapient.kpidashboard.apis.model.TreeAggregatorDetail;
 import com.publicissapient.kpidashboard.apis.util.CommonUtils;
 import com.publicissapient.kpidashboard.apis.util.KPIHelperUtil;
 import com.publicissapient.kpidashboard.apis.util.KpiDataHelper;
@@ -199,9 +197,8 @@ public class ProductionIssuesByPriorityAndAgingServiceImpl
 
 	private void kpiWithFilter(Map<String, List<JiraIssue>> projectWiseJiraIssueMap, Map<String, Node> mapTmp,
 			List<Node> leafNodeList, KpiElement kpiElement) {
-		Map<String, ValidationData> validationDataMap = new HashMap<>();
 		String requestTrackerId = getRequestTrackerId();
-
+		List<KPIExcelData> excelData = new ArrayList<>();
 		List<String> xAxisRange = customApiConfig.getTotalDefectCountAgingXAxisRange();
 		kpiElement.setxAxisValues(xAxisRange);
 
@@ -233,12 +230,15 @@ public class ProductionIssuesByPriorityAndAgingServiceImpl
 
 				// Populates data in Excel for validation for tickets created
 				// before
-				populateValidationDataObject(kpiElement, requestTrackerId, projectName, validationDataMap,
-						projectWiseJiraIssueList);
+				if(requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
+					KPIExcelUtility.populateProductionDefectAgingExcelData(projectName, projectWiseJiraIssueList, excelData);
+				}
 			}
 			mapTmp.get(node.getId()).setValue(trendValueMap);
 
 		});
+		kpiElement.setExcelData(excelData);
+		kpiElement.setExcelColumns(KPIExcelColumn.PRODUCTION_DEFECTS_AGEING.getColumns());
 	}
 
 	/**
