@@ -54,6 +54,8 @@ public class KPIExcelUtility {
 
     private static final String MONTH_YEAR_FORMAT = "MMM yyyy";
     private static final String DATE_YEAR_MONTH_FORMAT = "dd-MMM-yy";
+
+    private static final String DATE_FORMAT_PRODUCTION_DEFECT_AGEING = "yyyy-mm-dd";
     private static final String LEAD_TIME = "Lead Time";
     private static final String INTAKE_TO_DOR = "Intake - DoR";
     private static final String DOR_TO_DOD = "DoR - DoD";
@@ -432,11 +434,11 @@ public class KPIExcelUtility {
         epicList.forEach(epic -> {
             if (null != epic) {
                 Map<String, String> epicLink = new HashMap<>();
-                epicLink.put(epic.getNumber(), epic.getUrl());
+                epicLink.put(epic.getNumber(), checkEmptyURL(epic));
                 KPIExcelData excelData = new KPIExcelData();
                 excelData.setProjectName(projectName);
                 excelData.setEpicID(epicLink);
-                excelData.setEpicName(epic.getName());
+                excelData.setEpicName(checkEmptyName(epic));
                 excelData.setCostOfDelay(epic.getCostOfDelay());
                 DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendPattern(DateUtil.TIME_FORMAT).optionalStart().appendPattern(".")
                         .appendFraction(ChronoField.MICRO_OF_SECOND, 1, 9, false).optionalEnd().toFormatter();
@@ -490,7 +492,7 @@ public class KPIExcelUtility {
         for (int i = 0; i < dfi.getJobNameList().size(); i++) {
             KPIExcelData excelData = new KPIExcelData();
             excelData.setProjectName(projectName);
-            excelData.setDeploymentDate(dfi.getDeploymentDateList().get(i));
+            excelData.setDate(dfi.getDeploymentDateList().get(i));
             excelData.setJobName(dfi.getJobNameList().get(i));
             excelData.setMonth(dfi.getMonthList().get(i));
             excelData.setDeploymentEnvironment(dfi.getEnvironmentList().get(i));
@@ -499,6 +501,54 @@ public class KPIExcelUtility {
 
         }
 
+    }
+
+    public static void populateDefectWithoutIssueLinkExcelData(List<JiraIssue> defectWithoutStory, List<KPIExcelData> kpiExcelData, String sprintName) {
+
+        defectWithoutStory.forEach(defect -> {
+            if (null != defect) {
+                KPIExcelData excelData = new KPIExcelData();
+                Map<String, String> defectLink = new HashMap<>();
+                defectLink.put(defect.getNumber(), checkEmptyURL(defect));
+                excelData.setSprintName(sprintName);
+                excelData.setDefectWithoutStoryLink(defectLink);
+                excelData.setPriority(defect.getPriority());
+                kpiExcelData.add(excelData);
+            }
+        });
+
+    }
+
+    public static void populateTestWithoutStoryExcelData(String projectName, Map<String, TestCaseDetails> totalTestMap,
+                                                         List<TestCaseDetails> testWithoutStory, List<KPIExcelData> kpiExcelData) {
+        if (MapUtils.isNotEmpty(totalTestMap)) {
+            List<String> testWithoutStoryIdList = testWithoutStory.stream().map(TestCaseDetails::getNumber).collect(Collectors.toList());
+            totalTestMap.forEach((testId, testCaseDetails) -> {
+                String isDefectPresent = testWithoutStoryIdList.contains(testId) ? Constant.EMPTY_STRING : Constant.EXCEL_YES;
+                KPIExcelData excelData = new KPIExcelData();
+                excelData.setProjectName(projectName);
+                excelData.setTestCaseId(testId);
+                excelData.setIsTestLinkedToStory(isDefectPresent);
+                kpiExcelData.add(excelData);
+            });
+        }
+    }
+
+    public static void populateProductionDefectAgingExcelData(String projectName, List<JiraIssue> defectList, List<KPIExcelData> kpiExcelData) {
+        defectList.forEach(defect -> {
+            KPIExcelData excelData = new KPIExcelData();
+            Map<String, String> defectLink = new HashMap<>();
+            defectLink.put(defect.getNumber(), checkEmptyURL(defect));
+            excelData.setProjectName(projectName);
+            excelData.setDefectId(defectLink);
+            excelData.setPriority(defect.getPriority());
+            DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendPattern(DateUtil.TIME_FORMAT).optionalStart().appendPattern(".")
+                    .appendFraction(ChronoField.MICRO_OF_SECOND, 1, 9, false).optionalEnd().toFormatter();
+            LocalDateTime dateTime = LocalDateTime.parse(defect.getCreatedDate(), formatter);
+            excelData.setDate(dateTime.format(DateTimeFormatter.ofPattern(DATE_FORMAT_PRODUCTION_DEFECT_AGEING)));
+            excelData.setDefectStatus(defect.getJiraStatus());
+            kpiExcelData.add(excelData);
+        });
     }
 
 }
