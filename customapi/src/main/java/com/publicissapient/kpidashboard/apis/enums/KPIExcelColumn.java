@@ -30,7 +30,7 @@ public enum KPIExcelColumn {
     STORY_COUNT("kpi40", Arrays.asList("Sprint Name", "Story ID", "Issue Description")),
     CODE_COMMIT("kpi11", Arrays.asList("Project Name", "Repository Url", "Branch", "Day", "No. Of Commit", "No. of Merge")),
 
-    MEAN_TIME_TO_MERGE("kpi84", Arrays.asList("Project Name", "Repository Url", "Branch", "Weeks", "Mean Time To Merge (In Hours)")),
+    MEAN_TIME_TO_MERGE("kpi84", Arrays.asList("Project", "Repository Url", "Branch", "Weeks", "Mean Time To Merge (In Hours)")),
     AVERAGE_RESOLUTION_TIME("kpi83", Arrays.asList("Sprint Name", "Story ID", "Issue Description", "Issue Type", "Resolution Time(In Days)")),
     LEAD_TIME("kpi3", Arrays.asList("Project Name", "Intake to DOR(In Days)", "DOR to DOD (In Days)", "DOD TO Live (In Days)", "Lead Time (In Days)")),
     SPRINT_VELOCITY("kpi39", Arrays.asList("Sprint Name", "Story ID", "Issue Description", "Story Size(In story point)")),

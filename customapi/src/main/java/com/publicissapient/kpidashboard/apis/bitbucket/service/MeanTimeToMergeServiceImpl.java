@@ -227,7 +227,7 @@ public class MeanTimeToMergeServiceImpl extends BitBucketKPIService<Double, List
         weekRange.forEach((week, value) -> {
             DataCount dataCount = setDataCount(projectName, week, value);
             aggDataMap.get(branchName).add(dataCount);
-            excelDataLoader.put("Week " + week, (double) TimeUnit.MILLISECONDS.toHours(value.longValue()));
+            excelDataLoader.put(week, (double) TimeUnit.MILLISECONDS.toHours(value.longValue()));
         });
     }
 

@@ -168,6 +168,7 @@ public class CodeBuildTimeServiceImpl extends JenkinsKPIService<Long, List<Objec
 
         List<KPIExcelData> excelData = new ArrayList<>();
         projectLeafNodeList.forEach(node -> {
+
             String trendLineName = node.getProjectFilter().getName();
             CodeBuildTimeInfo codeBuildTimeInfo = new CodeBuildTimeInfo();
             LocalDateTime end = localEndDate;
@@ -207,7 +208,7 @@ public class CodeBuildTimeServiceImpl extends JenkinsKPIService<Long, List<Objec
             mapTmp.get(node.getId()).setValue(aggDataMap);
 
             populateValidationDataObject(requestTrackerId, excelData,
-                    trendLineName);
+                    trendLineName, codeBuildTimeInfo);
 
         });
         kpiElement.setExcelData(excelData);
@@ -432,16 +433,16 @@ public class CodeBuildTimeServiceImpl extends JenkinsKPIService<Long, List<Objec
     /**
      * Populates data for validation.
      *
-     *
      * @param requestTrackerId
      * @param excelData
      * @param projectName
+     * @param codeBuildTimeInfo
      */
     private void populateValidationDataObject(String requestTrackerId,
-                                              List<KPIExcelData> excelData, String projectName) {
+                                              List<KPIExcelData> excelData, String projectName, CodeBuildTimeInfo codeBuildTimeInfo) {
 
         if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-            KPIExcelUtility.populateCodeBuildTime(excelData, projectName);
+            KPIExcelUtility.populateCodeBuildTime(excelData, projectName, codeBuildTimeInfo);
 
         }
     }

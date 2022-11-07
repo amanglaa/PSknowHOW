@@ -18,6 +18,7 @@
 
 package com.publicissapient.kpidashboard.apis.util;
 
+import com.google.common.collect.Sets;
 import com.publicissapient.kpidashboard.apis.constant.Constant;
 import com.publicissapient.kpidashboard.apis.enums.KPICode;
 import com.publicissapient.kpidashboard.apis.model.ChangeFailureRateInfo;
@@ -36,6 +37,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -359,18 +361,25 @@ public class KPIExcelUtility {
     public static void populateStoryCountExcelData(String sprint,
                                                    List<KPIExcelData> kpiExcelData, List<JiraIssue> sprintWiseStoriesList, List<String> totalPresentJiraIssue) {
 
-
+        List<String> totalPresentIssueList = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(sprintWiseStoriesList)) {
+
+            for (JiraIssue jiraIssue : sprintWiseStoriesList) {
+                totalPresentIssueList.add(jiraIssue.getNumber());
+            }
             for (int i = 0; i < totalPresentJiraIssue.size(); i++) {
 
-                KPIExcelData excelData = new KPIExcelData();
-                excelData.setSprintName(sprint);
-                Map<String, String> storyDetails = new HashMap<>();
-                storyDetails.put(sprintWiseStoriesList.get(i).getNumber(), checkEmptyURL(sprintWiseStoriesList.get(i)));
-                excelData.setStoryId(storyDetails);
-                excelData.setIssueDesc(checkEmptyName(sprintWiseStoriesList.get(i)));
-                kpiExcelData.add(excelData);
+                if (totalPresentIssueList.contains(totalPresentJiraIssue.get(i))) {
 
+                    KPIExcelData excelData = new KPIExcelData();
+                    excelData.setSprintName(sprint);
+                    Map<String, String> storyDetails = new HashMap<>();
+                    storyDetails.put(sprintWiseStoriesList.get(i).getNumber(), checkEmptyURL(sprintWiseStoriesList.get(i)));
+                    excelData.setStoryId(storyDetails);
+                    excelData.setIssueDesc(checkEmptyName(sprintWiseStoriesList.get(i)));
+                    kpiExcelData.add(excelData);
+
+                }
             }
         }
     }
@@ -522,19 +531,22 @@ public class KPIExcelUtility {
 
     }
 
-    public static void populateCodeBuildTime(List<KPIExcelData> kpiExcelData, String projectName) {
+    public static void populateCodeBuildTime(List<KPIExcelData> kpiExcelData, String projectName, CodeBuildTimeInfo codeBuildTimeInfo) {
+
         KPIExcelData excelData = new KPIExcelData();
-        CodeBuildTimeInfo codeBuildTimeInfo = new CodeBuildTimeInfo();
-        excelData.setProject(projectName);
-        excelData.setJobName(codeBuildTimeInfo.getBuildJobList().toString());
-        excelData.setBuildUrl(codeBuildTimeInfo.getBuildUrlList().toString());
-        excelData.setStartTime(codeBuildTimeInfo.getBuildStartTimeList().toString());
-        excelData.setEndTime(codeBuildTimeInfo.getBuildEndTimeList().toString());
-        excelData.setStartedBy(codeBuildTimeInfo.getStartedByList().toString());
-        excelData.setWeeks(codeBuildTimeInfo.getWeeksList().toString());
-        excelData.setBuildStatus(codeBuildTimeInfo.getBuildStatusList().toString());
-        excelData.setDuration(codeBuildTimeInfo.getDurationList().toString());
-        kpiExcelData.add(excelData);
+        for (int i = 0; i < codeBuildTimeInfo.getBuildJobList().size(); i++) {
+            excelData.setProject(projectName);
+            excelData.setJobName(codeBuildTimeInfo.getBuildJobList().get(i));
+            excelData.setBuildUrl(codeBuildTimeInfo.getBuildUrlList().get(i));
+            excelData.setStartTime(codeBuildTimeInfo.getBuildStartTimeList().get(i));
+            excelData.setEndTime(codeBuildTimeInfo.getBuildEndTimeList().get(i));
+            excelData.setStartedBy(codeBuildTimeInfo.getStartedByList().get(i));
+            excelData.setWeeks(codeBuildTimeInfo.getWeeksList().get(i));
+            excelData.setBuildStatus(codeBuildTimeInfo.getBuildStatusList().get(i));
+            excelData.setDuration(codeBuildTimeInfo.getDurationList().get(i));
+            kpiExcelData.add(excelData);
+
+        }
     }
 
     public static void populateMeanTimeMergeExcelData(String projectName, List<Map<String, Double>> repoWiseMRList,
@@ -548,8 +560,8 @@ public class KPIExcelUtility {
                 for (Map.Entry m : repoWiseMap.entrySet()) {
                     KPIExcelData excelData = new KPIExcelData();
                     excelData.setProject(projectName);
-                    excelData.setRepositoryURL(repoList.toString());
-                    excelData.setBranch(branchList.toString());
+                    excelData.setRepositoryURL(repoList.get(0));
+                    excelData.setBranch(branchList.get(0));
                     excelData.setWeeks(m.getKey().toString());
                     excelData.setMeanTimetoMerge(m.getValue().toString());
                     kpiExcelData.add(excelData);
@@ -560,7 +572,7 @@ public class KPIExcelUtility {
 
     }
 
-    public static void populateCodeCommit(String sprintName, List<Map<String, Long>> repoWiseCommitList,
+    public static void populateCodeCommit(String projectName, List<Map<String, Long>> repoWiseCommitList,
                                           List<String> repoList, List<String> branchList, List<KPIExcelData> kpiExcelData,
                                           List<Map<String, Long>> repoWiseMergeRequestList) {
 
@@ -570,24 +582,26 @@ public class KPIExcelUtility {
                 Map<String, Long> repoWiseMergeMap = new HashMap<>();
                 repoWiseCommitMap = repoWiseCommitList.get(i);
                 repoWiseMergeMap = repoWiseMergeRequestList.get(i);
-                KPIExcelData excelData = new KPIExcelData();
-                for (Map.Entry m : repoWiseCommitMap.entrySet()) {
 
-                    excelData.setSprintName(sprintName);
-                    excelData.setRepositoryURL(repoList.toString());
-                    excelData.setBranch(branchList.toString());
-                    excelData.setDays(m.getKey().toString());
-                    excelData.setNumberOfCommit(m.getValue().toString());
+                for (String date : Sets.union(repoWiseCommitMap.keySet(), repoWiseMergeMap.keySet())) {
+                    // these could be null, if the maps don't share the same keys
+                    Long commitHours = repoWiseCommitMap.get(date);
+                    Long mergeHours = repoWiseMergeMap.get(date);
+                    KPIExcelData excelData = new KPIExcelData();
+                    excelData.setProjectName(projectName);
+                    excelData.setRepositoryURL(repoList.get(i));
+                    excelData.setBranch(branchList.get(i));
+                    excelData.setDays(date);
+                    excelData.setNumberOfCommit(commitHours.toString());
+                    excelData.setNumberOfMerge(mergeHours.toString());
                     kpiExcelData.add(excelData);
+                }
 
-                }
-                for (Map.Entry m1 : repoWiseCommitMap.entrySet()) {
-                    excelData.setMeanTimetoMerge(m1.getValue().toString());
-                    kpiExcelData.add(excelData);
-                }
 
             }
-        }
 
+
+        }
     }
+
 }

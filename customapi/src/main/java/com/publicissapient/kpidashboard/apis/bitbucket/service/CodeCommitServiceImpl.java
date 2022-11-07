@@ -305,8 +305,8 @@ public class CodeCommitServiceImpl extends BitBucketKPIService<Long, List<Object
                                    List<Map<String, Long>> repoWiseMergeRequestList) {
         if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
 
-            String sprintName = node.getSprintFilter().getName();
-            KPIExcelUtility.populateCodeCommit(sprintName, repoWiseCommitList, repoList, branchList, excelData, repoWiseMergeRequestList);
+            String projectName = node.getProjectFilter().getName();
+            KPIExcelUtility.populateCodeCommit(projectName, repoWiseCommitList, repoList, branchList, excelData, repoWiseMergeRequestList);
         }
     }
 
@@ -328,23 +328,23 @@ public class CodeCommitServiceImpl extends BitBucketKPIService<Long, List<Object
             Map<String, Integer> hoverValues = new HashMap<>();
             if (commitCountForRepo != null && commitCountForRepo.get(currentDate) != null) {
                 Long commitForDay = commitCountForRepo.get(currentDate);
-                excelDataLoader.put(DATE + formatDate(currentDate), commitForDay);
+                excelDataLoader.put(formatDate(currentDate), commitForDay);
                 dataCount.setValue(commitForDay);
                 hoverValues.put(NO_CHECKIN, commitForDay.intValue());
             } else {
-                excelDataLoader.put(DATE + formatDate(currentDate), 0l);
+                excelDataLoader.put(formatDate(currentDate), 0l);
                 dataCount.setValue(0l);
                 hoverValues.put(NO_CHECKIN, 0);
 
             }
             if (mergeCountForRepo != null && mergeCountForRepo.get(currentDate) != null) {
                 Long mergeForDay = mergeCountForRepo.get(currentDate);
-                mergeRequestExcelDataLoader.put(DATE + formatDate(currentDate), mergeForDay);
+                mergeRequestExcelDataLoader.put(formatDate(currentDate), mergeForDay);
                 dataCount.setLineValue(mergeForDay);
                 hoverValues.put(NO_MERGE, mergeForDay.intValue());
 
             } else {
-                mergeRequestExcelDataLoader.put(DATE + formatDate(currentDate), 0l);
+                mergeRequestExcelDataLoader.put(formatDate(currentDate), 0l);
                 dataCount.setLineValue(0l);
                 hoverValues.put(NO_MERGE, 0);
 

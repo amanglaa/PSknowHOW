@@ -18,34 +18,13 @@
 
 package com.publicissapient.kpidashboard.apis.jira.scrum.service;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.publicissapient.kpidashboard.apis.data.FieldMappingDataFactory;
-import com.publicissapient.kpidashboard.apis.model.Node;
-import org.bson.types.ObjectId;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
-
 import com.publicissapient.kpidashboard.apis.appsetting.service.ConfigHelperService;
 import com.publicissapient.kpidashboard.apis.common.service.CacheService;
 import com.publicissapient.kpidashboard.apis.common.service.impl.KpiHelperService;
 import com.publicissapient.kpidashboard.apis.config.CustomApiConfig;
 import com.publicissapient.kpidashboard.apis.constant.Constant;
 import com.publicissapient.kpidashboard.apis.data.AccountHierarchyFilterDataFactory;
+import com.publicissapient.kpidashboard.apis.data.FieldMappingDataFactory;
 import com.publicissapient.kpidashboard.apis.data.JiraIssueDataFactory;
 import com.publicissapient.kpidashboard.apis.data.KpiRequestFactory;
 import com.publicissapient.kpidashboard.apis.enums.Filters;
@@ -56,6 +35,7 @@ import com.publicissapient.kpidashboard.apis.filter.service.FilterHelperService;
 import com.publicissapient.kpidashboard.apis.model.AccountHierarchyData;
 import com.publicissapient.kpidashboard.apis.model.KpiElement;
 import com.publicissapient.kpidashboard.apis.model.KpiRequest;
+import com.publicissapient.kpidashboard.apis.model.Node;
 import com.publicissapient.kpidashboard.apis.model.TreeAggregatorDetail;
 import com.publicissapient.kpidashboard.apis.util.KPIHelperUtil;
 import com.publicissapient.kpidashboard.common.model.application.DataCount;
@@ -67,158 +47,177 @@ import com.publicissapient.kpidashboard.common.repository.application.FieldMappi
 import com.publicissapient.kpidashboard.common.repository.application.ProjectBasicConfigRepository;
 import com.publicissapient.kpidashboard.common.repository.jira.JiraIssueRepository;
 import com.publicissapient.kpidashboard.common.repository.jira.SprintRepository;
+import org.bson.types.ObjectId;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StoryCountImplTest {
 
-	public Map<String, ProjectBasicConfig> projectConfigMap = new HashMap<>();
-	public Map<ObjectId, FieldMapping> fieldMappingMap = new HashMap<>();
-	@Mock
-	JiraIssueRepository jiraIssueRepository;
-	@Mock
-	CacheService cacheService;
-	@Mock
-	ConfigHelperService configHelperService;
-	@Mock
-	KpiHelperService kpiHelperService;
-	@InjectMocks
-	StoryCountImpl storyCountImpl;
-	@Mock
-	ProjectBasicConfigRepository projectConfigRepository;
-	@Mock
-	FieldMappingRepository fieldMappingRepository;
-	@Mock
-	SprintRepository sprintRepository;
-	@Mock
-	CustomApiConfig customApiSetting;
+    public Map<String, ProjectBasicConfig> projectConfigMap = new HashMap<>();
+    public Map<ObjectId, FieldMapping> fieldMappingMap = new HashMap<>();
+    @Mock
+    JiraIssueRepository jiraIssueRepository;
+    @Mock
+    CacheService cacheService;
+    @Mock
+    ConfigHelperService configHelperService;
+    @Mock
+    KpiHelperService kpiHelperService;
+    @InjectMocks
+    StoryCountImpl storyCountImpl;
+    @Mock
+    ProjectBasicConfigRepository projectConfigRepository;
+    @Mock
+    FieldMappingRepository fieldMappingRepository;
+    @Mock
+    SprintRepository sprintRepository;
+    @Mock
+    CustomApiConfig customApiSetting;
 
-	@Mock
-	private FilterHelperService filterHelperService;
-	private Map<String, Object> filterLevelMap;
-	private List<ProjectBasicConfig> projectConfigList = new ArrayList<>();
-	private List<FieldMapping> fieldMappingList = new ArrayList<>();
-	private List<JiraIssue> storyList = new ArrayList<>();
-	private Map<String, String> kpiWiseAggregation = new HashMap<>();
-	private List<DataCount> dataCountList = new ArrayList<>();
-	private List<SprintDetails> sprintDetailsList = new ArrayList<>();
-	private List<JiraIssue> totalIssueList = new ArrayList<>();
+    @Mock
+    private FilterHelperService filterHelperService;
+    private Map<String, Object> filterLevelMap;
+    private List<ProjectBasicConfig> projectConfigList = new ArrayList<>();
+    private List<FieldMapping> fieldMappingList = new ArrayList<>();
+    private List<JiraIssue> storyList = new ArrayList<>();
+    private Map<String, String> kpiWiseAggregation = new HashMap<>();
+    private List<DataCount> dataCountList = new ArrayList<>();
+    private List<SprintDetails> sprintDetailsList = new ArrayList<>();
+    private List<JiraIssue> totalIssueList = new ArrayList<>();
 
-	private KpiRequest kpiRequest;
-	private List<AccountHierarchyData> accountHierarchyDataList = new ArrayList<>();
+    private KpiRequest kpiRequest;
+    private List<AccountHierarchyData> accountHierarchyDataList = new ArrayList<>();
 
-	@Before
-	public void setup() {
-		KpiRequestFactory kpiRequestFactory = KpiRequestFactory.newInstance();
-		kpiRequest = kpiRequestFactory.findKpiRequest(KPICode.STORY_COUNT.getKpiId());
-		kpiRequest.setLabel("PROJECT");
+    @Before
+    public void setup() {
+        KpiRequestFactory kpiRequestFactory = KpiRequestFactory.newInstance();
+        kpiRequest = kpiRequestFactory.findKpiRequest(KPICode.STORY_COUNT.getKpiId());
+        kpiRequest.setLabel("PROJECT");
 
-		AccountHierarchyFilterDataFactory accountHierarchyFilterDataFactory = AccountHierarchyFilterDataFactory
-				.newInstance();
-		accountHierarchyDataList = accountHierarchyFilterDataFactory.getAccountHierarchyDataList();
+        AccountHierarchyFilterDataFactory accountHierarchyFilterDataFactory = AccountHierarchyFilterDataFactory
+                .newInstance();
+        accountHierarchyDataList = accountHierarchyFilterDataFactory.getAccountHierarchyDataList();
 
-		filterLevelMap = new LinkedHashMap<>();
-		filterLevelMap.put("PROJECT", Filters.PROJECT);
-		filterLevelMap.put("SPRINT", Filters.SPRINT);
+        filterLevelMap = new LinkedHashMap<>();
+        filterLevelMap.put("PROJECT", Filters.PROJECT);
+        filterLevelMap.put("SPRINT", Filters.SPRINT);
 
-		JiraIssueDataFactory jiraIssueDataFactory = JiraIssueDataFactory.newInstance();
+        JiraIssueDataFactory jiraIssueDataFactory = JiraIssueDataFactory.newInstance();
 
-		totalIssueList = jiraIssueDataFactory.getJiraIssues();
+        totalIssueList = jiraIssueDataFactory.getJiraIssues();
 
-		ProjectBasicConfig projectConfig = new ProjectBasicConfig();
-		projectConfig.setId(new ObjectId("6335363749794a18e8a4479b"));
-		projectConfig.setProjectName("Scrum Project");
-		projectConfigMap.put(projectConfig.getProjectName(), projectConfig);
+        ProjectBasicConfig projectConfig = new ProjectBasicConfig();
+        projectConfig.setId(new ObjectId("6335363749794a18e8a4479b"));
+        projectConfig.setProjectName("Scrum Project");
+        projectConfigMap.put(projectConfig.getProjectName(), projectConfig);
 
-		FieldMappingDataFactory fieldMappingDataFactory = FieldMappingDataFactory
-				.newInstance("/json/default/scrum_project_field_mappings.json");
-		FieldMapping fieldMapping = fieldMappingDataFactory.getFieldMappings().get(0);
-		fieldMappingMap.put(fieldMapping.getBasicProjectConfigId(), fieldMapping);
-		configHelperService.setProjectConfigMap(projectConfigMap);
-		configHelperService.setFieldMappingMap(fieldMappingMap);
-		when(configHelperService.getFieldMappingMap()).thenReturn(fieldMappingMap);
-		/// set aggregation criteria kpi wise
-		kpiWiseAggregation.put(KPICode.STORY_COUNT.name(), "sum");
-	}
-
-
-	@After
-	public void cleanup() {
-		jiraIssueRepository.deleteAll();
-	}
+        FieldMappingDataFactory fieldMappingDataFactory = FieldMappingDataFactory
+                .newInstance("/json/default/scrum_project_field_mappings.json");
+        FieldMapping fieldMapping = fieldMappingDataFactory.getFieldMappings().get(0);
+        fieldMappingMap.put(fieldMapping.getBasicProjectConfigId(), fieldMapping);
+        configHelperService.setProjectConfigMap(projectConfigMap);
+        configHelperService.setFieldMappingMap(fieldMappingMap);
+        when(configHelperService.getFieldMappingMap()).thenReturn(fieldMappingMap);
+        /// set aggregation criteria kpi wise
+        kpiWiseAggregation.put(KPICode.STORY_COUNT.name(), "sum");
+    }
 
 
-	@Test
-	public void testCalculateKPIMetrics() {
-		Map<String, Object> subCategoryMap = new HashMap<>();
-		Double storyCount = storyCountImpl.calculateKPIMetrics(subCategoryMap);
-		assertThat("Story List : ", storyCount, equalTo(0.0));
-	}
+    @After
+    public void cleanup() {
+        jiraIssueRepository.deleteAll();
+    }
 
-	@Test
-	public void testFetchKPIDataFromDbData() throws ApplicationException {
-		TreeAggregatorDetail treeAggregatorDetail = KPIHelperUtil.getTreeLeafNodesGroupedByFilter(kpiRequest,
-				accountHierarchyDataList, new ArrayList<>(), "hierarchyLevelOne", 5);
-		List<Node> leafNodeList = new ArrayList<>();
-		leafNodeList = KPIHelperUtil.getLeafNodes(treeAggregatorDetail.getRoot(), leafNodeList);
-		String startDate = leafNodeList.get(0).getSprintFilter().getStartDate();
-		String endDate = leafNodeList.get(leafNodeList.size() - 1).getSprintFilter().getEndDate();
-		when(sprintRepository.findBySprintIDIn(Mockito.any())).thenReturn(sprintDetailsList);
-		Map<String, Object> storyList = storyCountImpl.fetchKPIDataFromDb(leafNodeList, startDate, endDate, kpiRequest);
-		assertThat("Total Stories : ", storyList.size(), equalTo(2));
-	}
 
-	@Test
-	public void testGetStoryList() throws ApplicationException {
-		TreeAggregatorDetail treeAggregatorDetail = KPIHelperUtil.getTreeLeafNodesGroupedByFilter(kpiRequest,
-				accountHierarchyDataList, new ArrayList<>(), "hierarchyLevelOne", 5);
-		when(sprintRepository.findBySprintIDIn(Mockito.any())).thenReturn(sprintDetailsList);
-		when(jiraIssueRepository.findIssueByNumber(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(totalIssueList);
-		String kpiRequestTrackerId = "Excel-Jira-5be544de025de212549176a9";
-		when(cacheService.getFromApplicationCache(Constant.KPI_REQUEST_TRACKER_ID_KEY + KPISource.JIRA.name()))
-				.thenReturn(kpiRequestTrackerId);
-		when(storyCountImpl.getRequestTrackerId()).thenReturn(kpiRequestTrackerId);
-		try {
-			KpiElement kpiElement = storyCountImpl.getKpiData(kpiRequest, kpiRequest.getKpiList().get(0),
-					treeAggregatorDetail);
-			List<DataCount> dataCountList = (List<DataCount>) kpiElement.getTrendValueList();
+    @Test
+    public void testCalculateKPIMetrics() {
+        Map<String, Object> subCategoryMap = new HashMap<>();
+        Double storyCount = storyCountImpl.calculateKPIMetrics(subCategoryMap);
+        assertThat("Story List : ", storyCount, equalTo(0.0));
+    }
 
-			assertThat("Story Count : ", dataCountList.size(), equalTo(1));
+    @Test
+    public void testFetchKPIDataFromDbData() throws ApplicationException {
+        TreeAggregatorDetail treeAggregatorDetail = KPIHelperUtil.getTreeLeafNodesGroupedByFilter(kpiRequest,
+                accountHierarchyDataList, new ArrayList<>(), "hierarchyLevelOne", 5);
+        List<Node> leafNodeList = new ArrayList<>();
+        leafNodeList = KPIHelperUtil.getLeafNodes(treeAggregatorDetail.getRoot(), leafNodeList);
+        String startDate = leafNodeList.get(0).getSprintFilter().getStartDate();
+        String endDate = leafNodeList.get(leafNodeList.size() - 1).getSprintFilter().getEndDate();
+        when(sprintRepository.findBySprintIDIn(Mockito.any())).thenReturn(sprintDetailsList);
+        Map<String, Object> storyList = storyCountImpl.fetchKPIDataFromDb(leafNodeList, startDate, endDate, kpiRequest);
+        assertThat("Total Stories : ", storyList.size(), equalTo(2));
+    }
 
-		} catch (ApplicationException enfe) {
+    @Test
+    public void testGetStoryList() throws ApplicationException {
+        TreeAggregatorDetail treeAggregatorDetail = KPIHelperUtil.getTreeLeafNodesGroupedByFilter(kpiRequest,
+                accountHierarchyDataList, new ArrayList<>(), "hierarchyLevelOne", 5);
+        when(sprintRepository.findBySprintIDIn(Mockito.any())).thenReturn(sprintDetailsList);
 
-		}
+        String kpiRequestTrackerId = "Excel-Jira-5be544de025de212549176a9";
+        when(cacheService.getFromApplicationCache(Constant.KPI_REQUEST_TRACKER_ID_KEY + KPISource.JIRA.name()))
+                .thenReturn(kpiRequestTrackerId);
+        when(storyCountImpl.getRequestTrackerId()).thenReturn(kpiRequestTrackerId);
+        try {
+            KpiElement kpiElement = storyCountImpl.getKpiData(kpiRequest, kpiRequest.getKpiList().get(0),
+                    treeAggregatorDetail);
+            List<DataCount> dataCountList = (List<DataCount>) kpiElement.getTrendValueList();
 
-	}
+            assertThat("Story Count : ", dataCountList.size(), equalTo(1));
 
-	@Test
-	public void testGetStoryList_EmptySprintDetails_AzureCase() throws ApplicationException {
-		TreeAggregatorDetail treeAggregatorDetail = KPIHelperUtil.getTreeLeafNodesGroupedByFilter(kpiRequest,
-				accountHierarchyDataList, new ArrayList<>(), "hierarchyLevelOne", 5);
-		when(sprintRepository.findBySprintIDIn(Mockito.any())).thenReturn(new ArrayList<>());
-		when(jiraIssueRepository.findIssuesBySprintAndType(Mockito.any(), Mockito.any()))
-				.thenReturn(totalIssueList);
-		String kpiRequestTrackerId = "Excel-Jira-5be544de025de212549176a9";
-		when(cacheService.getFromApplicationCache(Constant.KPI_REQUEST_TRACKER_ID_KEY + KPISource.JIRA.name()))
-				.thenReturn(kpiRequestTrackerId);
-		when(storyCountImpl.getRequestTrackerId()).thenReturn(kpiRequestTrackerId);
-		try {
-			KpiElement kpiElement = storyCountImpl.getKpiData(kpiRequest, kpiRequest.getKpiList().get(0),
-					treeAggregatorDetail);
-			List<DataCount> dataCountList = (List<DataCount>) kpiElement.getTrendValueList();
+        } catch (ApplicationException enfe) {
 
-			assertThat("Story Count : ", dataCountList.size(), equalTo(1));
+        }
 
-		} catch (ApplicationException enfe) {
+    }
 
-		}
+    @Test
+    public void testGetStoryList_EmptySprintDetails_AzureCase() throws ApplicationException {
+        TreeAggregatorDetail treeAggregatorDetail = KPIHelperUtil.getTreeLeafNodesGroupedByFilter(kpiRequest,
+                accountHierarchyDataList, new ArrayList<>(), "hierarchyLevelOne", 5);
+        when(sprintRepository.findBySprintIDIn(Mockito.any())).thenReturn(new ArrayList<>());
+        when(jiraIssueRepository.findIssuesBySprintAndType(Mockito.any(), Mockito.any()))
+                .thenReturn(totalIssueList);
+        String kpiRequestTrackerId = "Excel-Jira-5be544de025de212549176a9";
+        when(cacheService.getFromApplicationCache(Constant.KPI_REQUEST_TRACKER_ID_KEY + KPISource.JIRA.name()))
+                .thenReturn(kpiRequestTrackerId);
+        when(storyCountImpl.getRequestTrackerId()).thenReturn(kpiRequestTrackerId);
+        try {
+            KpiElement kpiElement = storyCountImpl.getKpiData(kpiRequest, kpiRequest.getKpiList().get(0),
+                    treeAggregatorDetail);
+            List<DataCount> dataCountList = (List<DataCount>) kpiElement.getTrendValueList();
 
-	}
+            assertThat("Story Count : ", dataCountList.size(), equalTo(1));
 
-	@Test
-	public void testQualifierType() {
-		String kpiName = KPICode.STORY_COUNT.name();
-		String type = storyCountImpl.getQualifierType();
-		assertThat("KPI NAME : ", type, equalTo(kpiName));
-	}
+        } catch (ApplicationException enfe) {
+
+        }
+
+    }
+
+    @Test
+    public void testQualifierType() {
+        String kpiName = KPICode.STORY_COUNT.name();
+        String type = storyCountImpl.getQualifierType();
+        assertThat("KPI NAME : ", type, equalTo(kpiName));
+    }
 
 }
