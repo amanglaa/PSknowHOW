@@ -283,11 +283,7 @@ public class SprintCapacityServiceImpl extends JiraKPIService<Double, List<Objec
             List<String> loggedTimeList = new ArrayList<>();
             List<String> estimateTimeList = new ArrayList<>();
             estimateTimeList.add(df2.format(estimateTime));
-            sprintCapacityList.stream()
-                    .collect(toMap(JiraIssue::getNumber, Function.identity()));
-
             for (JiraIssue jiraIssue : sprintCapacityList) {
-
                 Double daysLogged = 0.0d;
                 if (jiraIssue.getTimeSpentInMinutes() != null) {
                     daysLogged = Double.valueOf(jiraIssue.getTimeSpentInMinutes()) / 60;

@@ -76,6 +76,12 @@ public enum KPIExcelColumn {
 
     DEPLOYMENT_FREQUENCY("kpi118", Arrays.asList("Project Name", "Date", "Job Name", "Month", "Environment")),
 
+    DEFECTS_WITHOUT_STORY_LINK("kpi80", Arrays.asList("Sprint Name","Priority","Defects Without Story Link")),
+
+    TEST_WITHOUT_STORY_LINK("kpi79", Arrays.asList("Project Name","Test Case ID","Linked to Story")),
+
+    PRODUCTION_DEFECTS_AGEING("kpi127", Arrays.asList("Project Name", "Defect ID", "Priority", "Date", "Status")),
+
     INVALID("INVALID_KPI", Arrays.asList("Invalid"));
 
     // @formatter:on

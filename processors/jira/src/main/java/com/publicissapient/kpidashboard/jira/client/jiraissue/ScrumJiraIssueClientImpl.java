@@ -196,7 +196,7 @@ public class ScrumJiraIssueClientImpl extends JiraIssueClient {// NOPMD
 						savedIsuesCount += issues.size();
 					}
 
-					if (!dataExist && !latestDataFetched && setForCacheClean.size() > sprintCount) {
+					if (!latestDataFetched && setForCacheClean.size() > sprintCount) {
 						latestDataFetched = cleanCache();
 						setForCacheClean.clear();
 						log.info("latest sprint fetched cache cleaned.");
@@ -283,17 +283,6 @@ public class ScrumJiraIssueClientImpl extends JiraIssueClient {// NOPMD
 		processorExecutionTraceLog.setExecutionSuccess(isSuccess);
 		processorExecutionTraceLog.setExecutionEndedAt(System.currentTimeMillis());
 		processorExecutionTraceLogService.save(processorExecutionTraceLog);
-	}
-
-	private LocalDateTime updatedDateToSave(LocalDateTime capturedDate, LocalDateTime currentIssueDate) {
-		if (capturedDate == null) {
-			return currentIssueDate;
-		}
-
-		if (currentIssueDate.isAfter(capturedDate)) {
-			return currentIssueDate;
-		}
-		return capturedDate;
 	}
 
 	private boolean cleanCache() {
