@@ -79,6 +79,8 @@ export class SharedService implements OnInit {
   setNoData = new Subject<boolean>();
   clickedItem = new Subject<any>();
   public xLabelValue: any;
+  selectedLevel:object={};
+  selectedTrends:Array<object> = [];
   constructor() {
     this.passDataToDashboard = new EventEmitter();
     this.onTabRefresh = new EventEmitter();
@@ -285,6 +287,18 @@ export class SharedService implements OnInit {
   }
   setGlobalDownload(val){
     this.isDownloadExcel.emit(val);
+  }
+  setSelectedLevel(val){
+    this.selectedLevel = {...val};
+  }
+  getSelectedLevel(){
+    return this.selectedLevel;
+  }
+  setSelectedTrends(values){
+    this.selectedTrends = [...values];
+  }
+  getSelectedTrends(){
+    return this.selectedTrends;
   }
 }
 

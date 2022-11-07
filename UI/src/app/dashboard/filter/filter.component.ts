@@ -457,8 +457,17 @@ export class FilterComponent implements OnInit {
 
     // this method would be called on click of apply button of filter
     applyChanges(applySource?, filterApplied = true): void {
-        if (this.filterForm?.get('selectedTrendValue')?.value?.length > 0) {
-
+        let selectedLevelId = this.filterForm?.get('selectedLevel')?.value;
+        let selectedTrendIds = this.filterForm?.get('selectedTrendValue')?.value;
+        let selectedLevel = this.hierarchyLevels?.filter(x => x.hierarchyLevelId == selectedLevelId)[0];
+        if (selectedTrendIds?.length > 0) {
+            let selectedTrendValues = [];
+            for(let i = 0; i<selectedTrendIds?.length;i++){
+                selectedTrendValues.push(this.trendLineValueList?.filter(x => x.nodeId == selectedTrendIds[i])[0]);
+            }
+            
+            this.service.setSelectedLevel(selectedLevel);
+            this.service.setSelectedTrends(selectedTrendValues);
             if (!applySource) {
                 this.ngselect?.close();
                 this.ngselect?.blur();
