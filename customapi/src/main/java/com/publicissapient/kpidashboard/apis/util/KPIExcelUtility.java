@@ -533,9 +533,10 @@ public class KPIExcelUtility {
 
     public static void populateCodeBuildTime(List<KPIExcelData> kpiExcelData, String projectName, CodeBuildTimeInfo codeBuildTimeInfo) {
 
-        KPIExcelData excelData = new KPIExcelData();
+
         for (int i = 0; i < codeBuildTimeInfo.getBuildJobList().size(); i++) {
-            excelData.setProject(projectName);
+            KPIExcelData excelData = new KPIExcelData();
+            excelData.setProjectName(projectName);
             excelData.setJobName(codeBuildTimeInfo.getBuildJobList().get(i));
             excelData.setBuildUrl(codeBuildTimeInfo.getBuildUrlList().get(i));
             excelData.setStartTime(codeBuildTimeInfo.getBuildStartTimeList().get(i));
