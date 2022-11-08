@@ -18,38 +18,13 @@
 
 package com.publicissapient.kpidashboard.apis.common.service.impl;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.bson.types.ObjectId;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.Duration;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.publicissapient.kpidashboard.apis.appsetting.service.ConfigHelperService;
 import com.publicissapient.kpidashboard.apis.config.CustomApiConfig;
 import com.publicissapient.kpidashboard.apis.constant.Constant;
 import com.publicissapient.kpidashboard.apis.enums.JiraFeature;
 import com.publicissapient.kpidashboard.apis.enums.JiraFeatureHistory;
 import com.publicissapient.kpidashboard.apis.filter.service.FilterHelperService;
+import com.publicissapient.kpidashboard.apis.model.KPIFieldMappingResponse;
 import com.publicissapient.kpidashboard.apis.model.KpiElement;
 import com.publicissapient.kpidashboard.apis.model.KpiRequest;
 import com.publicissapient.kpidashboard.apis.model.MasterResponse;
@@ -60,6 +35,7 @@ import com.publicissapient.kpidashboard.apis.util.KpiDataHelper;
 import com.publicissapient.kpidashboard.common.constant.CommonConstant;
 import com.publicissapient.kpidashboard.common.constant.NormalizedJira;
 import com.publicissapient.kpidashboard.common.model.application.FieldMapping;
+import com.publicissapient.kpidashboard.common.model.application.KPIFieldMapping;
 import com.publicissapient.kpidashboard.common.model.application.KpiMaster;
 import com.publicissapient.kpidashboard.common.model.application.ValidationData;
 import com.publicissapient.kpidashboard.common.model.excel.CapacityKpiData;
@@ -77,6 +53,31 @@ import com.publicissapient.kpidashboard.common.repository.jira.JiraIssueReposito
 import com.publicissapient.kpidashboard.common.repository.jira.KanbanJiraIssueHistoryRepository;
 import com.publicissapient.kpidashboard.common.repository.jira.SprintRepository;
 import com.publicissapient.kpidashboard.common.repository.kpivideolink.KPIVideoLinkRepository;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.bson.types.ObjectId;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.Duration;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Helper class for kpi requests . Utility to process for kpi requests.
@@ -303,8 +304,8 @@ public class KpiHelperService { // NOPMD
 		
 		//fetch jira issue based on jira number
 		Set<JiraIssue> issueData=jiraIssueRepository.findIssueAndDescByNumber(storyIdList);
-		Map<String, JiraIssue> issueMapping = issueData.stream()
-			      .collect(Collectors.toMap(JiraIssue::getNumber, Function.identity()));	
+		Map<String, JiraIssue> issueMapping = new HashMap<>();
+		issueData.stream().forEach(issue -> issueMapping.putIfAbsent(issue.getNumber(), issue));
 		List<JiraIssue> defectListWoDrop = new ArrayList<>();
 		getDefectsWithoutDrop(droppedDefects, defectDataList, defectListWoDrop);
 		resultListMap.put(STORY_DATA, sprintWiseStoryList);
@@ -440,12 +441,18 @@ public class KpiHelperService { // NOPMD
 
 		List<SprintDetails> sprintDetails = sprintRepository.findBySprintIDIn(sprintList);
 		Set<String> totalIssue = new HashSet<>();
-		sprintDetails.stream().forEach(sprintDetail -> {
-			if (CollectionUtils.isNotEmpty(sprintDetail.getTotalIssues())) {
-				totalIssue.addAll(sprintDetail.getTotalIssues());
-			}
+		if(CollectionUtils.isNotEmpty(sprintDetails)) {
+			sprintDetails.stream().forEach(sprintDetail -> {
+				if (CollectionUtils.isNotEmpty(sprintDetail.getTotalIssues())) {
+					totalIssue.addAll(KpiDataHelper.getIssuesIdListBasedOnTypeFromSprintDetails(sprintDetail,
+							CommonConstant.TOTAL_ISSUES));
+				}
 
-		});
+			});
+		} else {
+			mapOfFilters.put(JiraFeature.SPRINT_ID.getFieldValueInFeature(),
+					sprintList.stream().distinct().collect(Collectors.toList()));
+		}
 
 		/** additional filter **/
 		KpiDataHelper.createAdditionalFilterMap(kpiRequest, mapOfFilters, Constant.SCRUM, DEV, flterHelperService);
@@ -453,9 +460,18 @@ public class KpiHelperService { // NOPMD
 		mapOfFilters.put(JiraFeature.BASIC_PROJECT_CONFIG_ID.getFieldValueInFeature(),
 				basicProjectConfigIds.stream().distinct().collect(Collectors.toList()));
 
-		resultListMap.put(SPRINTVELOCITYKEY,
-				jiraIssueRepository.findIssueByNumber(mapOfFilters, totalIssue, uniqueProjectMap));
-		resultListMap.put(SPRINT_WISE_SPRINTDETAILS, sprintDetails);
+		if (CollectionUtils.isNotEmpty(totalIssue)) {
+			resultListMap.put(SPRINTVELOCITYKEY,
+					jiraIssueRepository.findIssueByNumber(mapOfFilters, totalIssue, uniqueProjectMap));
+			resultListMap.put(SPRINT_WISE_SPRINTDETAILS, sprintDetails);
+		} else {
+			//start: for azure board sprint details collections put is empty due to we did not have required data of issues.
+			List<JiraIssue> sprintVelocityList = jiraIssueRepository.findIssuesBySprintAndType(mapOfFilters,
+					uniqueProjectMap);
+			resultListMap.put(SPRINTVELOCITYKEY, sprintVelocityList);
+			resultListMap.put(SPRINT_WISE_SPRINTDETAILS, null);
+		}
+		//end: for azure board sprint details collections put is empty due to we did not have required data of issues.
 
 		return resultListMap;
 
@@ -1271,6 +1287,18 @@ public class KpiHelperService { // NOPMD
 
 		sprintWiseStories.forEach(sprintWiseStory -> sprintWiseStory.getStoryList()
 				.removeIf(storyId -> !acceptedStoryIds.contains(storyId)));
+	}
+
+	/**
+	 * Fetchs kpi fieldmapping list KpiFieldMapping response.
+	 *
+	 * @return the KpiFieldMapping response
+	 */
+	public KPIFieldMappingResponse fetchKpiFieldMappingList() {
+		List<KPIFieldMapping> lisOfKpiFieldMapping = (List<KPIFieldMapping>) configHelperService.loadKpiFieldMapping();
+		KPIFieldMappingResponse kpiFieldMappingResponse = new KPIFieldMappingResponse();
+		kpiFieldMappingResponse.setKpiFieldMappingList(lisOfKpiFieldMapping);
+		return kpiFieldMappingResponse;
 	}
 
 }
