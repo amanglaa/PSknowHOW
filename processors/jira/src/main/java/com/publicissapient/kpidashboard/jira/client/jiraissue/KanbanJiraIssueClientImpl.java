@@ -526,6 +526,8 @@ public class KanbanJiraIssueClientImpl extends JiraIssueClient {
 		jiraIssueHistory.setRootCauseList(jiraIssue.getRootCauseList());
 		jiraIssueHistory.setStoryType(jiraIssue.getTypeName());
 		jiraIssueHistory.setAdditionalFilters(jiraIssue.getAdditionalFilters());
+		jiraIssueHistory.setUrl(jiraIssue.getUrl());
+		jiraIssueHistory.setDescription(jiraIssue.getName());
 		// This method is not setup method. write it to keep
 		// custom history
 		processJiraIssueHistory(jiraIssueHistory, jiraIssue, issue, fieldMapping);

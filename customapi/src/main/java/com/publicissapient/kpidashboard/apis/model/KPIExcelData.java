@@ -50,7 +50,7 @@ public class KPIExcelData {
 	private String totalTimeSpent;
 
 	@JsonProperty("Closed")
-	private String status;
+	private String closedStatus;
 
 	@JsonProperty("Project Name")
 	private String projectName;
@@ -209,7 +209,19 @@ public class KPIExcelData {
 	private String isTestLinkedToStory;
 
 	@JsonProperty("Status")
-	private String defectStatus;
+	private String status;
+
+	@JsonProperty("Issue Status")
+	private String issueStatus;
+
+    @JsonProperty("Execution Date")
+    private String executionDate;
+
+    @JsonProperty("Ticket Issue ID")
+    private Map<String, String> ticketIssue;
+
+    @JsonProperty("Closed Ticket Issue ID")
+    private Map<String, String> closedTicket;
 
 	@JsonProperty("Start Time")
 	private String startTime;
@@ -226,8 +238,11 @@ public class KPIExcelData {
 	@JsonProperty("Started By")
 	private String startedBy;
 
+	@JsonProperty("Build Url")
+	private String buildUrl;
+
 	@JsonProperty("Repository Url")
-	private Map<String, String> repositoryURL;
+	private String repositoryURL;
 
 	@JsonProperty("Branch")
 	private String branch;
@@ -244,25 +259,15 @@ public class KPIExcelData {
 	@JsonProperty("No. of Merge")
 	private String numberOfMerge;
 
+	@JsonProperty("Created Date")
+	private String createdDate;
+
+    @JsonProperty("Closed Ticket Issue Type")
+    private String closedTicketIssueType;
+
     @JsonProperty("Day/Week/Month")
-    private String ticketVelocityDate;
+    private String dayWeekMonth;
 
-    @JsonProperty("Ticket Issue ID")
-    private Map<String, String> ticketIssueID;
-
-    @JsonProperty("Size (In Story Points)")
-    private String sizeInStoryPoints;
-
-    @JsonProperty("Build Url")
-    private Map<String, String> buildUrl;
-
-	@JsonProperty("Start Date")
-	private String startDate;
-
-	@JsonProperty("End Date")
-	private String endDate;
-
-	@JsonProperty("Estimated Capacity (in hours)")
-	private String estimatedCapacity;
-
+    @JsonProperty("Issue Priority")
+    private String issuePriority;
 }

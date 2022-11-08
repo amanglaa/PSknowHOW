@@ -19,14 +19,13 @@
 package com.publicissapient.kpidashboard.common.repository.jira;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.HashSet;
 import java.util.regex.Pattern;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -43,9 +42,6 @@ import com.publicissapient.kpidashboard.common.model.jira.KanbanJiraIssue;
 @Service
 public class KanbanJiraIssueRepositoryImpl implements KanbanJiraIssueRepoCustom {
 
-	@Autowired
-	private MongoOperations operations;
-
 	private static final String TICKET_PROJECT_ID_FIELD = "basicProjectConfigId";
 	private static final String TICKET_CREATED_DATE_FIELD = "createdDate";
 	private static final String RANGE = "range";
@@ -60,6 +56,9 @@ public class KanbanJiraIssueRepositoryImpl implements KanbanJiraIssueRepoCustom 
 	private static final String NUMBER = "number";
 	private static final String NAME = "name";
 	private static final String URL = "url";
+	private static final String CREATED_DATE = "createdDate";
+	@Autowired
+	private MongoOperations operations;
 
 	@Override
 	public List<KanbanJiraIssue> findIssuesByType(Map<String, List<String>> mapOfFilters, String dateFrom,
@@ -174,7 +173,6 @@ public class KanbanJiraIssueRepositoryImpl implements KanbanJiraIssueRepoCustom 
 		return operations.find(query, KanbanJiraIssue.class);
 
 	}
-
 
 	public List<KanbanJiraIssue> findCostOfDelayByType(Map<String, List<String>> mapOfFilters) {
 

@@ -80,19 +80,40 @@ public enum KPIExcelColumn {
 
     DEFECTS_WITHOUT_STORY_LINK("kpi80", Arrays.asList("Project Name","Priority","Defects Without Story Link", "Issue Description")),
 
-    TEST_WITHOUT_STORY_LINK("kpi79", Arrays.asList("Project Name","Test Case ID", "Linked to Story")),
+    TEST_WITHOUT_STORY_LINK("kpi79", Arrays.asList("Project Name","Test Case ID","Linked to Story")),
 
-    PRODUCTION_DEFECTS_AGEING("kpi127", Arrays.asList("Project Name", "Defect ID", "Issue Description", "Priority", "Date", "Status")),
+    PRODUCTION_DEFECTS_AGEING("kpi127", Arrays.asList("Project Name", "Defect ID", "Issue Description", "Priority", "Created Date", "Status")),
 
-    TICKET_VELOCITY("kpi49", Arrays.asList("Project Name", "Day/Week/Month", "Ticket Issue ID", "Issue Type", "Issue Description", "Size (In Story Points)")),
+	UNIT_TEST_COVERAGE_KANBAN("kpi62", Arrays.asList("Project", "Job Name", "Unit Coverage", "Weeks")),
 
-    CODE_BUILD_TIME_KANBAN("kpi66", Arrays.asList("Project Name", "Job Name", "Start Time", "End Time", "Duration", "Build Status", "Started By", "Build Url")),
+	SONAR_VIOLATIONS_KANBAN("kpi64", Arrays.asList("Project", "Job Name", "Sonar Violations", "Weeks")),
 
-    CODE_COMMIT_MERGE_KANBAN("kpi65", Arrays.asList("Project Name", "Repository Url", "Branch", "Day", "No. Of Commit")),
+	SONAR_TECH_DEBT_KANBAN("kpi67", Arrays.asList("Project", "Job Name", "Tech Debt (in days)", "Weeks")),
 
-    TEAM_CAPACITY_KANBAN("kpi58", Arrays.asList("Project Name", "Start Date", "End Date", "Estimated Capacity (in hours)")),
+	TEST_EXECUTION_KANBAN("kpi71", Arrays.asList("Project", "Execution Date", "Total Test", "Executed Test",
+			"Execution %", "Passed Test", "Passed %")),
 
-    INVALID("INVALID_KPI", Arrays.asList("Invalid"));
+	KANBAN_REGRESSION_PASS_PERCENTAGE("kpi63", Arrays.asList("Project", "Test Case ID", "Automated")),
+
+	OPEN_TICKET_AGING_BY_PRIORITY("kpi997",
+			Arrays.asList("Project", "Ticket Issue ID", "Priority", "Created Date", "Issue Status")),
+
+	NET_OPEN_TICKET_COUNT_BY_STATUS("kpi48",
+			Arrays.asList("Project", "Day/Week/Month", "Ticket Issue ID", "Issue Status", "Created Date")),
+
+	NET_OPEN_TICKET_COUNT_BY_RCA("kpi51",
+			Arrays.asList("Project", "Day/Week/Month", "Ticket Issue ID", "Root Cause", "Created Date")),
+
+	TICKET_COUNT_BY_PRIORITY("kpi50",
+			Arrays.asList("Project", "Day/Week/Month", "Ticket Issue ID", "Priority", "Created Date")),
+
+	TICKET_OPEN_VS_CLOSED_RATE_BY_TYPE("kpi55",
+			Arrays.asList("Project", "Day/Week/Month", "Ticket Issue ID", "Issue Type", "Status")),
+
+	TICKET_OPEN_VS_CLOSE_BY_PRIORITY("kpi54",
+			Arrays.asList("Project", "Day/Week/Month", "Ticket Issue ID", "Issue Priority", "Status")),
+
+	INVALID("INVALID_KPI", Arrays.asList("Invalid"));
 
     // @formatter:on
 
