@@ -225,4 +225,3 @@ public interface JiraIssueRepositoryCustom {// NOPMD
 
 	public Set<JiraIssue> findIssueAndDescByNumber(List<String> storyNumber);
 }
-

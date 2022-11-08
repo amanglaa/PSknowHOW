@@ -268,7 +268,7 @@ public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom {// NO
 	}
 
 	/**
-	 *
+	 * 
 	 * @param mapOfFilters
 	 * @param criteria
 	 * @return
@@ -284,7 +284,7 @@ public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom {// NO
 	}
 
 	/**
-	 *
+	 * 
 	 * @param uniqueProjectMap
 	 * @return
 	 */
@@ -413,7 +413,7 @@ public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom {// NO
 
 	/**
 	 * This method is used to find stories for a given list of sprints
-	 *
+	 * 
 	 * @param mapOfFilters
 	 *            filters
 	 * @param storyNumber
