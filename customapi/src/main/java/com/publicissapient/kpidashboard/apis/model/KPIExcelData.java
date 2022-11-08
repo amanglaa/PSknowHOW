@@ -50,7 +50,7 @@ public class KPIExcelData {
 	private String totalTimeSpent;
 
 	@JsonProperty("Closed")
-	private String status;
+	private String closedStatus;
 
 	@JsonProperty("Project Name")
 	private String projectName;
@@ -209,7 +209,19 @@ public class KPIExcelData {
 	private String isTestLinkedToStory;
 
 	@JsonProperty("Status")
-	private String defectStatus;
+	private String status;
+
+	@JsonProperty("Issue Status")
+	private String issueStatus;
+
+    @JsonProperty("Execution Date")
+    private String executionDate;
+
+    @JsonProperty("Ticket Issue ID")
+    private Map<String, String> ticketIssue;
+
+    @JsonProperty("Closed Ticket Issue ID")
+    private Map<String, String> closedTicket;
 
 	@JsonProperty("Start Time")
 	private String startTime;
@@ -249,4 +261,13 @@ public class KPIExcelData {
 
 	@JsonProperty("Created Date")
 	private String createdDate;
+
+    @JsonProperty("Closed Ticket Issue Type")
+    private String closedTicketIssueType;
+
+    @JsonProperty("Day/Week/Month")
+    private String dayWeekMonth;
+
+    @JsonProperty("Issue Priority")
+    private String issuePriority;
 }

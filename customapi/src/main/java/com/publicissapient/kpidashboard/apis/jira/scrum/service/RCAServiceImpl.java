@@ -334,6 +334,9 @@ public class RCAServiceImpl extends JiraKPIService<Long, List<Object>, Map<Strin
 					overAllHoverValueMap.put(StringUtils.capitalize(rca), rcaCountHover);
 				});
 			}
+			else{
+				excelData.clear();
+			}
 			Map<String, List<DataCount>> dataCountMap = new HashMap<>();
 
 			finalMap.forEach((key, value) -> {

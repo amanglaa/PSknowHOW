@@ -51,6 +51,7 @@ import com.publicissapient.kpidashboard.common.repository.excel.KanbanCapacityRe
 import com.publicissapient.kpidashboard.common.repository.jira.JiraIssueCustomHistoryRepository;
 import com.publicissapient.kpidashboard.common.repository.jira.JiraIssueRepository;
 import com.publicissapient.kpidashboard.common.repository.jira.KanbanJiraIssueHistoryRepository;
+import com.publicissapient.kpidashboard.common.repository.jira.KanbanJiraIssueRepository;
 import com.publicissapient.kpidashboard.common.repository.jira.SprintRepository;
 import com.publicissapient.kpidashboard.common.repository.kpivideolink.KPIVideoLinkRepository;
 import org.apache.commons.collections4.CollectionUtils;
@@ -78,6 +79,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Helper class for kpi requests . Utility to process for kpi requests.
@@ -136,6 +138,9 @@ public class KpiHelperService { // NOPMD
 
 	@Autowired
 	private FilterHelperService flterHelperService;
+
+	@Autowired
+	private KanbanJiraIssueRepository kanbanJiraIssueRepository;
 
 	/**
 	 * Prepares Kpi Elemnts on the basis of kpi master data.
@@ -684,14 +689,14 @@ public class KpiHelperService { // NOPMD
 				DEV, flterHelperService);
 		mapOfFilters.put(JiraFeatureHistory.BASIC_PROJECT_CONFIG_ID.getFieldValueInFeature(),
 				projectList.stream().distinct().collect(Collectors.toList()));
-		resultListMap.put(SUBGROUPCATEGORY, subGroupCategory);
 
+		List<KanbanIssueCustomHistory> issuesByCreatedDateAndType = kanbanJiraIssueHistoryRepository
+				.findIssuesByCreatedDateAndType(mapOfFilters, uniqueProjectMap, startDate, endDate);
+		resultListMap.put(SUBGROUPCATEGORY, subGroupCategory);
 		resultListMap.put(PROJECT_WISE_ISSUE_TYPES, projectWiseIssueTypeMap);
 		resultListMap.put(PROJECT_WISE_CLOSED_STORY_STATUS, projectWiseClosedStatusMap);
 		resultListMap.put(PROJECT_WISE_OPEN_STORY_STATUS, projectWiseOpenStatusMap);
-		resultListMap.put(JIRA_ISSUE_HISTORY_DATA, kanbanJiraIssueHistoryRepository
-				.findIssuesByCreatedDateAndType(mapOfFilters, uniqueProjectMap, startDate, endDate));
-
+		resultListMap.put(JIRA_ISSUE_HISTORY_DATA, issuesByCreatedDateAndType);
 		return resultListMap;
 	}
 
