@@ -18,6 +18,8 @@
 
 package com.publicissapient.kpidashboard.common.model.application;
 
+import org.joda.time.DateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,7 +27,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.joda.time.DateTime;
 
 /**
  * Cycle time validation data to show in excel.
