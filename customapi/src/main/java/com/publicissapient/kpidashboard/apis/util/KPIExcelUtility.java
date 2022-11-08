@@ -35,6 +35,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.publicissapient.kpidashboard.common.model.jira.JiraIssueCustomHistory;
 import com.publicissapient.kpidashboard.common.model.jira.KanbanIssueCustomHistory;
 import com.publicissapient.kpidashboard.common.model.testexecution.KanbanTestExecution;
 import org.apache.commons.collections.CollectionUtils;
@@ -310,6 +311,15 @@ public class KPIExcelUtility {
 			KanbanJiraIssue jiraIssue = (KanbanJiraIssue) object;
 			description = StringUtils.isEmpty(jiraIssue.getName()) ? Constant.EMPTY_STRING : jiraIssue.getName();
 		}
+        if (object instanceof KanbanIssueCustomHistory) {
+            KanbanIssueCustomHistory jiraIssue = (KanbanIssueCustomHistory) object;
+            description = StringUtils.isEmpty(jiraIssue.getDescription()) ? Constant.EMPTY_STRING : jiraIssue.getDescription();
+        }
+        if (object instanceof JiraIssueCustomHistory) {
+            JiraIssueCustomHistory jiraIssue = (JiraIssueCustomHistory) object;
+            description = StringUtils.isEmpty(jiraIssue.getDescription()) ? Constant.EMPTY_STRING : jiraIssue.getDescription();
+        }
+
 		return description;
 	}
 
@@ -327,6 +337,10 @@ public class KPIExcelUtility {
 			KanbanIssueCustomHistory jiraIssue = (KanbanIssueCustomHistory) object;
 			url = StringUtils.isEmpty(jiraIssue.getUrl()) ? Constant.EMPTY_STRING : jiraIssue.getUrl();
 		}
+        if (object instanceof JiraIssueCustomHistory) {
+            JiraIssueCustomHistory jiraIssue = (JiraIssueCustomHistory) object;
+            url = StringUtils.isEmpty(jiraIssue.getUrl()) ? Constant.EMPTY_STRING : jiraIssue.getUrl();
+        }
 
 		return url;
 
