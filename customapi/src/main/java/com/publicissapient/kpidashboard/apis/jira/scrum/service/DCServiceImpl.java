@@ -284,6 +284,7 @@ public class DCServiceImpl extends JiraKPIService<Long, List<Object>, Map<String
 
 		Map<Pair<String, String>, Map<String, Long>> sprintWiseDCPriorityMap = new HashMap<>();
 		Map<Pair<String, String>, Integer> sprintWiseTDCMap = new HashMap<>();
+		Map<Pair<String, String>, List<JiraIssue>> sprintWiseDefectDataListMap = new HashMap<>();
 
 		List<KPIExcelData> excelData = new ArrayList<>();
 
@@ -302,8 +303,7 @@ public class DCServiceImpl extends JiraKPIService<Long, List<Object>, Map<String
 			Map<String, Long> priorityCountMap = KPIHelperUtil.setpriorityScrum(sprintWiseDefectDataList,
 					customApiConfig);
 			projectWisePriorityList.addAll(priorityCountMap.keySet());
-			populateExcelDataObject(requestTrackerId, storyDefectDataListMap, excelData, sprintFilter,
-					sprintWiseDefectDataList);
+			sprintWiseDefectDataListMap.put(sprintFilter,sprintWiseDefectDataList);
 
 			setSprintWiseLogger(sprintFilter, storyIdList, sprintWiseDefectDataList, priorityCountMap);
 
@@ -338,6 +338,8 @@ public class DCServiceImpl extends JiraKPIService<Long, List<Object>, Map<String
 					trendValueList.add(dataCount);
 					dataCountMap.computeIfAbsent(priority, k -> new ArrayList<>()).add(dataCount);
 				});
+
+				populateExcelDataObject(requestTrackerId,node.getSprintFilter().getName(), excelData,sprintWiseDefectDataListMap.get(currentNodeIdentifier));
 			}
 			log.debug("[DC-SPRINT-WISE][{}]. DC for sprint {}  is {} and trend value is {}", requestTrackerId,
 					node.getSprintFilter().getName(), sprintWiseDCPriorityMap.get(currentNodeIdentifier),
@@ -379,21 +381,10 @@ public class DCServiceImpl extends JiraKPIService<Long, List<Object>, Map<String
 		return dataCount;
 	}
 
-	private void populateExcelDataObject(String requestTrackerId, Map<String, Object> storyDefectDataListMap,
-			List<KPIExcelData> excelData, Pair<String, String> sprint, List<JiraIssue> sprintWiseDefectDataList) {
+	private void populateExcelDataObject(String requestTrackerId, String sprintName,
+			List<KPIExcelData> excelData, List<JiraIssue> sprintWiseDefectDataList) {
 
 		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-
-			Map<String, String> sprintWiseStoryNameMap = ((List<SprintWiseStory>) storyDefectDataListMap
-					.get(SPRINT_WISE_STORY_DATA)).stream()
-							.collect(Collectors.toMap(SprintWiseStory::getSprint, SprintWiseStory::getSprintName,
-									(name1, mane2) -> name1));
-
-			String sprintName = sprintWiseStoryNameMap.get(sprint.getValue());
-			if (!sprint.getKey().equals(sprint.getValue())) {
-				sprintName = new StringBuilder().append(sprintName).append(Constant.UNDERSCORE).append(sprint.getKey())
-						.toString();
-			}
 			KPIExcelUtility.populateDefectRelatedExcelData(sprintName, sprintWiseDefectDataList, excelData,
 					KPICode.DEFECT_COUNT_BY_PRIORITY.getKpiId());
 

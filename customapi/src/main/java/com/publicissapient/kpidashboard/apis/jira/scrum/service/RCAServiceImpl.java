@@ -33,6 +33,8 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -68,8 +70,6 @@ import com.publicissapient.kpidashboard.common.model.application.FieldMapping;
 import com.publicissapient.kpidashboard.common.model.jira.JiraIssue;
 import com.publicissapient.kpidashboard.common.model.jira.SprintWiseStory;
 import com.publicissapient.kpidashboard.common.repository.jira.JiraIssueRepository;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * This class proces the KPI request for Root Cause Analysis
@@ -291,6 +291,7 @@ public class RCAServiceImpl extends JiraKPIService<Long, List<Object>, Map<Strin
 		// linked to sprint will create a bug.sprintWiseStoryMap will be empty.
 		Map<Pair<String, String>, Long> sprintIssueRCACountMap = new HashMap<>();
 		Map<String, Set<String>> projectWiseRCA = new HashMap<>();
+		Map<Pair<String, String>, List<JiraIssue>> sprintWiseDefectDataListMap = new HashMap<>();
 		sprintWiseMap.forEach((sprint, sprintWiseStories) -> {
 
 			List<String> storyIdList = new ArrayList<>();
@@ -305,14 +306,13 @@ public class RCAServiceImpl extends JiraKPIService<Long, List<Object>, Map<Strin
 			Map<String, Long> rcaCountMap = sprintWiseDefectDataList.stream()
 					.flatMap(f -> f.getRootCauseList().stream())
 					.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
-			populateExcelDataObject(requestTrackerId, storyDefectDataListMap, excelData, sprint,
-					sprintWiseDefectDataList);
 
 			setSprintWiseLogger(sprint, storyIdList, sprintWiseDefectDataList, rcaCountMap);
 
 			sprintWiseRCAMap.put(sprint, rcaCountMap);
 			sprintIssueRCACountMap.put(sprint, rcaCountMap.values().stream().reduce(0L, Long::sum));
 			projectWiseRCA.computeIfAbsent(sprint.getLeft(), k -> new HashSet<>()).addAll(rcaCountMap.keySet());
+			sprintWiseDefectDataListMap.put(sprint, sprintWiseDefectDataList);
 		});
 
 		sprintLeafNodeList.forEach(node -> {
@@ -323,6 +323,7 @@ public class RCAServiceImpl extends JiraKPIService<Long, List<Object>, Map<Strin
 			Set<String> allRCA = projectWiseRCA
 					.getOrDefault(node.getProjectFilter().getBasicProjectConfigId().toString(), new HashSet<>());
 			Map<String, Long> rcaMap = sprintWiseRCAMap.getOrDefault(currentNodeIdentifier, new HashMap<>());
+			List<JiraIssue> jiraIssueList = sprintWiseDefectDataListMap.get(currentNodeIdentifier);
 			Map<String, Long> finalMap = new HashMap<>();
 			Map<String, Integer> overAllHoverValueMap = new HashMap<>();
 			if (allRCA.size() > 1) {
@@ -333,9 +334,7 @@ public class RCAServiceImpl extends JiraKPIService<Long, List<Object>, Map<Strin
 					Integer rcaCountHover = rcaMap.getOrDefault(rca, 0L).intValue();
 					overAllHoverValueMap.put(StringUtils.capitalize(rca), rcaCountHover);
 				});
-			}
-			else{
-				excelData.clear();
+				populateExcelDataObject(requestTrackerId, storyDefectDataListMap, excelData, jiraIssueList, node.getSprintFilter().getName());
 			}
 			Map<String, List<DataCount>> dataCountMap = new HashMap<>();
 
@@ -364,22 +363,14 @@ public class RCAServiceImpl extends JiraKPIService<Long, List<Object>, Map<Strin
 	}
 
 	private void populateExcelDataObject(String requestTrackerId, Map<String, Object> storyDefectDataListMap,
-			List<KPIExcelData> excelData, Pair<String, String> sprint, List<JiraIssue> sprintWiseDefectDataList) {
+			List<KPIExcelData> excelData, List<JiraIssue> sprintWiseDefectDataList,
+			String name) {
 
 		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-
-			Map<String, String> sprintWiseStoryNameMap = ((List<SprintWiseStory>) storyDefectDataListMap
-					.get(SPRINT_WISE_STORY_DATA)).stream()
-							.collect(Collectors.toMap(SprintWiseStory::getSprint, SprintWiseStory::getSprintName,
-									(name1, mane2) -> name1));
-
-			String sprintName = sprintWiseStoryNameMap.get(sprint.getValue());
-			if (!sprint.getKey().equals(sprint.getValue())) {
-				sprintName = new StringBuilder().append(sprintName).append(Constant.UNDERSCORE).append(sprint.getKey())
-						.toString();
+			if (sprintWiseDefectDataList.size() > 0) {
+				KPIExcelUtility.populateDefectRelatedExcelData(name, sprintWiseDefectDataList, excelData,
+						KPICode.DEFECT_COUNT_BY_RCA.getKpiId());
 			}
-			KPIExcelUtility.populateDefectRelatedExcelData(sprintName, sprintWiseDefectDataList, excelData,
-					KPICode.DEFECT_COUNT_BY_RCA.getKpiId());
 
 		}
 	}
