@@ -78,11 +78,11 @@ public enum KPIExcelColumn {
 
     DEPLOYMENT_FREQUENCY("kpi118", Arrays.asList("Project Name", "Date", "Job Name", "Month", "Environment")),
 
-    DEFECTS_WITHOUT_STORY_LINK("kpi80", Arrays.asList("Sprint Name","Priority","Defects Without Story Link")),
+    DEFECTS_WITHOUT_STORY_LINK("kpi80", Arrays.asList("Project Name","Priority","Defects Without Story Link", "Issue Description")),
 
     TEST_WITHOUT_STORY_LINK("kpi79", Arrays.asList("Project Name","Test Case ID","Linked to Story")),
 
-    PRODUCTION_DEFECTS_AGEING("kpi127", Arrays.asList("Project Name", "Defect ID", "Priority", "Date", "Status")),
+    PRODUCTION_DEFECTS_AGEING("kpi127", Arrays.asList("Project Name", "Defect ID", "Issue Description", "Priority", "Created Date", "Status")),
 
 	UNIT_TEST_COVERAGE_KANBAN("kpi62", Arrays.asList("Project", "Job Name", "Unit Coverage", "Weeks")),
 

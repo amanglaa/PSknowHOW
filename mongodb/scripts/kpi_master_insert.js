@@ -1263,11 +1263,11 @@ db.getCollection('kpi_master').insert(
         },
         {
           "type": "paragraph",
-          "value": "Estimated Hours: It explains the total hours required to complete Sprint backlog"
+          "value": "Estimated Hours: It explains the total hours required to complete Sprint backlog. The capacity is defined in KnowHOW"
         },
         {
           "type": "paragraph",
-          "value": "Logged Work: The amount of time team has logged within a Sprint"
+          "value": "Logged Work: The amount of time team has logged within a Sprint. It is derived as sum of all logged work against issues tagged to a Sprint in Jira"
         }
       ]
     },

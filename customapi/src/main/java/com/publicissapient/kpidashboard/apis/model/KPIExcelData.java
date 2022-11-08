@@ -220,9 +220,6 @@ public class KPIExcelData {
     @JsonProperty("Ticket Issue ID")
     private Map<String, String> ticketIssue;
 
-    @JsonProperty("Created Date")
-    private String createdDate;
-
     @JsonProperty("Closed Ticket Issue ID")
     private Map<String, String> closedTicket;
 
@@ -261,6 +258,9 @@ public class KPIExcelData {
 
 	@JsonProperty("No. of Merge")
 	private String numberOfMerge;
+
+	@JsonProperty("Created Date")
+	private String createdDate;
 
     @JsonProperty("Closed Ticket Issue Type")
     private String closedTicketIssueType;
