@@ -96,7 +96,4 @@ public interface KanbanJiraIssueRepoCustom {
 	 */
 	void updateByBasicProjectConfigId(String basicProjectConfigId, List<String> fieldsToUnset);
 
-	Set<KanbanJiraIssue> findIssueAndDescByNumber(List<String> storyNumber);
-
-
 }

@@ -89,7 +89,6 @@ public class TicketOpenVsClosedByTypeServiceImpl extends JiraKPIService<Long, Li
 	private static final String DEV = "DeveloperKpi";
 	private static final String IN = "in";
 	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-	private static final String ISSUE_DATA = "issueData";
 	@Autowired
 	private KanbanJiraIssueRepository kanbanJiraIssueRepository;
 	@Autowired
@@ -233,9 +232,7 @@ public class TicketOpenVsClosedByTypeServiceImpl extends JiraKPIService<Long, Li
 		resultListMap.put(SUBGROUPCATEGORY, subGroupCategory);
 		resultListMap.put(PROJECT_WISE_ISSUETYPES, projectWiseIssueTypeMap);
 		resultListMap.put(PROJECT_WISE_CLOSED_STORY_STATUS, projectWiseClosedStatusMap);
-		resultListMap.put(ISSUE_DATA, kanbanJiraIssueRepository.findIssueAndDescByNumber(
-				issuesByStatusAndDate.stream().map(KanbanIssueCustomHistory::getStoryID).collect(Collectors.toList())));
-
+		
 		return resultListMap;
 	}
 
