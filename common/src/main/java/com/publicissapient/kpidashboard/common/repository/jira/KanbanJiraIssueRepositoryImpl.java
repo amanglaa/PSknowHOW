@@ -21,6 +21,8 @@ package com.publicissapient.kpidashboard.common.repository.jira;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.regex.Pattern;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -55,6 +57,9 @@ public class KanbanJiraIssueRepositoryImpl implements KanbanJiraIssueRepoCustom 
 	private static final String TYPE_NAME = "typeName";
 	private static final String JIRA_ISSUE_STATUS = "jiraStatus";
 	private static final String NIN = "nin";
+	private static final String NUMBER = "number";
+	private static final String NAME = "name";
+	private static final String URL = "url";
 
 	@Override
 	public List<KanbanJiraIssue> findIssuesByType(Map<String, List<String>> mapOfFilters, String dateFrom,
@@ -199,6 +204,20 @@ public class KanbanJiraIssueRepositoryImpl implements KanbanJiraIssueRepoCustom 
 
 			operations.updateMulti(query, update, KanbanJiraIssue.class);
 		}
+
+	}
+
+	@Override
+	public Set<KanbanJiraIssue> findIssueAndDescByNumber(List<String> storyNumber) {
+
+		Criteria criteria = new Criteria();
+		criteria = criteria.and(NUMBER).in(storyNumber);
+
+		Query query = new Query(criteria);
+		query.fields().include(NUMBER);
+		query.fields().include(NAME);
+		query.fields().include(URL);
+		return new HashSet<>(operations.find(query, KanbanJiraIssue.class));
 
 	}
 

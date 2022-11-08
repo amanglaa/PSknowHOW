@@ -226,11 +226,8 @@ public class KPIExcelData {
 	@JsonProperty("Started By")
 	private String startedBy;
 
-	@JsonProperty("Build Url")
-	private String buildUrl;
-
 	@JsonProperty("Repository Url")
-	private String repositoryURL;
+	private Map<String, String> repositoryURL;
 
 	@JsonProperty("Branch")
 	private String branch;
@@ -246,5 +243,26 @@ public class KPIExcelData {
 
 	@JsonProperty("No. of Merge")
 	private String numberOfMerge;
+
+    @JsonProperty("Day/Week/Month")
+    private String ticketVelocityDate;
+
+    @JsonProperty("Ticket Issue ID")
+    private Map<String, String> ticketIssueID;
+
+    @JsonProperty("Size (In Story Points)")
+    private String sizeInStoryPoints;
+
+    @JsonProperty("Build Url")
+    private Map<String, String> buildUrl;
+
+	@JsonProperty("Start Date")
+	private String startDate;
+
+	@JsonProperty("End Date")
+	private String endDate;
+
+	@JsonProperty("Estimated Capacity (in hours)")
+	private String estimatedCapacity;
 
 }

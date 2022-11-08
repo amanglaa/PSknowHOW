@@ -20,14 +20,15 @@ package com.publicissapient.kpidashboard.apis.jira.kanban.service;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import com.publicissapient.kpidashboard.apis.data.*;
+import com.publicissapient.kpidashboard.common.model.jira.JiraIssue;
+import com.publicissapient.kpidashboard.common.repository.jira.JiraIssueRepository;
+import com.publicissapient.kpidashboard.common.repository.jira.KanbanJiraIssueRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,10 +43,6 @@ import com.publicissapient.kpidashboard.apis.common.service.CommonService;
 import com.publicissapient.kpidashboard.apis.common.service.impl.KpiHelperService;
 import com.publicissapient.kpidashboard.apis.config.CustomApiConfig;
 import com.publicissapient.kpidashboard.apis.constant.Constant;
-import com.publicissapient.kpidashboard.apis.data.AccountHierarchyKanbanFilterDataFactory;
-import com.publicissapient.kpidashboard.apis.data.HierachyLevelFactory;
-import com.publicissapient.kpidashboard.apis.data.KanbanIssueCustomHistoryDataFactory;
-import com.publicissapient.kpidashboard.apis.data.KpiRequestFactory;
 import com.publicissapient.kpidashboard.apis.enums.KPISource;
 import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
 import com.publicissapient.kpidashboard.apis.filter.service.FilterHelperService;
@@ -72,6 +69,8 @@ public class TicketVelocityServiceImplTest {
 	@Mock
 	CacheService cacheService;
 	@Mock
+	KanbanJiraIssueRepository featureRepository;
+	@Mock
 	ConfigHelperService configHelperService;
 	@Mock
 	KpiHelperService kpiHelperService;
@@ -93,6 +92,7 @@ public class TicketVelocityServiceImplTest {
 	private List<AccountHierarchyDataKanban> accountHierarchyDataKanbanList = new ArrayList<>();
 	private List<ProjectBasicConfig> projectConfigList = new ArrayList<>();
 	private List<FieldMapping> fieldMappingList = new ArrayList<>();
+	Set<KanbanJiraIssue> issues = new HashSet<>();
 
 	@Before
 	public void setup() {
@@ -108,6 +108,8 @@ public class TicketVelocityServiceImplTest {
 		KanbanIssueCustomHistoryDataFactory issueHistoryFactory = KanbanIssueCustomHistoryDataFactory.newInstance();
 		jiraHistoryList = issueHistoryFactory
 				.getKanbanIssueCustomHistoryDataListByTypeName(Arrays.asList("Story", "Defect", "Issue"));
+
+		issues = new HashSet<>(KanbanJiraIssueDataFactory.newInstance().getKanbanJiraIssueDataList());
 
 	}
 
@@ -143,7 +145,7 @@ public class TicketVelocityServiceImplTest {
 				.thenReturn(resultListMap);
 		HierachyLevelFactory hierachyLevelFactory = HierachyLevelFactory.newInstance();
 		when(cacheService.getFullKanbanHierarchyLevel()).thenReturn(hierachyLevelFactory.getHierarchyLevels());
-
+		when(featureRepository.findIssueAndDescByNumber(any())).thenReturn(issues);
 		String kpiRequestTrackerId = "Excel-Jira-5be544de025de212549176a9";
 		when(cacheService.getFromApplicationCache(Constant.KPI_REQUEST_TRACKER_ID_KEY + KPISource.JIRAKANBAN.name()))
 				.thenReturn(kpiRequestTrackerId);

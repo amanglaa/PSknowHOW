@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.publicissapient.kpidashboard.common.model.excel.KanbanCapacity;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -44,6 +45,7 @@ import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
 import com.publicissapient.kpidashboard.common.model.application.ProjectVersion;
 import com.publicissapient.kpidashboard.common.model.application.ResolutionTimeValidation;
 import com.publicissapient.kpidashboard.common.model.jira.JiraIssue;
+import com.publicissapient.kpidashboard.common.model.jira.KanbanIssueCustomHistory;
 import com.publicissapient.kpidashboard.common.model.jira.KanbanJiraIssue;
 import com.publicissapient.kpidashboard.common.model.testexecution.TestExecution;
 import com.publicissapient.kpidashboard.common.model.zephyr.TestCaseDetails;
@@ -454,6 +456,7 @@ public class KPIExcelUtility {
 		}
 	}
 
+
 	public static void populateCODExcelData(String projectName, List<JiraIssue> epicList,
 			List<KPIExcelData> kpiExcelData) {
 
@@ -466,12 +469,18 @@ public class KPIExcelUtility {
 				excelData.setEpicID(epicLink);
 				excelData.setEpicName(checkEmptyName(epic));
 				excelData.setCostOfDelay(epic.getCostOfDelay());
-				DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendPattern(DateUtil.TIME_FORMAT)
-						.optionalStart().appendPattern(".").appendFraction(ChronoField.MICRO_OF_SECOND, 1, 9, false)
-						.optionalEnd().toFormatter();
-				LocalDateTime dateTime = LocalDateTime.parse(epic.getChangeDate(), formatter);
-				excelData.setMonth(dateTime.format(DateTimeFormatter.ofPattern(MONTH_YEAR_FORMAT)));
-				excelData.setEpicEndDate(dateTime.format(DateTimeFormatter.ofPattern(DATE_YEAR_MONTH_FORMAT)));
+				String month = Constant.EMPTY_STRING;
+				String epicEndDate = Constant.EMPTY_STRING;
+				if(epic.getChangeDate() != null) {
+					DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendPattern(DateUtil.TIME_FORMAT)
+							.optionalStart().appendPattern(".").appendFraction(ChronoField.MICRO_OF_SECOND, 1, 9, false)
+							.optionalEnd().toFormatter();
+					LocalDateTime dateTime = LocalDateTime.parse(epic.getChangeDate(), formatter);
+					month = dateTime.format(DateTimeFormatter.ofPattern(MONTH_YEAR_FORMAT));
+					epicEndDate = dateTime.format(DateTimeFormatter.ofPattern(DATE_YEAR_MONTH_FORMAT));
+				}
+				excelData.setMonth(month);
+				excelData.setEpicEndDate(epicEndDate);
 				kpiExcelData.add(excelData);
 			}
 		});
@@ -489,12 +498,18 @@ public class KPIExcelUtility {
 				excelData.setEpicID(epicLink);
 				excelData.setEpicName(epic.getName());
 				excelData.setCostOfDelay(epic.getCostOfDelay());
-				DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendPattern(DateUtil.TIME_FORMAT)
-						.optionalStart().appendPattern(".").appendFraction(ChronoField.MICRO_OF_SECOND, 1, 9, false)
-						.optionalEnd().toFormatter();
-				LocalDateTime dateTime = LocalDateTime.parse(epic.getChangeDate(), formatter);
-				excelData.setMonth(dateTime.format(DateTimeFormatter.ofPattern(MONTH_YEAR_FORMAT)));
-				excelData.setEpicEndDate(dateTime.toString());
+				String month = Constant.EMPTY_STRING;
+				String epicEndDate = Constant.EMPTY_STRING;
+				if(epic.getChangeDate() != null) {
+					DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendPattern(DateUtil.TIME_FORMAT)
+							.optionalStart().appendPattern(".").appendFraction(ChronoField.MICRO_OF_SECOND, 1, 9, false)
+							.optionalEnd().toFormatter();
+					LocalDateTime dateTime = LocalDateTime.parse(epic.getChangeDate(), formatter);
+					month = dateTime.format(DateTimeFormatter.ofPattern(MONTH_YEAR_FORMAT));
+					epicEndDate = dateTime.toString();
+				}
+				excelData.setMonth(month);
+				excelData.setEpicEndDate(epicEndDate);
 				kpiExcelData.add(excelData);
 			}
 		});
@@ -541,9 +556,10 @@ public class KPIExcelUtility {
 				KPIExcelData excelData = new KPIExcelData();
 				Map<String, String> defectLink = new HashMap<>();
 				defectLink.put(defect.getNumber(), checkEmptyURL(defect));
-				excelData.setSprintName(sprintName);
+				excelData.setProjectName(sprintName);
 				excelData.setDefectWithoutStoryLink(defectLink);
 				excelData.setPriority(defect.getPriority());
+				excelData.setIssueDesc(defect.getName());
 				kpiExcelData.add(excelData);
 			}
 		});
@@ -576,12 +592,17 @@ public class KPIExcelUtility {
 			excelData.setProjectName(projectName);
 			excelData.setDefectId(defectLink);
 			excelData.setPriority(defect.getPriority());
-			DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendPattern(DateUtil.TIME_FORMAT)
-					.optionalStart().appendPattern(".").appendFraction(ChronoField.MICRO_OF_SECOND, 1, 9, false)
-					.optionalEnd().toFormatter();
-			LocalDateTime dateTime = LocalDateTime.parse(defect.getCreatedDate(), formatter);
-			excelData.setDate(dateTime.format(DateTimeFormatter.ofPattern(DATE_FORMAT_PRODUCTION_DEFECT_AGEING)));
+			String date = Constant.EMPTY_STRING;
+			if(defect.getCreatedDate() != null) {
+				DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendPattern(DateUtil.TIME_FORMAT)
+						.optionalStart().appendPattern(".").appendFraction(ChronoField.MICRO_OF_SECOND, 1, 9, false)
+						.optionalEnd().toFormatter();
+				LocalDateTime dateTime = LocalDateTime.parse(defect.getCreatedDate(), formatter);
+				date = dateTime.format(DateTimeFormatter.ofPattern(DATE_FORMAT_PRODUCTION_DEFECT_AGEING));
+			}
+			excelData.setDate(date);
 			excelData.setDefectStatus(defect.getJiraStatus());
+			excelData.setIssueDesc(defect.getName());
 			kpiExcelData.add(excelData);
 		});
 	}
@@ -620,7 +641,9 @@ public class KPIExcelUtility {
 			KPIExcelData excelData = new KPIExcelData();
 			excelData.setProjectName(projectName);
 			excelData.setJobName(codeBuildTimeInfo.getBuildJobList().get(i));
-			excelData.setBuildUrl(codeBuildTimeInfo.getBuildUrlList().get(i));
+			Map<String, String> buildUrl = new HashMap<>();
+			buildUrl.put(codeBuildTimeInfo.getBuildUrlList().get(i), codeBuildTimeInfo.getBuildUrlList().get(i));
+			excelData.setBuildUrl(buildUrl);
 			excelData.setStartTime(codeBuildTimeInfo.getBuildStartTimeList().get(i));
 			excelData.setEndTime(codeBuildTimeInfo.getBuildEndTimeList().get(i));
 			excelData.setStartedBy(codeBuildTimeInfo.getStartedByList().get(i));
@@ -642,8 +665,10 @@ public class KPIExcelUtility {
 				for (Map.Entry m : repoWiseMap.entrySet()) {
 					KPIExcelData excelData = new KPIExcelData();
 					excelData.setProject(projectName);
-					excelData.setRepositoryURL(repoList.get(0));
-					excelData.setBranch(branchList.get(0));
+					Map<String, String> repoUrl = new HashMap<>();
+					repoUrl.put(repoList.get(i), repoList.get(i));
+					excelData.setRepositoryURL(repoUrl);
+					excelData.setBranch(branchList.get(i));
 					excelData.setWeeks(m.getKey().toString());
 					excelData.setMeanTimetoMerge(m.getValue().toString());
 					kpiExcelData.add(excelData);
@@ -671,7 +696,9 @@ public class KPIExcelUtility {
 					Long mergeHours = repoWiseMergeMap.get(date);
 					KPIExcelData excelData = new KPIExcelData();
 					excelData.setProjectName(projectName);
-					excelData.setRepositoryURL(repoList.get(i));
+					Map<String, String> repoUrl = new HashMap<>();
+					repoUrl.put(repoList.get(i), repoList.get(i));
+					excelData.setRepositoryURL(repoUrl);
 					excelData.setBranch(branchList.get(i));
 					excelData.setDays(date);
 					excelData.setNumberOfCommit(commitHours.toString());
@@ -697,6 +724,87 @@ public class KPIExcelUtility {
 			excelData.setLeadTime(cycleMap.get(LEAD_TIME).toString());
 			kpiExcelData.add(excelData);
 
+		}
+	}
+
+	private static String checkEmptyName(KanbanJiraIssue jiraIssue) {
+		return StringUtils.isEmpty(jiraIssue.getName()) ? Constant.EMPTY_STRING : jiraIssue.getName();
+	}
+
+	private static String checkEmptyURL(KanbanJiraIssue jiraIssue) {
+		return StringUtils.isEmpty(jiraIssue.getUrl()) ? Constant.EMPTY_STRING : jiraIssue.getUrl();
+	}
+
+    public static void populateTicketVelocityExcelData(List<KanbanIssueCustomHistory> velocityList, String projectName, String date, Map<String, KanbanJiraIssue> issueMapping, List<KPIExcelData> kpiExcelData) {
+
+        velocityList.forEach(kanbanIssueCustomHistory -> {
+            KPIExcelData excelData = new KPIExcelData();
+            excelData.setProjectName(projectName);
+            excelData.setTicketVelocityDate(date);
+            excelData.setIssueType(kanbanIssueCustomHistory.getStoryType());
+            excelData.setSizeInStoryPoints(kanbanIssueCustomHistory.getEstimate());
+            if (MapUtils.isNotEmpty(issueMapping)) {
+                KanbanJiraIssue jiraIssue = issueMapping.get(kanbanIssueCustomHistory.getStoryID());
+                if (null != jiraIssue) {
+                    excelData.setIssueDesc(checkEmptyName(jiraIssue));
+                    Map<String, String> storyId = new HashMap<>();
+                    storyId.put(kanbanIssueCustomHistory.getStoryID(), checkEmptyURL(jiraIssue));
+					excelData.setIssueDesc(jiraIssue.getName());
+                    excelData.setTicketIssueID(storyId);
+                }
+            }
+            kpiExcelData.add(excelData);
+
+        });
+
+    }
+
+    public static void populateCodeBuildTimeExcelData(CodeBuildTimeInfo codeBuildTimeInfo, String projectName, List<KPIExcelData> kpiExcelData) {
+        for (int i = 0; i < codeBuildTimeInfo.getBuildJobList().size(); i++) {
+            KPIExcelData excelData = new KPIExcelData();
+            excelData.setProjectName(projectName);
+            excelData.setJobName(codeBuildTimeInfo.getBuildJobList().get(i));
+            excelData.setStartTime(codeBuildTimeInfo.getBuildStartTimeList().get(i));
+            excelData.setEndTime(codeBuildTimeInfo.getBuildEndTimeList().get(i));
+            excelData.setDuration(codeBuildTimeInfo.getDurationList().get(i));
+            excelData.setStartedBy(codeBuildTimeInfo.getStartedByList().get(i));
+            Map<String, String> codeBuildUrl = new HashMap<>();
+			codeBuildUrl.put(codeBuildTimeInfo.getBuildUrlList().get(i), codeBuildTimeInfo.getBuildUrlList().get(i));
+			excelData.setBuildUrl(codeBuildUrl);
+            excelData.setBuildStatus(codeBuildTimeInfo.getBuildStatusList().get(i));
+            kpiExcelData.add(excelData);
+
+        }
+    }
+
+	public static void populateCodeCommitKanbanExcelData(String projectName, List<Map<String, Long>> repoWiseCommitList,
+														 List<String> repoList, List<String> branchList, List<KPIExcelData> kpiExcelData) {
+		if (CollectionUtils.isNotEmpty(repoWiseCommitList) ) {
+			for (int i = 0; i < repoWiseCommitList.size(); i++) {
+				for (String date : repoWiseCommitList.get(i).keySet()) {
+					KPIExcelData excelData = new KPIExcelData();
+					excelData.setProjectName(projectName);
+					Map<String, String> repoUrl = new HashMap<>();
+					repoUrl.put(repoList.get(i), repoList.get(i));
+					excelData.setRepositoryURL(repoUrl);
+					excelData.setBranch(branchList.get(i));
+					excelData.setDays(date);
+					excelData.setNumberOfCommit(repoWiseCommitList.get(i).get(date).toString());
+					kpiExcelData.add(excelData);
+				}
+			}
+		}
+
+	}
+
+	public static void populateTeamCapacityKanbanExcelData(String dateProjectKey,List<KanbanCapacity> capacityList, List<KPIExcelData> kpiExcelData) {
+		for (KanbanCapacity kanbanCapacity : capacityList) {
+			KPIExcelData excelData = new KPIExcelData();
+			excelData.setProjectName(kanbanCapacity.getProjectName());
+			excelData.setStartDate(kanbanCapacity.getStartDate().toString());
+			excelData.setEndDate(kanbanCapacity.getEndDate().toString());
+			excelData.setEstimatedCapacity(df2.format(kanbanCapacity.getCapacity()));
+			kpiExcelData.add(excelData);
 		}
 	}
 

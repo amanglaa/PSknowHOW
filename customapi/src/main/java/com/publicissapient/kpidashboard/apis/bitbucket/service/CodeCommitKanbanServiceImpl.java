@@ -18,6 +18,41 @@
 
 package com.publicissapient.kpidashboard.apis.bitbucket.service;
 
+import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
+import com.publicissapient.kpidashboard.apis.appsetting.service.ConfigHelperService;
+import com.publicissapient.kpidashboard.apis.config.CustomApiConfig;
+import com.publicissapient.kpidashboard.apis.enums.KPICode;
+import com.publicissapient.kpidashboard.apis.enums.KPIExcelColumn;
+import com.publicissapient.kpidashboard.apis.enums.KPISource;
+import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
+import com.publicissapient.kpidashboard.apis.model.CustomDateRange;
+import com.publicissapient.kpidashboard.apis.model.KpiElement;
+import com.publicissapient.kpidashboard.apis.model.KpiRequest;
+import com.publicissapient.kpidashboard.apis.model.Node;
+import com.publicissapient.kpidashboard.apis.model.TreeAggregatorDetail;
+import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
+import com.publicissapient.kpidashboard.apis.model.ProjectFilter;
+import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
+import com.publicissapient.kpidashboard.apis.util.KpiDataHelper;
+import com.publicissapient.kpidashboard.common.constant.CommonConstant;
+import com.publicissapient.kpidashboard.common.model.application.DataCount;
+import com.publicissapient.kpidashboard.common.model.application.DataCountGroup;
+import com.publicissapient.kpidashboard.common.model.application.Tool;
+import com.publicissapient.kpidashboard.common.model.application.ValidationData;
+import com.publicissapient.kpidashboard.common.model.scm.CommitDetails;
+import com.publicissapient.kpidashboard.common.repository.scm.CommitRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.bson.types.ObjectId;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,40 +66,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.bson.types.ObjectId;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObject;
-import com.publicissapient.kpidashboard.apis.appsetting.service.ConfigHelperService;
-import com.publicissapient.kpidashboard.apis.config.CustomApiConfig;
-import com.publicissapient.kpidashboard.apis.enums.KPICode;
-import com.publicissapient.kpidashboard.apis.enums.KPISource;
-import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
-import com.publicissapient.kpidashboard.apis.model.CustomDateRange;
-import com.publicissapient.kpidashboard.apis.model.KpiElement;
-import com.publicissapient.kpidashboard.apis.model.KpiRequest;
-import com.publicissapient.kpidashboard.apis.model.Node;
-import com.publicissapient.kpidashboard.apis.model.ProjectFilter;
-import com.publicissapient.kpidashboard.apis.model.TreeAggregatorDetail;
-import com.publicissapient.kpidashboard.apis.util.KpiDataHelper;
-import com.publicissapient.kpidashboard.common.constant.CommonConstant;
-import com.publicissapient.kpidashboard.common.model.application.DataCount;
-import com.publicissapient.kpidashboard.common.model.application.DataCountGroup;
-import com.publicissapient.kpidashboard.common.model.application.Tool;
-import com.publicissapient.kpidashboard.common.model.application.ValidationData;
-import com.publicissapient.kpidashboard.common.model.scm.CommitDetails;
-import com.publicissapient.kpidashboard.common.repository.scm.CommitRepository;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
@@ -96,7 +97,6 @@ public class CodeCommitKanbanServiceImpl extends BitBucketKPIService<Long, List<
 	}
 
 	/**
-	 *
 	 * @param kpiRequest
 	 * @param kpiElement
 	 * @param treeAggregatorDetail
@@ -106,7 +106,7 @@ public class CodeCommitKanbanServiceImpl extends BitBucketKPIService<Long, List<
 	@SuppressWarnings("unchecked")
 	@Override
 	public KpiElement getKpiData(KpiRequest kpiRequest, KpiElement kpiElement,
-			TreeAggregatorDetail treeAggregatorDetail) throws ApplicationException {
+								 TreeAggregatorDetail treeAggregatorDetail) throws ApplicationException {
 
 		Node root = treeAggregatorDetail.getRoot();
 		Map<String, Node> mapTmp = treeAggregatorDetail.getMapTmp();
@@ -137,7 +137,7 @@ public class CodeCommitKanbanServiceImpl extends BitBucketKPIService<Long, List<
 	}
 
 	private void dateWiseLeafNodeValue(Map<String, Node> mapTmp, List<Node> projectList, KpiElement kpiElement,
-			KpiRequest kpiRequest) {
+									   KpiRequest kpiRequest) {
 
 		CustomDateRange dateRange = KpiDataHelper.getStartAndEndDate(kpiRequest);
 
@@ -150,8 +150,9 @@ public class CodeCommitKanbanServiceImpl extends BitBucketKPIService<Long, List<
 	}
 
 	private void kpiWithFilter(Map<String, Object> resultMap, Map<String, Node> mapTmp, List<Node> leafNodeList,
-			KpiElement kpiElement, KpiRequest kpiRequest) {
+							   KpiElement kpiElement, KpiRequest kpiRequest) {
 		Map<String, ValidationData> validationMap = new HashMap<>();
+		List<KPIExcelData> excelData = new ArrayList<>();
 		List<CommitDetails> commitList = (List<CommitDetails>) resultMap.get(COMMIT_COUNT);
 		final Map<ObjectId, Map<String, Long>> commitListItemId = new LinkedHashMap<>();
 		Map<ObjectId, Map<String, List<Tool>>> toolMap = configHelperService.getToolItemMap();
@@ -184,18 +185,23 @@ public class CodeCommitKanbanServiceImpl extends BitBucketKPIService<Long, List<
 				String dataCountDate = getRange(dateRange, kpiRequest);
 				prepareRepoWiseMap(filterValueMap, projectName, dataCountDate, projectWiseDataMap);
 				currentDate = getNextRangeDate(kpiRequest, currentDate);
-				populateValidationDataObject(getRequestTrackerIdKanban(), repoWiseCommitList, listOfRepo, listOfBranch,
-						validationMap, node);
+
+				if (getRequestTrackerIdKanban().toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
+					KPIExcelUtility.populateCodeCommitKanbanExcelData(node.getProjectFilter().getName(), repoWiseCommitList, listOfRepo, listOfBranch, excelData);
+				}
+
 			}
 			mapTmp.get(projectNodeId).setValue(projectWiseDataMap);
 
 		});
+		kpiElement.setExcelData(excelData);
+		kpiElement.setExcelColumns(KPIExcelColumn.CODE_COMMIT_MERGE_KANBAN.getColumns());
 		kpiElement.setMapOfSprintAndData(validationMap);
 	}
 
 	/**
 	 * loop tool wise to fetch data for each day
-	 * 
+	 *
 	 * @param reposList
 	 * @param dateRange
 	 * @param commitListItemId
@@ -253,7 +259,7 @@ public class CodeCommitKanbanServiceImpl extends BitBucketKPIService<Long, List<
 	}
 
 	private void prepareRepoWiseMap(Map<String, Long> filterWiseValue, String projectName, String dataCountDate,
-			Map<String, List<DataCount>> projectWiseDataMap) {
+									Map<String, List<DataCount>> projectWiseDataMap) {
 		List<Long> commitCountList = new ArrayList<>();
 		filterWiseValue.forEach((filter, value) -> {
 			commitCountList.add(value);
@@ -263,26 +269,6 @@ public class CodeCommitKanbanServiceImpl extends BitBucketKPIService<Long, List<
 		DataCount dcObj = getDataCountObject(calculateKpiValue(commitCountList, KPICode.NUMBER_OF_CHECK_INS.getKpiId()),
 				projectName, dataCountDate);
 		projectWiseDataMap.computeIfAbsent(CommonConstant.OVERALL, k -> new ArrayList<>()).add(dcObj);
-	}
-
-	/**
-	 * Populates validation data object.
-	 *  @param requestTrackerId
-	 * @param repoWiseCommitList
-	 * @param repoList
-	 * @param branchList
-	 * @param validationDataMap
-	 * @param node
-	 */
-	private void populateValidationDataObject(String requestTrackerId, List<Map<String, Long>> repoWiseCommitList,
-											  List<String> repoList, List<String> branchList, Map<String, ValidationData> validationDataMap, Node node) {
-		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-			ValidationData validationData = new ValidationData();
-			validationData.setRepoList(repoList);
-			validationData.setBranchList(branchList);
-			validationData.setDayWiseCommitList(new ArrayList<>(repoWiseCommitList));
-			validationDataMap.put(node.getProjectFilter().getName(), validationData);
-		}
 	}
 
 	private DataCount getDataCountObject(Long value, String projectName, String date) {
@@ -322,7 +308,7 @@ public class CodeCommitKanbanServiceImpl extends BitBucketKPIService<Long, List<
 	@SuppressWarnings("PMD.AvoidCatchingGenericException")
 	@Override
 	public Map<String, Object> fetchKPIDataFromDb(List<Node> leafNodeList, String startDate, String endDate,
-			KpiRequest kpiRequest) {
+												  KpiRequest kpiRequest) {
 		Set<String> listOfmapOfProjectFilters = new HashSet<>();
 		Set<String> branchList = new HashSet<>();
 
@@ -359,7 +345,7 @@ public class CodeCommitKanbanServiceImpl extends BitBucketKPIService<Long, List<
 				new DateTime(startDate, DateTimeZone.UTC).withTimeAtStartOfDay().getMillis(),
 				StringUtils.isNotEmpty(endDate)
 						? new DateTime(endDate, DateTimeZone.UTC).withTimeAtStartOfDay().plus(MILISEC_ONE_DAY)
-								.getMillis()
+						.getMillis()
 						: new Date().getTime(),
 				filter);
 

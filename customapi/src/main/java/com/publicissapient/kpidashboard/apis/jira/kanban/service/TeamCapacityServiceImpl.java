@@ -18,25 +18,11 @@
 
 package com.publicissapient.kpidashboard.apis.jira.kanban.service;
 
-import java.text.DecimalFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.publicissapient.kpidashboard.apis.common.service.impl.KpiHelperService;
 import com.publicissapient.kpidashboard.apis.config.CustomApiConfig;
 import com.publicissapient.kpidashboard.apis.constant.Constant;
 import com.publicissapient.kpidashboard.apis.enums.KPICode;
+import com.publicissapient.kpidashboard.apis.enums.KPIExcelColumn;
 import com.publicissapient.kpidashboard.apis.enums.KPISource;
 import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
 import com.publicissapient.kpidashboard.apis.filter.service.FilterHelperService;
@@ -46,13 +32,26 @@ import com.publicissapient.kpidashboard.apis.model.KpiElement;
 import com.publicissapient.kpidashboard.apis.model.KpiRequest;
 import com.publicissapient.kpidashboard.apis.model.Node;
 import com.publicissapient.kpidashboard.apis.model.TreeAggregatorDetail;
+import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
+import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
 import com.publicissapient.kpidashboard.apis.util.KpiDataHelper;
 import com.publicissapient.kpidashboard.common.constant.CommonConstant;
 import com.publicissapient.kpidashboard.common.model.application.DataCount;
-import com.publicissapient.kpidashboard.common.model.application.ValidationData;
 import com.publicissapient.kpidashboard.common.model.excel.KanbanCapacity;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component
 @Slf4j
@@ -60,7 +59,6 @@ public class TeamCapacityServiceImpl extends JiraKPIService<Double, List<Object>
 
 	private static final String TICKET_LIST = "tickets";
 	private static final String SUBGROUPCATEGORY = "subGroupCategory";
-	private final DecimalFormat df2 = new DecimalFormat(".##");
 	@Autowired
 	private KpiHelperService kpiHelperService;
 	@Autowired
@@ -165,7 +163,7 @@ public class TeamCapacityServiceImpl extends JiraKPIService<Double, List<Object>
 	private void kpiWithoutFilter(Map<String, Map<String, List<KanbanCapacity>>> projectAndDateWiseCapacityMap,
 			Map<String, Node> mapTmp, List<Node> leafNodeList, KpiElement kpiElement, KpiRequest kpiRequest) {
 		String requestTrackerId = getKanbanRequestTrackerId();
-		Map<String, ValidationData> validationDataMap = new HashMap<>();
+		List<KPIExcelData> excelData = new ArrayList<>();
 		leafNodeList.forEach(node -> {
 			String projectNodeId = node.getProjectFilter().getId();
 			Map<String, List<KanbanCapacity>> dateWiseKanbanCapacity = projectAndDateWiseCapacityMap.
@@ -185,14 +183,17 @@ public class TeamCapacityServiceImpl extends JiraKPIService<Double, List<Object>
 					String date = getRange(dateRange, kpiRequest);
 					dataCount.add(getDataCountObject(capacityList.get(0), projectName, date));
 					currentDate = getNextRangeDate(kpiRequest, currentDate);
-					populateValidationDataObject(requestTrackerId, validationDataMap, kanbanCapacityList,
-							date + Constant.UNDERSCORE + projectName);
+
+					if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
+						KPIExcelUtility.populateTeamCapacityKanbanExcelData(date + Constant.UNDERSCORE + projectName, kanbanCapacityList, excelData);
+					}
 
 				}
 				mapTmp.get(node.getId()).setValue(dataCount);
 			}
 		});
-		kpiElement.setMapOfSprintAndData(validationDataMap);
+		kpiElement.setExcelData(excelData);
+		kpiElement.setExcelColumns(KPIExcelColumn.TEAM_CAPACITY_KANBAN.getColumns());
 	}
 
 	private DataCount getDataCountObject(Double value, String projectName, String date) {
@@ -231,40 +232,6 @@ public class TeamCapacityServiceImpl extends JiraKPIService<Double, List<Object>
 
 	}
 
-	/**
-	 *
-	 * @param requestTrackerId
-	 * @param validationDataMap
-	 * @param capacityList
-	 * @param dateProjectKey
-	 */
-	private void populateValidationDataObject(String requestTrackerId, Map<String, ValidationData> validationDataMap,
-			List<KanbanCapacity> capacityList, String dateProjectKey) {
-
-		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-
-			List<String> startTime = new ArrayList<>();
-			List<String> endTime = new ArrayList<>();
-			List<String> projectName = new ArrayList<>();
-			List<String> capacity = new ArrayList<>();
-
-			for (KanbanCapacity capacityData : capacityList) {
-				endTime.add(capacityData.getEndDate().toString());
-				startTime.add(capacityData.getStartDate().toString());
-				projectName.add(capacityData.getProjectName());
-				capacity.add(df2.format(capacityData.getCapacity()));
-
-			}
-			ValidationData validationData = new ValidationData();
-			validationData.setProjectName(projectName);
-			validationData.setStartTime(startTime);
-			validationData.setEndTime(endTime);
-			validationData.setEstimateTimeList(capacity);
-
-			validationDataMap.put(dateProjectKey, validationData);
-
-		}
-	}
 
 	/**
 	 *

@@ -78,11 +78,19 @@ public enum KPIExcelColumn {
 
     DEPLOYMENT_FREQUENCY("kpi118", Arrays.asList("Project Name", "Date", "Job Name", "Month", "Environment")),
 
-    DEFECTS_WITHOUT_STORY_LINK("kpi80", Arrays.asList("Sprint Name","Priority","Defects Without Story Link")),
+    DEFECTS_WITHOUT_STORY_LINK("kpi80", Arrays.asList("Project Name","Priority","Defects Without Story Link", "Issue Description")),
 
-    TEST_WITHOUT_STORY_LINK("kpi79", Arrays.asList("Project Name","Test Case ID","Linked to Story")),
+    TEST_WITHOUT_STORY_LINK("kpi79", Arrays.asList("Project Name","Test Case ID", "Linked to Story")),
 
-    PRODUCTION_DEFECTS_AGEING("kpi127", Arrays.asList("Project Name", "Defect ID", "Priority", "Date", "Status")),
+    PRODUCTION_DEFECTS_AGEING("kpi127", Arrays.asList("Project Name", "Defect ID", "Issue Description", "Priority", "Date", "Status")),
+
+    TICKET_VELOCITY("kpi49", Arrays.asList("Project Name", "Day/Week/Month", "Ticket Issue ID", "Issue Type", "Issue Description", "Size (In Story Points)")),
+
+    CODE_BUILD_TIME_KANBAN("kpi66", Arrays.asList("Project Name", "Job Name", "Start Time", "End Time", "Duration", "Build Status", "Started By", "Build Url")),
+
+    CODE_COMMIT_MERGE_KANBAN("kpi65", Arrays.asList("Project Name", "Repository Url", "Branch", "Day", "No. Of Commit")),
+
+    TEAM_CAPACITY_KANBAN("kpi58", Arrays.asList("Project Name", "Start Date", "End Date", "Estimated Capacity (in hours)")),
 
     INVALID("INVALID_KPI", Arrays.asList("Invalid"));
 

@@ -18,6 +18,36 @@
 
 package com.publicissapient.kpidashboard.apis.jira.kanban.service;
 
+import com.publicissapient.kpidashboard.apis.common.service.impl.KpiHelperService;
+import com.publicissapient.kpidashboard.apis.config.CustomApiConfig;
+import com.publicissapient.kpidashboard.apis.constant.Constant;
+import com.publicissapient.kpidashboard.apis.enums.KPICode;
+import com.publicissapient.kpidashboard.apis.enums.KPIExcelColumn;
+import com.publicissapient.kpidashboard.apis.enums.KPISource;
+import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
+import com.publicissapient.kpidashboard.apis.filter.service.FilterHelperService;
+import com.publicissapient.kpidashboard.apis.jira.service.JiraKPIService;
+import com.publicissapient.kpidashboard.apis.model.CustomDateRange;
+import com.publicissapient.kpidashboard.apis.model.KpiElement;
+import com.publicissapient.kpidashboard.apis.model.KpiRequest;
+import com.publicissapient.kpidashboard.apis.model.Node;
+import com.publicissapient.kpidashboard.apis.model.TreeAggregatorDetail;
+import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
+import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
+import com.publicissapient.kpidashboard.apis.util.KpiDataHelper;
+import com.publicissapient.kpidashboard.common.constant.CommonConstant;
+import com.publicissapient.kpidashboard.common.model.application.AdditionalFilterCategory;
+import com.publicissapient.kpidashboard.common.model.application.DataCount;
+import com.publicissapient.kpidashboard.common.model.jira.KanbanIssueCustomHistory;
+import com.publicissapient.kpidashboard.common.model.jira.KanbanJiraIssue;
+import com.publicissapient.kpidashboard.common.repository.jira.KanbanJiraIssueRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -25,35 +55,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
-
-import com.publicissapient.kpidashboard.apis.filter.service.FilterHelperService;
-import com.publicissapient.kpidashboard.common.model.application.AdditionalFilterCategory;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import com.publicissapient.kpidashboard.apis.common.service.impl.KpiHelperService;
-import com.publicissapient.kpidashboard.apis.config.CustomApiConfig;
-import com.publicissapient.kpidashboard.apis.constant.Constant;
-import com.publicissapient.kpidashboard.apis.enums.KPICode;
-import com.publicissapient.kpidashboard.apis.enums.KPISource;
-import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
-import com.publicissapient.kpidashboard.apis.jira.service.JiraKPIService;
-import com.publicissapient.kpidashboard.apis.model.CustomDateRange;
-import com.publicissapient.kpidashboard.apis.model.KpiElement;
-import com.publicissapient.kpidashboard.apis.model.KpiRequest;
-import com.publicissapient.kpidashboard.apis.model.Node;
-import com.publicissapient.kpidashboard.apis.model.TreeAggregatorDetail;
-import com.publicissapient.kpidashboard.apis.util.KpiDataHelper;
-import com.publicissapient.kpidashboard.common.constant.CommonConstant;
-import com.publicissapient.kpidashboard.common.model.application.DataCount;
-import com.publicissapient.kpidashboard.common.model.application.ValidationData;
-import com.publicissapient.kpidashboard.common.model.jira.KanbanIssueCustomHistory;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * This class calculates the Ticket Velocity and trend analysis.
@@ -76,6 +79,9 @@ public class TicketVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 
 	@Autowired
 	private FilterHelperService filterHelperService;
+
+	@Autowired
+	private KanbanJiraIssueRepository kanbanJiraIssueRepository;
 
 	@Override
 	public String getQualifierType() {
@@ -158,7 +164,7 @@ public class TicketVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 	private void kpiWithoutFilter(Map<String, Map<String, List<KanbanIssueCustomHistory>>> projectAndDateWiseStoryMap,
 			Map<String, Node> mapTmp, List<Node> leafNodeList, KpiElement kpiElement, KpiRequest kpiRequest) {
 		String requestTrackerId = getKanbanRequestTrackerId();
-		Map<String, ValidationData> validationDataMap = new HashMap<>();
+		List<KPIExcelData> excelData = new ArrayList<>();
 		leafNodeList.forEach(node -> {
 			String projectNodeId = node.getProjectFilter().getId();
 			String basicProjectConfigId = node.getProjectFilter().getBasicProjectConfigId().toString();
@@ -176,42 +182,26 @@ public class TicketVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 							kpiRequest.getDuration());
 
 					Double capacity = filterDataBasedOnStartAndEndDate(dateWiseStoryMap, dateRange,
-							kanbanIssueCustomHistories, projectName);
+							kanbanIssueCustomHistories);
 					String date = getRange(dateRange, kpiRequest);
 					dataCount.add(getDataCountObject(capacity, projectName, date));
 					currentDate = getNextRangeDate(kpiRequest, currentDate);
-					populateValidationDataObject(requestTrackerId, validationDataMap, kanbanIssueCustomHistories,
-							date + Constant.UNDERSCORE + projectName);
+					List<String> storyIdList = new ArrayList<>();
+					kanbanIssueCustomHistories.forEach(s -> storyIdList.add(s.getStoryID()));
+					Set<KanbanJiraIssue> issueData = kanbanJiraIssueRepository.findIssueAndDescByNumber(storyIdList);
+					Map<String, KanbanJiraIssue> issueMapping = new HashMap<>();
+					issueData.stream().forEach(issue -> issueMapping.putIfAbsent(issue.getNumber(), issue));
+					if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
+
+						KPIExcelUtility.populateTicketVelocityExcelData(kanbanIssueCustomHistories, projectName, date, issueMapping, excelData);
+					}
 				}
 				mapTmp.get(node.getId()).setValue(dataCount);
 
 			}
 		});
-		kpiElement.setMapOfSprintAndData(validationDataMap);
-	}
-
-	private void populateValidationDataObject(String requestTrackerId, Map<String, ValidationData> validationDataMap,
-			List<KanbanIssueCustomHistory> velocityList, String dateProjectKey) {
-
-		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-
-			List<String> defectKeyList = new ArrayList<>();
-			List<String> storyPointList = new ArrayList<>();
-
-			for (KanbanIssueCustomHistory feature : velocityList) {
-				if (feature.getProjectComponentId()!=null) {
-					defectKeyList.add(feature.getStoryID());
-					storyPointList.add(feature.getEstimate());
-				}
-			}
-			ValidationData validationData = new ValidationData();
-			validationData.setDefectKeyList(defectKeyList);
-			validationData.setStoryPointList(storyPointList);
-
-			validationDataMap.put(dateProjectKey, validationData);
-
-		}
-
+		kpiElement.setExcelData(excelData);
+		kpiElement.setExcelColumns(KPIExcelColumn.TICKET_VELOCITY.getColumns());
 	}
 
 	private Map<String, Map<String, List<KanbanIssueCustomHistory>>> createDateWiseKanbanHistMap(
@@ -281,7 +271,7 @@ public class TicketVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 	}
 
 	private Double filterDataBasedOnStartAndEndDate(Map<String, List<KanbanIssueCustomHistory>> dateWiseStoryMap,
-			CustomDateRange dateRange, List<KanbanIssueCustomHistory> totalTicket, String projectName) {
+			CustomDateRange dateRange, List<KanbanIssueCustomHistory> totalTicket) {
 		List<KanbanIssueCustomHistory> dummyList = new ArrayList<>();
 
 		for (LocalDate currentDate = dateRange.getStartDate(); currentDate.compareTo(dateRange.getStartDate()) >= 0
