@@ -96,10 +96,10 @@ public enum KPIExcelColumn {
 	KANBAN_REGRESSION_PASS_PERCENTAGE("kpi63", Arrays.asList("Project", "Test Case ID", "Automated")),
 
 	OPEN_TICKET_AGING_BY_PRIORITY("kpi997",
-			Arrays.asList("Project", "Ticket Issue ID", "Priority", "Created Date", "Issue status")),
+			Arrays.asList("Project", "Ticket Issue ID", "Priority", "Created Date", "Issue Status")),
 
 	NET_OPEN_TICKET_COUNT_BY_STATUS("kpi48",
-			Arrays.asList("Project", "Day/Week/Month", "Ticket Issue ID", "Issue status", "Created Date")),
+			Arrays.asList("Project", "Day/Week/Month", "Ticket Issue ID", "Issue Status", "Created Date")),
 
 	NET_OPEN_TICKET_COUNT_BY_RCA("kpi51",
 			Arrays.asList("Project", "Day/Week/Month", "Ticket Issue ID", "Root Cause", "Created Date")),

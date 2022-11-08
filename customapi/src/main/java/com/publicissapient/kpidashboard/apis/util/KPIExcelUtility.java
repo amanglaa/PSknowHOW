@@ -19,17 +19,24 @@
 package com.publicissapient.kpidashboard.apis.util;
 
 import java.text.DecimalFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.publicissapient.kpidashboard.common.model.jira.KanbanIssueCustomHistory;
+import com.publicissapient.kpidashboard.common.model.testexecution.KanbanTestExecution;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -345,8 +352,8 @@ public class KPIExcelUtility {
     }
 
 	public static void populateTestExcecutionExcelData(String sprintProjectName, TestExecution testDetail,
-			KanbanTestExecution kanbanTestExecution, double executionPercentage, double passPercentage,
-			List<KPIExcelData> kpiExcelData) {
+													   KanbanTestExecution kanbanTestExecution, double executionPercentage, double passPercentage,
+													   List<KPIExcelData> kpiExcelData) {
 
 		if (testDetail != null) {
 			KPIExcelData excelData = new KPIExcelData();
@@ -622,25 +629,6 @@ public class KPIExcelUtility {
             });
         }
     }
-
-	public static void populateProductionDefectAgingExcelData(String projectName, List<JiraIssue> defectList,
-															  List<KPIExcelData> kpiExcelData) {
-		defectList.forEach(defect -> {
-			KPIExcelData excelData = new KPIExcelData();
-			Map<String, String> defectLink = new HashMap<>();
-			defectLink.put(defect.getNumber(), checkEmptyURL(defect));
-			excelData.setProjectName(projectName);
-			excelData.setDefectId(defectLink);
-			excelData.setPriority(defect.getPriority());
-			DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendPattern(DateUtil.TIME_FORMAT)
-					.optionalStart().appendPattern(".").appendFraction(ChronoField.MICRO_OF_SECOND, 1, 9, false)
-					.optionalEnd().toFormatter();
-			LocalDateTime dateTime = LocalDateTime.parse(defect.getCreatedDate(), formatter);
-			excelData.setDate(dateTime.format(DateTimeFormatter.ofPattern(DATE_FORMAT_PRODUCTION_DEFECT_AGEING)));
-			excelData.setStatus(defect.getJiraStatus());
-			kpiExcelData.add(excelData);
-		});
-	}
 
     public static void populateStoryCountExcelData(String sprint, List<KPIExcelData> kpiExcelData,
                                                    List<JiraIssue> sprintWiseStoriesList, List<String> totalPresentJiraIssue) {
