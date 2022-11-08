@@ -11,6 +11,9 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import com.publicissapient.kpidashboard.apis.enums.KPIExcelColumn;
+import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
+import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -86,8 +89,7 @@ public class LeadTimeKanbanServiceImpl extends JiraKPIService<Long, List<Object>
 			ObjectId basicProjectConfigId = leaf.getProjectFilter().getBasicProjectConfigId();
 			Map<String, Object> mapOfProjectFilters = new LinkedHashMap<>();
 
-			FieldMapping fieldMapping = configHelperService.getFieldMappingMap()
-					.get(basicProjectConfigId);
+			FieldMapping fieldMapping = configHelperService.getFieldMappingMap().get(basicProjectConfigId);
 			projectList.add(basicProjectConfigId.toString());
 			if (Optional.ofNullable(fieldMapping.getKanbanCycleTimeIssueType()).isPresent()) {
 				mapOfProjectFilters.put(JiraFeatureHistory.STORY_TYPE.getFieldValueInFeature(),
@@ -176,11 +178,12 @@ public class LeadTimeKanbanServiceImpl extends JiraKPIService<Long, List<Object>
 
 	private void kpiWithFilter(Map<String, List<KanbanIssueCustomHistory>> projectWiseJiraIssue,
 			Map<String, Node> mapTmp, List<Node> leafNodeList, KpiElement kpiElement) {
-		Map<String, ValidationData> validationDataMap = new HashMap<>();
+
+		List<KPIExcelData> excelData = new ArrayList<>();
 		String requestTrackerId = getKanbanRequestTrackerId();
 
 		leafNodeList.forEach(node -> {
-			String projectNodeId =  node.getProjectFilter().getBasicProjectConfigId().toString();
+			String projectNodeId = node.getProjectFilter().getBasicProjectConfigId().toString();
 			String trendLineName = node.getProjectFilter().getName();
 			List<KanbanIssueCustomHistory> kanbanIssueList = projectWiseJiraIssue.get(projectNodeId);
 			if (CollectionUtils.isNotEmpty(kanbanIssueList)) {
@@ -193,14 +196,17 @@ public class LeadTimeKanbanServiceImpl extends JiraKPIService<Long, List<Object>
 
 				mapTmp.get(node.getId()).setValue(dataCountMap);
 
-				populateValidationDataObject(kpiElement, requestTrackerId, validationDataMap, leadTimeList,
-						trendLineName);
+				populateExcelDataObject(requestTrackerId, excelData, cycleMap, trendLineName);
+
 				log.debug(
 						"[LEAD-TIME-KANBAN-FILTER-WISE][{}]. Open to Triage: {} . Triage to Complete: {} . Complete to Live: {}. Open to Live: {}",
 						requestTrackerId, cycleMap.get(OPEN_TO_TRIAGE), cycleMap.get(TRIAGE_TO_COMPLETE),
 						cycleMap.get(COMPLETE_TO_LIVE), cycleMap.get(LEAD_TIME));
 			}
 		});
+		kpiElement.setExcelData(excelData);
+		kpiElement.setExcelColumns(KPIExcelColumn.LEAD_TIME_KANBAN.getColumns());
+
 	}
 
 	/**
@@ -332,23 +338,16 @@ public class LeadTimeKanbanServiceImpl extends JiraKPIService<Long, List<Object>
 
 	/**
 	 * 
-	 * @param kpiElement
+	 * 
 	 * @param requestTrackerId
-	 * @param validationDataMap
-	 * @param leadTimeValidationDataForKanban
+	 * 
 	 * @param trendLineName
 	 */
-	private void populateValidationDataObject(KpiElement kpiElement, String requestTrackerId,
-			Map<String, ValidationData> validationDataMap,
-			List<LeadTimeValidationDataForKanban> leadTimeValidationDataForKanban, String trendLineName) {
+	private void populateExcelDataObject(String requestTrackerId, List<KPIExcelData> excelData,
+			Map<String, Long> cycleMap, String trendLineName) {
 
 		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-			ValidationData validationData = new ValidationData();
-			if (CollectionUtils.isNotEmpty(leadTimeValidationDataForKanban)) {
-				validationData.setLeadTimeList(leadTimeValidationDataForKanban);
-			}
-			validationDataMap.put(trendLineName, validationData);
-			kpiElement.setMapOfSprintAndData(validationDataMap);
+			KPIExcelUtility.populateKanbanLeadTime(excelData, trendLineName, cycleMap);
 
 		}
 	}
