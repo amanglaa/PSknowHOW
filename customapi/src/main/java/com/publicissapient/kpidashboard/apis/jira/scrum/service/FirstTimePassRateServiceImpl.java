@@ -153,12 +153,12 @@ public class FirstTimePassRateServiceImpl extends JiraKPIService<Double, List<Ob
 		Map<Pair<String, String>, List<SprintWiseStory>> sprintWiseMap = sprintWiseStoryList.stream().collect(Collectors
 				.groupingBy(sws -> Pair.of(sws.getBasicProjectConfigId(), sws.getSprint()), Collectors.toList()));
 
-		Map<String, String> sprintIdSprintNameMap = sprintWiseStoryList.stream().collect(
-				Collectors.toMap(SprintWiseStory::getSprint, SprintWiseStory::getSprintName, (name1, name2) -> name1));
-
 		Map<String, JiraIssue> issueData = (Map<String, JiraIssue>) resultMap.get(ISSUE_DATA);
 
 		Map<Pair<String, String>, Double> sprintWiseFTPRMap = new HashMap<>();
+		Map<Pair<String, String>, List<String>> sprintWiseTotalStoryIdList = new HashMap<>();
+		Map<Pair<String, String>, List<JiraIssue>> sprintWiseFTPListMap = new HashMap<>();
+
 		Map<Pair<String, String>, Map<String, Integer>> sprintWiseHowerMap = new HashMap<>();
 		List<KPIExcelData> excelData = new ArrayList<>();
 		sprintWiseMap.forEach((sprint, sprintWiseStories) -> {
@@ -166,23 +166,18 @@ public class FirstTimePassRateServiceImpl extends JiraKPIService<Double, List<Ob
 			List<String> totalStoryIdList = new ArrayList<>();
 			sprintWiseStories.stream().map(SprintWiseStory::getStoryList).collect(Collectors.toList())
 					.forEach(totalStoryIdList::addAll);
+			sprintWiseTotalStoryIdList.put(sprint,totalStoryIdList);
 
 			List<JiraIssue> ftpStoriesList = ((List<JiraIssue>) resultMap.get(FIRST_TIME_PASS_STORIES)).stream()
 					.filter(jiraIssue -> jiraIssue.getSprintID().equals(sprint.getValue()))
 					.collect(Collectors.toList());
+			sprintWiseFTPListMap.put(sprint,ftpStoriesList);
 
 			double ftprForCurrentLeaf = 0.0d;
 			if (CollectionUtils.isNotEmpty(ftpStoriesList) && CollectionUtils.isNotEmpty(totalStoryIdList)) {
 				ftprForCurrentLeaf = ((double) ftpStoriesList.size() / totalStoryIdList.size()) * 100;
 			}
 			addFilterFtprList.add(ftprForCurrentLeaf);
-
-			// if for populating excel data
-			if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-				String sprintName = sprintIdSprintNameMap.get(sprint.getValue());
-				KPIExcelUtility.populateFTPRExcelData(sprintName, totalStoryIdList, ftpStoriesList, excelData,
-						issueData);
-			}
 
 			double sprintWiseFtpr = calculateKpiValue(addFilterFtprList, KPICode.FIRST_TIME_PASS_RATE.getKpiId());
 			sprintWiseFTPRMap.put(sprint, sprintWiseFtpr);
@@ -199,6 +194,13 @@ public class FirstTimePassRateServiceImpl extends JiraKPIService<Double, List<Ob
 
 			if (sprintWiseFTPRMap.containsKey(currentNodeIdentifier)) {
 				ftprForCurrentLeaf = sprintWiseFTPRMap.get(currentNodeIdentifier);
+				// if for populating excel data
+				if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
+					List<String> totalStoryIdList = sprintWiseTotalStoryIdList.get(currentNodeIdentifier);
+					List<JiraIssue> ftpStoriesList = sprintWiseFTPListMap.get(currentNodeIdentifier);
+					KPIExcelUtility.populateFTPRExcelData(node.getSprintFilter().getName(), totalStoryIdList, ftpStoriesList, excelData,
+							issueData);
+				}
 			} else {
 				ftprForCurrentLeaf = 0.0d;
 			}

@@ -170,42 +170,35 @@ public class DIRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 		Map<Pair<String, String>, List<SprintWiseStory>> sprintWiseMap = sprintWiseStoryList.stream().collect(Collectors
 				.groupingBy(sws -> Pair.of(sws.getBasicProjectConfigId(), sws.getSprint()), Collectors.toList()));
 
-		Map<String, String> sprintIdSprintNameMap = sprintWiseStoryList.stream().collect(
-				Collectors.toMap(SprintWiseStory::getSprint, SprintWiseStory::getSprintName, (name1, name2) -> name1));
-
 		Map<Pair<String, String>, Double> sprintWiseDIRMap = new HashMap<>();
 
 		Map<Pair<String, String>, Map<String, Integer>> sprintWiseHowerMap = new HashMap<>();
+		Map<Pair<String, String>, List<String>> sprintWiseTotalStoryIdList = new HashMap<>();
+		Map<Pair<String, String>, List<JiraIssue>> sprintWiseDefectListMap = new HashMap<>();
 
-		List<KPIExcelData> excelData = new ArrayList<>();
 		sprintWiseMap.forEach((sprint, sprintWiseStories) -> {
 			List<JiraIssue> sprintWiseDefectList = new ArrayList<>();
 
 			List<String> totalStoryIdList = new ArrayList<>();
 			sprintWiseStories.stream().map(SprintWiseStory::getStoryList).collect(Collectors.toList())
 					.forEach(totalStoryIdList::addAll);
+			sprintWiseTotalStoryIdList.put(sprint,totalStoryIdList);
 
 			List<JiraIssue> defectList = ((List<JiraIssue>) storyDefectDataListMap.get(DEFECT_DATA)).stream()
 					.filter(f -> sprint.getKey().equals(f.getBasicProjectConfigId())
 							&& CollectionUtils.containsAny(f.getDefectStoryID(), totalStoryIdList))
 					.collect(Collectors.toList());
+			sprintWiseDefectListMap.put(sprint,defectList);
 
 			double dirForCurrentLeaf = 0.0d;
 			if (CollectionUtils.isNotEmpty(defectList) && CollectionUtils.isNotEmpty(sprintWiseStories)) {
 				dirForCurrentLeaf = ((double) defectList.size() / totalStoryIdList.size()) * 100;
 			}
 			sprintWiseDefectList.addAll(defectList);
-
-			// if for populating excel data
-			if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-				String sprintName = sprintIdSprintNameMap.get(sprint.getValue());
-				KPIExcelUtility.populateDirOrDensityExcelData(sprintName, totalStoryIdList, defectList, excelData,
-						issueData);
-			}
 			sprintWiseDIRMap.put(sprint, dirForCurrentLeaf);
 			setHowerMap(sprintWiseHowerMap, sprint, totalStoryIdList, sprintWiseDefectList);
 		});
-
+		List<KPIExcelData> excelData = new ArrayList<>();
 		sprintLeafNodeList.forEach(node -> {
 			String trendLineName = node.getProjectFilter().getName();
 			String currentSprintComponentId = node.getSprintFilter().getId();
@@ -216,6 +209,13 @@ public class DIRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 
 			if (sprintWiseDIRMap.containsKey(currentNodeIdentifier)) {
 				defectInjectionRateForCurrentLeaf = sprintWiseDIRMap.get(currentNodeIdentifier);
+				// if for populating excel data
+				if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
+					List<String> totalStoryIdList = sprintWiseTotalStoryIdList.get(currentNodeIdentifier);
+					List<JiraIssue> defectList = sprintWiseDefectListMap.get(currentNodeIdentifier);
+					KPIExcelUtility.populateDirOrDensityExcelData(node.getSprintFilter().getName(), totalStoryIdList, defectList, excelData,
+							issueData);
+				}
 			} else {
 				defectInjectionRateForCurrentLeaf = 0.0d;
 			}

@@ -356,8 +356,7 @@ public class CreatedVsResolvedServiceImpl extends JiraKPIService<Double, List<Ob
 			totalCreatedTickets.stream()
 					.forEach(jiraIssue -> createdTicketMap.putIfAbsent(jiraIssue.getNumber(), jiraIssue));
 
-			String sprintName = node.getSprintFilter().getName();
-			KPIExcelUtility.populateCreatedVsResolvedExcelData(sprintName, createdTicketMap, totalResolvedTickets,
+			KPIExcelUtility.populateCreatedVsResolvedExcelData(node.getSprintFilter().getName(), createdTicketMap, totalResolvedTickets,
 					excelData);
 		}
 
