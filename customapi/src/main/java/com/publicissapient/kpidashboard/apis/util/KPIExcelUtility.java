@@ -64,6 +64,11 @@ public class KPIExcelUtility {
 	private static final String INTAKE_TO_DOR = "Intake - DoR";
 	private static final String DOR_TO_DOD = "DoR - DoD";
 	private static final String DOD_TO_LIVE = "DoD - Live";
+
+	private static final String OPEN_TO_TRIAGE = "Open - Triage";
+	private static final String TRIAGE_TO_COMPLETE = "Triage - Complete";
+	private static final String COMPLETE_TO_LIVE = "Complete - Live";
+
 	private static final DecimalFormat df2 = new DecimalFormat(".##");
 
 	private KPIExcelUtility() {
@@ -675,6 +680,22 @@ public class KPIExcelUtility {
 				}
 
 			}
+
+		}
+	}
+
+	public static void populateKanbanLeadTime(List<KPIExcelData> kpiExcelData, String projectName,
+			Map<String, Long> cycleMap) {
+
+		if (MapUtils.isNotEmpty(cycleMap)) {
+
+			KPIExcelData excelData = new KPIExcelData();
+			excelData.setProjectName(projectName);
+			excelData.setOpenToTriage(cycleMap.get(OPEN_TO_TRIAGE).toString());
+			excelData.setTriageToComplete(cycleMap.get(TRIAGE_TO_COMPLETE).toString());
+			excelData.setCompleteToLive(cycleMap.get(COMPLETE_TO_LIVE).toString());
+			excelData.setLeadTime(cycleMap.get(LEAD_TIME).toString());
+			kpiExcelData.add(excelData);
 
 		}
 	}
