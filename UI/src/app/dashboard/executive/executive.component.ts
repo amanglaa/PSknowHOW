@@ -1212,6 +1212,7 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
         } else {
           maturity = '--';
         }
+        maturity = maturity != 'NA' && maturity != '--' && maturity != '-' ? 'M'+maturity : maturity;
         return maturity;
       }
 
@@ -1222,18 +1223,18 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
         if(item?.value?.length > 0){
             let tempVal = item?.value[item?.value?.length - 1]?.lineValue ? item?.value[item?.value?.length - 1]?.lineValue : item?.value[item?.value?.length - 1]?.value; 
             let unit = kpiData?.kpiDetail?.kpiUnit?.toLowerCase() != 'number' ? kpiData?.kpiDetail?.kpiUnit : '';
-            latest = tempVal > 0 ? tempVal.toFixed(2) + (unit ? ' ' + unit : '') : tempVal + (unit ? ' ' + unit : '');
+            latest = tempVal > 0 ? (Math.round(tempVal * 10) / 10) + (unit ? ' ' + unit : '') : tempVal + (unit ? ' ' + unit : '');
         }
         if(item?.value?.length > 1 && kpiData?.kpiDetail?.showTrend) {
             if(kpiData?.kpiDetail?.trendCalculative){
                 let lhs = kpiData?.kpiDetail?.trendCalculation?.length > 0 ? kpiData?.kpiDetail?.trendCalculation[0]?.lhs : '';
                 let rhs = kpiData?.kpiDetail?.trendCalculation?.length > 0 ? kpiData?.kpiDetail?.trendCalculation[0]?.rhs : '';
                 if(lhs < rhs){
-                    trend = 'Upwards';
+                    trend = '+ve';
                 }else if(lhs > rhs){
-                    trend = 'Downwards';
+                    trend = '-ve';
                 }else if(lhs == rhs && kpiData?.kpiId == 'kpi126'){
-                    trend = 'Upwards';
+                    trend = '+ve';
                 }else{
                     trend = '-- --';
                 }
@@ -1242,13 +1243,13 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
                 let secondLastVal = item?.value[item?.value?.length - 2]?.value;
                 let isPositive = kpiData?.kpiDetail?.isPositiveTrend;
                 if(secondLastVal > lastVal && !isPositive){
-                    trend = 'Upwards';
+                    trend = '+ve';
                 }else if(secondLastVal < lastVal && !isPositive){
-                    trend = 'Downwards';
+                    trend = '-ve';
                 }else if(secondLastVal < lastVal && isPositive){
-                    trend = 'Upwards';
+                    trend = '+ve';
                 }else if(secondLastVal > lastVal && isPositive){
-                    trend = 'Downwards';
+                    trend = '-ve';
                 }else {
                     trend = '-- --';
                 }
@@ -1275,6 +1276,7 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
                     this.kpiTrendsObj[kpiId]?.push(trendObj); 
                 }
             }
+            // console.log(enabledKpiObj?.kpiName, kpiId, this.kpiTrendsObj[kpiId]);         
         }
       }
 }
