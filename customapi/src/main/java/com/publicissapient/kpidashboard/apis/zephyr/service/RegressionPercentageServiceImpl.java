@@ -219,7 +219,7 @@ public class RegressionPercentageServiceImpl extends ZephyrKPIService<Double, Li
 			}
 
 			KPIExcelUtility.populateRegressionAutomationExcelData(sprintName, totalTestCaseMap, automatedTest,
-					excelData);
+					excelData,KPICode.REGRESSION_AUTOMATION_COVERAGE.getKpiId());
 
 		}
 	}

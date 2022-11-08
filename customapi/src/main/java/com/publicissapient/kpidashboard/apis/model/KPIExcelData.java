@@ -202,6 +202,26 @@ public class KPIExcelData {
     private String isTestLinkedToStory;
 
     @JsonProperty("Status")
-    private String defectStatus;
+    private String issueStatus;
 
+    @JsonProperty("Execution Date")
+    private String executionDate;
+
+    @JsonProperty("Ticket Issue ID")
+    private Map<String, String> ticketIssue;
+
+    @JsonProperty("Created Date")
+    private String createdDate;
+
+    @JsonProperty("Closed Ticket Issue ID")
+    private Map<String, String> closedTicket;
+
+    @JsonProperty("Closed Ticket Issue Type")
+    private String closedTicketIssueType;
+
+    @JsonProperty("Day/Week/Month")
+    private String dayWeekMonth;
+
+    @JsonProperty("Issue Priority")
+    private String issuePriority;
 }

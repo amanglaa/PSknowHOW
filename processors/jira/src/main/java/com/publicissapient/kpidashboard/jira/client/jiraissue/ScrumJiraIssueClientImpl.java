@@ -805,6 +805,8 @@ public class ScrumJiraIssueClientImpl extends JiraIssueClient {// NOPMD
 		jiraIssueHistory.setProjectKey(jiraIssue.getProjectKey());
 		jiraIssueHistory.setStoryType(jiraIssue.getTypeName());
 		jiraIssueHistory.setAdditionalFilters(jiraIssue.getAdditionalFilters());
+		jiraIssueHistory.setUrl(jiraIssue.getUrl());
+		jiraIssueHistory.setDescription(jiraIssue.getName());
 		// This method is not setup method. write it to keep
 		// custom history
 		processJiraIssueHistory(jiraIssueHistory, jiraIssue, issue, fieldMapping);
