@@ -1,5 +1,25 @@
 package com.publicissapient.kpidashboard.apis.jira.scrum.service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import javax.validation.constraints.NotNull;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.bson.types.ObjectId;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.publicissapient.kpidashboard.apis.appsetting.service.ConfigHelperService;
 import com.publicissapient.kpidashboard.apis.common.service.impl.KpiHelperService;
 import com.publicissapient.kpidashboard.apis.config.CustomApiConfig;
@@ -7,16 +27,16 @@ import com.publicissapient.kpidashboard.apis.constant.Constant;
 import com.publicissapient.kpidashboard.apis.enums.Filters;
 import com.publicissapient.kpidashboard.apis.enums.JiraFeature;
 import com.publicissapient.kpidashboard.apis.enums.KPICode;
-import com.publicissapient.kpidashboard.apis.enums.KPISource;
 import com.publicissapient.kpidashboard.apis.enums.KPIExcelColumn;
+import com.publicissapient.kpidashboard.apis.enums.KPISource;
 import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
 import com.publicissapient.kpidashboard.apis.filter.service.FilterHelperService;
 import com.publicissapient.kpidashboard.apis.jira.service.JiraKPIService;
+import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
 import com.publicissapient.kpidashboard.apis.model.KpiElement;
 import com.publicissapient.kpidashboard.apis.model.KpiRequest;
 import com.publicissapient.kpidashboard.apis.model.Node;
 import com.publicissapient.kpidashboard.apis.model.TreeAggregatorDetail;
-import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
 import com.publicissapient.kpidashboard.apis.util.CommonUtils;
 import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
 import com.publicissapient.kpidashboard.apis.util.KpiDataHelper;
@@ -30,41 +50,28 @@ import com.publicissapient.kpidashboard.common.model.jira.JiraIssueCustomHistory
 import com.publicissapient.kpidashboard.common.model.jira.JiraIssueSprint;
 import com.publicissapient.kpidashboard.common.repository.jira.JiraIssueCustomHistoryRepository;
 import com.publicissapient.kpidashboard.common.repository.jira.JiraIssueRepository;
+
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.bson.types.ObjectId;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import javax.validation.constraints.NotNull;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @Component
 @Slf4j
 public class AverageResolutionTimeServiceImpl extends JiraKPIService<Double, List<Object>, Map<String, Object>> {
-	@Autowired
-	private JiraIssueRepository jiraIssueRepository;
-
-	@Autowired
-	private ConfigHelperService configHelperService;
-
-	@Autowired
-	private JiraIssueCustomHistoryRepository jiraIssueCustomHistoryRepository;
-
-	@Autowired
-	private CustomApiConfig customApiConfig;
-
-	@Autowired
-	private FilterHelperService flterHelperService;
-
 	private static final String STORY_LIST = "stories";
 	private static final String JIRA_ISSUE_LIST = "jiraIssuesBySprintAndType";
 	private static final String DEV = "DeveloperKpi";
 	private static final String STORY_HISTORY_DATA = "storyHistoryData";
 	private static final String PROJECT_FIELDMAPPING = "projectFieldMapping";
 	private static final String AGGREGATED = "Overall";
+	@Autowired
+	private JiraIssueRepository jiraIssueRepository;
+	@Autowired
+	private ConfigHelperService configHelperService;
+	@Autowired
+	private JiraIssueCustomHistoryRepository jiraIssueCustomHistoryRepository;
+	@Autowired
+	private CustomApiConfig customApiConfig;
+	@Autowired
+	private FilterHelperService flterHelperService;
 
 	@Override
 	public Double calculateKPIMetrics(Map<String, Object> t) {
@@ -78,7 +85,7 @@ public class AverageResolutionTimeServiceImpl extends JiraKPIService<Double, Lis
 
 	@Override
 	public KpiElement getKpiData(KpiRequest kpiRequest, KpiElement kpiElement,
-								 TreeAggregatorDetail treeAggregatorDetail) throws ApplicationException {
+			TreeAggregatorDetail treeAggregatorDetail) throws ApplicationException {
 
 		List<DataCount> trendValueList = new ArrayList<>();
 		Node root = treeAggregatorDetail.getRoot();
@@ -133,8 +140,8 @@ public class AverageResolutionTimeServiceImpl extends JiraKPIService<Double, Lis
 
 	@SuppressWarnings("unchecked")
 	private void sprintWiseLeafNodeValue(Map<String, Node> mapTmp, List<Node> sprintLeafNodeList,
-										 List<DataCount> trendValueList, KpiElement kpiElement, KpiRequest kpiRequest,
-										 Set<String> absentIssueTypesRoot) {
+			List<DataCount> trendValueList, KpiElement kpiElement, KpiRequest kpiRequest,
+			Set<String> absentIssueTypesRoot) {
 
 		String requestTrackerId = getRequestTrackerId();
 		sprintLeafNodeList.sort((node1, node2) -> node1.getSprintFilter().getStartDate()
@@ -162,12 +169,10 @@ public class AverageResolutionTimeServiceImpl extends JiraKPIService<Double, Lis
 		Map<String, List<ResolutionTimeValidation>> sprintWiseResolution = groupSprintWiseIssues(jiraIssues,
 				resolutionTimeIssueIdWise);
 
-
 		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
 
 			KPIExcelUtility.populateAverageResolutionTime(sprintWiseResolution, excelData);
 		}
-
 
 		Map<String, Map<String, Double>> sprintIssueTypeWiseTime = new HashMap<>();
 		sprintWiseResolution.forEach((sprint, issueWiseTimeList) -> {
@@ -238,7 +243,7 @@ public class AverageResolutionTimeServiceImpl extends JiraKPIService<Double, Lis
 	}
 
 	private Map<String, Double> getResolutionTime(List<JiraIssueCustomHistory> jiraIssueCustomHistories,
-												  Map<String, FieldMapping> fieldMappingMap) {
+			Map<String, FieldMapping> fieldMappingMap) {
 		Map<String, Double> sprintWiseResult = new HashMap<>();
 		if (CollectionUtils.isNotEmpty(jiraIssueCustomHistories)) {
 			for (JiraIssueCustomHistory jiraIssueCustomHistory : jiraIssueCustomHistories) {
@@ -259,8 +264,10 @@ public class AverageResolutionTimeServiceImpl extends JiraKPIService<Double, Lis
 	/**
 	 * this method get story completion days
 	 *
-	 * @param fieldMapping       fieldMapping
-	 * @param storySprintDetails storySprintDetails
+	 * @param fieldMapping
+	 *            fieldMapping
+	 * @param storySprintDetails
+	 *            storySprintDetails
 	 * @return days
 	 */
 	private Double getStoryCompletionDays(FieldMapping fieldMapping, List<JiraIssueSprint> storySprintDetails) {
@@ -298,7 +305,7 @@ public class AverageResolutionTimeServiceImpl extends JiraKPIService<Double, Lis
 
 	@Override
 	public Map<String, Object> fetchKPIDataFromDb(List<Node> leafNodeList, String startDate, String endDate,
-												  KpiRequest kpiRequest) {
+			KpiRequest kpiRequest) {
 		Map<String, List<String>> mapOfFilters = new LinkedHashMap<>();
 		Map<String, Object> resultListMap = new HashMap<>();
 
@@ -322,7 +329,8 @@ public class AverageResolutionTimeServiceImpl extends JiraKPIService<Double, Lis
 			FieldMapping fieldMapping = configHelperService.getFieldMappingMap().get(basicProjectConfigId);
 			if (null != fieldMapping) {
 				projectFieldMapping.put(basicProjectConfigId.toString(), fieldMapping);
-				KpiHelperService.getDroppedDefectsFilters(statusConfigsOfRejectedStoriesByProject, basicProjectConfigId, fieldMapping);
+				KpiHelperService.getDroppedDefectsFilters(statusConfigsOfRejectedStoriesByProject, basicProjectConfigId,
+						fieldMapping);
 				List<String> jiraIssueTypes = new ArrayList<>(Arrays.asList(fieldMapping.getJiraIssueTypeNames()));
 				if (CollectionUtils.containsAny(jiraIssueTypes, fieldMapping.getJiradefecttype())) {
 					jiraIssueTypes.add(NormalizedJira.DEFECT_TYPE.getValue());
@@ -348,7 +356,8 @@ public class AverageResolutionTimeServiceImpl extends JiraKPIService<Double, Lis
 
 		// do not change the order of remove methods
 		List<JiraIssue> defectListWoDrop = new ArrayList<>();
-		KpiHelperService.getDefectsWithoutDrop(statusConfigsOfRejectedStoriesByProject, jiraIssuesBySprintAndType, defectListWoDrop);
+		KpiHelperService.getDefectsWithoutDrop(statusConfigsOfRejectedStoriesByProject, jiraIssuesBySprintAndType,
+				defectListWoDrop);
 
 		List<String> storyIds = getIssueIds(defectListWoDrop);
 
@@ -369,10 +378,8 @@ public class AverageResolutionTimeServiceImpl extends JiraKPIService<Double, Lis
 		return storyIds;
 	}
 
-
 	private Map<String, List<ResolutionTimeValidation>> groupSprintWiseIssues(List<JiraIssue> jiraIssues,
-																			  Map<String, Double> resolutionTimeIssueIdWise) {
-
+			Map<String, Double> resolutionTimeIssueIdWise) {
 
 		Map<String, List<ResolutionTimeValidation>> sprintSubCatIssueTypeStoryMap = new HashMap<>();
 
@@ -394,7 +401,6 @@ public class AverageResolutionTimeServiceImpl extends JiraKPIService<Double, Lis
 				}
 			});
 
-
 			sprintSubCatIssueTypeStoryMap.put(sprint, resolutionTimes);
 
 		});
@@ -407,4 +413,3 @@ public class AverageResolutionTimeServiceImpl extends JiraKPIService<Double, Lis
 		return calculateKpiValueForDouble(valueList, kpiId);
 	}
 }
-

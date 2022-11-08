@@ -158,14 +158,14 @@ public class ScrumJiraIssueClientImpl extends JiraIssueClient {// NOPMD
 		int total = 0;
 
 		Map<String, LocalDateTime> lastSavedJiraIssueChangedDateByType = new HashMap<>();
-
+		setStartDate(jiraProcessorConfig);
 		ProcessorExecutionTraceLog processorExecutionTraceLog = createTraceLog(
 				projectConfig.getBasicProjectConfigId().toHexString());
 		try {
 
 			boolean dataExist = (jiraIssueRepository
 					.findTopByBasicProjectConfigId(projectConfig.getBasicProjectConfigId().toString()) != null);
-//write get logic to fetch last successful updated date.
+			//write get logic to fetch last successful updated date.
 			String queryDate = getDeltaDate(processorExecutionTraceLog.getLastSuccessfulRun());
 			Set<SprintDetails> setForCacheClean = new HashSet<>();
 			String userTimeZone = jiraAdapter.getUserTimeZone(projectConfig);

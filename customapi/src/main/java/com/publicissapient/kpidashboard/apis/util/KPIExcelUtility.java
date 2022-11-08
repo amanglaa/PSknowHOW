@@ -18,18 +18,15 @@
 
 package com.publicissapient.kpidashboard.apis.util;
 
-import java.time.LocalDate;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -37,9 +34,11 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.google.common.collect.Sets;
 import com.publicissapient.kpidashboard.apis.constant.Constant;
 import com.publicissapient.kpidashboard.apis.enums.KPICode;
 import com.publicissapient.kpidashboard.apis.model.ChangeFailureRateInfo;
+import com.publicissapient.kpidashboard.apis.model.CodeBuildTimeInfo;
 import com.publicissapient.kpidashboard.apis.model.DeploymentFrequencyInfo;
 import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
 import com.publicissapient.kpidashboard.common.model.application.ProjectVersion;
@@ -51,6 +50,20 @@ import com.publicissapient.kpidashboard.common.model.testexecution.KanbanTestExe
 import com.publicissapient.kpidashboard.common.model.testexecution.TestExecution;
 import com.publicissapient.kpidashboard.common.model.zephyr.TestCaseDetails;
 import com.publicissapient.kpidashboard.common.util.DateUtil;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import java.text.DecimalFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * The class contains mapping of kpi and Excel columns.
@@ -62,11 +75,17 @@ public class KPIExcelUtility {
 	private static final String MONTH_YEAR_FORMAT = "MMM yyyy";
 	private static final String DATE_YEAR_MONTH_FORMAT = "dd-MMM-yy";
 
-	private static final String DATE_FORMAT_PRODUCTION_DEFECT_AGEING = "yyyy-MM-dd";
+	private static final String DATE_FORMAT_PRODUCTION_DEFECT_AGEING = "yyyy-mm-dd";
 	private static final String LEAD_TIME = "Lead Time";
 	private static final String INTAKE_TO_DOR = "Intake - DoR";
 	private static final String DOR_TO_DOD = "DoR - DoD";
 	private static final String DOD_TO_LIVE = "DoD - Live";
+
+	private static final String OPEN_TO_TRIAGE = "Open - Triage";
+	private static final String TRIAGE_TO_COMPLETE = "Triage - Complete";
+	private static final String COMPLETE_TO_LIVE = "Complete - Live";
+
+	private static final DecimalFormat df2 = new DecimalFormat(".##");
 
 	private KPIExcelUtility() {
 	}
@@ -322,7 +341,7 @@ public class KPIExcelUtility {
 
 	}
 
-	public static void populateChangeFailureRateExcelData(String projectName,
+    public static void populateChangeFailureRateExcelData(String projectName,
 			ChangeFailureRateInfo changeFailureRateInfo, List<KPIExcelData> kpiExcelData) {
 		List<String> buildJobNameList = changeFailureRateInfo.getBuildJobNameList();
 		if (CollectionUtils.isNotEmpty(buildJobNameList)) {
@@ -340,7 +359,7 @@ public class KPIExcelUtility {
 		}
 	}
 
-	public static void populateTestExcecutionExcelData(String sprintProjectName, TestExecution testDetail,
+    public static void populateTestExcecutionExcelData(String sprintProjectName, TestExecution testDetail,
 			KanbanTestExecution kanbanTestExecution, double executionPercentage, double passPercentage,
 			List<KPIExcelData> kpiExcelData) {
 
@@ -380,6 +399,7 @@ public class KPIExcelUtility {
 				excelData.setStoryId(storyDetails);
 				excelData.setIssueDesc(jiraIssue.getName());
 				excelData.setStoryPoints(jiraIssue.getStoryPoints().toString());
+
 				kpiExcelData.add(excelData);
 			});
 		}
@@ -396,6 +416,7 @@ public class KPIExcelUtility {
 				storyDetails.put(totalStoriesList.get(i).getNumber(), checkEmptyURL(totalStoriesList.get(i)));
 				excelData.setStoryId(storyDetails);
 				excelData.setIssueDesc(checkEmptyName(totalStoriesList.get(i)));
+
 				excelData.setOriginalTimeEstimate(estimateTimeList.get(0));
 				excelData.setTotalTimeSpent(loggedTimeList.get(i));
 				kpiExcelData.add(excelData);
@@ -408,6 +429,7 @@ public class KPIExcelUtility {
 
 		if (MapUtils.isNotEmpty(sprintWiseResolution)) {
 			sprintWiseResolution.forEach((sprint, resolutionTimesValidationList) -> {
+
 				resolutionTimesValidationList.stream().forEach(resolutionTimeValidation -> {
 					KPIExcelData excelData = new KPIExcelData();
 					excelData.setSprintName(sprint);
@@ -418,6 +440,7 @@ public class KPIExcelUtility {
 					excelData.setIssueType(resolutionTimeValidation.getIssueType());
 					excelData.setResolutionTime(resolutionTimeValidation.getResolutionTime().toString());
 					kpiExcelData.add(excelData);
+
 				});
 
 			});
@@ -603,6 +626,120 @@ public class KPIExcelUtility {
 		}
 	}
 
+    public static void populateStoryCountExcelData(String sprint, List<KPIExcelData> kpiExcelData,
+			List<JiraIssue> sprintWiseStoriesList, List<String> totalPresentJiraIssue) {
+
+		List<String> totalPresentIssueList = new ArrayList<>();
+		if (CollectionUtils.isNotEmpty(sprintWiseStoriesList)) {
+
+			for (JiraIssue jiraIssue : sprintWiseStoriesList) {
+				totalPresentIssueList.add(jiraIssue.getNumber());
+			}
+			for (int i = 0; i < totalPresentJiraIssue.size(); i++) {
+
+				if (totalPresentIssueList.contains(totalPresentJiraIssue.get(i))) {
+
+					KPIExcelData excelData = new KPIExcelData();
+					excelData.setSprintName(sprint);
+					Map<String, String> storyDetails = new HashMap<>();
+					storyDetails.put(sprintWiseStoriesList.get(i).getNumber(),
+							checkEmptyURL(sprintWiseStoriesList.get(i)));
+					excelData.setStoryId(storyDetails);
+					excelData.setIssueDesc(checkEmptyName(sprintWiseStoriesList.get(i)));
+					kpiExcelData.add(excelData);
+
+				}
+			}
+		}
+	}
+
+	public static void populateCodeBuildTime(List<KPIExcelData> kpiExcelData, String projectName,
+			CodeBuildTimeInfo codeBuildTimeInfo) {
+
+		for (int i = 0; i < codeBuildTimeInfo.getBuildJobList().size(); i++) {
+			KPIExcelData excelData = new KPIExcelData();
+			excelData.setProjectName(projectName);
+			excelData.setJobName(codeBuildTimeInfo.getBuildJobList().get(i));
+			excelData.setBuildUrl(codeBuildTimeInfo.getBuildUrlList().get(i));
+			excelData.setStartTime(codeBuildTimeInfo.getBuildStartTimeList().get(i));
+			excelData.setEndTime(codeBuildTimeInfo.getBuildEndTimeList().get(i));
+			excelData.setStartedBy(codeBuildTimeInfo.getStartedByList().get(i));
+			excelData.setWeeks(codeBuildTimeInfo.getWeeksList().get(i));
+			excelData.setBuildStatus(codeBuildTimeInfo.getBuildStatusList().get(i));
+			excelData.setDuration(codeBuildTimeInfo.getDurationList().get(i));
+			kpiExcelData.add(excelData);
+
+		}
+	}
+
+	public static void populateMeanTimeMergeExcelData(String projectName, List<Map<String, Double>> repoWiseMRList,
+			List<String> repoList, List<String> branchList, List<KPIExcelData> kpiExcelData) {
+
+		if (CollectionUtils.isNotEmpty(repoWiseMRList)) {
+			for (int i = 0; i < repoWiseMRList.size(); i++) {
+				Map<String, Double> repoWiseMap = new HashMap<>();
+				repoWiseMap = repoWiseMRList.get(i);
+				for (Map.Entry m : repoWiseMap.entrySet()) {
+					KPIExcelData excelData = new KPIExcelData();
+					excelData.setProject(projectName);
+					excelData.setRepositoryURL(repoList.get(0));
+					excelData.setBranch(branchList.get(0));
+					excelData.setWeeks(m.getKey().toString());
+					excelData.setMeanTimetoMerge(m.getValue().toString());
+					kpiExcelData.add(excelData);
+				}
+
+			}
+		}
+
+	}
+
+	public static void populateCodeCommit(String projectName, List<Map<String, Long>> repoWiseCommitList,
+			List<String> repoList, List<String> branchList, List<KPIExcelData> kpiExcelData,
+			List<Map<String, Long>> repoWiseMergeRequestList) {
+
+		if (CollectionUtils.isNotEmpty(repoWiseCommitList) && CollectionUtils.isNotEmpty(repoWiseMergeRequestList)) {
+			for (int i = 0; i < repoWiseCommitList.size(); i++) {
+				Map<String, Long> repoWiseCommitMap = new HashMap<>();
+				Map<String, Long> repoWiseMergeMap = new HashMap<>();
+				repoWiseCommitMap = repoWiseCommitList.get(i);
+				repoWiseMergeMap = repoWiseMergeRequestList.get(i);
+
+				for (String date : Sets.union(repoWiseCommitMap.keySet(), repoWiseMergeMap.keySet())) {
+
+					Long commitHours = repoWiseCommitMap.get(date);
+					Long mergeHours = repoWiseMergeMap.get(date);
+					KPIExcelData excelData = new KPIExcelData();
+					excelData.setProjectName(projectName);
+					excelData.setRepositoryURL(repoList.get(i));
+					excelData.setBranch(branchList.get(i));
+					excelData.setDays(date);
+					excelData.setNumberOfCommit(commitHours.toString());
+					excelData.setNumberOfMerge(mergeHours.toString());
+					kpiExcelData.add(excelData);
+				}
+
+			}
+
+		}
+	}
+
+	public static void populateKanbanLeadTime(List<KPIExcelData> kpiExcelData, String projectName,
+			Map<String, Long> cycleMap) {
+
+		if (MapUtils.isNotEmpty(cycleMap)) {
+
+			KPIExcelData excelData = new KPIExcelData();
+			excelData.setProjectName(projectName);
+			excelData.setOpenToTriage(cycleMap.get(OPEN_TO_TRIAGE).toString());
+			excelData.setTriageToComplete(cycleMap.get(TRIAGE_TO_COMPLETE).toString());
+			excelData.setCompleteToLive(cycleMap.get(COMPLETE_TO_LIVE).toString());
+			excelData.setLeadTime(cycleMap.get(LEAD_TIME).toString());
+			kpiExcelData.add(excelData);
+
+		}
+	}
+
 	public static void populateProductionDefectAgingExcelData(String projectName, List<JiraIssue> defectList,
 			List<KPIExcelData> kpiExcelData) {
 		defectList.forEach(defect -> {
@@ -640,7 +777,7 @@ public class KPIExcelUtility {
 	/**
 	 * prepare data for excel for cumulative kpi of Kanban on the basis of field.
 	 * field can be RCA/priority/status field values as per field of jira
-	 * 
+	 *
 	 * @param projectName
 	 * @param jiraHistoryFieldAndDateWiseIssueMap
 	 * @param fieldValues

@@ -66,4 +66,5 @@ public class JiraProcessorConfig {
 	private String jiraSprintByBoardUrlApi;
 	private String jiraEpicApi;
 	private Integer sprintReportCountToBeFetched;
+	private boolean considerStartDate;
 }
