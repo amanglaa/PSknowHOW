@@ -11,9 +11,6 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import com.publicissapient.kpidashboard.apis.enums.KPIExcelColumn;
-import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
-import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -26,16 +23,19 @@ import com.publicissapient.kpidashboard.apis.appsetting.service.ConfigHelperServ
 import com.publicissapient.kpidashboard.apis.config.CustomApiConfig;
 import com.publicissapient.kpidashboard.apis.enums.JiraFeatureHistory;
 import com.publicissapient.kpidashboard.apis.enums.KPICode;
+import com.publicissapient.kpidashboard.apis.enums.KPIExcelColumn;
 import com.publicissapient.kpidashboard.apis.enums.KPISource;
 import com.publicissapient.kpidashboard.apis.errors.ApplicationException;
 import com.publicissapient.kpidashboard.apis.jira.service.JiraKPIService;
 import com.publicissapient.kpidashboard.apis.model.CustomDateRange;
+import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
 import com.publicissapient.kpidashboard.apis.model.KpiElement;
 import com.publicissapient.kpidashboard.apis.model.KpiRequest;
 import com.publicissapient.kpidashboard.apis.model.Node;
 import com.publicissapient.kpidashboard.apis.model.TreeAggregatorDetail;
 import com.publicissapient.kpidashboard.apis.util.AggregationUtils;
 import com.publicissapient.kpidashboard.apis.util.CommonUtils;
+import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
 import com.publicissapient.kpidashboard.apis.util.KpiDataHelper;
 import com.publicissapient.kpidashboard.common.constant.CommonConstant;
 import com.publicissapient.kpidashboard.common.model.application.CycleTime;
@@ -43,7 +43,6 @@ import com.publicissapient.kpidashboard.common.model.application.DataCount;
 import com.publicissapient.kpidashboard.common.model.application.DataCountGroup;
 import com.publicissapient.kpidashboard.common.model.application.FieldMapping;
 import com.publicissapient.kpidashboard.common.model.application.LeadTimeValidationDataForKanban;
-import com.publicissapient.kpidashboard.common.model.application.ValidationData;
 import com.publicissapient.kpidashboard.common.model.jira.KanbanIssueCustomHistory;
 import com.publicissapient.kpidashboard.common.model.jira.KanbanIssueHistory;
 import com.publicissapient.kpidashboard.common.repository.jira.KanbanJiraIssueHistoryRepository;
@@ -196,7 +195,10 @@ public class LeadTimeKanbanServiceImpl extends JiraKPIService<Long, List<Object>
 
 				mapTmp.get(node.getId()).setValue(dataCountMap);
 
-				populateExcelDataObject(requestTrackerId, excelData, cycleMap, trendLineName);
+				if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
+					KPIExcelUtility.populateKanbanLeadTime(excelData, trendLineName, cycleMap);
+
+				}
 
 				log.debug(
 						"[LEAD-TIME-KANBAN-FILTER-WISE][{}]. Open to Triage: {} . Triage to Complete: {} . Complete to Live: {}. Open to Live: {}",
@@ -333,22 +335,6 @@ public class LeadTimeKanbanServiceImpl extends JiraKPIService<Long, List<Object>
 		if (Optional.ofNullable(live).isPresent() && live.equalsIgnoreCase(history.getStatus())) {
 			cycleTime.setLiveTime(new DateTime(history.getActivityDate()));
 			leadTimeValidationDataForKanban.setLiveDate(history.getActivityDate());
-		}
-	}
-
-	/**
-	 * 
-	 * 
-	 * @param requestTrackerId
-	 * 
-	 * @param trendLineName
-	 */
-	private void populateExcelDataObject(String requestTrackerId, List<KPIExcelData> excelData,
-			Map<String, Long> cycleMap, String trendLineName) {
-
-		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-			KPIExcelUtility.populateKanbanLeadTime(excelData, trendLineName, cycleMap);
-
 		}
 	}
 
