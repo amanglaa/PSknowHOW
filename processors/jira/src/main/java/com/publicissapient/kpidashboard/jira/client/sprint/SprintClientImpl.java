@@ -117,14 +117,15 @@ public class SprintClientImpl implements SprintClient {
 				sprint.setBasicProjectConfigId(projectConfig.getBasicProjectConfigId());
 				if (null != dbSprintDetailMap.get(sprint.getSprintID())) {
 					SprintDetails dbSprintDetails =  dbSprintDetailMap.get(sprint.getSprintID());
+					sprint.setId(dbSprintDetails.getId());
 					//case 1 : same sprint different board id
 					if (!dbSprintDetails.getOriginBoardId().containsAll(sprint.getOriginBoardId())) {
-						sprint.getOriginBoardId().addAll(sprint.getOriginBoardId());
+						sprint.getOriginBoardId().addAll(dbSprintDetails.getOriginBoardId());
 						fetchReport = true;
 					}//case 2 : sprint state is active or changed which is present in db
 					else if (sprint.getState().equalsIgnoreCase(SprintDetails.SPRINT_STATE_ACTIVE) ||
 							!sprint.getState().equalsIgnoreCase(dbSprintDetails.getState())) {
-						sprint.getOriginBoardId().addAll(sprint.getOriginBoardId());
+						sprint.setOriginBoardId(dbSprintDetails.getOriginBoardId());
 						fetchReport = true;
 					}else {
 						log.info("Sprint not to be saved again : {}, status: {} ", sprint.getOriginalSprintId(),

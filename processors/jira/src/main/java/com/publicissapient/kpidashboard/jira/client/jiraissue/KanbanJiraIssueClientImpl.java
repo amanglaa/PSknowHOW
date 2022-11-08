@@ -140,12 +140,11 @@ public class KanbanJiraIssueClientImpl extends JiraIssueClient {
 		int savedIsuesCount = 0;
 		int total = 0;
 		Map<String, LocalDateTime> lastSavedKanbanJiraIssueChangedDateByType = new HashMap<>();
-
+		setStartDate(jiraProcessorConfig);
 		ProcessorExecutionTraceLog processorExecutionTraceLog = createTraceLog(
 				projectConfig.getBasicProjectConfigId().toHexString());
 
 		try {
-
 			boolean dataExist = (kanbanJiraRepo
 					.findTopByBasicProjectConfigId(projectConfig.getBasicProjectConfigId().toString()) != null);
 

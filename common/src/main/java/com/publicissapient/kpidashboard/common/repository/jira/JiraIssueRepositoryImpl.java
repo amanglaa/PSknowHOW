@@ -20,7 +20,10 @@ package com.publicissapient.kpidashboard.common.repository.jira;//NOPMD
 
 //Do not remove NOPMD comment. This is for ignoring ExcessivePublicCount violation
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -51,8 +54,6 @@ public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom {// NO
 	private static final String SPRINT_ID = "sprintID";
 	private static final String SPRINT = "sprint";
 	private static final String NUMBER = "number";
-	private static final String NAME = "name";
-	private static final String URL = "url";
 	private static final String STORY_LIST = "storyList";
 	private static final String SPRINT_BEGIN_DATE = "sprintBeginDate";
 	private static final String SPRINT_NAME = "sprintName";
@@ -268,7 +269,7 @@ public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom {// NO
 	}
 
 	/**
-	 *
+	 * 
 	 * @param mapOfFilters
 	 * @param criteria
 	 * @return
@@ -284,7 +285,7 @@ public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom {// NO
 	}
 
 	/**
-	 *
+	 * 
 	 * @param uniqueProjectMap
 	 * @return
 	 */
@@ -413,7 +414,7 @@ public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom {// NO
 
 	/**
 	 * This method is used to find stories for a given list of sprints
-	 *
+	 * 
 	 * @param mapOfFilters
 	 *            filters
 	 * @param storyNumber
@@ -588,20 +589,6 @@ public class JiraIssueRepositoryImpl implements JiraIssueRepositoryCustom {// NO
 
 		Aggregation aggregation = Aggregation.newAggregation(matchStage, groupBySprint);
 		return operations.aggregate(aggregation, JiraIssue.class, SprintWiseStory.class).getMappedResults();
-	}
-
-	@Override
-	public Set<JiraIssue> findIssueAndDescByNumber(List<String> storyNumber) {
-
-		Criteria criteria = new Criteria();
-		criteria = criteria.and(NUMBER).in(storyNumber);
-
-		Query query = new Query(criteria);
-		query.fields().include(NUMBER);
-		query.fields().include(NAME);
-		query.fields().include(URL);
-		return new HashSet<>(operations.find(query, JiraIssue.class));
-
 	}
 
 }
