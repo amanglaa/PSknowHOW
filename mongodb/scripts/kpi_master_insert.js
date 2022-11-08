@@ -1849,8 +1849,7 @@ db.getCollection('kpi_master').insert(
     "showTrend": true,
     "aggregationCriteria": "sum",
     "isAdditionalFilterSupport": false,
-    "calculateMaturity": false,
-    "maturityRange": ["-1","1-2","2-5","5-10","10-"]
+    "calculateMaturity": false
   },
   {
     "kpiId": "kpi113",
