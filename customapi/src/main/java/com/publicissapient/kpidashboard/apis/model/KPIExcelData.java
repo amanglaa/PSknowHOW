@@ -50,7 +50,7 @@ public class KPIExcelData {
 	private String totalTimeSpent;
 
 	@JsonProperty("Closed")
-	private String status;
+	private String closedStatus;
 
 	@JsonProperty("Project Name")
 	private String projectName;
@@ -209,6 +209,9 @@ public class KPIExcelData {
 	private String isTestLinkedToStory;
 
 	@JsonProperty("Status")
+	private String status;
+
+	@JsonProperty("Issue Status")
 	private String issueStatus;
 
     @JsonProperty("Execution Date")

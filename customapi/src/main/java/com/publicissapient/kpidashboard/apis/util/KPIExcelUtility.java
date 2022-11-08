@@ -19,14 +19,19 @@
 package com.publicissapient.kpidashboard.apis.util;
 
 import java.text.DecimalFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -50,20 +55,6 @@ import com.publicissapient.kpidashboard.common.model.testexecution.KanbanTestExe
 import com.publicissapient.kpidashboard.common.model.testexecution.TestExecution;
 import com.publicissapient.kpidashboard.common.model.zephyr.TestCaseDetails;
 import com.publicissapient.kpidashboard.common.util.DateUtil;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.StringUtils;
-
-import java.text.DecimalFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.time.temporal.ChronoField;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * The class contains mapping of kpi and Excel columns.
@@ -341,7 +332,7 @@ public class KPIExcelUtility {
 
 	}
 
-    public static void populateChangeFailureRateExcelData(String projectName,
+	public static void populateChangeFailureRateExcelData(String projectName,
 			ChangeFailureRateInfo changeFailureRateInfo, List<KPIExcelData> kpiExcelData) {
 		List<String> buildJobNameList = changeFailureRateInfo.getBuildJobNameList();
 		if (CollectionUtils.isNotEmpty(buildJobNameList)) {
@@ -359,7 +350,7 @@ public class KPIExcelUtility {
 		}
 	}
 
-    public static void populateTestExcecutionExcelData(String sprintProjectName, TestExecution testDetail,
+	public static void populateTestExcecutionExcelData(String sprintProjectName, TestExecution testDetail,
 			KanbanTestExecution kanbanTestExecution, double executionPercentage, double passPercentage,
 			List<KPIExcelData> kpiExcelData) {
 
@@ -505,7 +496,7 @@ public class KPIExcelUtility {
 				Map<String, String> storyDetails = new HashMap<>();
 				storyDetails.put(storyId, checkEmptyURL(jiraIssue));
 				excelData.setStoryId(storyDetails);
-				excelData.setStatus(present);
+				excelData.setClosedStatus(present);
 
 				kpiExcelData.add(excelData);
 
@@ -626,7 +617,7 @@ public class KPIExcelUtility {
 		}
 	}
 
-    public static void populateStoryCountExcelData(String sprint, List<KPIExcelData> kpiExcelData,
+	public static void populateStoryCountExcelData(String sprint, List<KPIExcelData> kpiExcelData,
 			List<JiraIssue> sprintWiseStoriesList, List<String> totalPresentJiraIssue) {
 
 		List<String> totalPresentIssueList = new ArrayList<>();
@@ -754,7 +745,7 @@ public class KPIExcelUtility {
 					.optionalEnd().toFormatter();
 			LocalDateTime dateTime = LocalDateTime.parse(defect.getCreatedDate(), formatter);
 			excelData.setDate(dateTime.format(DateTimeFormatter.ofPattern(DATE_FORMAT_PRODUCTION_DEFECT_AGEING)));
-			excelData.setIssueStatus(defect.getJiraStatus());
+			excelData.setStatus(defect.getJiraStatus());
 			kpiExcelData.add(excelData);
 		});
 	}
@@ -854,7 +845,7 @@ public class KPIExcelUtility {
 			excelData.setTicketIssue(storyMap);
 			excelData.setPriority(kanbanIssues.getPriority());
 			excelData.setCreatedDate(LocalDate.parse(kanbanIssues.getCreatedDate().split("T")[0]).toString());
-			excelData.setIssueStatus(kanbanIssues.getJiraStatus());
+			excelData.setStatus(kanbanIssues.getJiraStatus());
 			kpiExcelData.add(excelData);
 		});
 	}
@@ -877,7 +868,7 @@ public class KPIExcelUtility {
 				if (kpiId.equalsIgnoreCase(KPICode.TICKET_OPEN_VS_CLOSE_BY_PRIORITY.getKpiId())) {
 					kpiExcelDataObject.setIssuePriority(issue.getPriority());
 				}
-				kpiExcelDataObject.setIssueStatus("Open");
+				kpiExcelDataObject.setStatus("Open");
 				excelDataList.add(kpiExcelDataObject);
 			});
 
@@ -894,7 +885,7 @@ public class KPIExcelUtility {
 				if (kpiId.equalsIgnoreCase(KPICode.TICKET_OPEN_VS_CLOSE_BY_PRIORITY.getKpiId())) {
 					kpiExcelDataObject.setIssuePriority(issue.getPriority());
 				}
-				kpiExcelDataObject.setIssueStatus("Closed");
+				kpiExcelDataObject.setStatus("Closed");
 				excelDataList.add(kpiExcelDataObject);
 			});
 		}
