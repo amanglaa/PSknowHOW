@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.joda.time.DateTime;
 
 /**
  * Lead time validation data to show in excel.
@@ -21,9 +22,11 @@ import lombok.ToString;
 @ToString
 public class LeadTimeValidationDataForKanban {
 
+	private String url;
+	private String issueDesc;
 	private String issueNumber;
-	private String intakeDate;
-	private String triageDate;
-	private String completedDate;
-	private String liveDate;
+	private DateTime intakeDate;
+	private DateTime triageDate;
+	private DateTime completedDate;
+	private DateTime liveDate;
 }

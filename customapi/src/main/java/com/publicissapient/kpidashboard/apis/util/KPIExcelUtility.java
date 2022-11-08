@@ -35,6 +35,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.publicissapient.kpidashboard.common.model.application.LeadTimeData;
 import com.publicissapient.kpidashboard.common.model.jira.JiraIssueCustomHistory;
 import com.publicissapient.kpidashboard.common.model.jira.KanbanIssueCustomHistory;
 import com.publicissapient.kpidashboard.common.model.testexecution.KanbanTestExecution;
@@ -470,23 +471,6 @@ public class KPIExcelUtility {
             });
         }
     }
-
-    public static void populateLeadTime(List<KPIExcelData> kpiExcelData, String projectName,
-                                        Map<String, Long> cycleMap) {
-
-        if (MapUtils.isNotEmpty(cycleMap)) {
-
-            KPIExcelData excelData = new KPIExcelData();
-            excelData.setProjectName(projectName);
-            excelData.setIntakeToDOR(cycleMap.get(INTAKE_TO_DOR).toString());
-            excelData.setDorToDod(cycleMap.get(DOR_TO_DOD).toString());
-            excelData.setDodToLive(cycleMap.get(DOD_TO_LIVE).toString());
-            excelData.setLeadTime(cycleMap.get(LEAD_TIME).toString());
-            kpiExcelData.add(excelData);
-
-        }
-    }
-
     /**
      * TO GET Constant.EXCEL_YES/"N" from complete list of defects if defect is
      * present in conditional list then Constant.EXCEL_YES else
@@ -743,19 +727,24 @@ public class KPIExcelUtility {
     }
 
     public static void populateKanbanLeadTime(List<KPIExcelData> kpiExcelData, String projectName,
-                                              Map<String, Long> cycleMap) {
+                                              LeadTimeData leadTimeDataKanban, List<KanbanIssueCustomHistory> kanbanIssueList) {
 
-        if (MapUtils.isNotEmpty(cycleMap)) {
+        if (leadTimeDataKanban.getIssueNumber().size() > 0) {
+            for (int i = 0; i < leadTimeDataKanban.getIssueNumber().size(); i++) {
+                KPIExcelData excelData = new KPIExcelData();
+                excelData.setProjectName(projectName);
+                Map<String, String> storyId = new HashMap<>();
+                storyId.put(leadTimeDataKanban.getIssueNumber().get(i), checkEmptyURL(kanbanIssueList.get(i)));
+                excelData.setStoryId(storyId);
+                excelData.setIssueDesc(checkEmptyName(kanbanIssueList.get(i)));
+                excelData.setOpenToTriage(leadTimeDataKanban.getOpenToTriage().get(i));
+                excelData.setTriageToComplete(leadTimeDataKanban.getTriageToComplete().get(i));
+                excelData.setCompleteToLive(leadTimeDataKanban.getCompleteToLive().get(i));
+                excelData.setLeadTime(leadTimeDataKanban.getLeadTime().get(i));
 
-            KPIExcelData excelData = new KPIExcelData();
-            excelData.setProjectName(projectName);
-            excelData.setOpenToTriage(cycleMap.get(OPEN_TO_TRIAGE).toString());
-            excelData.setTriageToComplete(cycleMap.get(TRIAGE_TO_COMPLETE).toString());
-            excelData.setCompleteToLive(cycleMap.get(COMPLETE_TO_LIVE).toString());
-            excelData.setLeadTime(cycleMap.get(LEAD_TIME).toString());
-            kpiExcelData.add(excelData);
-
-		}
+                kpiExcelData.add(excelData);
+            }
+        }
 	}
 
 	public static void populateProductionDefectAgingExcelData(String projectName, List<JiraIssue> defectList,
@@ -917,5 +906,26 @@ public class KPIExcelUtility {
 			});
 		}
 	}
+    public static void populateLeadTime(List<KPIExcelData> kpiExcelData, String projectName,
+                                        LeadTimeData leadTimeData, List<JiraIssueCustomHistory> issueCustomHistoryList) {
+
+        if (leadTimeData.getIssueNumber().size() > 0) {
+            for (int i = 0; i < leadTimeData.getIssueNumber().size(); i++) {
+                KPIExcelData excelData = new KPIExcelData();
+                excelData.setProjectName(projectName);
+                Map<String, String> storyId = new HashMap<>();
+                storyId.put(leadTimeData.getIssueNumber().get(i), checkEmptyURL(issueCustomHistoryList.get(i)));
+                excelData.setStoryId(storyId);
+                excelData.setIssueDesc(checkEmptyName(issueCustomHistoryList.get(i)));
+                excelData.setIntakeToDOR(leadTimeData.getIntakeToDor().get(i));
+                excelData.setDorToDod(leadTimeData.getDorToDOD().get(i));
+                excelData.setDodToLive(leadTimeData.getDodToLive().get(i));
+                excelData.setLeadTime(leadTimeData.getIntakeToLive().get(i));
+
+                kpiExcelData.add(excelData);
+            }
+        }
+    }
+
 
 }

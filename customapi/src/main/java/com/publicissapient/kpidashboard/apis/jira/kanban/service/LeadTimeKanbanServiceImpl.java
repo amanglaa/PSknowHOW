@@ -42,6 +42,7 @@ import com.publicissapient.kpidashboard.common.model.application.CycleTime;
 import com.publicissapient.kpidashboard.common.model.application.DataCount;
 import com.publicissapient.kpidashboard.common.model.application.DataCountGroup;
 import com.publicissapient.kpidashboard.common.model.application.FieldMapping;
+import com.publicissapient.kpidashboard.common.model.application.LeadTimeData;
 import com.publicissapient.kpidashboard.common.model.application.LeadTimeValidationDataForKanban;
 import com.publicissapient.kpidashboard.common.model.jira.KanbanIssueCustomHistory;
 import com.publicissapient.kpidashboard.common.model.jira.KanbanIssueHistory;
@@ -195,8 +196,10 @@ public class LeadTimeKanbanServiceImpl extends JiraKPIService<Long, List<Object>
 
 				mapTmp.get(node.getId()).setValue(dataCountMap);
 
+				LeadTimeData leadTimeMap = getLeadTime(leadTimeList);
+
 				if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-					KPIExcelUtility.populateKanbanLeadTime(excelData, trendLineName, cycleMap);
+					KPIExcelUtility.populateKanbanLeadTime(excelData, trendLineName, leadTimeMap, kanbanIssueList);
 
 				}
 
@@ -209,6 +212,67 @@ public class LeadTimeKanbanServiceImpl extends JiraKPIService<Long, List<Object>
 		kpiElement.setExcelData(excelData);
 		kpiElement.setExcelColumns(KPIExcelColumn.LEAD_TIME_KANBAN.getColumns());
 
+	}
+
+	private LeadTimeData getLeadTime(List<LeadTimeValidationDataForKanban> leadTimeValidationDataForKanbanList) {
+
+		List<String> openToTriageDay = new ArrayList<>();
+		List<String> triageToCompleteDay = new ArrayList<>();
+		List<String> completeToLiveDay = new ArrayList<>();
+		List<String> openToLiveDay = new ArrayList<>();
+		List<String> issueNumber = new ArrayList<>();
+		List<String> issueURL = new ArrayList<>();
+		List<String> issueDisc = new ArrayList<>();
+		LeadTimeData leadTimeData = new LeadTimeData();
+
+		if (CollectionUtils.isNotEmpty(leadTimeValidationDataForKanbanList)) {
+
+			for (LeadTimeValidationDataForKanban leadTimeValidationDataForKanban : leadTimeValidationDataForKanbanList) {
+
+				issueNumber.add(leadTimeValidationDataForKanban.getIssueNumber());
+
+				if (leadTimeValidationDataForKanban.getIntakeDate() != null
+						&& leadTimeValidationDataForKanban.getTriageDate() != null) {
+					Long diff = leadTimeValidationDataForKanban.getTriageDate().getMillis()
+							- leadTimeValidationDataForKanban.getIntakeDate().getMillis();
+					openToTriageDay.add(String.valueOf(TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)));
+				} else {
+					openToTriageDay.add("NA");
+				}
+				if (leadTimeValidationDataForKanban.getTriageDate() != null
+						&& leadTimeValidationDataForKanban.getCompletedDate() != null) {
+					Long diff = leadTimeValidationDataForKanban.getCompletedDate().getMillis()
+							- leadTimeValidationDataForKanban.getTriageDate().getMillis();
+					triageToCompleteDay.add(String.valueOf(TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)));
+				} else {
+					triageToCompleteDay.add("NA");
+				}
+				if (leadTimeValidationDataForKanban.getCompletedDate() != null
+						&& leadTimeValidationDataForKanban.getLiveDate() != null) {
+					Long diff = leadTimeValidationDataForKanban.getLiveDate().getMillis()
+							- leadTimeValidationDataForKanban.getCompletedDate().getMillis();
+					completeToLiveDay.add(String.valueOf(TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)));
+				} else {
+					completeToLiveDay.add("NA");
+				}
+				if (leadTimeValidationDataForKanban.getIntakeDate() != null
+						&& leadTimeValidationDataForKanban.getLiveDate() != null) {
+					Long diff = leadTimeValidationDataForKanban.getLiveDate().getMillis()
+							- leadTimeValidationDataForKanban.getIntakeDate().getMillis();
+					openToLiveDay.add(String.valueOf(TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)));
+				} else {
+					openToLiveDay.add("NA");
+				}
+
+			}
+			leadTimeData.setIssueNumber(issueNumber);
+			leadTimeData.setOpenToTriage(openToTriageDay);
+			leadTimeData.setTriageToComplete(triageToCompleteDay);
+			leadTimeData.setCompleteToLive(completeToLiveDay);
+			leadTimeData.setLeadTime(openToLiveDay);
+		}
+
+		return leadTimeData;
 	}
 
 	/**
@@ -260,7 +324,7 @@ public class LeadTimeKanbanServiceImpl extends JiraKPIService<Long, List<Object>
 				leadTimeValidationDataForKanban.setIssueNumber(jiraIssueCustomHistory.getStoryID());
 				CycleTime cycleTime = new CycleTime();
 				cycleTime.setIntakeTime(new DateTime(jiraIssueCustomHistory.getCreatedDate()));
-				leadTimeValidationDataForKanban.setIntakeDate(jiraIssueCustomHistory.getCreatedDate());
+				leadTimeValidationDataForKanban.setIntakeDate(DateTime.parse(jiraIssueCustomHistory.getCreatedDate()));
 				jiraIssueCustomHistory.getHistoryDetails()
 						.forEach(kanbanIssueHistory -> updateCycleTimeValidationData(triaged, completed, live,
 								leadTimeValidationDataForKanban, cycleTime, kanbanIssueHistory));
@@ -326,15 +390,15 @@ public class LeadTimeKanbanServiceImpl extends JiraKPIService<Long, List<Object>
 			KanbanIssueHistory history) {
 		if (cycleTime.getReadyTime() == null && CollectionUtils.emptyIfNull(triaged).contains(history.getStatus())) {
 			cycleTime.setReadyTime(new DateTime(history.getActivityDate()));
-			leadTimeValidationDataForKanban.setTriageDate(history.getActivityDate());
+			leadTimeValidationDataForKanban.setTriageDate(DateTime.parse(history.getActivityDate()));
 		}
 		if (CollectionUtils.emptyIfNull(completed).contains(history.getStatus())) {
 			cycleTime.setDeliveryTime(new DateTime(history.getActivityDate()));
-			leadTimeValidationDataForKanban.setCompletedDate(history.getActivityDate());
+			leadTimeValidationDataForKanban.setCompletedDate(DateTime.parse(history.getActivityDate()));
 		}
 		if (Optional.ofNullable(live).isPresent() && live.equalsIgnoreCase(history.getStatus())) {
 			cycleTime.setLiveTime(new DateTime(history.getActivityDate()));
-			leadTimeValidationDataForKanban.setLiveDate(history.getActivityDate());
+			leadTimeValidationDataForKanban.setLiveDate(DateTime.parse(history.getActivityDate()));
 		}
 	}
 

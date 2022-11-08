@@ -25,6 +25,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.joda.time.DateTime;
 
 /**
  * Cycle time validation data to show in excel.
@@ -38,9 +39,11 @@ import lombok.ToString;
 @ToString
 public class CycleTimeValidationData {
 	private String issueNumber;
-	private String intakeDate;
-	private String dorDate;
-	private String dodDate;
-	private String liveDate;
+	private String url;
+	private String issueDesc;
+	private DateTime intakeDate;
+	private DateTime dorDate;
+	private DateTime dodDate;
+	private DateTime liveDate;
 
 }
