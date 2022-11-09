@@ -69,7 +69,7 @@ public class KPIExcelUtility {
     private static final String MONTH_YEAR_FORMAT = "MMM yyyy";
     private static final String DATE_YEAR_MONTH_FORMAT = "dd-MMM-yy";
 
-    private static final String DATE_FORMAT_PRODUCTION_DEFECT_AGEING = "yyyy-mm-dd";
+    private static final String DATE_FORMAT_PRODUCTION_DEFECT_AGEING = "yyyy-MM-dd";
     private static final String LEAD_TIME = "Lead Time";
     private static final String INTAKE_TO_DOR = "Intake - DoR";
     private static final String DOR_TO_DOD = "DoR - DoD";
