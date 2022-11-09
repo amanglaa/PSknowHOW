@@ -93,7 +93,7 @@ public class KPIExcelUtility {
      * @param kpiExcelData
      * @param issueData
      */
-    public static void populateDirOrDensityExcelData(String sprint, List<String> storyIds, List<JiraIssue> defects,
+    public static void populateDirExcelData(String sprint, List<String> storyIds, List<JiraIssue> defects,
                                                      List<KPIExcelData> kpiExcelData, Map<String, JiraIssue> issueData) {
         if (CollectionUtils.isNotEmpty(storyIds)) {
             storyIds.forEach(story -> {

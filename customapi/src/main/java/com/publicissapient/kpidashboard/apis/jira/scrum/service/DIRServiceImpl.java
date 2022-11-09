@@ -213,7 +213,7 @@ public class DIRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 				if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
 					List<String> totalStoryIdList = sprintWiseTotalStoryIdList.get(currentNodeIdentifier);
 					List<JiraIssue> defectList = sprintWiseDefectListMap.get(currentNodeIdentifier);
-					KPIExcelUtility.populateDirOrDensityExcelData(node.getSprintFilter().getName(), totalStoryIdList, defectList, excelData,
+					KPIExcelUtility.populateDirExcelData(node.getSprintFilter().getName(), totalStoryIdList, defectList, excelData,
 							issueData);
 				}
 			} else {
