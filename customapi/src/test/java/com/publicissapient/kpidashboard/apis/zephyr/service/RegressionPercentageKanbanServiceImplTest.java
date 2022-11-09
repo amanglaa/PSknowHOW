@@ -121,7 +121,6 @@ public class RegressionPercentageKanbanServiceImplTest {
 		FieldMapping projectOne = new FieldMapping();
 		projectOne.setBasicProjectConfigId(new ObjectId("63284960fdd20276d60e4df5"));
 		projectOne.setJiraTestAutomationIssueType(Arrays.asList("Ticket"));
-		projectOne.setJiraTicketResolvedStatus(Arrays.asList("Resolved"));
 		projectOne.setJiraTicketClosedStatus(Arrays.asList("Done"));
 		projectOne.setJiraTestAutomationIssueType(Arrays.asList(""));
 		List<String> regressionAutomationValue = new ArrayList<>();
@@ -136,7 +135,6 @@ public class RegressionPercentageKanbanServiceImplTest {
 		FieldMapping projectTwo = new FieldMapping();
 		projectTwo.setBasicProjectConfigId(new ObjectId("6335363749794a18e8a4479b"));
 		projectTwo.setTicketCountIssueType(Arrays.asList("Ticket"));
-		projectTwo.setJiraTicketResolvedStatus(Arrays.asList("Resolved"));
 		projectTwo.setJiraTicketClosedStatus(Arrays.asList("Done"));
 		List<String> regressionAutomationLabels = new ArrayList<>();
 		regressionAutomationLabels.add("Regression");
@@ -146,7 +144,6 @@ public class RegressionPercentageKanbanServiceImplTest {
 		jiraRegressionTestValues.add("Jira Regression");
 		projectTwo.setJiraRegressionTestValue(jiraRegressionTestValues);
 		projectTwo.setTestRegressionValue(regressionAutomationValues);
-		projectTwo.setRegressionAutomationLabels(regressionAutomationLabels);
 		projectTwo.setRegressionAutomationFolderPath(Arrays.asList("regressionLabel/abc"));
 		fieldMappingList.add(projectOne);
 		fieldMappingList.add(projectTwo);
