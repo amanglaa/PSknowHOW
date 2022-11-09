@@ -79,9 +79,6 @@ public class TicketVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 	@Autowired
 	private FilterHelperService filterHelperService;
 
-	@Autowired
-	private KanbanJiraIssueRepository kanbanJiraIssueRepository;
-
 	@Override
 	public String getQualifierType() {
 		return KPICode.TICKET_VELOCITY.name();
