@@ -790,7 +790,7 @@ public class KPIExcelUtility {
                     LocalDateTime dateTime = LocalDateTime.parse(defect.getCreatedDate(), formatter);
                     date = dateTime.format(DateTimeFormatter.ofPattern(DATE_FORMAT_PRODUCTION_DEFECT_AGEING));
                 }
-                excelData.setDate(date);
+                excelData.setCreatedDate(date);
                 excelData.setIssueDesc(checkEmptyName(defect));
                 excelData.setStatus(defect.getJiraStatus());
                 kpiExcelData.add(excelData);
