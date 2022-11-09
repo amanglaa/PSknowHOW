@@ -26,7 +26,7 @@
             <ng-container *ngFor="let kpi of updatedConfigGlobalData; let i = index;">
               <div class="p-sm-6" [ngClass]="{'p-pl-4': i%2 == 0, 'p-pr-4': i%2 != 0}">
                 <app-kpi-card [trendBoxColorObj]="trendBoxColorObj" [kpiData]="kpi"
-                [trendData]="kpiTrendsObj[kpi?.kpiId]"
+                [trendData]="kpiTrendsObj[kpi?.kpiId]" [cols]="kpiChartData[kpi?.kpiId]?.columnHeaders"
                 [showTrendIndicator]="showKpiTrendIndicator[kpi?.kpiId] ==false ? showKpiTrendIndicator[kpi?.kpiId] : true"
                 (downloadExcel)="downloadExcel(kpi.kpiId, kpi.kpiName, kpi.kpiDetail.kanban)"
                 [dropdownArr]="kpiDropdowns[kpi?.kpiId]" (optionSelected)="handleSelectedOption($event, kpi)"

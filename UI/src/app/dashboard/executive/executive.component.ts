@@ -1190,14 +1190,16 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
         
         for(let kpi of this.updatedConfigGlobalData){
             let kpiId = kpi.kpiId;
-            let obj = {};
-            obj['kpiName'] = kpi?.kpiName;
-            for(let i = 0; i< this.kpiTrendsObj[kpiId]?.length;i++){
-                obj[this.kpiTrendsObj[kpiId][i]?.hierarchyName +'_latest'] = this.kpiTrendsObj[kpiId][i]?.latest;
-                obj[this.kpiTrendsObj[kpiId][i]?.hierarchyName +'_maturity'] = this.kpiTrendsObj[kpiId][i]?.maturity;
-                obj[this.kpiTrendsObj[kpiId][i]?.hierarchyName +'_trend'] = this.kpiTrendsObj[kpiId][i]?.trend;
+            if(this.kpiTrendsObj[kpiId]?.length > 0){
+                let obj = {};
+                obj['kpiName'] = kpi?.kpiName;
+                for(let i = 0; i< this.kpiTrendsObj[kpiId]?.length;i++){
+                    obj[this.kpiTrendsObj[kpiId][i]?.hierarchyName +'_latest'] = this.kpiTrendsObj[kpiId][i]?.value;
+                    obj[this.kpiTrendsObj[kpiId][i]?.hierarchyName +'_maturity'] = this.kpiTrendsObj[kpiId][i]?.maturity;
+                    obj[this.kpiTrendsObj[kpiId][i]?.hierarchyName +'_trend'] = this.kpiTrendsObj[kpiId][i]?.trend;
+                }
+                worksheet.addRow(obj);
             }
-            worksheet.addRow(obj);
         }
        
 
@@ -1210,18 +1212,6 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
                     cell.font = {
                         name: 'Arial Rounded MT Bold'
                     };
-
-                    // cell.fill = {
-                    //     type: 'pattern',
-                    //     pattern: 'solid',
-                    //     fgColor: {
-                    //         argb: 'FFFFFF00'
-                    //     },
-                    //     bgColor: {
-                    //         argb: 'FF0000FF'
-                    //     }
-                    // };
-
                 });
             }
             row.eachCell({
@@ -1244,6 +1234,34 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
                 };
             });
         });
+        // Footer Row
+        worksheet.addRow([]);
+        let footerRow = worksheet.addRow(['* KPIs which do not have any data are not included in the export']);
+        footerRow.getCell(1).fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: {
+                argb: 'FFCCFFE5'
+            }
+        };
+        footerRow.getCell(1).border = {
+            top: {
+                style: 'thin'
+            },
+            left: {
+                style: 'thin'
+            },
+            bottom: {
+                style: 'thin'
+            },
+            right: {
+                style: 'thin'
+            }
+        };
+
+
+        // Merge Cells
+        worksheet.mergeCells(`A${footerRow.number}:F${footerRow.number}`);
        // Generate Excel File with given name
         workbook.xlsx.writeBuffer().then((data) => {
         const blob = new Blob([data as BlobPart], {
@@ -1321,17 +1339,19 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
             this.kpiTrendsObj[kpiId] = [];
             for(let i = 0; i < this.kpiChartData[kpiId]?.length; i++){
                 if(this.kpiChartData[kpiId][i]?.value?.length > 0){
+                    let trendObj = {}
                     const [latest, trend] = this.checkLatestAndTrendValue(enabledKpiObj, this.kpiChartData[kpiId][i]);
-                    let trendObj = {
+                    trendObj = {
                         "hierarchyName": this.kpiChartData[kpiId][i]?.data,
-                        "latest": latest,
+                        "value": latest,
                         "trend": trend,
-                        "maturity": this.checkMaturity(this.kpiChartData[kpiId][i]),
+                        "maturity": kpiId != 'kpi3' && kpiId != 'kpi53' ? 
+                                    this.checkMaturity(this.kpiChartData[kpiId][i]) 
+                                    : 'M'+this.kpiChartData[kpiId][i]?.maturity,
                     }
                     this.kpiTrendsObj[kpiId]?.push(trendObj); 
                 }
             }
-            // console.log(enabledKpiObj?.kpiName, kpiId, this.kpiTrendsObj[kpiId]);         
         }
       }
 }
