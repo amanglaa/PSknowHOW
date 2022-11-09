@@ -925,7 +925,7 @@ public class KPIExcelUtility {
 	}
 
 	public static void populateTicketVelocityExcelData(List<KanbanIssueCustomHistory> velocityList, String projectName,
-			String date, Map<String, KanbanJiraIssue> issueMapping, List<KPIExcelData> kpiExcelData) {
+			String date, List<KPIExcelData> kpiExcelData) {
 
 		velocityList.forEach(kanbanIssueCustomHistory -> {
 			KPIExcelData excelData = new KPIExcelData();
