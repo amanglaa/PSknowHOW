@@ -26,6 +26,7 @@ export class KpiCardComponent implements OnInit, OnDestroy {
   @Input() showExport: boolean;
   @Input() showTrendIndicator =true;
   @Input() showChartView = true;
+  @Input() cols: Array<object> = [];
 
   constructor(private service: SharedService) {
   }
