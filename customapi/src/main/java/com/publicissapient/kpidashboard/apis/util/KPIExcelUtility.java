@@ -51,10 +51,7 @@ import com.publicissapient.kpidashboard.common.model.application.ProjectVersion;
 import com.publicissapient.kpidashboard.common.model.application.ResolutionTimeValidation;
 import com.publicissapient.kpidashboard.common.model.excel.KanbanCapacity;
 import com.publicissapient.kpidashboard.common.model.jira.JiraIssue;
-import com.publicissapient.kpidashboard.common.model.jira.JiraIssueCustomHistory;
-import com.publicissapient.kpidashboard.common.model.jira.KanbanIssueCustomHistory;
 import com.publicissapient.kpidashboard.common.model.jira.KanbanJiraIssue;
-import com.publicissapient.kpidashboard.common.model.testexecution.KanbanTestExecution;
 import com.publicissapient.kpidashboard.common.model.testexecution.TestExecution;
 import com.publicissapient.kpidashboard.common.model.zephyr.TestCaseDetails;
 import com.publicissapient.kpidashboard.common.util.DateUtil;
@@ -793,11 +790,15 @@ public class KPIExcelUtility {
                 excelData.setProjectName(projectName);
                 excelData.setDefectId(defectLink);
                 excelData.setPriority(defect.getPriority());
-                DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendPattern(DateUtil.TIME_FORMAT)
-                        .optionalStart().appendPattern(".").appendFraction(ChronoField.MICRO_OF_SECOND, 1, 9, false)
-                        .optionalEnd().toFormatter();
-                LocalDateTime dateTime = LocalDateTime.parse(defect.getCreatedDate(), formatter);
-                excelData.setDate(dateTime.format(DateTimeFormatter.ofPattern(DATE_FORMAT_PRODUCTION_DEFECT_AGEING)));
+                String date = Constant.EMPTY_STRING;
+                if (defect.getCreatedDate() != null) {
+                    DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendPattern(DateUtil.TIME_FORMAT)
+                            .optionalStart().appendPattern(".").appendFraction(ChronoField.MICRO_OF_SECOND, 1, 9, false)
+                            .optionalEnd().toFormatter();
+                    LocalDateTime dateTime = LocalDateTime.parse(defect.getCreatedDate(), formatter);
+                    date = dateTime.format(DateTimeFormatter.ofPattern(DATE_FORMAT_PRODUCTION_DEFECT_AGEING));
+                }
+                excelData.setDate(date);
                 excelData.setStatus(defect.getJiraStatus());
                 kpiExcelData.add(excelData);
             });
@@ -934,46 +935,50 @@ public class KPIExcelUtility {
 
 	public static void populateTicketVelocityExcelData(List<KanbanIssueCustomHistory> velocityList, String projectName,
 			String date, List<KPIExcelData> kpiExcelData) {
+        if(CollectionUtils.isNotEmpty(velocityList)) {
+            velocityList.forEach(kanbanIssueCustomHistory -> {
+                KPIExcelData excelData = new KPIExcelData();
+                excelData.setProjectName(projectName);
+                excelData.setDayWeekMonth(date);
+                excelData.setIssueType(kanbanIssueCustomHistory.getStoryType());
+                excelData.setSizeInStoryPoints(kanbanIssueCustomHistory.getEstimate());
+                if (kanbanIssueCustomHistory.getStoryID() != null) {
+                    Map<String, String> storyId = new HashMap<>();
+                    storyId.put(kanbanIssueCustomHistory.getStoryID(), checkEmptyURL(kanbanIssueCustomHistory));
+                    excelData.setTicketIssue(storyId);
+                }
+                kpiExcelData.add(excelData);
 
-		velocityList.forEach(kanbanIssueCustomHistory -> {
-			KPIExcelData excelData = new KPIExcelData();
-			excelData.setProjectName(projectName);
-			excelData.setDayWeekMonth(date);
-			excelData.setIssueType(kanbanIssueCustomHistory.getStoryType());
-			excelData.setSizeInStoryPoints(kanbanIssueCustomHistory.getEstimate());
-			if (kanbanIssueCustomHistory.getStoryID() != null) {
-				Map<String, String> storyId = new HashMap<>();
-				storyId.put(kanbanIssueCustomHistory.getStoryID(), checkEmptyURL(kanbanIssueCustomHistory));
-				excelData.setTicketIssue(storyId);
-			}
-			kpiExcelData.add(excelData);
-
-		});
+            });
+        }
 
 	}
 
 	public static void populateCodeBuildTimeExcelData(CodeBuildTimeInfo codeBuildTimeInfo, String projectName,
 			List<KPIExcelData> kpiExcelData) {
-		for (int i = 0; i < codeBuildTimeInfo.getBuildJobList().size(); i++) {
-			KPIExcelData excelData = new KPIExcelData();
-			excelData.setProjectName(projectName);
-			excelData.setJobName(codeBuildTimeInfo.getBuildJobList().get(i));
-			excelData.setStartTime(codeBuildTimeInfo.getBuildStartTimeList().get(i));
-			excelData.setEndTime(codeBuildTimeInfo.getBuildEndTimeList().get(i));
-			excelData.setDuration(codeBuildTimeInfo.getDurationList().get(i));
-			excelData.setStartedBy(codeBuildTimeInfo.getStartedByList().get(i));
-			Map<String, String> codeBuildUrl = new HashMap<>();
-			codeBuildUrl.put(codeBuildTimeInfo.getBuildUrlList().get(i), codeBuildTimeInfo.getBuildUrlList().get(i));
-			excelData.setBuildUrl(codeBuildUrl);
-			excelData.setBuildStatus(codeBuildTimeInfo.getBuildStatusList().get(i));
-			kpiExcelData.add(excelData);
+        if (codeBuildTimeInfo != null)
+            for (int i = 0; i < codeBuildTimeInfo.getBuildJobList().size(); i++) {
+                KPIExcelData excelData = new KPIExcelData();
+                excelData.setProjectName(projectName);
+                excelData.setJobName(codeBuildTimeInfo.getBuildJobList().get(i));
+                excelData.setStartTime(codeBuildTimeInfo.getBuildStartTimeList().get(i));
+                excelData.setEndTime(codeBuildTimeInfo.getBuildEndTimeList().get(i));
+                excelData.setDuration(codeBuildTimeInfo.getDurationList().get(i));
+                excelData.setStartedBy(codeBuildTimeInfo.getStartedByList().get(i));
+                Map<String, String> codeBuildUrl = new HashMap<>();
+                codeBuildUrl.put(codeBuildTimeInfo.getBuildUrlList().get(i), codeBuildTimeInfo.getBuildUrlList().get(i));
+                excelData.setBuildUrl(codeBuildUrl);
+                excelData.setBuildStatus(codeBuildTimeInfo.getBuildStatusList().get(i));
+                kpiExcelData.add(excelData);
 
-		}
-	}
+            }
+    }
+
 
 	public static void populateCodeCommitKanbanExcelData(String projectName, List<Map<String, Long>> repoWiseCommitList,
 			List<String> repoList, List<String> branchList, List<KPIExcelData> kpiExcelData) {
-		if (CollectionUtils.isNotEmpty(repoWiseCommitList)) {
+		if (CollectionUtils.isNotEmpty(repoWiseCommitList) && CollectionUtils.isNotEmpty(repoList)
+				&& CollectionUtils.isNotEmpty(branchList)) {
 			for (int i = 0; i < repoWiseCommitList.size(); i++) {
 				for (String date : repoWiseCommitList.get(i).keySet()) {
 					KPIExcelData excelData = new KPIExcelData();
@@ -993,14 +998,16 @@ public class KPIExcelUtility {
 
 	public static void populateTeamCapacityKanbanExcelData(List<KanbanCapacity> capacityList,
 			List<KPIExcelData> kpiExcelData) {
-		for (KanbanCapacity kanbanCapacity : capacityList) {
-			KPIExcelData excelData = new KPIExcelData();
-			excelData.setProjectName(kanbanCapacity.getProjectName());
-			excelData.setStartDate(kanbanCapacity.getStartDate().toString());
-			excelData.setEndDate(kanbanCapacity.getEndDate().toString());
-			excelData.setEstimatedCapacity(df2.format(kanbanCapacity.getCapacity()));
-			kpiExcelData.add(excelData);
-		}
+        if(CollectionUtils.isNotEmpty(capacityList)) {
+            for (KanbanCapacity kanbanCapacity : capacityList) {
+                KPIExcelData excelData = new KPIExcelData();
+                excelData.setProjectName(kanbanCapacity.getProjectName());
+                excelData.setStartDate(kanbanCapacity.getStartDate().toString());
+                excelData.setEndDate(kanbanCapacity.getEndDate().toString());
+                excelData.setEstimatedCapacity(df2.format(kanbanCapacity.getCapacity()));
+                kpiExcelData.add(excelData);
+            }
+        }
 	}
 
 }

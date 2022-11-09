@@ -54,7 +54,7 @@ import com.publicissapient.kpidashboard.apis.util.KpiDataHelper;
 import com.publicissapient.kpidashboard.common.constant.CommonConstant;
 import com.publicissapient.kpidashboard.common.model.application.DataCount;
 import com.publicissapient.kpidashboard.common.model.jira.KanbanIssueCustomHistory;
-import com.publicissapient.kpidashboard.common.repository.jira.KanbanJiraIssueRepository;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -183,7 +183,6 @@ public class TicketVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 					dataCount.add(getDataCountObject(capacity, projectName, date));
 					currentDate = getNextRangeDate(kpiRequest, currentDate);
 					if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-
 						KPIExcelUtility.populateTicketVelocityExcelData(kanbanIssueCustomHistories, projectName, date, excelData);
 					}
 				}
