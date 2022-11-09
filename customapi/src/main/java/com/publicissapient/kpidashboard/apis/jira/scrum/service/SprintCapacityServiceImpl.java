@@ -47,7 +47,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
@@ -206,15 +205,15 @@ public class SprintCapacityServiceImpl extends JiraKPIService<Double, List<Objec
                 estimateTimeForCurrentLeaf = sprintWiseEstimateTimeMap.get(currentNodeEstimateTime);
             }
             double loggedTimeForCurrentLeaf = 0.0;
-            if (CollectionUtils.isNotEmpty(sprintWiseLoggedTimeMap.get(currentNodeIdentifier))) {
-                Map<String, Object> currentSprintLeafCapacityMap = new HashMap<>();
-                currentSprintLeafCapacityMap.put(SPRINTCAPACITYKEY, sprintWiseLoggedTimeMap.get(currentNodeIdentifier));
-                loggedTimeForCurrentLeaf = Double
-                        .valueOf(df2.format(calculateKPIMetrics(currentSprintLeafCapacityMap)));
+			if (CollectionUtils.isNotEmpty(sprintWiseLoggedTimeMap.get(currentNodeIdentifier))) {
+				Map<String, Object> currentSprintLeafCapacityMap = new HashMap<>();
+				currentSprintLeafCapacityMap.put(SPRINTCAPACITYKEY, sprintWiseLoggedTimeMap.get(currentNodeIdentifier));
+				loggedTimeForCurrentLeaf = Double
+						.valueOf(df2.format(calculateKPIMetrics(currentSprintLeafCapacityMap)));
 
-                List<JiraIssue> sprintJiraIssues = sprintWiseLoggedTimeMap.get(currentNodeIdentifier);
-                populateExcelDataObject(requestTrackerId, excelData, sprintJiraIssues, estimateTimeForCurrentLeaf, node);
-            }
+				List<JiraIssue> sprintJiraIssues = sprintWiseLoggedTimeMap.get(currentNodeIdentifier);
+				populateExcelDataObject(requestTrackerId, excelData, sprintJiraIssues, node);
+			}
             hoverValue.put(ESTIMATED_HOURS, (int) estimateTimeForCurrentLeaf);
             hoverValue.put(LOGGED_HOURS, (int) loggedTimeForCurrentLeaf);
             DataCount dataCount = new DataCount();
@@ -269,31 +268,18 @@ public class SprintCapacityServiceImpl extends JiraKPIService<Double, List<Objec
      * @param requestTrackerId
      * @param excelData
      * @param sprintCapacityList
-     * @param estimateTime
      * @param node
      */
-    private void populateExcelDataObject(String requestTrackerId,
-                                         List<KPIExcelData> excelData, List<JiraIssue> sprintCapacityList, Double estimateTime, Node node
-    ) {
+	private void populateExcelDataObject(String requestTrackerId, List<KPIExcelData> excelData,
+			List<JiraIssue> sprintCapacityList, Node node) {
 
-        if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
+		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
 
-            String sprintName = node.getSprintFilter().getName();
+			String sprintName = node.getSprintFilter().getName();
 
-            List<String> loggedTimeList = new ArrayList<>();
-            List<String> estimateTimeList = new ArrayList<>();
-            estimateTimeList.add(df2.format(estimateTime));
-            for (JiraIssue jiraIssue : sprintCapacityList) {
-                Double daysLogged = 0.0d;
-                if (jiraIssue.getTimeSpentInMinutes() != null) {
-                    daysLogged = Double.valueOf(jiraIssue.getTimeSpentInMinutes()) / 60;
-                }
-                loggedTimeList.add(df2.format(daysLogged));
-            }
-
-            KPIExcelUtility.populateSprintCapacity(sprintName, sprintCapacityList, loggedTimeList, excelData, estimateTimeList);
-        }
-    }
+			KPIExcelUtility.populateSprintCapacity(sprintName, sprintCapacityList, excelData);
+		}
+	}
 
     /**
      * Sets DB Query log
