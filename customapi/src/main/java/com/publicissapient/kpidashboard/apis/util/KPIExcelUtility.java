@@ -783,14 +783,14 @@ public class KPIExcelUtility {
                 excelData.setDefectId(defectLink);
                 excelData.setPriority(defect.getPriority());
                 String date = Constant.EMPTY_STRING;
-				if (defect.getCreatedDate() != null) {
-					DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendPattern(DateUtil.TIME_FORMAT)
-							.optionalStart().appendPattern(".").appendFraction(ChronoField.MICRO_OF_SECOND, 1, 9, false)
-							.optionalEnd().toFormatter();
-					LocalDateTime dateTime = LocalDateTime.parse(defect.getCreatedDate(), formatter);
-					date = dateTime.format(DateTimeFormatter.ofPattern(DATE_FORMAT_PRODUCTION_DEFECT_AGEING));
-				}
-                excelData.setCreatedDate(date);
+                if (defect.getCreatedDate() != null) {
+                    DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendPattern(DateUtil.TIME_FORMAT)
+                            .optionalStart().appendPattern(".").appendFraction(ChronoField.MICRO_OF_SECOND, 1, 9, false)
+                            .optionalEnd().toFormatter();
+                    LocalDateTime dateTime = LocalDateTime.parse(defect.getCreatedDate(), formatter);
+                    date = dateTime.format(DateTimeFormatter.ofPattern(DATE_FORMAT_PRODUCTION_DEFECT_AGEING));
+                }
+                excelData.setDate(date);
                 excelData.setIssueDesc(checkEmptyName(defect));
                 excelData.setStatus(defect.getJiraStatus());
                 kpiExcelData.add(excelData);
