@@ -45,7 +45,7 @@ public enum KPIExcelColumn {
 
     FIRST_TIME_PASS_RATE("kpi82", Arrays.asList("Sprint Name", "Story ID", "Issue Description", "First Time Pass")),
 
-    DEFECT_DENSITY("kpi111", Arrays.asList("Sprint Name", "Story ID", "Issue Description", "Linked Defects")),
+    DEFECT_DENSITY("kpi111", Arrays.asList("Sprint Name", "Story ID", "Issue Description", "Linked Defects to Story","Story Size(In story point)")),
 
     DEFECT_SEEPAGE_RATE("kpi35", Arrays.asList("Sprint Name", "Defect ID", "Issue Description", "Escaped Defect")),
 

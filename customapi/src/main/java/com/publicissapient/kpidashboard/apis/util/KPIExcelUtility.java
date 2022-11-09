@@ -35,6 +35,9 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.publicissapient.kpidashboard.common.model.jira.JiraIssueCustomHistory;
+import com.publicissapient.kpidashboard.common.model.jira.KanbanIssueCustomHistory;
+import com.publicissapient.kpidashboard.common.model.testexecution.KanbanTestExecution;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -113,6 +116,32 @@ public class KPIExcelUtility {
             });
         }
     }
+
+    public static void populateDefectDensityExcelData(String sprint, List<String> storyIds, List<JiraIssue> defects,
+                                                     List<KPIExcelData> kpiExcelData, Map<String, JiraIssue> issueData) {
+        if (CollectionUtils.isNotEmpty(storyIds)) {
+            storyIds.forEach(story -> {
+                Map<String, String> linkedDefects = new HashMap<>();
+                defects.stream().filter(d -> d.getDefectStoryID().contains(story))
+                        .forEach(defect -> linkedDefects.putIfAbsent(defect.getNumber(), checkEmptyURL(defect)));
+                KPIExcelData excelData = new KPIExcelData();
+                excelData.setSprintName(sprint);
+                excelData.setLinkedDefectsStory(linkedDefects);
+                if (MapUtils.isNotEmpty(issueData)) {
+                    JiraIssue jiraIssue = issueData.get(story);
+                    if (null != jiraIssue) {
+                        excelData.setIssueDesc(checkEmptyName(jiraIssue));
+                        Map<String, String> storyId = new HashMap<>();
+                        storyId.put(story, checkEmptyURL(jiraIssue));
+                        excelData.setStoryId(storyId);
+                        excelData.setStoryPoints(jiraIssue.getStoryPoints().toString());
+                    }
+                }
+                kpiExcelData.add(excelData);
+            });
+        }
+    }
+
 
     public static void populateFTPRExcelData(String sprint, List<String> storyIds, List<JiraIssue> ftprStories,
                                              List<KPIExcelData> kpiExcelData, Map<String, JiraIssue> issueData) {
@@ -371,8 +400,8 @@ public class KPIExcelUtility {
     }
 
 	public static void populateTestExcecutionExcelData(String sprintProjectName, TestExecution testDetail,
-													   KanbanTestExecution kanbanTestExecution, double executionPercentage, double passPercentage,
-													   List<KPIExcelData> kpiExcelData) {
+                                                       KanbanTestExecution kanbanTestExecution, double executionPercentage, double passPercentage,
+                                                       List<KPIExcelData> kpiExcelData) {
 
 		if (testDetail != null) {
 			KPIExcelData excelData = new KPIExcelData();

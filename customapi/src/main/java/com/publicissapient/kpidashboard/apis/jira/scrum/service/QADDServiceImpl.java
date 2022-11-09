@@ -186,7 +186,7 @@ public class QADDServiceImpl extends JiraKPIService<Double, List<Object>, Map<St
 				if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
 					List<String> totalStoryIdList = sprintWiseStoryMAP.get(currentNodeIdentifier);
 					Set<JiraIssue> sprintWiseDefectList = sprintWiseDefectListMap.get(currentNodeIdentifier);
-					KPIExcelUtility.populateDirOrDensityExcelData(node.getSprintFilter().getName(), totalStoryIdList,
+					KPIExcelUtility.populateDefectDensityExcelData(node.getSprintFilter().getName(), totalStoryIdList,
 							new ArrayList<>(sprintWiseDefectList), excelData, allStoryMap);
 				}
 			} else {
@@ -215,7 +215,7 @@ public class QADDServiceImpl extends JiraKPIService<Double, List<Object>, Map<St
 		});
 
 		kpiElement.setExcelData(excelData);
-		kpiElement.setExcelColumns(KPIExcelColumn.DEFECT_INJECTION_RATE.getColumns());
+		kpiElement.setExcelColumns(KPIExcelColumn.DEFECT_DENSITY.getColumns());
 
 	}
 

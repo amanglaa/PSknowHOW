@@ -282,4 +282,7 @@ public class KPIExcelData {
 
 	@JsonProperty("Estimated Capacity (in hours)")
 	private String estimatedCapacity;
+
+	@JsonProperty("Linked Defects to Story")
+	private Map<String, String> linkedDefectsStory;
 }
