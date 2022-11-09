@@ -482,9 +482,9 @@ public class KPIExcelUtility {
 				KPIExcelData excelData = new KPIExcelData();
 				excelData.setProjectName(projectName);
 				Map<String, String> storyId = new HashMap<>();
-				storyId.put(leadTimeData.getIssueNumber().get(i), checkEmptyURL(leadTimeData.getUrlList().get(i)));
+				storyId.put(leadTimeData.getIssueNumber().get(i), leadTimeData.getUrlList().get(i));
 				excelData.setStoryId(storyId);
-				excelData.setIssueDesc(checkEmptyName(leadTimeData.getUrlList().get(i)));
+				excelData.setIssueDesc(leadTimeData.getIssueDiscList().get(i));
 				excelData.setIntakeToDOR(leadTimeData.getIntakeToDor().get(i));
 				excelData.setDorToDod(leadTimeData.getDorToDOD().get(i));
 				excelData.setDodToLive(leadTimeData.getDodToLive().get(i));
@@ -770,9 +770,9 @@ public class KPIExcelUtility {
 				KPIExcelData excelData = new KPIExcelData();
 				excelData.setProjectName(projectName);
 				Map<String, String> storyId = new HashMap<>();
-				storyId.put(leadTimeDataKanban.getIssueNumber().get(i), checkEmptyURL(leadTimeDataKanban.getUrlList().get(i)));
+				storyId.put(leadTimeDataKanban.getIssueNumber().get(i), leadTimeDataKanban.getUrlList().get(i));
 				excelData.setStoryId(storyId);
-				excelData.setIssueDesc(checkEmptyName(leadTimeDataKanban.getIssueDiscList().get(i)));
+				excelData.setIssueDesc(leadTimeDataKanban.getIssueDiscList().get(i));
 				excelData.setOpenToTriage(leadTimeDataKanban.getOpenToTriage().get(i));
 				excelData.setTriageToComplete(leadTimeDataKanban.getTriageToComplete().get(i));
 				excelData.setCompleteToLive(leadTimeDataKanban.getCompleteToLive().get(i));
