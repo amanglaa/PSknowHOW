@@ -187,10 +187,7 @@ public class TicketVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 					dataCount.add(getDataCountObject(capacity, projectName, date));
 					currentDate = getNextRangeDate(kpiRequest, currentDate);
 					List<String> storyIdList = new ArrayList<>();
-					kanbanIssueCustomHistories.forEach(s -> storyIdList.add(s.getStoryID()));
-					Set<KanbanJiraIssue> issueData = kanbanJiraIssueRepository.findIssueAndDescByNumber(storyIdList);
 					Map<String, KanbanJiraIssue> issueMapping = new HashMap<>();
-					issueData.stream().forEach(issue -> issueMapping.putIfAbsent(issue.getNumber(), issue));
 					if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
 
 						KPIExcelUtility.populateTicketVelocityExcelData(kanbanIssueCustomHistories, projectName, date, issueMapping, excelData);

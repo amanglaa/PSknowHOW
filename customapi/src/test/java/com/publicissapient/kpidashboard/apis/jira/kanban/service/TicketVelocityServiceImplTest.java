@@ -69,8 +69,6 @@ public class TicketVelocityServiceImplTest {
 	@Mock
 	CacheService cacheService;
 	@Mock
-	KanbanJiraIssueRepository featureRepository;
-	@Mock
 	ConfigHelperService configHelperService;
 	@Mock
 	KpiHelperService kpiHelperService;
@@ -145,7 +143,6 @@ public class TicketVelocityServiceImplTest {
 				.thenReturn(resultListMap);
 		HierachyLevelFactory hierachyLevelFactory = HierachyLevelFactory.newInstance();
 		when(cacheService.getFullKanbanHierarchyLevel()).thenReturn(hierachyLevelFactory.getHierarchyLevels());
-		when(featureRepository.findIssueAndDescByNumber(any())).thenReturn(issues);
 		String kpiRequestTrackerId = "Excel-Jira-5be544de025de212549176a9";
 		when(cacheService.getFromApplicationCache(Constant.KPI_REQUEST_TRACKER_ID_KEY + KPISource.JIRAKANBAN.name()))
 				.thenReturn(kpiRequestTrackerId);

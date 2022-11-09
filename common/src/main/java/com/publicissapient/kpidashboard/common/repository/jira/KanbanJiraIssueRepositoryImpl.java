@@ -205,18 +205,4 @@ public class KanbanJiraIssueRepositoryImpl implements KanbanJiraIssueRepoCustom 
 
 	}
 
-	@Override
-	public Set<KanbanJiraIssue> findIssueAndDescByNumber(List<String> storyNumber) {
-
-		Criteria criteria = new Criteria();
-		criteria = criteria.and(NUMBER).in(storyNumber);
-
-		Query query = new Query(criteria);
-		query.fields().include(NUMBER);
-		query.fields().include(NAME);
-		query.fields().include(URL);
-		return new HashSet<>(operations.find(query, KanbanJiraIssue.class));
-
-	}
-
 }

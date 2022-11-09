@@ -185,7 +185,7 @@ public class TeamCapacityServiceImpl extends JiraKPIService<Double, List<Object>
 					currentDate = getNextRangeDate(kpiRequest, currentDate);
 
 					if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-						KPIExcelUtility.populateTeamCapacityKanbanExcelData(date + Constant.UNDERSCORE + projectName, kanbanCapacityList, excelData);
+						KPIExcelUtility.populateTeamCapacityKanbanExcelData(kanbanCapacityList, excelData);
 					}
 
 				}
