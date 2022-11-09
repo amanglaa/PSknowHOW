@@ -445,24 +445,34 @@ public class KPIExcelUtility {
         }
     }
 
-    public static void populateSprintCapacity(String sprint, List<JiraIssue> totalStoriesList,
-                                              List<String> loggedTimeList, List<KPIExcelData> kpiExcelData, List<String> estimateTimeList) {
+	public static void populateSprintCapacity(String sprint, List<JiraIssue> totalStoriesList,
+			List<KPIExcelData> kpiExcelData) {
 
-        if (CollectionUtils.isNotEmpty(totalStoriesList)) {
-            for (int i = 0; i < totalStoriesList.size(); i++) {
-                KPIExcelData excelData = new KPIExcelData();
-                excelData.setSprintName(sprint);
-                Map<String, String> storyDetails = new HashMap<>();
-                storyDetails.put(totalStoriesList.get(i).getNumber(), checkEmptyURL(totalStoriesList.get(i)));
-                excelData.setStoryId(storyDetails);
-                excelData.setIssueDesc(checkEmptyName(totalStoriesList.get(i)));
+		if (CollectionUtils.isNotEmpty(totalStoriesList)) {
+			totalStoriesList.stream().forEach(issue -> {
 
-                excelData.setOriginalTimeEstimate(estimateTimeList.get(0));
-                excelData.setTotalTimeSpent(loggedTimeList.get(i));
-                kpiExcelData.add(excelData);
-            }
-        }
-    }
+				KPIExcelData excelData = new KPIExcelData();
+				excelData.setSprintName(sprint);
+				Map<String, String> storyDetails = new HashMap<>();
+				storyDetails.put(issue.getNumber(), checkEmptyURL(issue));
+				excelData.setStoryId(storyDetails);
+				excelData.setIssueDesc(checkEmptyName(issue));
+				Double daysLogged = 0.0d;
+				Double daysEstimated = 0.0d;
+				if (issue.getTimeSpentInMinutes() != null) {
+					daysLogged = Double.valueOf(issue.getTimeSpentInMinutes()) / 60;
+				}
+				excelData.setTotalTimeSpent(String.valueOf(daysLogged));
+
+				if (issue.getOriginalEstimateMinutes() != null) {
+					daysEstimated = Double.valueOf(issue.getOriginalEstimateMinutes()) / 60;
+				}
+				excelData.setOriginalTimeEstimate(String.valueOf(daysEstimated));
+				kpiExcelData.add(excelData);
+
+			});
+		}
+	}
 
 	public static void populateAverageResolutionTime(String sprintName,
 			List<ResolutionTimeValidation> sprintWiseResolution, List<KPIExcelData> kpiExcelData) {
