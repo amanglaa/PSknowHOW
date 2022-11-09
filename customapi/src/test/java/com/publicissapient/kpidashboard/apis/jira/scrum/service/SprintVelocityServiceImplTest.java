@@ -77,6 +77,7 @@ public class SprintVelocityServiceImplTest {
 	private final static String SPRINTVELOCITYKEY = "sprintVelocityKey";
 	private static final String SUBGROUPCATEGORY = "subGroupCategory";
 	private static final String SPRINT_WISE_SPRINTDETAILS = "sprintWiseSprintDetailMap";
+	private static final String PROJECT_WISE_CLOSED_STATUS_MAP = "projectWiseClosedStatusMap";
 	public Map<String, ProjectBasicConfig> projectConfigMap = new HashMap<>();
 	public Map<ObjectId, FieldMapping> fieldMappingMap = new HashMap<>();
 	List<JiraIssue> totalIssueList = new ArrayList<>();
@@ -196,6 +197,9 @@ public class SprintVelocityServiceImplTest {
 		resultListMap.put(SPRINTVELOCITYKEY, totalIssueList);
 		resultListMap.put(SUBGROUPCATEGORY, "Sprint");
 		resultListMap.put(SPRINT_WISE_SPRINTDETAILS, sprintDetailsList);
+		Map<String,List<String>> closedMap= new HashMap<>();
+		closedMap.put("6335363749794a18e8a4479b", fieldMappingMap.get(new ObjectId("6335363749794a18e8a4479b")).getJiraIssueDeliverdStatus());
+		resultListMap.put(PROJECT_WISE_CLOSED_STATUS_MAP,closedMap);
 		when(kpiHelperService.fetchSprintVelocityDataFromDb(any(), any())).thenReturn(resultListMap);
 
 		String kpiRequestTrackerId = "Excel-Jira-5be544de025de212549176a9";
