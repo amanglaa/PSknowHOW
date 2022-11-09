@@ -196,10 +196,10 @@ public class LeadTimeKanbanServiceImpl extends JiraKPIService<Long, List<Object>
 
 				mapTmp.get(node.getId()).setValue(dataCountMap);
 
-				LeadTimeData leadTimeMap = getLeadTime(leadTimeList);
+				LeadTimeData leadTimeData = getLeadTime(leadTimeList);
 
 				if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-					KPIExcelUtility.populateKanbanLeadTime(excelData, trendLineName, leadTimeMap, kanbanIssueList);
+					KPIExcelUtility.populateKanbanLeadTime(excelData, trendLineName, leadTimeData);
 
 				}
 
@@ -230,6 +230,8 @@ public class LeadTimeKanbanServiceImpl extends JiraKPIService<Long, List<Object>
 			for (LeadTimeValidationDataForKanban leadTimeValidationDataForKanban : leadTimeValidationDataForKanbanList) {
 
 				issueNumber.add(leadTimeValidationDataForKanban.getIssueNumber());
+				issueURL.add(leadTimeValidationDataForKanban.getUrl());
+				issueDisc.add(leadTimeValidationDataForKanban.getIssueDesc());
 
 				if (leadTimeValidationDataForKanban.getIntakeDate() != null
 						&& leadTimeValidationDataForKanban.getTriageDate() != null) {
@@ -266,6 +268,8 @@ public class LeadTimeKanbanServiceImpl extends JiraKPIService<Long, List<Object>
 
 			}
 			leadTimeData.setIssueNumber(issueNumber);
+			leadTimeData.setUrlList(issueURL);
+			leadTimeData.setIssueDiscList(issueDisc);
 			leadTimeData.setOpenToTriage(openToTriageDay);
 			leadTimeData.setTriageToComplete(triageToCompleteDay);
 			leadTimeData.setCompleteToLive(completeToLiveDay);
@@ -322,6 +326,8 @@ public class LeadTimeKanbanServiceImpl extends JiraKPIService<Long, List<Object>
 				String live = fieldMapping.getJiraLiveStatus();
 				LeadTimeValidationDataForKanban leadTimeValidationDataForKanban = new LeadTimeValidationDataForKanban();
 				leadTimeValidationDataForKanban.setIssueNumber(jiraIssueCustomHistory.getStoryID());
+				leadTimeValidationDataForKanban.setUrl(jiraIssueCustomHistory.getUrl());
+				leadTimeValidationDataForKanban.setIssueDesc(jiraIssueCustomHistory.getDescription());
 				CycleTime cycleTime = new CycleTime();
 				cycleTime.setIntakeTime(new DateTime(jiraIssueCustomHistory.getCreatedDate()));
 				leadTimeValidationDataForKanban.setIntakeDate(DateTime.parse(jiraIssueCustomHistory.getCreatedDate()));

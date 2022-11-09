@@ -221,11 +221,11 @@ public class LeadTimeServiceImpl extends JiraKPIService<Long, List<Object>, Map<
 						"[LEAD-TIME-FILTER-WISE][{}].  : Intake to DOR: {} . DoR to DoD: {} . DoD to Live: {} . Intake to Live: {}",
 						requestTrackerId, cycleMap.get(INTAKE_TO_DOR), cycleMap.get(DOR_TO_DOD),
 						cycleMap.get(DOD_TO_LIVE), cycleMap.get(LEAD_TIME));
-				LeadTimeData leadTimeMap = getLeadTime(cycleTimeList);
+				LeadTimeData leadTimeData = getLeadTime(cycleTimeList);
 
 				if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
 
-					KPIExcelUtility.populateLeadTime(excelData, trendLineName, leadTimeMap, issueCustomHistoryList);
+					KPIExcelUtility.populateLeadTime(excelData, trendLineName, leadTimeData);
 
 				}
 
@@ -333,7 +333,8 @@ public class LeadTimeServiceImpl extends JiraKPIService<Long, List<Object>, Map<
 				String live = fieldMapping.getJiraLiveStatus();
 				CycleTimeValidationData cycleTimeValidationData = new CycleTimeValidationData();
 				cycleTimeValidationData.setIssueNumber(jiraIssueCustomHistory.getStoryID());
-				// cycleTimeValidationData.setUrl(jiraIssueCustomHistory.getUrl());
+				cycleTimeValidationData.setUrl(jiraIssueCustomHistory.getUrl());
+				cycleTimeValidationData.setIssueDesc(jiraIssueCustomHistory.getDescription());
 				CycleTime cycleTime = new CycleTime();
 				cycleTime.setIntakeTime(jiraIssueCustomHistory.getCreatedDate());
 				cycleTimeValidationData.setIntakeDate(jiraIssueCustomHistory.getCreatedDate());
