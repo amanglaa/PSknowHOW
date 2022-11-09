@@ -229,7 +229,7 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 			double sprintVelocityForCurrentLeaf = 0.0d;
 			if (CollectionUtils.isNotEmpty(sprintWiseIssues.get(currentNodeIdentifier))) {
 				List<JiraIssue> sprintJiraIssues = sprintWiseIssues.get(currentNodeIdentifier);
-				sprintVelocityForCurrentLeaf = calculateSprintValue(sprintWiseEstimate, currentNodeIdentifier, sprintJiraIssues);
+				sprintVelocityForCurrentLeaf = calculateSprintVelocityValue(sprintWiseEstimate, currentNodeIdentifier, sprintJiraIssues);
 				populateValidationDataObject(kpiElement, requestTrackerId, validationDataMap, sprintJiraIssues, node,sprintWiseEstimate,currentNodeIdentifier);
 			}
 
@@ -250,7 +250,7 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 		});
 	}
 
-	private double calculateSprintValue(Map<Pair<String, String>, Map<String, Double>> sprintWiseEstimate, Pair<String, String> currentNodeIdentifier, List<JiraIssue> sprintJiraIssues) {
+	private double calculateSprintVelocityValue(Map<Pair<String, String>, Map<String, Double>> sprintWiseEstimate, Pair<String, String> currentNodeIdentifier, List<JiraIssue> sprintJiraIssues) {
 		double sprintVelocityForCurrentLeaf = 0.0;
 		if (MapUtils.isNotEmpty(sprintWiseEstimate)
 				&& MapUtils.isNotEmpty(sprintWiseEstimate.get(currentNodeIdentifier))) {
@@ -285,10 +285,10 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 			List<String> storyPointList = new ArrayList<>();
 
 			if(MapUtils.isNotEmpty(sprintWiseEstimate) && MapUtils.isNotEmpty(sprintWiseEstimate.get(currentNodeIdentifier))){
-				Map<String, Double> stringDoubleMap = sprintWiseEstimate.get(currentNodeIdentifier);
+				Map<String, Double> sprintWiseStoryPointnsMap = sprintWiseEstimate.get(currentNodeIdentifier);
 				for (JiraIssue jiraIssue : jiraIssues) {
 					defectKeyList.add(jiraIssue.getNumber());
-					storyPointList.add(Optional.ofNullable(stringDoubleMap.get(jiraIssue.getNumber())).orElse(0.0).toString());
+					storyPointList.add(Optional.ofNullable(sprintWiseStoryPointnsMap.get(jiraIssue.getNumber())).orElse(0.0).toString());
 				}
 			}
 			else {
