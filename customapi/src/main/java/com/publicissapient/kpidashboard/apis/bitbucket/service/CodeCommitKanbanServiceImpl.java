@@ -108,7 +108,7 @@ public class CodeCommitKanbanServiceImpl extends BitBucketKPIService<Long, List<
 	@SuppressWarnings("unchecked")
 	@Override
 	public KpiElement getKpiData(KpiRequest kpiRequest, KpiElement kpiElement,
-								 TreeAggregatorDetail treeAggregatorDetail) throws ApplicationException {
+			TreeAggregatorDetail treeAggregatorDetail) throws ApplicationException {
 
 		Node root = treeAggregatorDetail.getRoot();
 		Map<String, Node> mapTmp = treeAggregatorDetail.getMapTmp();
@@ -139,7 +139,7 @@ public class CodeCommitKanbanServiceImpl extends BitBucketKPIService<Long, List<
 	}
 
 	private void dateWiseLeafNodeValue(Map<String, Node> mapTmp, List<Node> projectList, KpiElement kpiElement,
-									   KpiRequest kpiRequest) {
+			KpiRequest kpiRequest) {
 
 		CustomDateRange dateRange = KpiDataHelper.getStartAndEndDate(kpiRequest);
 
@@ -152,7 +152,7 @@ public class CodeCommitKanbanServiceImpl extends BitBucketKPIService<Long, List<
 	}
 
 	private void kpiWithFilter(Map<String, Object> resultMap, Map<String, Node> mapTmp, List<Node> leafNodeList,
-							   KpiElement kpiElement, KpiRequest kpiRequest) {
+			KpiElement kpiElement, KpiRequest kpiRequest) {
 		Map<String, ValidationData> validationMap = new HashMap<>();
 		List<KPIExcelData> excelData = new ArrayList<>();
 		List<CommitDetails> commitList = (List<CommitDetails>) resultMap.get(COMMIT_COUNT);
@@ -261,7 +261,7 @@ public class CodeCommitKanbanServiceImpl extends BitBucketKPIService<Long, List<
 	}
 
 	private void prepareRepoWiseMap(Map<String, Long> filterWiseValue, String projectName, String dataCountDate,
-									Map<String, List<DataCount>> projectWiseDataMap) {
+			Map<String, List<DataCount>> projectWiseDataMap) {
 		List<Long> commitCountList = new ArrayList<>();
 		filterWiseValue.forEach((filter, value) -> {
 			commitCountList.add(value);
@@ -310,7 +310,7 @@ public class CodeCommitKanbanServiceImpl extends BitBucketKPIService<Long, List<
 	@SuppressWarnings("PMD.AvoidCatchingGenericException")
 	@Override
 	public Map<String, Object> fetchKPIDataFromDb(List<Node> leafNodeList, String startDate, String endDate,
-												  KpiRequest kpiRequest) {
+			KpiRequest kpiRequest) {
 		Set<String> listOfmapOfProjectFilters = new HashSet<>();
 		Set<String> branchList = new HashSet<>();
 
@@ -347,7 +347,7 @@ public class CodeCommitKanbanServiceImpl extends BitBucketKPIService<Long, List<
 				new DateTime(startDate, DateTimeZone.UTC).withTimeAtStartOfDay().getMillis(),
 				StringUtils.isNotEmpty(endDate)
 						? new DateTime(endDate, DateTimeZone.UTC).withTimeAtStartOfDay().plus(MILISEC_ONE_DAY)
-						.getMillis()
+								.getMillis()
 						: new Date().getTime(),
 				filter);
 

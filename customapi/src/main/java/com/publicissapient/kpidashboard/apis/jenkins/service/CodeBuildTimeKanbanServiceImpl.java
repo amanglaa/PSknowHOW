@@ -64,8 +64,6 @@ import static com.publicissapient.kpidashboard.common.constant.CommonConstant.HI
 @Slf4j
 public class CodeBuildTimeKanbanServiceImpl extends JenkinsKPIService<Long, List<Object>, Map<ObjectId, List<Build>>> {
 
-    private final List<String> processorsList = Arrays.asList(ProcessorConstants.BAMBOO, ProcessorConstants.JENKINS,
-            ProcessorConstants.TEAMCITY, ProcessorConstants.AZUREPIPELINE);
     @Autowired
     private ConfigHelperService configHelperService;
     @Autowired
@@ -74,6 +72,10 @@ public class CodeBuildTimeKanbanServiceImpl extends JenkinsKPIService<Long, List
     private BuildRepository buildRepository;
     @Autowired
     private CustomApiConfig customApiConfig;
+
+
+    private final List<String> processorsList = Arrays.asList(ProcessorConstants.BAMBOO, ProcessorConstants.JENKINS,
+            ProcessorConstants.TEAMCITY, ProcessorConstants.AZUREPIPELINE);
 
     @Override
     public String getQualifierType() {
