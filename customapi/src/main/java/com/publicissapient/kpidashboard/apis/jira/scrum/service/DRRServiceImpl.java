@@ -233,6 +233,9 @@ public class DRRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 		Map<Pair<String, String>, Double> sprintWiseDRRMap = new HashMap<>();
 		List<KPIExcelData> excelData = new ArrayList<>();
 		Map<Pair<String, String>, Map<String, Integer>> sprintWiseHowerMap = new HashMap<>();
+		Map<Pair<String, String>, List<JiraIssue>> sprintWiseTotaldDefectListMap = new HashMap<>();
+		Map<Pair<String, String>, List<JiraIssue>> sprintWiseRejectedDefectListMap = new HashMap<>();
+
 
 		sprintWiseMap.forEach((sprint, sprintWiseStories) -> {
 
@@ -268,9 +271,8 @@ public class DRRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 			subCategoryWiseDRRList.add(drrForCurrentLeaf);
 			sprintWiseRejectedDefectList.addAll(sprintWiseRejectedDefects);
 			sprintWiseTotaldDefectList.addAll(sprintWiseTotaldDefects);
-
-			populateExcelDataObject(requestTrackerId, storyDefectDataListMap, excelData, sprint,
-					sprintWiseRejectedDefectList, sprintWiseTotaldDefectList);
+			sprintWiseRejectedDefectListMap.put(sprint,sprintWiseRejectedDefectList);
+			sprintWiseTotaldDefectListMap.put(sprint,sprintWiseTotaldDefectList);
 
 			setSprintWiseLogger(sprint, totalStoryIdList, sprintWiseTotaldDefectList, sprintWiseRejectedDefectList);
 
@@ -288,6 +290,12 @@ public class DRRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 
 			if (sprintWiseDRRMap.containsKey(currentNodeIdentifier)) {
 				drrForCurrentLeaf = sprintWiseDRRMap.get(currentNodeIdentifier);
+				List<JiraIssue> sprintWiseRejectedDefectList = sprintWiseRejectedDefectListMap.get(currentNodeIdentifier);
+				List<JiraIssue> sprintWiseTotaldDefectList = sprintWiseTotaldDefectListMap.get(currentNodeIdentifier);
+
+				populateExcelDataObject(requestTrackerId, node.getSprintFilter().getName(), excelData,
+						sprintWiseRejectedDefectList, sprintWiseTotaldDefectList);
+
 			} else {
 				drrForCurrentLeaf = 0.0d;
 			}
@@ -322,24 +330,13 @@ public class DRRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 				.compareTo(node2.getSprintFilter().getStartDate()));
 	}
 
-	private void populateExcelDataObject(String requestTrackerId, Map<String, Object> storyDefectDataListMap,
-			List<KPIExcelData> excelData, Pair<String, String> sprint, List<JiraIssue> sprintWiseRejectedDefectList,
+	private void populateExcelDataObject(String requestTrackerId,String sprintName,
+			List<KPIExcelData> excelData, List<JiraIssue> sprintWiseRejectedDefectList,
 			List<JiraIssue> sprintWiseTotaldDefectList) {
 		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
 
-			Map<String, String> sprintWiseStoryNameMap = ((List<SprintWiseStory>) storyDefectDataListMap
-					.get(SPRINT_WISE_STORY_DATA)).stream()
-							.collect(Collectors.toMap(SprintWiseStory::getSprint, SprintWiseStory::getSprintName,
-									(name1, name2) -> name1));
-
 			Map<String, JiraIssue> totalDefectList = new HashMap<>();
 			sprintWiseTotaldDefectList.stream().forEach(bugs -> totalDefectList.putIfAbsent(bugs.getNumber(), bugs));
-
-			String sprintName = sprintWiseStoryNameMap.get(sprint.getValue());
-			if (!sprint.getKey().equals(sprint.getValue())) {
-				sprintName = new StringBuilder().append(sprintName).append(Constant.UNDERSCORE).append(sprint.getKey())
-						.toString();
-			}
 			KPIExcelUtility.populateDefectRelatedExcelData(sprintName, totalDefectList, sprintWiseRejectedDefectList,
 					excelData, KPICode.DEFECT_REJECTION_RATE.getKpiId());
 		}

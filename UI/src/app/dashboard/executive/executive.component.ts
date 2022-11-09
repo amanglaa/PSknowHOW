@@ -1158,30 +1158,36 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
         let worksheet;
         const workbook = new Excel.Workbook();
         worksheet = workbook.addWorksheet('Kpi Data');
-        let level = this.service.getSelectedLevel();
+        // let level = this.service.getSelectedLevel();
         let trends = this.service.getSelectedTrends();
-        let firstRow = [level['hierarchyLevelName']];
-        let headerNames = ["KPI Name"];
-        let headerKeys = [{key: 'kpiName', width: 35}];
+        // let firstRow = [level['hierarchyLevelName']];
+        // let headerNames = ["KPI Name"];
+        let headers = [{header: 'KPI Name', key: 'kpiName', width: 30}];
         for(let i = 0; i<trends.length; i++){
-            firstRow.push(trends[i]['nodeName']);
-            headerNames.push("Latest("+trends[i]['nodeName'] +")");
-            headerNames.push("Trend("+trends[i]['nodeName'] +")");
-            headerNames.push("Maturity("+trends[i]['nodeName'] +")");
-            headerKeys.push({key: trends[i]['nodeName'] + '_latest', width: 15});
-            headerKeys.push({key: trends[i]['nodeName'] + '_trend', width: 15});
-            headerKeys.push({key: trends[i]['nodeName'] + '_maturity', width: 15});
+            // firstRow.push(trends[i]['nodeName']);
+            // headerNames.push("Latest ("+trends[i]['nodeName'] +")");
+            // headerNames.push("Trend ("+trends[i]['nodeName'] +")");
+            // headerNames.push("Maturity ("+trends[i]['nodeName'] +")");
+            let colorCode = this.trendBoxColorObj[trends[i]['nodeName']]?.color;
+            colorCode = colorCode.slice(1);
+            headers.push({header:"Latest ("+trends[i]['nodeName'] +")", key: trends[i]['nodeName'] + '_latest', width: 15});
+            headers.push({header:"Trend ("+trends[i]['nodeName'] +")", key: trends[i]['nodeName'] + '_trend', width: 15});
+            headers.push({header:"Maturity ("+trends[i]['nodeName'] +")", key: trends[i]['nodeName'] + '_maturity', width: 15});
+            worksheet.getRow(1).getCell((i*3)+2).fill = { type: 'pattern', pattern: 'solid', fgColor:{argb:colorCode} };
+            worksheet.getRow(1).getCell((i*3)+3).fill = { type: 'pattern', pattern: 'solid', fgColor:{argb:colorCode} };
+            worksheet.getRow(1).getCell((i*3)+4).fill = { type: 'pattern', pattern: 'solid', fgColor:{argb:colorCode} };
         }
         
         // worksheet.getRow(1).values = [firstRow[0]];
-        for(let i = 1; i<firstRow?.length; i++){
-            worksheet.mergeCells(1, i+1, 1, i+3);
-            // worksheet.getCell(worksheet.getColumn(i+1)).value = firstRow[i+1];
-            // worksheet.getCell().value = firstRow[i+1];
-        }
-        worksheet.getRow(1).values = [...firstRow];
-        worksheet.getRow(2).values = [...headerNames];
-        worksheet.columns = [...headerKeys];
+        // for(let i = 1; i<firstRow?.length; i++){
+        //     worksheet.mergeCells(1, i+1, 1, i+3);
+        //     worksheet.getCell(worksheet.getColumn(i+1)).value = firstRow[i+1];
+        //     // worksheet.getCell().value = firstRow[i+1];
+        // }
+        // worksheet.getRow(1).values = [...firstRow];
+        // worksheet.getRow(2).values = [...headerNames];
+        worksheet.columns = [...headers];
+        
         for(let kpi of this.updatedConfigGlobalData){
             let kpiId = kpi.kpiId;
             let obj = {};
@@ -1193,9 +1199,10 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
             }
             worksheet.addRow(obj);
         }
+       
 
         worksheet.eachRow(function(row, rowNumber) {
-            if (rowNumber === 1 || rowNumber === 2) {
+            if (rowNumber === 1) {
                 row.eachCell({
                     includeEmpty: true
                 }, function(cell) {
@@ -1204,16 +1211,16 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
                         name: 'Arial Rounded MT Bold'
                     };
 
-                    cell.fill = {
-                        type: 'pattern',
-                        pattern: 'solid',
-                        fgColor: {
-                            argb: 'FFFFFF00'
-                        },
-                        bgColor: {
-                            argb: 'FF0000FF'
-                        }
-                    };
+                    // cell.fill = {
+                    //     type: 'pattern',
+                    //     pattern: 'solid',
+                    //     fgColor: {
+                    //         argb: 'FFFFFF00'
+                    //     },
+                    //     bgColor: {
+                    //         argb: 'FF0000FF'
+                    //     }
+                    // };
 
                 });
             }
@@ -1260,6 +1267,7 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
         } else {
           maturity = '--';
         }
+        maturity = maturity != 'NA' && maturity != '--' && maturity != '-' ? 'M'+maturity : maturity;
         return maturity;
       }
 
@@ -1270,18 +1278,18 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
         if(item?.value?.length > 0){
             let tempVal = item?.value[item?.value?.length - 1]?.lineValue ? item?.value[item?.value?.length - 1]?.lineValue : item?.value[item?.value?.length - 1]?.value; 
             let unit = kpiData?.kpiDetail?.kpiUnit?.toLowerCase() != 'number' ? kpiData?.kpiDetail?.kpiUnit : '';
-            latest = tempVal > 0 ? tempVal.toFixed(2) + (unit ? ' ' + unit : '') : tempVal + (unit ? ' ' + unit : '');
+            latest = tempVal > 0 ? (Math.round(tempVal * 10) / 10) + (unit ? ' ' + unit : '') : tempVal + (unit ? ' ' + unit : '');
         }
         if(item?.value?.length > 1 && kpiData?.kpiDetail?.showTrend) {
             if(kpiData?.kpiDetail?.trendCalculative){
                 let lhs = kpiData?.kpiDetail?.trendCalculation?.length > 0 ? kpiData?.kpiDetail?.trendCalculation[0]?.lhs : '';
                 let rhs = kpiData?.kpiDetail?.trendCalculation?.length > 0 ? kpiData?.kpiDetail?.trendCalculation[0]?.rhs : '';
                 if(lhs < rhs){
-                    trend = 'upwards';
+                    trend = '+ve';
                 }else if(lhs > rhs){
-                    trend = 'downwards';
+                    trend = '-ve';
                 }else if(lhs == rhs && kpiData?.kpiId == 'kpi126'){
-                    trend = 'upwards';
+                    trend = '+ve';
                 }else{
                     trend = '-- --';
                 }
@@ -1290,13 +1298,13 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
                 let secondLastVal = item?.value[item?.value?.length - 2]?.value;
                 let isPositive = kpiData?.kpiDetail?.isPositiveTrend;
                 if(secondLastVal > lastVal && !isPositive){
-                    trend = 'upwards';
+                    trend = '+ve';
                 }else if(secondLastVal < lastVal && !isPositive){
-                    trend = 'downwards';
+                    trend = '-ve';
                 }else if(secondLastVal < lastVal && isPositive){
-                    trend = 'upwards';
+                    trend = '+ve';
                 }else if(secondLastVal > lastVal && isPositive){
-                    trend = 'downwards';
+                    trend = '-ve';
                 }else {
                     trend = '-- --';
                 }
@@ -1323,6 +1331,7 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
                     this.kpiTrendsObj[kpiId]?.push(trendObj); 
                 }
             }
+            // console.log(enabledKpiObj?.kpiName, kpiId, this.kpiTrendsObj[kpiId]);         
         }
       }
 }
