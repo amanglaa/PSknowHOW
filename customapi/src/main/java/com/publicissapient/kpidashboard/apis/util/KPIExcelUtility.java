@@ -684,32 +684,23 @@ public class KPIExcelUtility {
         }
     }
 
-    public static void populateStoryCountExcelData(String sprint, List<KPIExcelData> kpiExcelData,
-                                                   List<JiraIssue> sprintWiseStoriesList, List<String> totalPresentJiraIssue) {
+	public static void populateStoryCountExcelData(String sprint, List<KPIExcelData> kpiExcelData,
+			List<JiraIssue> allJiraIssueList, List<String> totalPresentJiraIssue) {
 
-        List<String> totalPresentIssueList = new ArrayList<>();
-        if (CollectionUtils.isNotEmpty(sprintWiseStoriesList)) {
+		if (CollectionUtils.isNotEmpty(allJiraIssueList)) {
+			allJiraIssueList.stream().filter(issue -> totalPresentJiraIssue.contains(issue.getNumber()))
+					.forEach(sprintIssue -> {
+						KPIExcelData excelData = new KPIExcelData();
+						excelData.setSprintName(sprint);
+						Map<String, String> storyDetails = new HashMap<>();
+						storyDetails.put(sprintIssue.getNumber(), checkEmptyURL(sprintIssue));
+						excelData.setStoryId(storyDetails);
+						excelData.setIssueDesc(checkEmptyName(sprintIssue));
+						kpiExcelData.add(excelData);
+					});
+		}
+	 }
 
-            for (JiraIssue jiraIssue : sprintWiseStoriesList) {
-                totalPresentIssueList.add(jiraIssue.getNumber());
-            }
-            for (int i = 0; i < totalPresentJiraIssue.size(); i++) {
-
-                if (totalPresentIssueList.contains(totalPresentJiraIssue.get(i))) {
-
-                    KPIExcelData excelData = new KPIExcelData();
-                    excelData.setSprintName(sprint);
-                    Map<String, String> storyDetails = new HashMap<>();
-                    storyDetails.put(sprintWiseStoriesList.get(i).getNumber(),
-                            checkEmptyURL(sprintWiseStoriesList.get(i)));
-                    excelData.setStoryId(storyDetails);
-                    excelData.setIssueDesc(checkEmptyName(sprintWiseStoriesList.get(i)));
-                    kpiExcelData.add(excelData);
-
-                }
-            }
-        }
-    }
 
     public static void populateCodeBuildTime(List<KPIExcelData> kpiExcelData, String projectName,
                                              CodeBuildTimeInfo codeBuildTimeInfo) {

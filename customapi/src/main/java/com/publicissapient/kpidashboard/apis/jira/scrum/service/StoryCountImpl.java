@@ -268,7 +268,7 @@ public class StoryCountImpl extends JiraKPIService<Double, List<Object>, Map<Str
 			// prepare data from jira issue.
 		}
 
-		// Map<String, ValidationData> validationDataMap = new HashMap<>();
+
 		List<KPIExcelData> excelData = new ArrayList<>();
 
 		for (Node node : sprintLeafNodeList) {
@@ -311,15 +311,15 @@ public class StoryCountImpl extends JiraKPIService<Double, List<Object>, Map<Str
 	 * Populates Validation Data Object
 	 *
 	 * @param requestTrackerId
-	 * @param sprintWiseStoriesList
+	 * @param allJiraIssuesList
 	 * @param node
 	 * @param totalPresentJiraIssue
 	 */
-	private void populateExcelData(String requestTrackerId, List<JiraIssue> sprintWiseStoriesList,
+	private void populateExcelData(String requestTrackerId, List<JiraIssue> allJiraIssuesList,
 			List<KPIExcelData> excelData, Node node, List<String> totalPresentJiraIssue) {
 		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
 			String sprintName = node.getSprintFilter().getName();
-			KPIExcelUtility.populateStoryCountExcelData(sprintName, excelData, sprintWiseStoriesList,
+			KPIExcelUtility.populateStoryCountExcelData(sprintName, excelData, allJiraIssuesList,
 					totalPresentJiraIssue);
 
 		}
