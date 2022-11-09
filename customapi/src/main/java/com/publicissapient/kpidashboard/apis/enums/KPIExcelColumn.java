@@ -114,6 +114,18 @@ public enum KPIExcelColumn {
 	TICKET_OPEN_VS_CLOSE_BY_PRIORITY("kpi54",
 			Arrays.asList("Project", "Day/Week/Month", "Ticket Issue ID", "Issue Priority", "Status")),
 
+	TICKET_VELOCITY("kpi49",
+			Arrays.asList("Project Name", "Day/Week/Month", "Ticket Issue ID", "Issue Type", "Size (In Story Points)")),
+
+	CODE_BUILD_TIME_KANBAN("kpi66", Arrays.asList("Project Name", "Job Name", "Start Time", "End Time", "Duration",
+			"Build Status", "Started By", "Build Url")),
+
+	CODE_COMMIT_MERGE_KANBAN("kpi65",
+			Arrays.asList("Project Name", "Repository Url", "Branch", "Day", "No. Of Commit")),
+
+	TEAM_CAPACITY_KANBAN("kpi58",
+			Arrays.asList("Project Name", "Start Date", "End Date", "Estimated Capacity (in hours)")),
+
 	INVALID("INVALID_KPI", Arrays.asList("Invalid"));
 
     // @formatter:on

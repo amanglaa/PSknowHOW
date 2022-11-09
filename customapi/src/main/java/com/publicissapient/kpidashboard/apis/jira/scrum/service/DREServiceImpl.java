@@ -237,6 +237,8 @@ public class DREServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 
 		Map<Pair<String, String>, Double> sprintWiseDREMap = new HashMap<>();
 		Map<Pair<String, String>, Map<String, Integer>> sprintWiseHowerMap = new HashMap<>();
+		Map<Pair<String, String>, List<JiraIssue>> sprintWiseTotaldDefectListMap = new HashMap<>();
+		Map<Pair<String, String>, List<JiraIssue>> sprintWiseCloseddDefectListMap = new HashMap<>();
 		List<KPIExcelData> excelData = new ArrayList<>();
 
 		sprintWiseMap.forEach((sprint, sprintWiseStories) -> {
@@ -278,8 +280,8 @@ public class DREServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 			subCategoryWiseDREList.add(dreForCurrentLeaf);
 			sprintWiseClosedDefectList.addAll(subCategoryWiseClosedDefectList);
 			sprintWiseTotaldDefectList.addAll(subCategoryWiseTotaldDefectList);
-			populateExcelDataObject(requestTrackerId, storyDefectDataListMap, excelData, sprint,
-					sprintWiseClosedDefectList, sprintWiseTotaldDefectList);
+			sprintWiseCloseddDefectListMap.put(sprint,sprintWiseClosedDefectList);
+			sprintWiseTotaldDefectListMap.put(sprint,sprintWiseTotaldDefectList);
 
 			setSprintWiseLogger(sprint, totalStoryIdList, sprintWiseTotaldDefectList, sprintWiseClosedDefectList);
 
@@ -298,6 +300,10 @@ public class DREServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 
 			if (sprintWiseDREMap.containsKey(currentNodeIdentifier)) {
 				dreForCurrentLeaf = sprintWiseDREMap.get(currentNodeIdentifier);
+				List<JiraIssue> sprintWiseClosedDefectList = sprintWiseCloseddDefectListMap.get(currentNodeIdentifier);
+				List<JiraIssue> sprintWiseTotaldDefectList = sprintWiseTotaldDefectListMap.get(currentNodeIdentifier);
+				populateExcelDataObject(requestTrackerId, node.getSprintFilter().getName(), excelData,sprintWiseClosedDefectList, sprintWiseTotaldDefectList);
+
 			} else {
 				dreForCurrentLeaf = 0.0d;
 			}
@@ -321,24 +327,14 @@ public class DREServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 		kpiElement.setExcelColumns(KPIExcelColumn.DEFECT_REMOVAL_EFFICIENCY.getColumns());
 	}
 
-	private void populateExcelDataObject(String requestTrackerId, Map<String, Object> storyDefectDataListMap,
-			List<KPIExcelData> excelData, Pair<String, String> sprint, List<JiraIssue> sprintWiseClosedDefectList,
+	private void populateExcelDataObject(String requestTrackerId,String sprintName,
+			List<KPIExcelData> excelData, List<JiraIssue> sprintWiseClosedDefectList,
 			List<JiraIssue> sprintWiseTotaldDefectList) {
 		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-
-			Map<String, String> sprintWiseStoryNameMap = ((List<SprintWiseStory>) storyDefectDataListMap
-					.get(SPRINT_WISE_STORY_DATA)).stream()
-							.collect(Collectors.toMap(SprintWiseStory::getSprint, SprintWiseStory::getSprintName,
-									(name1, name2) -> name1));
 
 			Map<String, JiraIssue> totalDefectList = new HashMap<>();
 			sprintWiseTotaldDefectList.stream().forEach(bugs -> totalDefectList.putIfAbsent(bugs.getNumber(), bugs));
 
-			String sprintName = sprintWiseStoryNameMap.get(sprint.getValue());
-			if (!sprint.getKey().equals(sprint.getValue())) {
-				sprintName = new StringBuilder().append(sprintName).append(Constant.UNDERSCORE).append(sprint.getKey())
-						.toString();
-			}
 			KPIExcelUtility.populateDefectRelatedExcelData(sprintName, totalDefectList, sprintWiseClosedDefectList,
 					excelData, KPICode.DEFECT_REMOVAL_EFFICIENCY.getKpiId());
 

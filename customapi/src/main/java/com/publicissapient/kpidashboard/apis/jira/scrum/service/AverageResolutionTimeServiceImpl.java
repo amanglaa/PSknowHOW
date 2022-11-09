@@ -169,11 +169,6 @@ public class AverageResolutionTimeServiceImpl extends JiraKPIService<Double, Lis
 		Map<String, List<ResolutionTimeValidation>> sprintWiseResolution = groupSprintWiseIssues(jiraIssues,
 				resolutionTimeIssueIdWise);
 
-		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-
-			KPIExcelUtility.populateAverageResolutionTime(sprintWiseResolution, excelData);
-		}
-
 		Map<String, Map<String, Double>> sprintIssueTypeWiseTime = new HashMap<>();
 		sprintWiseResolution.forEach((sprint, issueWiseTimeList) -> {
 			Map<String, Double> issueTypeAvgTime = new HashMap<>();
@@ -212,6 +207,10 @@ public class AverageResolutionTimeServiceImpl extends JiraKPIService<Double, Lis
 			Map<String, Double> issueTypeAvgTime = new HashMap<>();
 			if (sprintIssueTypeWiseTime.containsKey(currentSprintComponentId)) {
 				issueTypeAvgTime = sprintIssueTypeWiseTime.get(currentSprintComponentId);
+				List<ResolutionTimeValidation> resolutionTimeValidations = sprintWiseResolution.get(currentSprintComponentId);
+				if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
+					KPIExcelUtility.populateAverageResolutionTime(node.getSprintFilter().getName(),resolutionTimeValidations, excelData);
+				}
 			}
 			Set<String> issueTypesFound = issueTypeAvgTime.keySet();
 			issueTypes.removeAll(issueTypesFound);
