@@ -587,6 +587,9 @@ public class OnlineAdapter implements JiraAdapter {
 	private Set<String> initializeAddedIssues(Set<String> addedIssue, Set<SprintIssue> totalIssues,
 											  Set<SprintIssue> puntedIssues, boolean otherBoardExist) {
 		if (otherBoardExist) {
+			if(null == addedIssue){
+				addedIssue = new HashSet<>();
+			}
 			Set<String> keySet = CollectionUtils.emptyIfNull(totalIssues).stream().map(issue -> issue.getNumber())
 					.collect(Collectors.toSet());
 			keySet.addAll(CollectionUtils.emptyIfNull(puntedIssues).stream().map(issue -> issue.getNumber())

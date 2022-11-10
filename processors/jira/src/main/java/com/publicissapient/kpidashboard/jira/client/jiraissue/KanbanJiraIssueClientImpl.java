@@ -179,6 +179,10 @@ public class KanbanJiraIssueClientImpl extends JiraIssueClient {
 						break;
 					}
 				}
+
+				log.info("fetching epic");
+				List<Issue> epicIssue = jiraAdapter.getEpic(projectConfig,board.getBoardId());
+				saveJiraIssueDetails(epicIssue, projectConfig);
 			}
 		} catch (JSONException e) {
 			log.error("JIRA Processor | Error while updating Story information in kanban client", e);
