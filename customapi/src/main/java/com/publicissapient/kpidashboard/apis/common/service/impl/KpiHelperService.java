@@ -468,7 +468,7 @@ public class KpiHelperService { // NOPMD
 
 		if (CollectionUtils.isNotEmpty(totalIssue)) {
 			resultListMap.put(SPRINTVELOCITYKEY,
-					jiraIssueRepository.findIssueByNumber(mapOfFilters, totalIssue, uniqueProjectMap));
+					jiraIssueRepository.findIssueByNumber(mapOfFilters, totalIssue, new HashMap<>()));
 			resultListMap.put(SPRINT_WISE_SPRINTDETAILS, sprintDetails);
 			resultListMap.put(PROJECT_WISE_CLOSED_STATUS_MAP,closedStatusMap);
 		} else {
