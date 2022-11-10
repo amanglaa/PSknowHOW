@@ -3323,7 +3323,7 @@ db.getCollection('kpi_master').insert(
         "details": [
           {
             "type": "paragraph",
-            "value": "Work Completed KPI gives a depiction of the work completed in an iteration from three available dimensions"
+            "value": "Work Completed KPI gives a depiction of the work completed in an iteration from two available dimensions"
           },
           {
             "type": "paragraph",
@@ -3332,10 +3332,6 @@ db.getCollection('kpi_master').insert(
           {
             "type": "paragraph",
             "value": "Story Points - Sum of story points of all issues completed based on DOD in the iteration"
-          },
-          {
-            "type": "paragraph",
-            "value": "Hours - Sum of worked hours as mentioned in Jira of all issues completed based on DOD in the iteration"
           },
           {
             "type": "paragraph",
