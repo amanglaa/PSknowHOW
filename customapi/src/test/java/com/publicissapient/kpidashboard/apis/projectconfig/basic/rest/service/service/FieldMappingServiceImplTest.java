@@ -334,6 +334,7 @@ public class FieldMappingServiceImplTest {
 		fieldMapping.setJiraDefectInjectionIssueType(Arrays.asList("Story"));
 		fieldMapping.setJiraTestAutomationIssueType(Arrays.asList("Story"));
 		fieldMapping.setJiraIntakeToDorIssueType(Arrays.asList("Story", "Defect"));
+		fieldMapping.setJiraTechDebtIssueType(Arrays.asList("Story"));
 		fieldMapping.setJiraStoryIdentification(Arrays.asList("Story"));
 		fieldMapping.setJiraSprintCapacityIssueType(Arrays.asList("Story"));
 		// workflow
@@ -360,6 +361,8 @@ public class FieldMappingServiceImplTest {
 		fieldMapping.setJiraTechDebtIdentification(CommonConstant.CUSTOM_FIELD);
 		fieldMapping.setJiraTechDebtValue(Arrays.asList("Story"));
 		fieldMapping.setJiraTechDebtCustomField(fieldMapping.getJiraTechDebtCustomField());
+		// defect
+		fieldMapping.setRootCauseValue(fieldMapping.getRootCauseValue());
 		// test case
 		fieldMapping.setJiraTestCaseType(new String[] { "abc", "xyz" });
 		fieldMapping.setRegressionAutomationFolderPath(Arrays.asList(""));
@@ -379,10 +382,14 @@ public class FieldMappingServiceImplTest {
 		fieldMapping.setTicketCountIssueType(Arrays.asList("Story"));
 		fieldMapping.setTicketCountIssueType(Arrays.asList("Story"));
 		fieldMapping.setKanbanCycleTimeIssueType(Arrays.asList("Story"));
+		fieldMapping.setKanbanJiraTechDebtIssueType(Arrays.asList("Story"));
 
 		// workflow
 		fieldMapping.setTicketDeliverdStatus(Arrays.asList("READY FOR UAT"));
+		fieldMapping.setTicketReopenStatus(Arrays.asList("Open"));
 		fieldMapping.setJiraTicketTriagedStatus(Arrays.asList(""));
+		fieldMapping.setJiraTicketResolvedStatus(Arrays.asList("Closed"));
+		fieldMapping.setJiraTicketWipStatus(Arrays.asList("In Development"));
 		fieldMapping.setJiraTicketRejectedStatus(Arrays.asList("Rejected"));
 		fieldMapping.setJiraTicketClosedStatus(Arrays.asList("Closed"));
 		fieldMapping.setStoryFirstStatus("Open");
