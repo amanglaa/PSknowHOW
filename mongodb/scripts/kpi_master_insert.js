@@ -2977,7 +2977,7 @@ db.getCollection('kpi_master').insert(
     "maxValue": "",
     "kpiUnit": "Hours",
     "isDeleted": "False",
-    "defaultOrder": 4,
+    "defaultOrder": 5,
     "kpiCategory": "Iteration",
     "kpiSource": "Jira",
     "groupId": 8,
@@ -3015,7 +3015,7 @@ db.getCollection('kpi_master').insert(
     "maxValue": "",
     "kpiUnit": "Count",
     "isDeleted": "False",
-    "defaultOrder": 5,
+    "defaultOrder": 6,
     "kpiCategory": "Iteration",
     "kpiSource": "Jira",
     "groupId": 8,
@@ -3049,7 +3049,7 @@ db.getCollection('kpi_master').insert(
     "maxValue": "",
     "kpiUnit": "Story Point",
     "isDeleted": "False",
-    "defaultOrder": 6,
+    "defaultOrder": 7,
     "kpiCategory": "Iteration",
     "kpiSource": "Jira",
     "groupId": 8,
@@ -3305,5 +3305,51 @@ db.getCollection('kpi_master').insert(
     "isAdditionalFilterSupport": false,
     "calculateMaturity": false,
     "kanban": false
-  }
+  },
+  {
+      "kpiId": "kpi128",
+      "kpiName": "Work Completed",
+      "maxValue": "",
+      "kpiUnit": "Hours",
+      "isDeleted": "False",
+      "defaultOrder": 4,
+      "kpiCategory": "Iteration",
+      "kpiSource": "Jira",
+      "groupId": 8,
+      "thresholdValue": "",
+      "kanban": false,
+      "chartType": null,
+      "kpiInfo": {
+        "details": [
+          {
+            "type": "paragraph",
+            "value": "Work Completed KPI gives a depiction of the work completed in an iteration from three available dimensions"
+          },
+          {
+            "type": "paragraph",
+            "value": "Issue count - Total no. of issues that are completed based on DOD in the iteration."
+          },
+          {
+            "type": "paragraph",
+            "value": "Story Points - Sum of story points of all issues completed based on DOD in the iteration"
+          },
+          {
+            "type": "paragraph",
+            "value": "Hours - Sum of worked hours as mentioned in Jira of all issues completed based on DOD in the iteration"
+          },
+          {
+            "type": "paragraph",
+            "value": "Source of this KPI is Jira. To see the latest data, run the Jira processor from KnowHOW settings"
+          }
+        ]
+      },
+      "xAxisLabel": "",
+      "yAxisLabel": "",
+      "isPositiveTrend": true,
+      "showTrend": false,
+      "isSquadSupport": false,
+      "kpiFilter": "multiSelectDropDown",
+      "boxType": "2_column",
+      "calculateMaturity": false
+    }
 ]);
