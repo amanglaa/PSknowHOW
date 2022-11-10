@@ -24,9 +24,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -42,14 +46,10 @@ import com.publicissapient.kpidashboard.apis.model.KpiElement;
 import com.publicissapient.kpidashboard.apis.model.KpiRequest;
 import com.publicissapient.kpidashboard.apis.model.Node;
 import com.publicissapient.kpidashboard.apis.model.TreeAggregatorDetail;
-import com.publicissapient.kpidashboard.apis.util.KpiDataHelper;
-import com.publicissapient.kpidashboard.common.constant.CommonConstant;
 import com.publicissapient.kpidashboard.common.model.application.DataCount;
 import com.publicissapient.kpidashboard.common.model.application.ValidationData;
 import com.publicissapient.kpidashboard.common.model.jira.JiraIssue;
 import com.publicissapient.kpidashboard.common.model.jira.SprintDetails;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * This class calculates the DRR and trend analysis of the DRR.
@@ -64,6 +64,9 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 	private static final String SEPARATOR_ASTERISK = "*************************************";
 	private static final String SPRINTVELOCITYKEY = "sprintVelocityKey";
 	private static final String SPRINT_WISE_SPRINTDETAILS = "sprintWiseSprintDetailMap";
+	private static final String PROJECT_WISE_CLOSED_STATUS_MAP = "projectWiseClosedStatusMap";
+	private static final String PROJECT_WISE_TYPE_NAME_MAP = "projectWiseTypeNameMap";
+	private static final String TOTAL_ISSUE_WITH_STORYPOINTS = "totalIssueWithStoryPoints";
 	@Autowired
 	private KpiHelperService kpiHelperService;
 	@Autowired
@@ -176,19 +179,20 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 		List<JiraIssue> allJiraIssue = (List<JiraIssue>) sprintVelocityStoryMap.get(SPRINTVELOCITYKEY);
 
 		Map<Pair<String, String>, List<JiraIssue>> sprintWiseIssues = new HashMap<>();
+		Map<Pair<String, String>, Map<String,Double>> sprintWiseEstimate = new HashMap<>();
 
 		List<SprintDetails> sprintDetails = (List<SprintDetails>) sprintVelocityStoryMap.get(SPRINT_WISE_SPRINTDETAILS);
 
-		if(CollectionUtils.isNotEmpty(allJiraIssue)) {
 			if (CollectionUtils.isNotEmpty(sprintDetails)) {
 				sprintDetails.forEach(sd -> {
-					List<String> totalIssues = KpiDataHelper.getIssuesIdListBasedOnTypeFromSprintDetails(sd,
-							CommonConstant.TOTAL_ISSUES);
-					List<JiraIssue> sprintIssues = allJiraIssue.stream().filter(element -> totalIssues.contains(element.getNumber())).collect(Collectors.toList());
-					sprintWiseIssues.put(Pair.of(sd.getBasicProjectConfigId().toString(), sd.getSprintID()),
-							sprintIssues);
+					Map<Pair<String, String>, Map<String, Double>> sprintWiseNumberStoryMap = (Map<Pair<String, String>, Map<String, Double>>) sprintVelocityStoryMap.get(TOTAL_ISSUE_WITH_STORYPOINTS);
+					Map<String, Double> storyWiseStoryPoint = sprintWiseNumberStoryMap.get((Pair.of(sd.getBasicProjectConfigId().toString(), sd.getSprintID())));
+					sprintWiseEstimate.put(Pair.of(sd.getBasicProjectConfigId().toString(), sd.getSprintID()),
+							storyWiseStoryPoint);
+
 				});
 			} else {
+				if(CollectionUtils.isNotEmpty(allJiraIssue)) {
 				//start : for azure board sprint details collections empty so that we have to prepare data from jira issue
 				Map<String, List<JiraIssue>> projectWiseJiraIssues = allJiraIssue.stream()
 						.collect(Collectors.groupingBy(JiraIssue::getBasicProjectConfigId));
@@ -212,13 +216,10 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 					.of(node.getProjectFilter().getBasicProjectConfigId().toString(), currentSprintComponentId);
 
 			Map<String, List<JiraIssue>> currentSprintLeafVelocityMap = new HashMap<>();
-			double sprintVelocityForCurrentLeaf = 0.0d;
-			if (CollectionUtils.isNotEmpty(sprintWiseIssues.get(currentNodeIdentifier))) {
-				List<JiraIssue> sprintJiraIssues = sprintWiseIssues.get(currentNodeIdentifier);
-				sprintVelocityForCurrentLeaf = sprintJiraIssues.stream()
-						.mapToDouble(ji -> Double.valueOf(ji.getEstimate())).sum();
-				populateValidationDataObject(kpiElement, requestTrackerId, validationDataMap, sprintJiraIssues, node);
-			}
+			double sprintVelocityForCurrentLeaf = calculateSprintVelocityValue(sprintWiseEstimate, currentNodeIdentifier,
+					sprintWiseIssues);
+			populateValidationDataObject(kpiElement, requestTrackerId, validationDataMap, sprintWiseIssues, node,
+					sprintWiseEstimate, currentNodeIdentifier);
 
 			setSprintWiseLogger(node.getSprintFilter().getName(), currentSprintLeafVelocityMap.get(SPRINTVELOCITYKEY),
 					sprintVelocityForCurrentLeaf);
@@ -237,28 +238,58 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 		});
 	}
 
+	private double calculateSprintVelocityValue(Map<Pair<String, String>, Map<String, Double>> sprintWiseEstimate, Pair<String, String> currentNodeIdentifier, Map<Pair<String, String>, List<JiraIssue>> sprintJiraIssues) {
+		double sprintVelocityForCurrentLeaf = 0.0d;
+		if (CollectionUtils.isNotEmpty(sprintJiraIssues.get(currentNodeIdentifier))) {
+			List<JiraIssue> jiraIssueList = sprintJiraIssues.get(currentNodeIdentifier);
+			sprintVelocityForCurrentLeaf = jiraIssueList.stream().mapToDouble(ji -> Double.valueOf(ji.getEstimate()))
+					.sum();
+		} else {
+			if (MapUtils.isNotEmpty(sprintWiseEstimate.get(currentNodeIdentifier))) {
+				Map<String, Double> storyWiseStoryPoints = sprintWiseEstimate.get(currentNodeIdentifier);
+				for (Map.Entry<String, Double> map : storyWiseStoryPoints.entrySet()) {
+					sprintVelocityForCurrentLeaf = sprintVelocityForCurrentLeaf
+							+ Optional.ofNullable(map.getValue()).orElse(0.0d).doubleValue();
+				}
+			}
+
+		}
+		return sprintVelocityForCurrentLeaf;
+	}
+
 	/**
 	 * Populates Validation Data Object
-	 * 
 	 * @param kpiElement
 	 * @param requestTrackerId
 	 * @param validationDataMap
-	 * @param jiraIssues
+	 * @param sprintWiseIssues
 	 * @param node
+	 * @param sprintWiseEstimate
+	 * @param currentNodeIdentifier
 	 */
 	private void populateValidationDataObject(KpiElement kpiElement, String requestTrackerId,
-			Map<String, ValidationData> validationDataMap, List<JiraIssue> jiraIssues,
-			Node node) {
+											  Map<String, ValidationData> validationDataMap, Map<Pair<String, String>, List<JiraIssue>> sprintWiseIssues,
+											  Node node, Map<Pair<String, String>, Map<String, Double>> sprintWiseEstimate, Pair<String, String> currentNodeIdentifier) {
 
 		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-
 			List<String> defectKeyList = new ArrayList<>();
 			List<String> storyPointList = new ArrayList<>();
 
-			for (JiraIssue jiraIssue : jiraIssues) {
+			if (CollectionUtils.isNotEmpty(sprintWiseIssues.get(currentNodeIdentifier))) {
+				List<JiraIssue> jiraIssues = sprintWiseIssues.get(currentNodeIdentifier);
+				for (JiraIssue jiraIssue : jiraIssues) {
+					defectKeyList.add(jiraIssue.getNumber());
+					storyPointList.add(jiraIssue.getEstimate());
+				}
+			} else {
+				if (MapUtils.isNotEmpty(sprintWiseEstimate)
+						&& MapUtils.isNotEmpty(sprintWiseEstimate.get(currentNodeIdentifier))) {
+					for (Map.Entry<String, Double> storyWiseStoryPointns : sprintWiseEstimate.get(currentNodeIdentifier).entrySet()) {
+						defectKeyList.add(storyWiseStoryPointns.getKey());
+						storyPointList.add(Optional.ofNullable(storyWiseStoryPointns.getValue()).orElse(0.0).toString());
+					}
 
-				defectKeyList.add(jiraIssue.getNumber());
-				storyPointList.add(jiraIssue.getEstimate());
+				}
 			}
 
 			String keyForValidation = node.getSprintFilter().getName();
