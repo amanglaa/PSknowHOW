@@ -1263,42 +1263,16 @@ public class KpiHelperService { // NOPMD
 		}
 	}
 
-	private static void getDefectsWoDrop(Map<String, Map<String,List<String>>> droppedDefects, Set<JiraIssue> defectListWoDropSet, JiraIssue jiraIssue) {
-		if (!StringUtils.isBlank(jiraIssue.getStatus())) {
-			Map<String,List<String>> defectStatus = droppedDefects.get(jiraIssue.getBasicProjectConfigId());
-			if (null != defectStatus && !defectStatus.isEmpty()) {
-				if (CollectionUtils.isNotEmpty(defectStatus.get(Constant.DEFECT_REJECTION_STATUS))
-						&& CollectionUtils.isNotEmpty(defectStatus.get(Constant.RESOLUTION_TYPE_FOR_REJECTION))) {
-					if (StringUtils.isNotEmpty(jiraIssue.getStatus()) &&
-							!defectStatus.get(Constant.DEFECT_REJECTION_STATUS).contains(jiraIssue.getStatus())) {
-						if (StringUtils.isNotEmpty(jiraIssue.getResolution()) &&
-								!defectStatus.get(Constant.RESOLUTION_TYPE_FOR_REJECTION).contains(jiraIssue.getResolution())) {
-							defectListWoDropSet.add(jiraIssue);
-						}else{
-							defectListWoDropSet.add(jiraIssue);
-						}
-					}
-					if (StringUtils.isNotEmpty(jiraIssue.getResolution()) &&
-							!defectStatus.get(Constant.RESOLUTION_TYPE_FOR_REJECTION).contains(jiraIssue.getResolution())) {
-						if (StringUtils.isNotEmpty(jiraIssue.getStatus()) &&
-								!defectStatus.get(Constant.DEFECT_REJECTION_STATUS).contains(jiraIssue.getStatus())) {
-							defectListWoDropSet.add(jiraIssue);
-						}else{
-							defectListWoDropSet.add(jiraIssue);
-						}
-					}
-				} else if (CollectionUtils.isEmpty(defectStatus.get(Constant.DEFECT_REJECTION_STATUS)) &&
-						CollectionUtils.isNotEmpty(defectStatus.get(Constant.RESOLUTION_TYPE_FOR_REJECTION)) &&
-						!defectStatus.get(Constant.RESOLUTION_TYPE_FOR_REJECTION).contains(jiraIssue.getResolution())) {
-					defectListWoDropSet.add(jiraIssue);
-				} else if (CollectionUtils.isEmpty(defectStatus.get(Constant.RESOLUTION_TYPE_FOR_REJECTION)) &&
-						CollectionUtils.isNotEmpty(defectStatus.get(Constant.DEFECT_REJECTION_STATUS)) &&
-						!defectStatus.get(Constant.DEFECT_REJECTION_STATUS).contains(jiraIssue.getStatus())) {
-					defectListWoDropSet.add(jiraIssue);
-				}
-			} else {
+	private static void getDefectsWoDrop(Map<String, Map<String, List<String>>> droppedDefects, Set<JiraIssue> defectListWoDropSet, JiraIssue jiraIssue) {
+		Map<String, List<String>> defectStatus = droppedDefects.get(jiraIssue.getBasicProjectConfigId());
+		if (null != defectStatus && !defectStatus.isEmpty()) {
+			List<String> rejectedDefect = defectStatus.getOrDefault(Constant.DEFECT_REJECTION_STATUS, new ArrayList<>());
+			List<String> resolutionTypeForRejection = defectStatus.getOrDefault(Constant.RESOLUTION_TYPE_FOR_REJECTION, new ArrayList<>());
+			if (!rejectedDefect.contains(jiraIssue.getStatus()) && !resolutionTypeForRejection.contains(jiraIssue.getResolution())) {
 				defectListWoDropSet.add(jiraIssue);
 			}
+		} else {
+			defectListWoDropSet.add(jiraIssue);
 		}
 	}
 
