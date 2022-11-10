@@ -1263,11 +1263,11 @@ db.getCollection('kpi_master').insert(
         },
         {
           "type": "paragraph",
-          "value": "Estimated Hours: It explains the total hours required to complete Sprint backlog"
+          "value": "Estimated Hours: It explains the total hours required to complete Sprint backlog. The capacity is defined in KnowHOW"
         },
         {
           "type": "paragraph",
-          "value": "Logged Work: The amount of time team has logged within a Sprint"
+          "value": "Logged Work: The amount of time team has logged within a Sprint. It is derived as sum of all logged work against issues tagged to a Sprint in Jira"
         }
       ]
     },
@@ -1849,8 +1849,7 @@ db.getCollection('kpi_master').insert(
     "showTrend": true,
     "aggregationCriteria": "sum",
     "isAdditionalFilterSupport": false,
-    "calculateMaturity": false,
-    "maturityRange": ["-1","1-2","2-5","5-10","10-"]
+    "calculateMaturity": false
   },
   {
     "kpiId": "kpi113",
@@ -2897,7 +2896,7 @@ db.getCollection('kpi_master').insert(
     "kpiId": "kpi121",
     "kpiName": "Capacity",
     "maxValue": "",
-    "kpiUnit": "Hours",
+    "kpiUnit": "",
     "isDeleted": "False",
     "defaultOrder": 2,
     "kpiCategory": "Iteration",
@@ -2910,7 +2909,7 @@ db.getCollection('kpi_master').insert(
       "details": [
         {
           "type": "paragraph",
-          "value": "Planned capacity is the development team's available time represented in Hours."
+          "value": "Planned capacity is the development team's available time."
         },
         {
           "type": "paragraph",

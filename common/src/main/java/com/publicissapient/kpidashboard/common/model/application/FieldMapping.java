@@ -48,14 +48,12 @@ public class FieldMapping extends BasicModel {
 
 	private ObjectId projectToolConfigId;
 	private ObjectId basicProjectConfigId;
-	private String projectId;
 	private String sprintName;
 	private String epicName;
 	private List<String> jiradefecttype;
 
 	// defectPriority
 	private List<String> defectPriority;
-	private String[] jiraIssueTypeNames;
 	private List<String> jiraIssueEpicType;
 	private String storyFirstStatus;
 	private String envImpacted;
@@ -68,7 +66,6 @@ public class FieldMapping extends BasicModel {
 	private List<String> jiraDefectInjectionIssueType;
 	private List<String> jiraDod;
 	private String jiraDefectCreatedStatus;
-	private List<String> jiraTechDebtIssueType;
 	private String jiraTechDebtIdentification;
 	private String jiraTechDebtCustomField;
 	private List<String> jiraTechDebtValue;
@@ -80,7 +77,6 @@ public class FieldMapping extends BasicModel {
 	private List<String> jiraDefectRemovalStatus;
 	private List<String> jiraDefectRemovalIssueType;
 	private List<String> regressionAutomationFolderPath;// TODO delete this field
-	private List<String> inSprintAutomationFolderPath;// TODO delete this field
 	/**
 	 * Device Platform (iOS/Android/Desktop)
 	 */
@@ -109,8 +105,6 @@ public class FieldMapping extends BasicModel {
 
 	private String jiraLiveStatus;
 
-	private List<String> regressionAutomationLabels;// TODO delete this field
-
 	private List<String> ticketCountIssueType;
 
 	private List<String> kanbanRCACountIssueType;
@@ -118,33 +112,15 @@ public class FieldMapping extends BasicModel {
 	private List<String> jiraTicketVelocityIssueType;
 
 	private List<String> ticketDeliverdStatus;
-
-	private List<String> ticketReopenStatus;
-
-	private List<String> kanbanJiraTechDebtIssueType;
-
-	private List<String> jiraTicketResolvedStatus;
 	private List<String> jiraTicketClosedStatus;
 	private List<String> kanbanCycleTimeIssueType;
 	private List<String> jiraTicketTriagedStatus;
-	private List<String> jiraTicketWipStatus;
 	private List<String> jiraTicketRejectedStatus;
 
 	private String jiraStatusMappingCustomField;
-
-	private List<String> rootCauseValue;
 	private List<String> excludeRCAFromFTPR;
 
-	// For Lloyds KPIs
-	private List<String> jiraDorToLiveIssueType;
-	private List<String> jiraProductiveStatus;
-
-	private List<String> jiraCommitmentReliabilityIssueType;
-
 	private List<String> resolutionTypeForRejection;
-
-	private List<String> jiraWasteStatus;
-	private List<String> qaRootCauseValue;
 	private List<String> jiraQADefectDensityIssueType;
 	private String jiraBugRaisedByQACustomField;
 	private String jiraBugRaisedByQAIdentification;
@@ -152,41 +128,27 @@ public class FieldMapping extends BasicModel {
 	private List<String> jiraDefectDroppedStatus;
 
 	// Epic custom Field mapping
-	private String epicCostOfDelay;
 	private String epicRiskReduction;
 	private String epicUserBusinessValue;
 	private String epicWsjf;
 	private String epicTimeCriticality;
 	private String epicJobSize;
 
-	// Squad Mapping
-	private String squadIdentifier;
-	private List<String> squadIdentMultiValue;
-	private String squadIdentSingleValue;
-
 	// Production Defect Mapping
 	private String productionDefectCustomField;
 	private String productionDefectIdentifier;
 	private List<String> productionDefectValue;
 	private String productionDefectComponentValue;
-
-	// testCaseMapping
-	private String[] jiraTestCaseType;
 	private String testAutomatedIdentification;
 	private String testAutomationCompletedIdentification;
-	private String testRegressionIdentification;
 	private String testAutomated;
 	private String testAutomationCompletedByCustomField;
-	private String testRegressionByCustomField;
 	private List<String> jiraAutomatedTestValue;
 	private List<String> jiraRegressionTestValue;
 	private List<String> jiraCanBeAutomatedTestValue;
 	private List<String> testCaseStatus;
 	@Builder.Default
 	private String estimationCriteria = "Story Point";
-
-	@Builder.Default
-	private Double storyPointToHourMapping = 8D;
 
 	@Builder.Default
 	private Double workingHoursDayCPT = 6D;
@@ -196,43 +158,5 @@ public class FieldMapping extends BasicModel {
 
 	// issue status to exclude missing worklogs
 	private List<String> issueStatusExcluMissingWork;
-
-	/**
-	 * Get jira issue type names string [ ].
-	 *
-	 * @return the string [ ]
-	 */
-	public String[] getJiraIssueTypeNames() {
-		return jiraIssueTypeNames == null ? null : jiraIssueTypeNames.clone();
-	}
-
-	/**
-	 * Sets jira issue type names.
-	 *
-	 * @param jiraIssueTypeNames
-	 *            the jira issue type names
-	 */
-	public void setJiraIssueTypeNames(String[] jiraIssueTypeNames) {
-		this.jiraIssueTypeNames = jiraIssueTypeNames == null ? null : jiraIssueTypeNames.clone();
-	}
-
-	/**
-	 * Get jira test case type string [ ].
-	 *
-	 * @return the string [ ]
-	 */
-	public String[] getJiraTestCaseType() {
-		return jiraTestCaseType == null ? null : jiraTestCaseType.clone();
-	}
-
-	/**
-	 * Sets jira test case type.
-	 *
-	 * @param jiraTestCaseType
-	 *            the jira test case type
-	 */
-	public void setJiraTestCaseType(String[] jiraTestCaseType) {
-		this.jiraTestCaseType = jiraTestCaseType == null ? null : jiraTestCaseType.clone();
-	}
 
 }

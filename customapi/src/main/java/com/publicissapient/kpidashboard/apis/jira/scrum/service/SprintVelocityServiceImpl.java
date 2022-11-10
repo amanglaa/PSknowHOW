@@ -24,13 +24,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-import lombok.extern.slf4j.Slf4j;
-
+import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
+import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -46,10 +44,14 @@ import com.publicissapient.kpidashboard.apis.model.KpiElement;
 import com.publicissapient.kpidashboard.apis.model.KpiRequest;
 import com.publicissapient.kpidashboard.apis.model.Node;
 import com.publicissapient.kpidashboard.apis.model.TreeAggregatorDetail;
+import com.publicissapient.kpidashboard.apis.util.KpiDataHelper;
+import com.publicissapient.kpidashboard.common.constant.CommonConstant;
 import com.publicissapient.kpidashboard.common.model.application.DataCount;
 import com.publicissapient.kpidashboard.common.model.application.ValidationData;
 import com.publicissapient.kpidashboard.common.model.jira.JiraIssue;
 import com.publicissapient.kpidashboard.common.model.jira.SprintDetails;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This class calculates the DRR and trend analysis of the DRR.
@@ -204,10 +206,12 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 							.put(Pair.of(basicProjectConfigId, sprintId), sprintWiseIssuesList));
 				});
 			}
-			// end : for azure board sprint details collections empty so that we have to prepare data from jira issue.
+			// end : for azure board sprint details collections empty so that we have to
+			// prepare data from jira issue.
 		}
 
-		Map<String, ValidationData> validationDataMap = new HashMap<>();
+		// Map<String, ValidationData> validationDataMap = new HashMap<>();
+		List<KPIExcelData> excelData = new ArrayList<>();
 		sprintLeafNodeList.forEach(node -> {
 			// Leaf node wise data
 			String trendLineName = node.getProjectFilter().getName();
@@ -220,6 +224,14 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 					sprintWiseIssues);
 			populateValidationDataObject(kpiElement, requestTrackerId, validationDataMap, sprintWiseIssues, node,
 					sprintWiseEstimate, currentNodeIdentifier);
+
+			double sprintVelocityForCurrentLeaf = 0.0d;
+			if (CollectionUtils.isNotEmpty(sprintWiseIssues.get(currentNodeIdentifier))) {
+				List<JiraIssue> sprintJiraIssues = sprintWiseIssues.get(currentNodeIdentifier);
+				sprintVelocityForCurrentLeaf = sprintJiraIssues.stream()
+						.mapToDouble(ji -> Double.valueOf(ji.getEstimate())).sum();
+				populateExcelDataObject(requestTrackerId, excelData, sprintJiraIssues, node);
+			}
 
 			setSprintWiseLogger(node.getSprintFilter().getName(), currentSprintLeafVelocityMap.get(SPRINTVELOCITYKEY),
 					sprintVelocityForCurrentLeaf);
@@ -236,6 +248,8 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 			mapTmp.get(node.getId()).setValue(new ArrayList<DataCount>(Arrays.asList(dataCount)));
 			trendValueList.add(dataCount);
 		});
+		kpiElement.setExcelData(excelData);
+		kpiElement.setExcelColumns(KPIExcelColumn.SPRINT_VELOCITY.getColumns());
 	}
 
 	private double calculateSprintVelocityValue(Map<Pair<String, String>, Map<String, Double>> sprintWiseEstimate, Pair<String, String> currentNodeIdentifier, Map<Pair<String, String>, List<JiraIssue>> sprintJiraIssues) {
@@ -351,4 +365,24 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 	public Double calculateKpiValue(List<Double> valueList, String kpiName) {
 		return calculateKpiValueForDouble(valueList, kpiName);
 	}
+
+	/**
+	 * Populates Validation Data Object
+	 *
+	 * @param requestTrackerId
+	 * @param jiraIssues
+	 * @param node
+	 */
+	private void populateExcelDataObject(String requestTrackerId, List<KPIExcelData> excelData,
+										 List<JiraIssue> jiraIssues, Node node) {
+
+		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
+			String sprintName = node.getSprintFilter().getName();
+
+			Map<String, JiraIssue> totalSprintStoryMap = new HashMap<>();
+			jiraIssues.stream().forEach(issue -> totalSprintStoryMap.putIfAbsent(issue.getNumber(), issue));
+			KPIExcelUtility.populateSprintVelocity(sprintName, totalSprintStoryMap, excelData);
+		}
+	}
+
 }

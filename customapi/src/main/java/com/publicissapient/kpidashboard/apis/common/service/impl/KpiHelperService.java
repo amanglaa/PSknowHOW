@@ -35,9 +35,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -77,6 +75,7 @@ import com.publicissapient.kpidashboard.common.repository.excel.KanbanCapacityRe
 import com.publicissapient.kpidashboard.common.repository.jira.JiraIssueCustomHistoryRepository;
 import com.publicissapient.kpidashboard.common.repository.jira.JiraIssueRepository;
 import com.publicissapient.kpidashboard.common.repository.jira.KanbanJiraIssueHistoryRepository;
+import com.publicissapient.kpidashboard.common.repository.jira.KanbanJiraIssueRepository;
 import com.publicissapient.kpidashboard.common.repository.jira.SprintRepository;
 import com.publicissapient.kpidashboard.common.repository.kpivideolink.KPIVideoLinkRepository;
 
@@ -103,6 +102,7 @@ public class KpiHelperService { // NOPMD
 	private static final String FIELD_PRIORITY = "priority";
 	private static final String FIELD_RCA = "rca";
 	private static final String SPRINT_WISE_SPRINTDETAILS = "sprintWiseSprintDetailMap";
+	private static final String ISSUE_DATA = "issueData";
 	private static final String TOTAL_ISSUE_WITH_STORYPOINTS = "totalIssueWithStoryPoints";
 
 
@@ -138,6 +138,9 @@ public class KpiHelperService { // NOPMD
 
 	@Autowired
 	private FilterHelperService flterHelperService;
+
+	@Autowired
+	private KanbanJiraIssueRepository kanbanJiraIssueRepository;
 
 	/**
 	 * Prepares Kpi Elemnts on the basis of kpi master data.
@@ -303,10 +306,16 @@ public class KpiHelperService { // NOPMD
 
 		// Fetch Defects linked with story ID's
 		List<JiraIssue> defectDataList = jiraIssueRepository.findIssuesByType(mapOfFiltersWithStoryIds);
+
+		//fetch jira issue based on jira number
+		Set<JiraIssue> issueData=jiraIssueRepository.findIssueAndDescByNumber(storyIdList);
+		Map<String, JiraIssue> issueMapping = new HashMap<>();
+		issueData.stream().forEach(issue -> issueMapping.putIfAbsent(issue.getNumber(), issue));
 		List<JiraIssue> defectListWoDrop = new ArrayList<>();
 		getDefectsWithoutDrop(droppedDefects, defectDataList, defectListWoDrop);
 		resultListMap.put(STORY_DATA, sprintWiseStoryList);
 		resultListMap.put(DEFECT_DATA, defectListWoDrop);
+		resultListMap.put(ISSUE_DATA, issueMapping);
 
 		return resultListMap;
 	}
@@ -448,7 +457,7 @@ public class KpiHelperService { // NOPMD
 
 		Map<Pair<String,String>, Map<String, Double>> totalIssue = new HashMap<>();
 		if (CollectionUtils.isNotEmpty(sprintDetails)) {
-			
+
 			sprintDetails.stream().forEach(sprintDetail -> {
 
 				if (CollectionUtils.isNotEmpty(sprintDetail.getTotalIssues())) {
@@ -702,14 +711,14 @@ public class KpiHelperService { // NOPMD
 				DEV, flterHelperService);
 		mapOfFilters.put(JiraFeatureHistory.BASIC_PROJECT_CONFIG_ID.getFieldValueInFeature(),
 				projectList.stream().distinct().collect(Collectors.toList()));
-		resultListMap.put(SUBGROUPCATEGORY, subGroupCategory);
 
+		List<KanbanIssueCustomHistory> issuesByCreatedDateAndType = kanbanJiraIssueHistoryRepository
+				.findIssuesByCreatedDateAndType(mapOfFilters, uniqueProjectMap, startDate, endDate);
+		resultListMap.put(SUBGROUPCATEGORY, subGroupCategory);
 		resultListMap.put(PROJECT_WISE_ISSUE_TYPES, projectWiseIssueTypeMap);
 		resultListMap.put(PROJECT_WISE_CLOSED_STORY_STATUS, projectWiseClosedStatusMap);
 		resultListMap.put(PROJECT_WISE_OPEN_STORY_STATUS, projectWiseOpenStatusMap);
-		resultListMap.put(JIRA_ISSUE_HISTORY_DATA, kanbanJiraIssueHistoryRepository
-				.findIssuesByCreatedDateAndType(mapOfFilters, uniqueProjectMap, startDate, endDate));
-
+		resultListMap.put(JIRA_ISSUE_HISTORY_DATA, issuesByCreatedDateAndType);
 		return resultListMap;
 	}
 
@@ -1305,6 +1314,18 @@ public class KpiHelperService { // NOPMD
 
 		sprintWiseStories.forEach(sprintWiseStory -> sprintWiseStory.getStoryList()
 				.removeIf(storyId -> !acceptedStoryIds.contains(storyId)));
+	}
+
+	/**
+	 * Fetchs kpi fieldmapping list KpiFieldMapping response.
+	 *
+	 * @return the KpiFieldMapping response
+	 */
+	public KPIFieldMappingResponse fetchKpiFieldMappingList() {
+		List<KPIFieldMapping> lisOfKpiFieldMapping = (List<KPIFieldMapping>) configHelperService.loadKpiFieldMapping();
+		KPIFieldMappingResponse kpiFieldMappingResponse = new KPIFieldMappingResponse();
+		kpiFieldMappingResponse.setKpiFieldMappingList(lisOfKpiFieldMapping);
+		return kpiFieldMappingResponse;
 	}
 
 }
