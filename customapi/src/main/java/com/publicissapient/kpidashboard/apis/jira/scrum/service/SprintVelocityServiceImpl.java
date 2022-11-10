@@ -66,6 +66,7 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 	private static final String SPRINT_WISE_SPRINTDETAILS = "sprintWiseSprintDetailMap";
 	private static final String PROJECT_WISE_CLOSED_STATUS_MAP = "projectWiseClosedStatusMap";
 	private static final String PROJECT_WISE_TYPE_NAME_MAP = "projectWiseTypeNameMap";
+	private static final String TOTAL_ISSUE_WITH_STORYPOINTS = "totalIssueWithStoryPoints";
 	@Autowired
 	private KpiHelperService kpiHelperService;
 	@Autowired
@@ -181,33 +182,17 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 		Map<Pair<String, String>, Map<String,Double>> sprintWiseEstimate = new HashMap<>();
 
 		List<SprintDetails> sprintDetails = (List<SprintDetails>) sprintVelocityStoryMap.get(SPRINT_WISE_SPRINTDETAILS);
-		Map<String, List<String>> closedStatusMap = (Map<String, List<String>>) sprintVelocityStoryMap.get(PROJECT_WISE_CLOSED_STATUS_MAP);
-		Map<String, List<String>> typeNameMap = (Map<String, List<String>>) sprintVelocityStoryMap.get(PROJECT_WISE_TYPE_NAME_MAP);
 
-		if(CollectionUtils.isNotEmpty(allJiraIssue)) {
 			if (CollectionUtils.isNotEmpty(sprintDetails)) {
 				sprintDetails.forEach(sd -> {
-					List<String> closedStatus = closedStatusMap.getOrDefault(sd.getBasicProjectConfigId().toString(),
-							new ArrayList<>());
-					List<String> typeName = typeNameMap.getOrDefault(sd.getBasicProjectConfigId().toString(),
-							new ArrayList<>());
-
-					Map<String, Double> totalIssues = new HashMap<>();
-					sd.getTotalIssues().stream().forEach(sprintIssue -> {
-						if (closedStatus.contains(sprintIssue.getStatus()) && typeName.contains(sprintIssue.getTypeName())) {
-							totalIssues.putIfAbsent(sprintIssue.getNumber(), sprintIssue.getStoryPoints());
-						}
-					});
-					List<JiraIssue> sprintIssues = allJiraIssue.stream()
-							.filter(element -> totalIssues.containsKey(element.getNumber()))
-							.collect(Collectors.toList());
-					sprintWiseIssues.put(Pair.of(sd.getBasicProjectConfigId().toString(), sd.getSprintID()),
-							sprintIssues);
+					Map<Pair<String, String>, Map<String, Double>> sprintWiseNumberStoryMap = (Map<Pair<String, String>, Map<String, Double>>) sprintVelocityStoryMap.get(TOTAL_ISSUE_WITH_STORYPOINTS);
+					Map<String, Double> storyWiseStoryPoint = sprintWiseNumberStoryMap.get((Pair.of(sd.getBasicProjectConfigId().toString(), sd.getSprintID())));
 					sprintWiseEstimate.put(Pair.of(sd.getBasicProjectConfigId().toString(), sd.getSprintID()),
-							totalIssues);
+							storyWiseStoryPoint);
 
 				});
 			} else {
+				if(CollectionUtils.isNotEmpty(allJiraIssue)) {
 				//start : for azure board sprint details collections empty so that we have to prepare data from jira issue
 				Map<String, List<JiraIssue>> projectWiseJiraIssues = allJiraIssue.stream()
 						.collect(Collectors.groupingBy(JiraIssue::getBasicProjectConfigId));
@@ -231,12 +216,10 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 					.of(node.getProjectFilter().getBasicProjectConfigId().toString(), currentSprintComponentId);
 
 			Map<String, List<JiraIssue>> currentSprintLeafVelocityMap = new HashMap<>();
-			double sprintVelocityForCurrentLeaf = 0.0d;
-			if (CollectionUtils.isNotEmpty(sprintWiseIssues.get(currentNodeIdentifier))) {
-				List<JiraIssue> sprintJiraIssues = sprintWiseIssues.get(currentNodeIdentifier);
-				sprintVelocityForCurrentLeaf = calculateSprintVelocityValue(sprintWiseEstimate, currentNodeIdentifier, sprintJiraIssues);
-				populateValidationDataObject(kpiElement, requestTrackerId, validationDataMap, sprintJiraIssues, node,sprintWiseEstimate,currentNodeIdentifier);
-			}
+			double sprintVelocityForCurrentLeaf = calculateSprintVelocityValue(sprintWiseEstimate, currentNodeIdentifier,
+					sprintWiseIssues);
+			populateValidationDataObject(kpiElement, requestTrackerId, validationDataMap, sprintWiseIssues, node,
+					sprintWiseEstimate, currentNodeIdentifier);
 
 			setSprintWiseLogger(node.getSprintFilter().getName(), currentSprintLeafVelocityMap.get(SPRINTVELOCITYKEY),
 					sprintVelocityForCurrentLeaf);
@@ -255,18 +238,21 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 		});
 	}
 
-	private double calculateSprintVelocityValue(Map<Pair<String, String>, Map<String, Double>> sprintWiseEstimate, Pair<String, String> currentNodeIdentifier, List<JiraIssue> sprintJiraIssues) {
-		double sprintVelocityForCurrentLeaf = 0.0;
-		if (MapUtils.isNotEmpty(sprintWiseEstimate)
-				&& MapUtils.isNotEmpty(sprintWiseEstimate.get(currentNodeIdentifier))) {
-			Map<String, Double> stringDoubleMap = sprintWiseEstimate.get(currentNodeIdentifier);
-			for (JiraIssue jiraIssue : sprintJiraIssues) {
-				sprintVelocityForCurrentLeaf = sprintVelocityForCurrentLeaf
-						+ Optional.ofNullable(stringDoubleMap.get(jiraIssue.getNumber())).orElse(0.0);
-			}
-		} else {
-			sprintVelocityForCurrentLeaf = sprintJiraIssues.stream().mapToDouble(ji -> Double.valueOf(ji.getEstimate()))
+	private double calculateSprintVelocityValue(Map<Pair<String, String>, Map<String, Double>> sprintWiseEstimate, Pair<String, String> currentNodeIdentifier, Map<Pair<String, String>, List<JiraIssue>> sprintJiraIssues) {
+		double sprintVelocityForCurrentLeaf = 0.0d;
+		if (CollectionUtils.isNotEmpty(sprintJiraIssues.get(currentNodeIdentifier))) {
+			List<JiraIssue> jiraIssueList = sprintJiraIssues.get(currentNodeIdentifier);
+			sprintVelocityForCurrentLeaf = jiraIssueList.stream().mapToDouble(ji -> Double.valueOf(ji.getEstimate()))
 					.sum();
+		} else {
+			if (MapUtils.isNotEmpty(sprintWiseEstimate.get(currentNodeIdentifier))) {
+				Map<String, Double> storyWiseStoryPoints = sprintWiseEstimate.get(currentNodeIdentifier);
+				for (Map.Entry<String, Double> map : storyWiseStoryPoints.entrySet()) {
+					sprintVelocityForCurrentLeaf = sprintVelocityForCurrentLeaf
+							+ Optional.ofNullable(map.getValue()).orElse(0.0d).doubleValue();
+				}
+			}
+
 		}
 		return sprintVelocityForCurrentLeaf;
 	}
@@ -276,30 +262,33 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 	 * @param kpiElement
 	 * @param requestTrackerId
 	 * @param validationDataMap
-	 * @param jiraIssues
+	 * @param sprintWiseIssues
 	 * @param node
 	 * @param sprintWiseEstimate
 	 * @param currentNodeIdentifier
 	 */
 	private void populateValidationDataObject(KpiElement kpiElement, String requestTrackerId,
-											  Map<String, ValidationData> validationDataMap, List<JiraIssue> jiraIssues,
+											  Map<String, ValidationData> validationDataMap, Map<Pair<String, String>, List<JiraIssue>> sprintWiseIssues,
 											  Node node, Map<Pair<String, String>, Map<String, Double>> sprintWiseEstimate, Pair<String, String> currentNodeIdentifier) {
 
 		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
 			List<String> defectKeyList = new ArrayList<>();
 			List<String> storyPointList = new ArrayList<>();
 
-			if(MapUtils.isNotEmpty(sprintWiseEstimate) && MapUtils.isNotEmpty(sprintWiseEstimate.get(currentNodeIdentifier))){
-				Map<String, Double> sprintWiseStoryPointnsMap = sprintWiseEstimate.get(currentNodeIdentifier);
-				for (JiraIssue jiraIssue : jiraIssues) {
-					defectKeyList.add(jiraIssue.getNumber());
-					storyPointList.add(Optional.ofNullable(sprintWiseStoryPointnsMap.get(jiraIssue.getNumber())).orElse(0.0).toString());
-				}
-			}
-			else {
+			if (CollectionUtils.isNotEmpty(sprintWiseIssues.get(currentNodeIdentifier))) {
+				List<JiraIssue> jiraIssues = sprintWiseIssues.get(currentNodeIdentifier);
 				for (JiraIssue jiraIssue : jiraIssues) {
 					defectKeyList.add(jiraIssue.getNumber());
 					storyPointList.add(jiraIssue.getEstimate());
+				}
+			} else {
+				if (MapUtils.isNotEmpty(sprintWiseEstimate)
+						&& MapUtils.isNotEmpty(sprintWiseEstimate.get(currentNodeIdentifier))) {
+					for (Map.Entry<String, Double> storyWiseStoryPointns : sprintWiseEstimate.get(currentNodeIdentifier).entrySet()) {
+						defectKeyList.add(storyWiseStoryPointns.getKey());
+						storyPointList.add(Optional.ofNullable(storyWiseStoryPointns.getValue()).orElse(0.0).toString());
+					}
+
 				}
 			}
 

@@ -35,7 +35,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -101,8 +103,7 @@ public class KpiHelperService { // NOPMD
 	private static final String FIELD_PRIORITY = "priority";
 	private static final String FIELD_RCA = "rca";
 	private static final String SPRINT_WISE_SPRINTDETAILS = "sprintWiseSprintDetailMap";
-	private static final String PROJECT_WISE_CLOSED_STATUS_MAP = "projectWiseClosedStatusMap";
-	private static final String PROJECT_WISE_TYPE_NAME_MAP = "projectWiseTypeNameMap";
+	private static final String TOTAL_ISSUE_WITH_STORYPOINTS = "totalIssueWithStoryPoints";
 
 
 	private static final String FIELD_STATUS = "status";
@@ -444,18 +445,28 @@ public class KpiHelperService { // NOPMD
 		});
 
 		List<SprintDetails> sprintDetails = sprintRepository.findBySprintIDIn(sprintList);
-		Set<String> totalIssue = new HashSet<>();
+
+		Map<Pair<String,String>, Map<String, Double>> totalIssue = new HashMap<>();
 		if (CollectionUtils.isNotEmpty(sprintDetails)) {
+			
 			sprintDetails.stream().forEach(sprintDetail -> {
+
 				if (CollectionUtils.isNotEmpty(sprintDetail.getTotalIssues())) {
+
 					List<String> closedStatus = closedStatusMap.getOrDefault(sprintDetail.getBasicProjectConfigId().toString(),
 							new ArrayList<>());
 					List<String> typeName = typeNameMap.getOrDefault(sprintDetail.getBasicProjectConfigId().toString(),
 							new ArrayList<>());
-					totalIssue.addAll(sprintDetail.getTotalIssues().stream().filter(sprintIssue -> {
-						return (closedStatus.contains(sprintIssue.getStatus())&&typeName.contains(sprintIssue.getTypeName()));
-					}).map(SprintIssue::getNumber).distinct().collect(Collectors.toList()));
+
+					Map<String, Double> storyWiseStoryPoint = new HashMap<>();
+					sprintDetail.getTotalIssues().stream().filter(sprintIssue -> {
+						return (closedStatus.contains(sprintIssue.getStatus())
+								&& typeName.contains(sprintIssue.getTypeName()));
+					}).forEach(sprintIssue -> storyWiseStoryPoint.putIfAbsent(sprintIssue.getNumber(), sprintIssue.getStoryPoints()));
+
+					totalIssue.put(Pair.of(sprintDetail.getBasicProjectConfigId().toString(),sprintDetail.getSprintID()),storyWiseStoryPoint);
 				}
+
 			});
 		} else {
 			mapOfFilters.put(JiraFeature.SPRINT_ID.getFieldValueInFeature(),
@@ -468,9 +479,8 @@ public class KpiHelperService { // NOPMD
 		mapOfFilters.put(JiraFeature.BASIC_PROJECT_CONFIG_ID.getFieldValueInFeature(),
 				basicProjectConfigIds.stream().distinct().collect(Collectors.toList()));
 
-		if (CollectionUtils.isNotEmpty(totalIssue)) {
-			resultListMap.put(SPRINTVELOCITYKEY,
-					jiraIssueRepository.findIssueByNumber(mapOfFilters, totalIssue, new HashMap<>()));
+		if (MapUtils.isNotEmpty(totalIssue)) {
+			resultListMap.put(TOTAL_ISSUE_WITH_STORYPOINTS,totalIssue);
 			resultListMap.put(SPRINT_WISE_SPRINTDETAILS, sprintDetails);
 		} else {
 			//start: for azure board sprint details collections put is empty due to we did not have required data of issues.
@@ -479,8 +489,6 @@ public class KpiHelperService { // NOPMD
 			resultListMap.put(SPRINTVELOCITYKEY, sprintVelocityList);
 			resultListMap.put(SPRINT_WISE_SPRINTDETAILS, null);
 		}
-		resultListMap.put(PROJECT_WISE_CLOSED_STATUS_MAP,closedStatusMap);
-		resultListMap.put(PROJECT_WISE_TYPE_NAME_MAP,typeNameMap);
 		//end: for azure board sprint details collections put is empty due to we did not have required data of issues.
 
 		return resultListMap;
