@@ -1231,14 +1231,14 @@ db.getCollection('kpi_master').insert(
     "kanban": false,
     "chartType": "line",
     "kpiInfo": {
-      "definition": "Sprint Predictability signifies who stable is a team's velocity such that it can be used in forecasting milestones in future",
+      "definition": "Sprint Predictability signifies how stable is a team's velocity such that it can be used in forecasting milestones in future",
       "formula": [
         {
           "lhs": "Sprint Predictability for a sprint",
           "operator": "division",
           "operands": [
             "sprint velocity in last sprint.",
-            "sprint velocity in last 5 sprint"
+            "sprint velocity in last n sprint"
           ]
         }
       ]
