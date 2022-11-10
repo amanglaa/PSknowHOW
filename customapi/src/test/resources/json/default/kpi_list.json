@@ -2964,7 +2964,7 @@
     "showTrend": false,
     "isSquadSupport": false,
     "kpiFilter": "multiSelectDropDown",
-    "boxType": "2_column_big",
+    "boxType": "3_column",
     "calculateMaturity": false
   },
   {
@@ -3010,7 +3010,7 @@
     "showTrend": false,
     "isSquadSupport": false,
     "kpiFilter": "multiSelectDropDown",
-    "boxType": "2_column_big",
+    "boxType": "2_column",
     "calculateMaturity": false
   },
   {
@@ -3268,7 +3268,7 @@
     "showTrend": false,
     "isSquadSupport": false,
     "kpiFilter": "multiSelectDropDown",
-    "boxType": "2_column",
+    "boxType": "3_column",
     "calculateMaturity": false
   }
 ]

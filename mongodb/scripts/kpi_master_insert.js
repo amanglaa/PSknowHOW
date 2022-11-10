@@ -3040,7 +3040,7 @@ db.getCollection('kpi_master').insert(
     "showTrend": false,
     "isAdditionalFilterSupport": false,
     "kpiFilter": "multiSelectDropDown",
-    "boxType": "2_column_big",
+    "boxType": "3_column",
     "calculateMaturity": false
   },
   {
@@ -3086,7 +3086,7 @@ db.getCollection('kpi_master').insert(
     "showTrend": false,
     "isAdditionalFilterSupport": false,
     "kpiFilter": "multiSelectDropDown",
-    "boxType": "2_column_big",
+    "boxType": "2_column",
     "calculateMaturity": false
   },
   {
@@ -3349,7 +3349,7 @@ db.getCollection('kpi_master').insert(
       "showTrend": false,
       "isSquadSupport": false,
       "kpiFilter": "multiSelectDropDown",
-      "boxType": "2_column",
+      "boxType": "3_column",
       "calculateMaturity": false
     }
 ]);
