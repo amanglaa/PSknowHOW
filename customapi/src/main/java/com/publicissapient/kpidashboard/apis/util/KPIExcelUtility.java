@@ -724,7 +724,6 @@ public class KPIExcelUtility {
             excelData.setBuildUrl(buildUrl);
             excelData.setStartTime(codeBuildTimeInfo.getBuildStartTimeList().get(i));
             excelData.setEndTime(codeBuildTimeInfo.getBuildEndTimeList().get(i));
-            excelData.setStartedBy(codeBuildTimeInfo.getStartedByList().get(i));
             excelData.setWeeks(codeBuildTimeInfo.getWeeksList().get(i));
             excelData.setBuildStatus(codeBuildTimeInfo.getBuildStatusList().get(i));
             excelData.setDuration(codeBuildTimeInfo.getDurationList().get(i));
@@ -995,7 +994,6 @@ public class KPIExcelUtility {
                 excelData.setStartTime(codeBuildTimeInfo.getBuildStartTimeList().get(i));
                 excelData.setEndTime(codeBuildTimeInfo.getBuildEndTimeList().get(i));
                 excelData.setDuration(codeBuildTimeInfo.getDurationList().get(i));
-                excelData.setStartedBy(codeBuildTimeInfo.getStartedByList().get(i));
                 Map<String, String> codeBuildUrl = new HashMap<>();
                 codeBuildUrl.put(codeBuildTimeInfo.getBuildUrlList().get(i), codeBuildTimeInfo.getBuildUrlList().get(i));
                 excelData.setBuildUrl(codeBuildUrl);

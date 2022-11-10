@@ -26,7 +26,7 @@ import java.util.List;
  */
 public enum KPIExcelColumn {
 
-    CODE_BUILD_TIME("kpi8", Arrays.asList("Project Name", "Job Name", "Start Time", "End Time", "Duration", "Build Status", "Started By", "Build Url", "Weeks")),
+    CODE_BUILD_TIME("kpi8", Arrays.asList("Project Name", "Job Name", "Start Time", "End Time", "Duration", "Build Status", "Build Url", "Weeks")),
     STORY_COUNT("kpi40", Arrays.asList("Sprint Name", "Story ID", "Issue Description")),
     CODE_COMMIT("kpi11", Arrays.asList("Project Name", "Repository Url", "Branch", "Day", "No. Of Commit", "No. of Merge")),
 
@@ -118,7 +118,7 @@ public enum KPIExcelColumn {
 			Arrays.asList("Project Name", "Day/Week/Month", "Ticket Issue ID", "Issue Type", "Size (In Story Points)")),
 
 	CODE_BUILD_TIME_KANBAN("kpi66", Arrays.asList("Project Name", "Job Name", "Start Time", "End Time", "Duration",
-			"Build Status", "Started By", "Build Url")),
+			"Build Status", "Build Url")),
 
 	CODE_COMMIT_MERGE_KANBAN("kpi65",
 			Arrays.asList("Project Name", "Repository Url", "Branch", "Day", "No. Of Commit")),
