@@ -34,8 +34,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.publicissapient.kpidashboard.apis.model.KPIFieldMappingResponse;
+import com.publicissapient.kpidashboard.common.model.application.KPIFieldMapping;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -454,6 +458,7 @@ public class KpiHelperService { // NOPMD
 		});
 
 		List<SprintDetails> sprintDetails = sprintRepository.findBySprintIDIn(sprintList);
+		Set<String> issueList= new HashSet<>();
 
 		Map<Pair<String,String>, Map<String, Double>> totalIssue = new HashMap<>();
 		if (CollectionUtils.isNotEmpty(sprintDetails)) {
@@ -471,7 +476,9 @@ public class KpiHelperService { // NOPMD
 					sprintDetail.getTotalIssues().stream().filter(sprintIssue -> {
 						return (closedStatus.contains(sprintIssue.getStatus())
 								&& typeName.contains(sprintIssue.getTypeName()));
-					}).forEach(sprintIssue -> storyWiseStoryPoint.putIfAbsent(sprintIssue.getNumber(), sprintIssue.getStoryPoints()));
+					}).forEach(sprintIssue -> {
+						issueList.add(sprintIssue.getNumber());
+						storyWiseStoryPoint.putIfAbsent(sprintIssue.getNumber(), sprintIssue.getStoryPoints());});
 
 					totalIssue.put(Pair.of(sprintDetail.getBasicProjectConfigId().toString(),sprintDetail.getSprintID()),storyWiseStoryPoint);
 				}
@@ -488,9 +495,15 @@ public class KpiHelperService { // NOPMD
 		mapOfFilters.put(JiraFeature.BASIC_PROJECT_CONFIG_ID.getFieldValueInFeature(),
 				basicProjectConfigIds.stream().distinct().collect(Collectors.toList()));
 
+
 		if (MapUtils.isNotEmpty(totalIssue)) {
 			resultListMap.put(TOTAL_ISSUE_WITH_STORYPOINTS,totalIssue);
 			resultListMap.put(SPRINT_WISE_SPRINTDETAILS, sprintDetails);
+			Set<JiraIssue> issueData=jiraIssueRepository.findIssueAndDescByNumber(new ArrayList<>(issueList));
+			Map<String, JiraIssue> issueMapping = new HashMap<>();
+			issueData.stream().forEach(issue -> issueMapping.putIfAbsent(issue.getNumber(), issue));
+			resultListMap.put(ISSUE_DATA, issueMapping);
+
 		} else {
 			//start: for azure board sprint details collections put is empty due to we did not have required data of issues.
 			List<JiraIssue> sprintVelocityList = jiraIssueRepository.findIssuesBySprintAndType(mapOfFilters,
