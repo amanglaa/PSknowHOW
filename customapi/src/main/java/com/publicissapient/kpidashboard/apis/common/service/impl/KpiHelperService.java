@@ -1265,7 +1265,7 @@ public class KpiHelperService { // NOPMD
 
 	private static void getDefectsWoDrop(Map<String, Map<String, List<String>>> droppedDefects, Set<JiraIssue> defectListWoDropSet, JiraIssue jiraIssue) {
 		Map<String, List<String>> defectStatus = droppedDefects.get(jiraIssue.getBasicProjectConfigId());
-		if (null != defectStatus && !defectStatus.isEmpty()) {
+		if (MapUtils.isNotEmpty(defectStatus)) {
 			List<String> rejectedDefect = defectStatus.getOrDefault(Constant.DEFECT_REJECTION_STATUS, new ArrayList<>());
 			List<String> resolutionTypeForRejection = defectStatus.getOrDefault(Constant.RESOLUTION_TYPE_FOR_REJECTION, new ArrayList<>());
 			if (!rejectedDefect.contains(jiraIssue.getStatus()) && !resolutionTypeForRejection.contains(jiraIssue.getResolution())) {
