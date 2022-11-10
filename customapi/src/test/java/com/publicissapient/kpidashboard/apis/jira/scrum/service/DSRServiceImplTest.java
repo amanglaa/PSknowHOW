@@ -187,7 +187,7 @@ public class DSRServiceImplTest {
 		Map<String, Object> defectDataListMap = dsrServiceImpl.fetchKPIDataFromDb(leafNodeList, startDate, endDate,
 				kpiRequest);
 		assertThat("Total Defects value :", ((List<JiraIssue>) (defectDataListMap.get(TOTALBUGKEY))).size(),
-				equalTo(0));
+				equalTo(2));
 	}
 
 	@Test
