@@ -1247,12 +1247,16 @@ public class KpiHelperService { // NOPMD
 						if (StringUtils.isNotEmpty(jiraIssue.getResolution()) &&
 								!defectStatus.get(Constant.RESOLUTION_TYPE_FOR_REJECTION).contains(jiraIssue.getResolution())) {
 							defectListWoDropSet.add(jiraIssue);
+						}else{
+							defectListWoDropSet.add(jiraIssue);
 						}
 					}
 					if (StringUtils.isNotEmpty(jiraIssue.getResolution()) &&
 							!defectStatus.get(Constant.RESOLUTION_TYPE_FOR_REJECTION).contains(jiraIssue.getResolution())) {
 						if (StringUtils.isNotEmpty(jiraIssue.getStatus()) &&
 								!defectStatus.get(Constant.DEFECT_REJECTION_STATUS).contains(jiraIssue.getStatus())) {
+							defectListWoDropSet.add(jiraIssue);
+						}else{
 							defectListWoDropSet.add(jiraIssue);
 						}
 					}
