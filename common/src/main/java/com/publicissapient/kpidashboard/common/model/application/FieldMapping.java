@@ -54,7 +54,6 @@ public class FieldMapping extends BasicModel {
 
 	// defectPriority
 	private List<String> defectPriority;
-	private String[] jiraIssueTypeNames;
 	private List<String> jiraIssueEpicType;
 	private String storyFirstStatus;
 	private String envImpacted;
@@ -140,9 +139,6 @@ public class FieldMapping extends BasicModel {
 	private String productionDefectIdentifier;
 	private List<String> productionDefectValue;
 	private String productionDefectComponentValue;
-
-	// testCaseMapping
-	private String[] jiraTestCaseType;
 	private String testAutomatedIdentification;
 	private String testAutomationCompletedIdentification;
 	private String testAutomated;
@@ -162,43 +158,5 @@ public class FieldMapping extends BasicModel {
 
 	// issue status to exclude missing worklogs
 	private List<String> issueStatusExcluMissingWork;
-
-	/**
-	 * Get jira issue type names string [ ].
-	 *
-	 * @return the string [ ]
-	 */
-	public String[] getJiraIssueTypeNames() {
-		return jiraIssueTypeNames == null ? null : jiraIssueTypeNames.clone();
-	}
-
-	/**
-	 * Sets jira issue type names.
-	 *
-	 * @param jiraIssueTypeNames
-	 *            the jira issue type names
-	 */
-	public void setJiraIssueTypeNames(String[] jiraIssueTypeNames) {
-		this.jiraIssueTypeNames = jiraIssueTypeNames == null ? null : jiraIssueTypeNames.clone();
-	}
-
-	/**
-	 * Get jira test case type string [ ].
-	 *
-	 * @return the string [ ]
-	 */
-	public String[] getJiraTestCaseType() {
-		return jiraTestCaseType == null ? null : jiraTestCaseType.clone();
-	}
-
-	/**
-	 * Sets jira test case type.
-	 *
-	 * @param jiraTestCaseType
-	 *            the jira test case type
-	 */
-	public void setJiraTestCaseType(String[] jiraTestCaseType) {
-		this.jiraTestCaseType = jiraTestCaseType == null ? null : jiraTestCaseType.clone();
-	}
 
 }
