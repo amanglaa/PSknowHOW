@@ -102,6 +102,7 @@ public class KpiHelperService { // NOPMD
 	private static final String FIELD_RCA = "rca";
 	private static final String SPRINT_WISE_SPRINTDETAILS = "sprintWiseSprintDetailMap";
 	private static final String PROJECT_WISE_CLOSED_STATUS_MAP = "projectWiseClosedStatusMap";
+	private static final String PROJECT_WISE_TYPE_NAME_MAP = "projectWiseTypeNameMap";
 
 
 	private static final String FIELD_STATUS = "status";
@@ -436,6 +437,7 @@ public class KpiHelperService { // NOPMD
 					CommonUtils.convertToPatternList(fieldMapping.getJiraIssueDeliverdStatus()));
 			closedStatusMap.put(basicProjectConfigId.toString(),fieldMapping.getJiraIssueDeliverdStatus());
 			typeNameMap.put(basicProjectConfigId.toString(),fieldMapping.getJiraSprintVelocityIssueType());
+
 			uniqueProjectMap.put(basicProjectConfigId.toString(), mapOfProjectFilters);
 
 
@@ -470,7 +472,6 @@ public class KpiHelperService { // NOPMD
 			resultListMap.put(SPRINTVELOCITYKEY,
 					jiraIssueRepository.findIssueByNumber(mapOfFilters, totalIssue, new HashMap<>()));
 			resultListMap.put(SPRINT_WISE_SPRINTDETAILS, sprintDetails);
-			resultListMap.put(PROJECT_WISE_CLOSED_STATUS_MAP,closedStatusMap);
 		} else {
 			//start: for azure board sprint details collections put is empty due to we did not have required data of issues.
 			List<JiraIssue> sprintVelocityList = jiraIssueRepository.findIssuesBySprintAndType(mapOfFilters,
@@ -478,6 +479,8 @@ public class KpiHelperService { // NOPMD
 			resultListMap.put(SPRINTVELOCITYKEY, sprintVelocityList);
 			resultListMap.put(SPRINT_WISE_SPRINTDETAILS, null);
 		}
+		resultListMap.put(PROJECT_WISE_CLOSED_STATUS_MAP,closedStatusMap);
+		resultListMap.put(PROJECT_WISE_TYPE_NAME_MAP,typeNameMap);
 		//end: for azure board sprint details collections put is empty due to we did not have required data of issues.
 
 		return resultListMap;

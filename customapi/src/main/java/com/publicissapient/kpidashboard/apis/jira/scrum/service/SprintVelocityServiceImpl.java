@@ -65,6 +65,7 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 	private static final String SPRINTVELOCITYKEY = "sprintVelocityKey";
 	private static final String SPRINT_WISE_SPRINTDETAILS = "sprintWiseSprintDetailMap";
 	private static final String PROJECT_WISE_CLOSED_STATUS_MAP = "projectWiseClosedStatusMap";
+	private static final String PROJECT_WISE_TYPE_NAME_MAP = "projectWiseTypeNameMap";
 	@Autowired
 	private KpiHelperService kpiHelperService;
 	@Autowired
@@ -181,15 +182,19 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 
 		List<SprintDetails> sprintDetails = (List<SprintDetails>) sprintVelocityStoryMap.get(SPRINT_WISE_SPRINTDETAILS);
 		Map<String, List<String>> closedStatusMap = (Map<String, List<String>>) sprintVelocityStoryMap.get(PROJECT_WISE_CLOSED_STATUS_MAP);
+		Map<String, List<String>> typeNameMap = (Map<String, List<String>>) sprintVelocityStoryMap.get(PROJECT_WISE_TYPE_NAME_MAP);
 
 		if(CollectionUtils.isNotEmpty(allJiraIssue)) {
 			if (CollectionUtils.isNotEmpty(sprintDetails)) {
 				sprintDetails.forEach(sd -> {
 					List<String> closedStatus = closedStatusMap.getOrDefault(sd.getBasicProjectConfigId().toString(),
 							new ArrayList<>());
+					List<String> typeName = typeNameMap.getOrDefault(sd.getBasicProjectConfigId().toString(),
+							new ArrayList<>());
+
 					Map<String, Double> totalIssues = new HashMap<>();
 					sd.getTotalIssues().stream().forEach(sprintIssue -> {
-						if (closedStatus.contains(sprintIssue.getStatus())) {
+						if (closedStatus.contains(sprintIssue.getStatus()) && typeName.contains(sprintIssue.getTypeName())) {
 							totalIssues.putIfAbsent(sprintIssue.getNumber(), sprintIssue.getStoryPoints());
 						}
 					});
