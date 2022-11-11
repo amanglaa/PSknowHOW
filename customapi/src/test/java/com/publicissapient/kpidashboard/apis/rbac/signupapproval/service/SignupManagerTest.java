@@ -97,6 +97,7 @@ public class SignupManagerTest {
 				.thenReturn(authenticationObj(Constant.ACCESS_REQUEST_STATUS_REJECTED, false));
 		when(authenticationRepository.save(ArgumentMatchers.any()))
 				.thenReturn(authenticationObj(Constant.ACCESS_REQUEST_STATUS_REJECTED, true));
+		when(userInfoRepository.findByUsername(ArgumentMatchers.anyString())).thenReturn(userInfoObj());
 		signupManager.rejectAccessRequest(testId, rejectApprovalListener);
 		verify(rejectApprovalListener, atLeastOnce()).onFailure(
 				authenticationObj(Constant.ACCESS_REQUEST_STATUS_REJECTED, false), "Failed to reject the request");
