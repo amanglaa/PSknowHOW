@@ -463,7 +463,7 @@ export class BacklogComponent implements OnInit, OnDestroy{
   downloadExcel(kpiId, kpiName, isKanban) {
     const sprintIncluded = ['CLOSED'];
     this.helperService.downloadExcel(kpiId, kpiName, isKanban, this.filterApplyData, this.filterData, sprintIncluded).subscribe(getData => {
-      if (getData['excelData']) {
+      if (getData['excelData'] || !getData?.hasOwnProperty('validationData')) {
           this.kpiExcelData = this.excelService.generateExcelModalData(getData);
           this.modalDetails['tableHeadings'] = this.kpiExcelData.headerNames.map(column => column.header);
           this.modalDetails['tableValues'] = this.kpiExcelData.excelData;

@@ -31,6 +31,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -425,21 +426,33 @@ public class KPIExcelUtility {
 	}
 
     public static void populateSprintVelocity(String sprint, Map<String, JiraIssue> totalStoriesMap,
-                                              List<KPIExcelData> kpiExcelData) {
+                                              Map<String, Double> storyAndStoryPoint, List<KPIExcelData> kpiExcelData) {
+        if(storyAndStoryPoint==null) {
+            if (MapUtils.isNotEmpty(totalStoriesMap)) {
+                totalStoriesMap.forEach((storyId, jiraIssue) -> {
+                    KPIExcelData excelData = new KPIExcelData();
+                    excelData.setSprintName(sprint);
+                    Map<String, String> storyDetails = new HashMap<>();
+                    storyDetails.put(storyId, checkEmptyURL(jiraIssue));
+                    excelData.setStoryId(storyDetails);
+                    excelData.setIssueDesc(checkEmptyName(jiraIssue));
+                    excelData.setStoryPoints(jiraIssue.getStoryPoints().toString());
 
-        if (MapUtils.isNotEmpty(totalStoriesMap)) {
-            totalStoriesMap.forEach((storyId, jiraIssue) -> {
-
+                    kpiExcelData.add(excelData);
+                });
+            }
+        }else {
+            for (Map.Entry<String, Double> storyWiseStoryPointns : storyAndStoryPoint.entrySet()) {
                 KPIExcelData excelData = new KPIExcelData();
                 excelData.setSprintName(sprint);
                 Map<String, String> storyDetails = new HashMap<>();
-                storyDetails.put(storyId, checkEmptyURL(jiraIssue));
+                JiraIssue jiraIssue = totalStoriesMap.get(storyWiseStoryPointns.getKey());
+                storyDetails.put(jiraIssue.getNumber(), checkEmptyURL(jiraIssue));
                 excelData.setStoryId(storyDetails);
                 excelData.setIssueDesc(checkEmptyName(jiraIssue));
-                excelData.setStoryPoints(jiraIssue.getStoryPoints().toString());
-
+                excelData.setStoryPoints(Optional.ofNullable(storyWiseStoryPointns.getValue()).orElse(0.0).toString());
                 kpiExcelData.add(excelData);
-            });
+            }
         }
     }
 
