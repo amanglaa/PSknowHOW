@@ -68,6 +68,7 @@ public class FieldMapping extends BasicModel {
 	private List<String> jiraDefectInjectionIssueType;
 	private List<String> jiraDod;
 	private String jiraDefectCreatedStatus;
+	private List<String> jiraTechDebtIssueType;
 	private String jiraTechDebtIdentification;
 	private String jiraTechDebtCustomField;
 	private List<String> jiraTechDebtValue;
@@ -117,9 +118,16 @@ public class FieldMapping extends BasicModel {
 	private List<String> jiraTicketVelocityIssueType;
 
 	private List<String> ticketDeliverdStatus;
+
+	private List<String> ticketReopenStatus;
+
+	private List<String> kanbanJiraTechDebtIssueType;
+
+	private List<String> jiraTicketResolvedStatus;
 	private List<String> jiraTicketClosedStatus;
 	private List<String> kanbanCycleTimeIssueType;
 	private List<String> jiraTicketTriagedStatus;
+	private List<String> jiraTicketWipStatus;
 	private List<String> jiraTicketRejectedStatus;
 
 	private String jiraStatusMappingCustomField;
@@ -127,7 +135,16 @@ public class FieldMapping extends BasicModel {
 	private List<String> rootCauseValue;
 	private List<String> excludeRCAFromFTPR;
 
+	// For Lloyds KPIs
+	private List<String> jiraDorToLiveIssueType;
+	private List<String> jiraProductiveStatus;
+
+	private List<String> jiraCommitmentReliabilityIssueType;
+
 	private List<String> resolutionTypeForRejection;
+
+	private List<String> jiraWasteStatus;
+	private List<String> qaRootCauseValue;
 	private List<String> jiraQADefectDensityIssueType;
 	private String jiraBugRaisedByQACustomField;
 	private String jiraBugRaisedByQAIdentification;
@@ -135,11 +152,17 @@ public class FieldMapping extends BasicModel {
 	private List<String> jiraDefectDroppedStatus;
 
 	// Epic custom Field mapping
+	private String epicCostOfDelay;
 	private String epicRiskReduction;
 	private String epicUserBusinessValue;
 	private String epicWsjf;
 	private String epicTimeCriticality;
 	private String epicJobSize;
+
+	// Squad Mapping
+	private String squadIdentifier;
+	private List<String> squadIdentMultiValue;
+	private String squadIdentSingleValue;
 
 	// Production Defect Mapping
 	private String productionDefectCustomField;
@@ -151,14 +174,19 @@ public class FieldMapping extends BasicModel {
 	private String[] jiraTestCaseType;
 	private String testAutomatedIdentification;
 	private String testAutomationCompletedIdentification;
+	private String testRegressionIdentification;
 	private String testAutomated;
 	private String testAutomationCompletedByCustomField;
+	private String testRegressionByCustomField;
 	private List<String> jiraAutomatedTestValue;
 	private List<String> jiraRegressionTestValue;
 	private List<String> jiraCanBeAutomatedTestValue;
 	private List<String> testCaseStatus;
 	@Builder.Default
 	private String estimationCriteria = "Story Point";
+
+	@Builder.Default
+	private Double storyPointToHourMapping = 8D;
 
 	@Builder.Default
 	private Double workingHoursDayCPT = 6D;
