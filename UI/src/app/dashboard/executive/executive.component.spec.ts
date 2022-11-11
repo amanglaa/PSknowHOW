@@ -1929,7 +1929,8 @@ describe('ExecutiveComponent', () => {
                 }]
         };
         const spy = spyOn(helperService, 'downloadExcel').and.returnValue(of(excelData));
-        component.downloadExcel('kpi35', 'Defect Seepage Rate', false);
+        component.iSAdditionalFilterSelected =false;
+        component.downloadExcel('kpi35', 'Defect Seepage Rate', false,false);
         tick();
         expect(component.displayModal).toBeTruthy();
     }));
