@@ -1030,21 +1030,20 @@ public class KPIExcelUtility {
 
 	}
 
-	public static void populateTeamCapacityKanbanExcelData(Double capacity,
-			List<KPIExcelData> kpiExcelData, String projectName, CustomDateRange dateRange, String duration) {
+	public static void populateTeamCapacityKanbanExcelData(Double capacity, List<KPIExcelData> kpiExcelData,
+			String projectName, CustomDateRange dateRange, String duration) {
 
-                KPIExcelData excelData = new KPIExcelData();
-                excelData.setProjectName(projectName);
-                if(CommonConstant.DAYS.equalsIgnoreCase(duration)) {
-                    excelData.setStartDate(dateRange.getStartDate().toString());
-                    excelData.setEndDate(dateRange.getStartDate().toString());
-                }
-                else {
-                    excelData.setStartDate(dateRange.getStartDate().toString());
-                    excelData.setEndDate(dateRange.getEndDate().toString());
-                }
-                excelData.setEstimatedCapacity(df2.format(capacity));
-                kpiExcelData.add(excelData);
-            }
+		KPIExcelData excelData = new KPIExcelData();
+		excelData.setProjectName(projectName);
+		if (CommonConstant.DAYS.equalsIgnoreCase(duration)) {
+			excelData.setStartDate(dateRange.getStartDate().toString());
+			excelData.setEndDate(dateRange.getStartDate().toString());
+		} else {
+			excelData.setStartDate(dateRange.getStartDate().toString());
+			excelData.setEndDate(dateRange.getEndDate().toString());
+		}
+		excelData.setEstimatedCapacity(df2.format(capacity));
+		kpiExcelData.add(excelData);
+	}
 
 }
