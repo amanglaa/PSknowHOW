@@ -47,6 +47,15 @@ public interface FieldMappingRepository extends MongoRepository<FieldMapping, Ob
 	FieldMapping findByBasicProjectConfigId(ObjectId projectConfigId);
 
 	/**
+	 * Find by project id field mapping.
+	 *
+	 * @param projectId
+	 *            the project id
+	 * @return the field mapping
+	 */
+	FieldMapping findByProjectId(String projectId);
+
+	/**
 	 * Delete by project config id.
 	 *
 	 * @param basicProjectConfigId
