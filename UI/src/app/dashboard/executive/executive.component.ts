@@ -181,6 +181,7 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
                 if (this.kpiChartData && Object.keys(this.kpiChartData)?.length > 0) {
                     for (const key in this.kpiChartData) {
                         this.kpiChartData[key] = this.generateColorObj(key, this.kpiChartData[key]);
+                        this.createTrendsData(key);
                     }
                 }
                 this.trendBoxColorObj = { ...x };
@@ -240,7 +241,6 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
         this.configGlobalData?.forEach(element => {
             if (element.shown && element.isEnabled) {
                 this.kpiConfigData[element.kpiId] = true;
-                this.createTrendsData(element.kpiId);
             } else {
                 this.kpiConfigData[element.kpiId] = false;
             }
@@ -315,6 +315,7 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
                     this.chartColorList = {};
                     this.kpiSelectedFilterObj = {};
                     this.kpiDropdowns = {};
+                    this.kpiTrendsObj = {};
                 }
                 const kpiIdsForCurrentBoard = this.configGlobalData?.map(kpiDetails => kpiDetails.kpiId);
                 this.previousBoardId = this.boardId;
