@@ -258,7 +258,7 @@ public class KPIExcelUtility {
 
 	public static void populateRegressionAutomationExcelData(String sprintProject,
 			Map<String, TestCaseDetails> totalStoriesMap, List<TestCaseDetails> conditionStories,
-			List<KPIExcelData> kpiExcelData, String kpiId) {
+			List<KPIExcelData> kpiExcelData, String kpiId, String date) {
 		if (MapUtils.isNotEmpty(totalStoriesMap)) {
 			List<String> conditionalList = conditionStories.stream().map(TestCaseDetails::getNumber)
 					.collect(Collectors.toList());
@@ -269,6 +269,7 @@ public class KPIExcelUtility {
 					excelData.setSprintName(sprintProject);
 				} else {
 					excelData.setProject(sprintProject);
+					excelData.setDayWeekMonth(date);
 				}
 				excelData.setTestCaseId(storyId);
 				excelData.setAutomated(present);
@@ -284,6 +285,7 @@ public class KPIExcelUtility {
 				KPIExcelData excelData = new KPIExcelData();
 				excelData.setProject(projectName);
 				excelData.setJobName(jobList.get(i));
+
 				if (kpiId.equalsIgnoreCase(KPICode.UNIT_TEST_COVERAGE.getKpiId())
 						|| kpiId.equalsIgnoreCase(KPICode.UNIT_TEST_COVERAGE_KANBAN.getKpiId())) {
 					excelData.setUnitCoverage(kpiSpecificDataList.get(i));
@@ -296,13 +298,25 @@ public class KPIExcelUtility {
 						|| kpiId.equalsIgnoreCase(KPICode.SONAR_VIOLATIONS_KANBAN.getKpiId())) {
 					excelData.setSonarViolation(kpiSpecificDataList.get(i));
 				}
-				excelData.setWeeks(versionDate.get(i));
+				setSonarKpiWeekDayMonthColumn(versionDate.get(i), excelData, kpiId);
 				kpiExcelData.add(excelData);
 			}
 		}
 	}
 
-    public static void populateInSprintAutomationExcelData(String sprint, List<TestCaseDetails> allTestList,
+	private static void setSonarKpiWeekDayMonthColumn(String versionDate, KPIExcelData excelData, String kpiId) {
+
+		if (kpiId.equalsIgnoreCase(KPICode.UNIT_TEST_COVERAGE.getKpiId())
+				|| kpiId.equalsIgnoreCase(KPICode.SONAR_TECH_DEBT.getKpiId())
+				|| kpiId.equalsIgnoreCase(KPICode.SONAR_VIOLATIONS.getKpiId())) {
+			excelData.setWeeks(versionDate);
+
+		} else {
+			excelData.setDayWeekMonth(versionDate);
+		}
+	}
+
+	public static void populateInSprintAutomationExcelData(String sprint, List<TestCaseDetails> allTestList,
                                                            List<TestCaseDetails> automatedList, Set<JiraIssue> linkedStories, List<KPIExcelData> kpiExcelData) {
 
         if (CollectionUtils.isNotEmpty(allTestList)) {

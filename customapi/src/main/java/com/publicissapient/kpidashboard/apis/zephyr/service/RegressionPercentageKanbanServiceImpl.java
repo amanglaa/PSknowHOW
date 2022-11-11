@@ -208,8 +208,8 @@ public class RegressionPercentageKanbanServiceImpl extends ZephyrKPIService<Doub
 					DataCount dcObj = getDataCountObject(automation, projectName, date, projectNodeId, hoverMap);
 					dc.add(dcObj);
 
-					populateValidationDataObject(requestTrackerId, excelData, totalTestList,
-							automatedTestList, projectName);
+					populateExcelDataObject(requestTrackerId, excelData, totalTestList,
+							automatedTestList, projectName,date);
 
 					if (kpiRequest.getDuration().equalsIgnoreCase(CommonConstant.WEEK)) {
 						currentDate = currentDate.minusWeeks(1);
@@ -299,16 +299,16 @@ public class RegressionPercentageKanbanServiceImpl extends ZephyrKPIService<Doub
 	/**
 	 * populates the validation data node of the KPI element.
 	 *
-	 * @param kpiElement
+	 *
 	 * @param requestTrackerId
-	 * @param validationDataMap
+	 *
 	 * @param totalTest
 	 * @param automatedTest
 	 * @param dateProjectKey
 	 */
-	private void populateValidationDataObject(String requestTrackerId,
+	private void populateExcelDataObject(String requestTrackerId,
 			List<KPIExcelData> excelData, List<TestCaseDetails> totalTest,
-			List<TestCaseDetails> automatedTest, String dateProjectKey) {
+			List<TestCaseDetails> automatedTest, String dateProjectKey, String date) {
 
 		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
 
@@ -318,7 +318,7 @@ public class RegressionPercentageKanbanServiceImpl extends ZephyrKPIService<Doub
 			}
 
 			KPIExcelUtility.populateRegressionAutomationExcelData(dateProjectKey, totalTestCaseMap, automatedTest,
-					excelData,KPICode.KANBAN_REGRESSION_PASS_PERCENTAGE.getKpiId());
+					excelData,KPICode.KANBAN_REGRESSION_PASS_PERCENTAGE.getKpiId(),date);
 
 		}
 	}
