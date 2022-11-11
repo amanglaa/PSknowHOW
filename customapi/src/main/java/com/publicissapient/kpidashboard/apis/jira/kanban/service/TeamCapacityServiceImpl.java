@@ -69,7 +69,7 @@ public class TeamCapacityServiceImpl extends JiraKPIService<Double, List<Object>
 
 	/**
 	 * Gets Qualifier Type
-	 * 
+	 *
 	 * @return KPICode's <tt>TEAM_CAPACITY</tt> enums
 	 */
 	@Override
@@ -79,7 +79,7 @@ public class TeamCapacityServiceImpl extends JiraKPIService<Double, List<Object>
 
 	/**
 	 * Gets KPI Data
-	 * 
+	 *
 	 * @param kpiRequest
 	 * @param kpiElement
 	 * @param treeAggregatorDetail
@@ -88,7 +88,7 @@ public class TeamCapacityServiceImpl extends JiraKPIService<Double, List<Object>
 	 */
 	@Override
 	public KpiElement getKpiData(KpiRequest kpiRequest, KpiElement kpiElement,
-			TreeAggregatorDetail treeAggregatorDetail) throws ApplicationException {
+								 TreeAggregatorDetail treeAggregatorDetail) throws ApplicationException {
 
 		Node root = treeAggregatorDetail.getRoot();
 		Map<String, Node> mapTmp = treeAggregatorDetail.getMapTmp();
@@ -111,7 +111,7 @@ public class TeamCapacityServiceImpl extends JiraKPIService<Double, List<Object>
 
 	/**
 	 * Calculates KPI Metrics
-	 * 
+	 *
 	 * @param subCategoryMap
 	 */
 	@Override
@@ -121,7 +121,7 @@ public class TeamCapacityServiceImpl extends JiraKPIService<Double, List<Object>
 
 	/**
 	 * Fetches KPI Data from DB
-	 * 
+	 *
 	 * @param leafNodeList
 	 * @param startDate
 	 * @param endDate
@@ -131,14 +131,14 @@ public class TeamCapacityServiceImpl extends JiraKPIService<Double, List<Object>
 	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, Object> fetchKPIDataFromDb(List<Node> leafNodeList, String startDate, String endDate,
-			KpiRequest kpiRequest) {
+												  KpiRequest kpiRequest) {
 		return kpiHelperService.fetchTeamCapacityDataFromDb(leafNodeList, startDate, endDate, kpiRequest, TICKET_LIST);
 	}
 
 	/**
 	 * Populates KPI value to sprint leaf nodes and gives the trend analysis at
 	 * sprint wise.
-	 * 
+	 *
 	 * @param mapTmp
 	 * @param leafNodeList
 	 * @param kpiElement
@@ -146,7 +146,7 @@ public class TeamCapacityServiceImpl extends JiraKPIService<Double, List<Object>
 	 */
 	@SuppressWarnings("unchecked")
 	private void dateWiseLeafNodeValue(Map<String, Node> mapTmp, List<Node> leafNodeList, KpiElement kpiElement,
-			KpiRequest kpiRequest) {
+									   KpiRequest kpiRequest) {
 
 		CustomDateRange dateRange = KpiDataHelper.getStartAndEndDate(kpiRequest);
 
@@ -161,7 +161,7 @@ public class TeamCapacityServiceImpl extends JiraKPIService<Double, List<Object>
 	}
 
 	private void kpiWithoutFilter(Map<String, Map<String, List<KanbanCapacity>>> projectAndDateWiseCapacityMap,
-			Map<String, Node> mapTmp, List<Node> leafNodeList, KpiElement kpiElement, KpiRequest kpiRequest) {
+								  Map<String, Node> mapTmp, List<Node> leafNodeList, KpiElement kpiElement, KpiRequest kpiRequest) {
 		String requestTrackerId = getKanbanRequestTrackerId();
 		List<KPIExcelData> excelData = new ArrayList<>();
 		leafNodeList.forEach(node -> {
@@ -184,7 +184,7 @@ public class TeamCapacityServiceImpl extends JiraKPIService<Double, List<Object>
 					dataCount.add(getDataCountObject(capacityList.get(0), projectName, date));
 					currentDate = getNextRangeDate(kpiRequest, currentDate);
 					if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-						KPIExcelUtility.populateTeamCapacityKanbanExcelData(kanbanCapacityList, excelData);
+						KPIExcelUtility.populateTeamCapacityKanbanExcelData(capacityList.get(0), excelData, projectName, dateRange, kpiRequest.getDuration());
 					}
 				}
 				mapTmp.get(node.getId()).setValue(dataCount);
