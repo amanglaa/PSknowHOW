@@ -85,16 +85,16 @@ public enum KPIExcelColumn {
 
     PRODUCTION_DEFECTS_AGEING("kpi127", Arrays.asList("Project Name", "Defect ID", "Issue Description", "Priority", "Created Date", "Status")),
 
-	UNIT_TEST_COVERAGE_KANBAN("kpi62", Arrays.asList("Project", "Job Name", "Unit Coverage", "Weeks")),
+	UNIT_TEST_COVERAGE_KANBAN("kpi62", Arrays.asList("Project", "Job Name", "Unit Coverage", "Day/Week/Month")),
 
-	SONAR_VIOLATIONS_KANBAN("kpi64", Arrays.asList("Project", "Job Name", "Sonar Violations", "Weeks")),
+	SONAR_VIOLATIONS_KANBAN("kpi64", Arrays.asList("Project", "Job Name", "Sonar Violations", "Day/Week/Month")),
 
-	SONAR_TECH_DEBT_KANBAN("kpi67", Arrays.asList("Project", "Job Name", "Tech Debt (in days)", "Weeks")),
+	SONAR_TECH_DEBT_KANBAN("kpi67", Arrays.asList("Project", "Job Name", "Tech Debt (in days)", "Day/Week/Month")),
 
 	TEST_EXECUTION_KANBAN("kpi71", Arrays.asList("Project", "Execution Date", "Total Test", "Executed Test",
 			"Execution %", "Passed Test", "Passed %")),
 
-	KANBAN_REGRESSION_PASS_PERCENTAGE("kpi63", Arrays.asList("Project", "Test Case ID", "Automated")),
+	KANBAN_REGRESSION_PASS_PERCENTAGE("kpi63", Arrays.asList("Project","Day/Week/Month", "Test Case ID", "Automated")),
 
 	OPEN_TICKET_AGING_BY_PRIORITY("kpi997",
 			Arrays.asList("Project", "Ticket Issue ID", "Priority", "Created Date", "Issue Status")),

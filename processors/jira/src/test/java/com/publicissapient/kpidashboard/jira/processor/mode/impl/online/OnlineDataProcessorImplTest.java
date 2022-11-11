@@ -953,7 +953,6 @@ public class OnlineDataProcessorImplTest {
 		jiraType = new ArrayList<>();
 		jiraType.add("Story");
 		fieldMapping.setJiraDefectInjectionIssueType(jiraType);
-		fieldMapping.setJiraTechDebtIssueType(jiraType);
 		fieldMapping.setJiraDefectSeepageIssueType(jiraType);
 		fieldMapping.setJiraDefectRemovalStatus(jiraType);
 		fieldMapping.setJiraDefectRejectionlIssueType(jiraType);
@@ -1083,17 +1082,11 @@ public class OnlineDataProcessorImplTest {
 		fieldMapping.setTicketCountIssueType(jiraType);
 		fieldMapping.setEnvImpacted("customfield_13131");
 		fieldMapping.setJiraTicketVelocityIssueType(jiraType);
-		fieldMapping.setKanbanJiraTechDebtIssueType(jiraType);
 		fieldMapping.setKanbanCycleTimeIssueType(jiraType);
 
 		jiraType = new ArrayList<>();
 		jiraType.add("Resolved");
 		fieldMapping.setTicketDeliverdStatus(jiraType);
-		fieldMapping.setJiraTicketResolvedStatus(jiraType);
-
-		jiraType = new ArrayList<>();
-		jiraType.add("Reopen");
-		fieldMapping.setTicketReopenStatus(jiraType);
 
 		jiraType = new ArrayList<>();
 		jiraType.add("Closed");
