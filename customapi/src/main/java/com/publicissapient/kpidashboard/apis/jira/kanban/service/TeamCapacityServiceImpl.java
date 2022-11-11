@@ -88,7 +88,7 @@ public class TeamCapacityServiceImpl extends JiraKPIService<Double, List<Object>
 	 */
 	@Override
 	public KpiElement getKpiData(KpiRequest kpiRequest, KpiElement kpiElement,
-								 TreeAggregatorDetail treeAggregatorDetail) throws ApplicationException {
+			TreeAggregatorDetail treeAggregatorDetail) throws ApplicationException {
 
 		Node root = treeAggregatorDetail.getRoot();
 		Map<String, Node> mapTmp = treeAggregatorDetail.getMapTmp();
@@ -131,7 +131,7 @@ public class TeamCapacityServiceImpl extends JiraKPIService<Double, List<Object>
 	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, Object> fetchKPIDataFromDb(List<Node> leafNodeList, String startDate, String endDate,
-												  KpiRequest kpiRequest) {
+			KpiRequest kpiRequest) {
 		return kpiHelperService.fetchTeamCapacityDataFromDb(leafNodeList, startDate, endDate, kpiRequest, TICKET_LIST);
 	}
 
@@ -146,7 +146,7 @@ public class TeamCapacityServiceImpl extends JiraKPIService<Double, List<Object>
 	 */
 	@SuppressWarnings("unchecked")
 	private void dateWiseLeafNodeValue(Map<String, Node> mapTmp, List<Node> leafNodeList, KpiElement kpiElement,
-									   KpiRequest kpiRequest) {
+			KpiRequest kpiRequest) {
 
 		CustomDateRange dateRange = KpiDataHelper.getStartAndEndDate(kpiRequest);
 
@@ -161,7 +161,7 @@ public class TeamCapacityServiceImpl extends JiraKPIService<Double, List<Object>
 	}
 
 	private void kpiWithoutFilter(Map<String, Map<String, List<KanbanCapacity>>> projectAndDateWiseCapacityMap,
-								  Map<String, Node> mapTmp, List<Node> leafNodeList, KpiElement kpiElement, KpiRequest kpiRequest) {
+			Map<String, Node> mapTmp, List<Node> leafNodeList, KpiElement kpiElement, KpiRequest kpiRequest) {
 		String requestTrackerId = getKanbanRequestTrackerId();
 		List<KPIExcelData> excelData = new ArrayList<>();
 		leafNodeList.forEach(node -> {
