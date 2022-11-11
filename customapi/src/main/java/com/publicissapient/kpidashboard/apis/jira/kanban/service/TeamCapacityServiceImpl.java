@@ -171,20 +171,20 @@ public class TeamCapacityServiceImpl extends JiraKPIService<Double, List<Object>
 			if (MapUtils.isNotEmpty(dateWiseKanbanCapacity)) {
 				LocalDate currentDate = LocalDate.now();
 				List<DataCount> dataCount = new ArrayList<>();
-				List<KanbanCapacity> kanbanCapacityList = new ArrayList<>();
 				for (int i = 0; i < kpiRequest.getKanbanXaxisDataPoints(); i++) {
 					List<Double> capacityList = new ArrayList<>();
 					CustomDateRange dateRange = KpiDataHelper.getStartAndEndDateForDataFiltering(currentDate,
 							kpiRequest.getDuration());
 					String projectName = projectNodeId.substring(0,
 							projectNodeId.lastIndexOf(CommonConstant.UNDERSCORE));
-					kanbanCapacityList = filterDataBasedOnStartAndEndDate(dateWiseKanbanCapacity, dateRange,
+					filterDataBasedOnStartAndEndDate(dateWiseKanbanCapacity, dateRange,
 							capacityList, projectName);
 					String date = getRange(dateRange, kpiRequest);
 					dataCount.add(getDataCountObject(capacityList.get(0), projectName, date));
 					currentDate = getNextRangeDate(kpiRequest, currentDate);
 					if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-						KPIExcelUtility.populateTeamCapacityKanbanExcelData(capacityList.get(0), excelData, projectName, dateRange, kpiRequest.getDuration());
+						KPIExcelUtility.populateTeamCapacityKanbanExcelData(capacityList.get(0), excelData, projectName,
+								dateRange, kpiRequest.getDuration());
 					}
 				}
 				mapTmp.get(node.getId()).setValue(dataCount);
@@ -209,9 +209,8 @@ public class TeamCapacityServiceImpl extends JiraKPIService<Double, List<Object>
 		return dataCount;
 	}
 
-	private List<KanbanCapacity> filterDataBasedOnStartAndEndDate(
-			Map<String, List<KanbanCapacity>> dateWiseKanbanCapacity, CustomDateRange dateRange,
-			List<Double> capacityList, String projectName) {
+	private void filterDataBasedOnStartAndEndDate(Map<String, List<KanbanCapacity>> dateWiseKanbanCapacity,
+			CustomDateRange dateRange, List<Double> capacityList, String projectName) {
 		List<KanbanCapacity> kanbanCapacityList = new ArrayList<>();
 		List<KanbanCapacity> dummyList = new ArrayList<>();
 
@@ -226,8 +225,6 @@ public class TeamCapacityServiceImpl extends JiraKPIService<Double, List<Object>
 			capacity = kanbanCapacityList.stream().mapToDouble(KanbanCapacity::getCapacity).sum();
 			capacityList.add(capacity);
 		}
-		return kanbanCapacityList;
-
 	}
 
 
