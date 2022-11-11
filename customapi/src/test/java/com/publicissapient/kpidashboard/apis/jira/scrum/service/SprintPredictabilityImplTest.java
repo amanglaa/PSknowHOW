@@ -1,36 +1,16 @@
-/*******************************************************************************
- * Copyright 2014 CapitalOne, LLC.
- * Further development Copyright 2022 Sapient Corporation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- ******************************************************************************/
-
 package com.publicissapient.kpidashboard.apis.jira.scrum.service;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-import com.publicissapient.kpidashboard.apis.data.SprintWiseStoryDataFactory;
 import org.bson.types.ObjectId;
 import org.junit.After;
 import org.junit.Before;
@@ -38,7 +18,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.publicissapient.kpidashboard.apis.appsetting.service.ConfigHelperService;
@@ -49,8 +28,8 @@ import com.publicissapient.kpidashboard.apis.config.CustomApiConfig;
 import com.publicissapient.kpidashboard.apis.constant.Constant;
 import com.publicissapient.kpidashboard.apis.data.AccountHierarchyFilterDataFactory;
 import com.publicissapient.kpidashboard.apis.data.FieldMappingDataFactory;
-import com.publicissapient.kpidashboard.apis.data.JiraIssueDataFactory;
 import com.publicissapient.kpidashboard.apis.data.KpiRequestFactory;
+import com.publicissapient.kpidashboard.apis.data.SprintWiseStoryDataFactory;
 import com.publicissapient.kpidashboard.apis.enums.Filters;
 import com.publicissapient.kpidashboard.apis.enums.KPICode;
 import com.publicissapient.kpidashboard.apis.enums.KPISource;
@@ -62,7 +41,6 @@ import com.publicissapient.kpidashboard.apis.model.KpiRequest;
 import com.publicissapient.kpidashboard.apis.model.Node;
 import com.publicissapient.kpidashboard.apis.model.TreeAggregatorDetail;
 import com.publicissapient.kpidashboard.apis.util.KPIHelperUtil;
-import com.publicissapient.kpidashboard.common.constant.NormalizedJira;
 import com.publicissapient.kpidashboard.common.model.application.DataCount;
 import com.publicissapient.kpidashboard.common.model.application.FieldMapping;
 import com.publicissapient.kpidashboard.common.model.application.ProjectBasicConfig;
@@ -73,59 +51,54 @@ import com.publicissapient.kpidashboard.common.repository.application.ProjectBas
 import com.publicissapient.kpidashboard.common.repository.jira.JiraIssueRepository;
 
 @RunWith(MockitoJUnitRunner.class)
-public class DSRServiceImplTest {
-	private List<AccountHierarchyData> accountHierarchyDataList = new ArrayList<>();
-	private Map<String, Object> filterLevelMap;
+public class SprintPredictabilityImplTest {
 
+	private static final String SPRINT_WISE_PREDICTABILITY = "predictability";
+	private List<AccountHierarchyData> accountHierarchyDataList = new ArrayList<>();
 	private KpiRequest kpiRequest;
+	private Map<String, Object> filterLevelMap;
 	public Map<String, ProjectBasicConfig> projectConfigMap = new HashMap<>();
 	public Map<ObjectId, FieldMapping> fieldMappingMap = new HashMap<>();
-	List<JiraIssue> uatBugList = new ArrayList<>();
-	List<JiraIssue> totalBugList = new ArrayList<>();
+
 	List<SprintWiseStory> sprintWiseStoryList = new ArrayList<>();
-	private final static String UATBUGKEY = "uatBugData";
-	private final static String TOTALBUGKEY = "totalBugData";
 	private Map<String, String> kpiWiseAggregation = new HashMap<>();
 
 	@Mock
-	JiraIssueRepository jiraIssueRepository;
+	private JiraIssueRepository jiraIssueRepository;
 
 	@Mock
-	CacheService cacheService;
+	private CacheService cacheService;
 
 	@Mock
-	ConfigHelperService configHelperService;
-
-	@Mock
-	private KpiHelperService kpiHelperService;
-
-	@InjectMocks
-	DSRServiceImpl dsrServiceImpl;
-
-	@Mock
-	ProjectBasicConfigRepository projectConfigRepository;
-
-	@Mock
-	FieldMappingRepository fieldMappingRepository;
-
-	@Mock
-	private CommonService commonService;
+	private ConfigHelperService configHelperService;
 
 	@Mock
 	private FilterHelperService filterHelperService;
 
 	@Mock
-	CustomApiConfig customApiSetting;
+	private KpiHelperService kpiHelperService;
+
+	@InjectMocks
+	private SprintPredictabilityImpl sprintPredictability;
+
+	@Mock
+	private ProjectBasicConfigRepository projectConfigRepository;
+
+	@Mock
+	private FieldMappingRepository fieldMappingRepository;
+
+	@Mock
+	private CustomApiConfig customApiSetting;
+
+	@Mock
+	private CommonService commonService;
 
 	@Before
 	public void setup() {
+
 		KpiRequestFactory kpiRequestFactory = KpiRequestFactory.newInstance();
-		kpiRequest = kpiRequestFactory.findKpiRequest(KPICode.DEFECT_REMOVAL_EFFICIENCY.getKpiId());
+		kpiRequest = kpiRequestFactory.findKpiRequest(KPICode.SPRINT_PREDICTABILITY.getKpiId());
 		kpiRequest.setLabel("PROJECT");
-
-		SprintWiseStoryDataFactory sprintWiseStoryDataFactory = SprintWiseStoryDataFactory.newInstance();
-		sprintWiseStoryList= sprintWiseStoryDataFactory.getSprintWiseStories();
-
 
 		AccountHierarchyFilterDataFactory accountHierarchyFilterDataFactory = AccountHierarchyFilterDataFactory
 				.newInstance();
@@ -135,13 +108,8 @@ public class DSRServiceImplTest {
 		filterLevelMap.put("PROJECT", Filters.PROJECT);
 		filterLevelMap.put("SPRINT", Filters.SPRINT);
 
-		JiraIssueDataFactory jiraIssueDataFactory = JiraIssueDataFactory.newInstance();
-
-		totalBugList = jiraIssueDataFactory.getBugs();
-
-		uatBugList = totalBugList.stream()
-				.filter(f -> NormalizedJira.THIRD_PARTY_DEFECT_VALUE.getValue().equalsIgnoreCase(f.getDefectRaisedBy()))
-				.collect(Collectors.toList());
+		SprintWiseStoryDataFactory sprintWiseStoryDataFactory = SprintWiseStoryDataFactory.newInstance();
+		sprintWiseStoryList = sprintWiseStoryDataFactory.getSprintWiseStories();
 
 		ProjectBasicConfig projectConfig = new ProjectBasicConfig();
 		projectConfig.setId(new ObjectId("6335363749794a18e8a4479b"));
@@ -155,25 +123,18 @@ public class DSRServiceImplTest {
 		configHelperService.setProjectConfigMap(projectConfigMap);
 		configHelperService.setFieldMappingMap(fieldMappingMap);
 
-		kpiWiseAggregation.put("defectSeepageRate", "percentile");
+		// set aggregation criteria kpi wise
+		kpiWiseAggregation.put("defectRemovalEfficiency", "percentile");
+
 	}
 
 	@After
 	public void cleanup() {
+		sprintWiseStoryList = null;
 		jiraIssueRepository.deleteAll();
 
 	}
 
-	@Test
-	public void testCalculateKPIMetrics() {
-		Map<String, Object> filterComponentIdWiseDefectMap = new HashMap<>();
-		filterComponentIdWiseDefectMap.put(UATBUGKEY, uatBugList);
-		filterComponentIdWiseDefectMap.put(TOTALBUGKEY, totalBugList);
-		Double dsrValue = dsrServiceImpl.calculateKPIMetrics(filterComponentIdWiseDefectMap);
-		assertThat("DSR value :", dsrValue, equalTo(53.0));
-	}
-
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testFetchKPIDataFromDbData() throws ApplicationException {
 		TreeAggregatorDetail treeAggregatorDetail = KPIHelperUtil.getTreeLeafNodesGroupedByFilter(kpiRequest,
@@ -182,56 +143,46 @@ public class DSRServiceImplTest {
 		leafNodeList = KPIHelperUtil.getLeafNodes(treeAggregatorDetail.getRoot(), leafNodeList);
 		String startDate = leafNodeList.get(0).getSprintFilter().getStartDate();
 		String endDate = leafNodeList.get(leafNodeList.size() - 1).getSprintFilter().getEndDate();
-		when(jiraIssueRepository.findIssuesGroupBySprint(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
-				.thenReturn(sprintWiseStoryList);
 
-		when(jiraIssueRepository.findIssueByStoryNumber(Mockito.any(), Mockito.any(), Mockito.any()))
-				.thenReturn(totalBugList);
+		SprintWiseStoryDataFactory sprintWiseStoryDataFactory = SprintWiseStoryDataFactory.newInstance();
+		List<SprintWiseStory> storyData = sprintWiseStoryDataFactory.getSprintWiseStories();
+
+		Map<String, Object> resultListMap = new HashMap<>();
+		resultListMap.put("sprintWisePredictability", storyData);
 
 		when(configHelperService.getFieldMappingMap()).thenReturn(fieldMappingMap);
-		Map<String, Object> defectDataListMap = dsrServiceImpl.fetchKPIDataFromDb(leafNodeList, startDate, endDate,
-				kpiRequest);
-		assertThat("Total Defects value :", ((List<JiraIssue>) (defectDataListMap.get(TOTALBUGKEY))).size(),
-				equalTo(2));
+
+		Map<String, Object> sprintWisePredictability = sprintPredictability.fetchKPIDataFromDb(leafNodeList, startDate,
+				endDate, kpiRequest);
+		assertThat("Closed Defects value :",
+				((List<JiraIssue>) sprintWisePredictability.get(SPRINT_WISE_PREDICTABILITY)).size(), equalTo(0));
 	}
 
 	@Test
-	public void testGetDSR() throws ApplicationException {
+	public void testGetSprintPredictability() throws ApplicationException {
 
 		TreeAggregatorDetail treeAggregatorDetail = KPIHelperUtil.getTreeLeafNodesGroupedByFilter(kpiRequest,
 				accountHierarchyDataList, new ArrayList<>(), "hierarchyLevelOne", 5);
 
-		Map<String, List<String>> maturityRangeMap = new HashMap<>();
-		maturityRangeMap.put("defectSeepageRate", Arrays.asList("-30", "30-10", "10-5", "5-2", "2-"));
-
-		when(configHelperService.calculateMaturity()).thenReturn(maturityRangeMap);
-
-		when(jiraIssueRepository.findIssuesGroupBySprint(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
-				.thenReturn(sprintWiseStoryList);
-
-		when(jiraIssueRepository.findIssueByStoryNumber(Mockito.any(), Mockito.any(), Mockito.any()))
-				.thenReturn(totalBugList);
-
+		when(jiraIssueRepository.findStoriesByType(any(), any(), any(), any())).thenReturn(sprintWiseStoryList);
 		when(configHelperService.getFieldMappingMap()).thenReturn(fieldMappingMap);
+
 		String kpiRequestTrackerId = "Excel-Jira-5be544de025de212549176a9";
 		when(cacheService.getFromApplicationCache(Constant.KPI_REQUEST_TRACKER_ID_KEY + KPISource.JIRA.name()))
 				.thenReturn(kpiRequestTrackerId);
-		when(dsrServiceImpl.getRequestTrackerId()).thenReturn(kpiRequestTrackerId);
-
+		when(sprintPredictability.getRequestTrackerId()).thenReturn(kpiRequestTrackerId);
 		try {
-			KpiElement kpiElement = dsrServiceImpl.getKpiData(kpiRequest, kpiRequest.getKpiList().get(0),
+			KpiElement kpiElement = sprintPredictability.getKpiData(kpiRequest, kpiRequest.getKpiList().get(0),
 					treeAggregatorDetail);
-			assertThat("DSR Value :",
-					((ArrayList) ((List<DataCount>) kpiElement.getTrendValueList()).get(0).getValue()).size(),
-					equalTo(5));
-		} catch (ApplicationException enfe) {
-
+			assertThat("DRE Value :", ((List<DataCount>) kpiElement.getTrendValueList()).size(), equalTo(1));
+		} catch (Exception exception) {
 		}
 	}
 
 	@Test
-	public void testGetQualifierType() {
-		assertThat("Kpi Name :", dsrServiceImpl.getQualifierType(), equalTo(KPICode.DEFECT_SEEPAGE_RATE.name()));
+	public void testQualifierType() {
+		String kpiName = KPICode.SPRINT_PREDICTABILITY.name();
+		String type = sprintPredictability.getQualifierType();
+		assertThat("KPI NAME: ", type, equalTo(kpiName));
 	}
-
 }

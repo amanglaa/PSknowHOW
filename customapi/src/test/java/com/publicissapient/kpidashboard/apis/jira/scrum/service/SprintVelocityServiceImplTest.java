@@ -30,6 +30,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.bson.types.ObjectId;
 import org.junit.After;
 import org.junit.Before;
@@ -77,6 +78,9 @@ public class SprintVelocityServiceImplTest {
 	private final static String SPRINTVELOCITYKEY = "sprintVelocityKey";
 	private static final String SUBGROUPCATEGORY = "subGroupCategory";
 	private static final String SPRINT_WISE_SPRINTDETAILS = "sprintWiseSprintDetailMap";
+	private static final String PROJECT_WISE_CLOSED_STATUS_MAP = "projectWiseClosedStatusMap";
+	private static final String PROJECT_WISE_TYPE_NAME_MAP = "projectWiseTypeNameMap";
+	private static final String TOTAL_ISSUE_WITH_STORYPOINTS = "totalIssueWithStoryPoints";
 	public Map<String, ProjectBasicConfig> projectConfigMap = new HashMap<>();
 	public Map<ObjectId, FieldMapping> fieldMappingMap = new HashMap<>();
 	List<JiraIssue> totalIssueList = new ArrayList<>();
@@ -196,6 +200,12 @@ public class SprintVelocityServiceImplTest {
 		resultListMap.put(SPRINTVELOCITYKEY, totalIssueList);
 		resultListMap.put(SUBGROUPCATEGORY, "Sprint");
 		resultListMap.put(SPRINT_WISE_SPRINTDETAILS, sprintDetailsList);
+		Map<Pair<String,String>, Map<String,Double>> map= new HashMap<>();
+		Map<String,Double> abc=new HashMap<>();
+		abc.put("ABC",1.0);
+		map.put(Pair.of("6335363749794a18e8a4479b","abc"),abc);
+
+		resultListMap.put(TOTAL_ISSUE_WITH_STORYPOINTS,map);
 		when(kpiHelperService.fetchSprintVelocityDataFromDb(any(), any())).thenReturn(resultListMap);
 
 		String kpiRequestTrackerId = "Excel-Jira-5be544de025de212549176a9";
