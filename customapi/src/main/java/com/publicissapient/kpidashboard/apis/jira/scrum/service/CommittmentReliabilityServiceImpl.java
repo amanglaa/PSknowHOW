@@ -159,16 +159,16 @@ public class CommittmentReliabilityServiceImpl extends JiraKPIService<Long, List
 							CommonConstant.TOTAL_ISSUES);
 					List<String> completedSprintIssues = KpiDataHelper.getIssuesIdListBasedOnTypeFromSprintDetails(sd,
 							CommonConstant.COMPLETED_ISSUES);
-					List<JiraIssue> totalIssues = allJiraIssue.stream()
-							.filter(element -> availableIssues.contains(element.getNumber()))
-							.collect(Collectors.toList());
-					List<JiraIssue> completedIssues = allJiraIssue.stream()
-							.filter(element -> completedSprintIssues.contains(element.getNumber()))
-							.collect(Collectors.toList());
+					Set<JiraIssue> totalIssues = allJiraIssue.stream()
+							.filter(element -> (availableIssues.contains(element.getNumber())) && (element.getBasicProjectConfigId().equalsIgnoreCase(sd.getBasicProjectConfigId().toString())))
+							.collect(Collectors.toSet());
+					Set<JiraIssue> completedIssues = allJiraIssue.stream()
+							.filter(element -> (completedSprintIssues.contains(element.getNumber())) && (element.getBasicProjectConfigId().equalsIgnoreCase(sd.getBasicProjectConfigId().toString())))
+							.collect(Collectors.toSet());
 					sprintWiseCreatedIssues.put(Pair.of(sd.getBasicProjectConfigId().toString(), sd.getSprintID()),
-							totalIssues);
+							new ArrayList<>(totalIssues));
 					sprintWiseClosedIssues.put(Pair.of(sd.getBasicProjectConfigId().toString(), sd.getSprintID()),
-							completedIssues);
+							new ArrayList<>(completedIssues));
 				});
 			} else {
 				// for azure board sprint details collections empty so that we have to prepare
