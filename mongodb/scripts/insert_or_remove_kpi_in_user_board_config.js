@@ -134,9 +134,25 @@ var kpi126 = {
            "isShown"  : true,
            "order" : NumberInt(9)
           }
+var kpi5 = {
+          "kpiId" : "kpi5",
+          "kpiName" : "Sprint Predictability",
+          "isEnabled" : true,
+          "isShown"  : true,
+          "order" : NumberInt(19)
+        }
+var kpi5Category = {
+          "kpiId" : "kpi5",
+          "kpiName" : "Sprint Predictability",
+          "isEnabled" : true,
+          "isShown"  : true,
+          "order" : NumberInt(4)
+        }
 
 // sample data for add and remove any kpi , you have to write this way
 // parameter should be first boardName , boardId , kpiId , KpiOrder , Operation
+addNewOrUpdateKPIInAnyBoard(boardScrum, 1, "kpi5", 19, kpi5 , operationADD);
+addNewOrUpdateKPIInAnyBoard(boardScrum, 2, "kpi5", 4, kpi5Category , operationADD);
 //addNewOrUpdateKPIInAnyBoard(boardScrum, 5, "kpi76", 1,  "kpi76" , operationDELETE);
 //addNewOrUpdateKPIInAnyBoard(boardScrum, 1, "kpi126", 9, kpi126 , operationADD);
 //addNewOrUpdateKPIInAnyBoard(boardScrum, 3, "kpi126", 9, kpi126 , operationADD);

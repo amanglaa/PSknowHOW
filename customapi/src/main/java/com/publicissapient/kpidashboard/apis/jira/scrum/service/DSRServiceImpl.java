@@ -158,6 +158,11 @@ public class DSRServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 		List<SprintWiseStory> sprintWiseStoryList = jiraIssueRepository.findIssuesGroupBySprint(mapOfFilters,
 				uniqueProjectMap, kpiRequest.getFilterToShowOnTrend(), QA);
 
+		List<JiraIssue> issuesBySprintAndType = jiraIssueRepository.findIssuesBySprintAndType(mapOfFilters,
+				uniqueProjectMap);
+		List<JiraIssue> storyListWoDrop = new ArrayList<>();
+		KpiHelperService.getDefectsWithoutDrop(droppedDefects, issuesBySprintAndType, storyListWoDrop);
+		KpiHelperService.removeRejectedStoriesFromSprint(sprintWiseStoryList, storyListWoDrop);
 		List<String> storyNumberList = new ArrayList<>();
 		sprintWiseStoryList.forEach(s -> storyNumberList.addAll(s.getStoryList()));
 
