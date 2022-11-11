@@ -26,10 +26,6 @@
     margin: 8px;
     width: calc(100% - 16px);
   }
-.p-inputtext.p-component {
-    max-width: 500px;
-}
-
 .card__primary__title {padding: 24px 16px 16px;}
 .card__primary__title__text {
 display: block;
@@ -91,10 +87,20 @@ label.btn-import-label {
   cursor: pointer;
 }
 
-::ng-deep .field-mapping .p-inputgroup .p-inputtext, 
-::ng-deep .field-mapping .p-fluid .p-inputgroup .p-inputtext, 
-::ng-deep .field-mapping .p-inputgroup .p-inputwrapper, 
-::ng-deep .field-mapping .p-inputgroup .p-inputwrapper>.p-component {
-  flex: unset;
-  width: unset;
-} 
+::ng-deep .field-mapping .p-inputtext{
+  width: 100%;
+}
+::ng-deep .field-mapping .p-inputwrapper{
+  width: 100%;
+}
+::ng-deep .field-mapping .p-dropdown{
+  width: 100%;
+}
+::ng-deep .field-mapping .p-inputgroup .p-chips{
+  display: flex;
+  width: 100%;
+}
+::ng-deep .field-mapping .p-inputwrapper .p-chips{
+  display: flex;
+  width: 100%;
+}
