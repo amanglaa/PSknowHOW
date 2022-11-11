@@ -267,6 +267,7 @@ public class MetaDataClientImpl implements MetadataClient {
 			fieldMapping.setJiraDor(null);
 		}
 		fieldMapping.setJiraDod(workflowMap.get(CommonConstant.DOD));
+		fieldMapping.setJiraTechDebtIssueType(issueTypeMap.get(CommonConstant.STORY));
 		List<String> rejectionList = workflowMap.get(CommonConstant.REJECTION);
 		/*if (CollectionUtils.isNotEmpty(rejectionList)) {
 			fieldMapping.setJiraDefectRejectionStatus(rejectionList.get(0));
@@ -286,6 +287,7 @@ public class MetaDataClientImpl implements MetadataClient {
 		fieldMapping.setJiraStoryIdentification(issueTypeMap.get(CommonConstant.STORY));
 		fieldMapping.setRootCauseValue(valuesToIdentifyMap.get(CommonConstant.ROOT_CAUSE_VALUE));
 		fieldMapping.setResolutionTypeForRejection(valuesToIdentifyMap.get(CommonConstant.REJECTION_RESOLUTION));
+		fieldMapping.setQaRootCauseValue(valuesToIdentifyMap.get(CommonConstant.QA_ROOT_CAUSE));
 		fieldMapping.setJiraQADefectDensityIssueType(issueTypeMap.get(CommonConstant.STORY));
 
 		if (projectConfig.isKanban()) {
@@ -304,14 +306,22 @@ public class MetaDataClientImpl implements MetadataClient {
 				issueTypeMap.getOrDefault(CommonConstant.TICKET_VELOCITY_ISSUE_TYPE, new ArrayList<>()));
 		fieldMapping
 				.setTicketDeliverdStatus(workflowMap.getOrDefault(CommonConstant.DELIVERED, new ArrayList<>()));
+		fieldMapping.setTicketReopenStatus(
+				workflowMap.getOrDefault(CommonConstant.TICKET_REOPEN_STATUS, new ArrayList<>()));
 		fieldMapping.setJiraTicketTriagedStatus(
 				workflowMap.getOrDefault(CommonConstant.TICKET_TRIAGED_STATUS, new ArrayList<>()));
 		fieldMapping.setJiraTicketClosedStatus(
 				workflowMap.getOrDefault(CommonConstant.TICKET_CLOSED_STATUS, new ArrayList<>()));
 		fieldMapping.setJiraTicketRejectedStatus(
 				workflowMap.getOrDefault(CommonConstant.TICKET_REJECTED_STATUS, new ArrayList<>()));
+		fieldMapping.setJiraTicketResolvedStatus(
+				workflowMap.getOrDefault(CommonConstant.TICKET_RESOLVED_STATUS, new ArrayList<>()));
+		fieldMapping.setJiraTicketWipStatus(
+				workflowMap.getOrDefault(CommonConstant.TICKET_WIP_STATUS, new ArrayList<>()));
 		fieldMapping.setKanbanCycleTimeIssueType(
 				issueTypeMap.getOrDefault(CommonConstant.KANBAN_CYCLE_TIME_ISSUE_TYPE, new ArrayList<>()));
+		fieldMapping.setKanbanJiraTechDebtIssueType(
+				issueTypeMap.getOrDefault(CommonConstant.KANBAN_TECH_DEBT_ISSUE_TYPE, new ArrayList<>()));
 
 	}
 

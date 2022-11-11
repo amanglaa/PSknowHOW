@@ -216,6 +216,7 @@ public class OfflineDataProcessorImplTest {
         jiraType = new ArrayList<>();
         jiraType.add("Story");
         fieldMapping.setJiraDefectInjectionIssueType(jiraType);
+        fieldMapping.setJiraTechDebtIssueType(jiraType);
         fieldMapping.setJiraDefectSeepageIssueType(jiraType);
         fieldMapping.setJiraDefectRemovalStatus(jiraType);
         fieldMapping.setJiraDefectRejectionlIssueType(jiraType);
@@ -332,11 +333,17 @@ public class OfflineDataProcessorImplTest {
         jiraType = new ArrayList<>(Arrays.asList(new String[]{"Support Request", "Incident", "Project Request", "Member Account Request", "DOJO Consulting Request","Test Case"}));
         fieldMapping.setTicketCountIssueType(jiraType);
         fieldMapping.setJiraTicketVelocityIssueType(jiraType);
+        fieldMapping.setKanbanJiraTechDebtIssueType(jiraType);
         fieldMapping.setKanbanCycleTimeIssueType(jiraType);
 
         jiraType = new ArrayList<>();
         jiraType.add("Resolved");
         fieldMapping.setTicketDeliverdStatus(jiraType);
+        fieldMapping.setJiraTicketResolvedStatus(jiraType);
+
+        jiraType = new ArrayList<>();
+        jiraType.add("Reopen");
+        fieldMapping.setTicketReopenStatus(jiraType);
 
         jiraType = new ArrayList<>();
         jiraType.add("Closed");
