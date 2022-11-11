@@ -35,6 +35,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.publicissapient.kpidashboard.apis.model.ChangeFailureRateInfo;
+import com.publicissapient.kpidashboard.apis.model.CodeBuildTimeInfo;
+import com.publicissapient.kpidashboard.apis.model.DeploymentFrequencyInfo;
+import com.publicissapient.kpidashboard.apis.model.CustomDateRange;
+import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
+import com.publicissapient.kpidashboard.common.constant.CommonConstant;
 import com.publicissapient.kpidashboard.common.model.jira.JiraIssueCustomHistory;
 import com.publicissapient.kpidashboard.common.model.jira.KanbanIssueCustomHistory;
 import com.publicissapient.kpidashboard.common.model.testexecution.KanbanTestExecution;
@@ -45,14 +51,9 @@ import org.apache.commons.lang3.StringUtils;
 import com.google.common.collect.Sets;
 import com.publicissapient.kpidashboard.apis.constant.Constant;
 import com.publicissapient.kpidashboard.apis.enums.KPICode;
-import com.publicissapient.kpidashboard.apis.model.ChangeFailureRateInfo;
-import com.publicissapient.kpidashboard.apis.model.CodeBuildTimeInfo;
-import com.publicissapient.kpidashboard.apis.model.DeploymentFrequencyInfo;
-import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
 import com.publicissapient.kpidashboard.common.model.application.LeadTimeData;
 import com.publicissapient.kpidashboard.common.model.application.ProjectVersion;
 import com.publicissapient.kpidashboard.common.model.application.ResolutionTimeValidation;
-import com.publicissapient.kpidashboard.common.model.excel.KanbanCapacity;
 import com.publicissapient.kpidashboard.common.model.jira.JiraIssue;
 import com.publicissapient.kpidashboard.common.model.jira.KanbanJiraIssue;
 import com.publicissapient.kpidashboard.common.model.testexecution.TestExecution;
@@ -1046,18 +1047,19 @@ public class KPIExcelUtility {
 
 	}
 
-	public static void populateTeamCapacityKanbanExcelData(List<KanbanCapacity> capacityList,
-			List<KPIExcelData> kpiExcelData) {
-        if(CollectionUtils.isNotEmpty(capacityList)) {
-            for (KanbanCapacity kanbanCapacity : capacityList) {
-                KPIExcelData excelData = new KPIExcelData();
-                excelData.setProjectName(kanbanCapacity.getProjectName());
-                excelData.setStartDate(kanbanCapacity.getStartDate().toString());
-                excelData.setEndDate(kanbanCapacity.getEndDate().toString());
-                excelData.setEstimatedCapacity(df2.format(kanbanCapacity.getCapacity()));
-                kpiExcelData.add(excelData);
-            }
-        }
+	public static void populateTeamCapacityKanbanExcelData(Double capacity, List<KPIExcelData> kpiExcelData,
+			String projectName, CustomDateRange dateRange, String duration) {
+
+		KPIExcelData excelData = new KPIExcelData();
+		excelData.setProjectName(projectName);
+        excelData.setStartDate(dateRange.getStartDate().toString());
+		if (CommonConstant.DAYS.equalsIgnoreCase(duration)) {
+			excelData.setEndDate(dateRange.getStartDate().toString());
+		} else {
+			excelData.setEndDate(dateRange.getEndDate().toString());
+		}
+		excelData.setEstimatedCapacity(df2.format(capacity));
+		kpiExcelData.add(excelData);
 	}
 
 }
