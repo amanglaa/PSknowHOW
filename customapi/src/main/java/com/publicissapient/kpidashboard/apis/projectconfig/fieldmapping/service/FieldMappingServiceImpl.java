@@ -172,7 +172,7 @@ public class FieldMappingServiceImpl implements FieldMappingService {
 		boolean isUpdated;
 
 		List<String> fieldNameList = Arrays.asList("jiradefecttype", "sprintName", "jiraStoryPointsCustomField",
-				"rootCause", "jiraIssueTypeNames", "storyFirstStatus", "epicCostOfDelay", "epicRiskReduction",
+				"rootCause", "jiraIssueTypeNames", "storyFirstStatus", "epicRiskReduction",
 				"epicUserBusinessValue", "epicWsjf", "epicTimeCriticality", "epicJobSize" , "additionalFilterConfig");
 
 		isUpdated = checkFieldsForUpdation(unsaved, saved, fieldNameList);
@@ -200,7 +200,7 @@ public class FieldMappingServiceImpl implements FieldMappingService {
 		if (!isUpdated && isZephyrTestTool(unsaved)) {
 			List<String> testCaseFieldList = Arrays.asList("jiraTestCaseType", "testAutomated",
 					"jiraCanNotAutomatedTestValue", "testAutomationStatusLabel", "jiraAutomatedTestValue","testAutomatedIdentification","testAutomationCompletedIdentification"
-					,"jiraAutomatedTestValue","testAutomationCompletedByCustomField","testRegressionByCustomField","jiraRegressionTestValue","testRegressionIdentification");
+					,"jiraAutomatedTestValue","testAutomationCompletedByCustomField","jiraRegressionTestValue");
 			isUpdated = checkFieldsForUpdation(unsaved, saved, testCaseFieldList);
 		}
 
@@ -232,7 +232,7 @@ public class FieldMappingServiceImpl implements FieldMappingService {
 		if (!isUpdated && isZephyrTestTool(unsaved)) {
 			List<String> testCaseFieldList = Arrays.asList("jiraTestCaseType", "testAutomated",
 					"jiraCanNotAutomatedTestValue", "testAutomationStatusLabel", "jiraAutomatedTestValue","testAutomatedIdentification","testAutomationCompletedIdentification"
-					,"jiraAutomatedTestValue","testAutomationCompletedByCustomField","testRegressionByCustomField","jiraRegressionTestValue","testRegressionIdentification");
+					,"jiraAutomatedTestValue","testAutomationCompletedByCustomField","jiraRegressionTestValue");
 
 			isUpdated = checkFieldsForUpdation(unsaved, saved, testCaseFieldList);
 		}
