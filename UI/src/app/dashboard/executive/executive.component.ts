@@ -347,6 +347,7 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
                 } else if (this.filterData?.length && !$event.makeAPICall) {
                     // alert('no call');
                     this.allKpiArray.forEach(element => {
+                        this.getDropdownArray(element?.kpiId);
                         // For kpi3 and kpi53 generating table column headers and table data
                         if (element.kpiId === 'kpi3' || element.kpiId === 'kpi53') {
                             //generating column headers
@@ -1116,13 +1117,17 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
         const idx = this.ifKpiExist(kpiId);
         let trendValueList = [];
         const optionsArr = [];
-
         if (idx != -1) {
             trendValueList = this.allKpiArray[idx]?.trendValueList;
             if (trendValueList?.length > 0 && trendValueList[0]?.hasOwnProperty('filter')) {
                 const obj = {};
                 for (let i = 0; i < trendValueList?.length; i++) {
-                    optionsArr?.push(trendValueList[i]?.filter);
+                    for(let key in this.colorObj){
+                        let kpiFilter = trendValueList[i]?.value?.findIndex(x => this.colorObj[key]?.nodeName == x.data);
+                        if(kpiFilter != -1){
+                            optionsArr?.push(trendValueList[i]?.filter);
+                        }
+                    }
                 }
                 const kpiObj = this.updatedConfigGlobalData?.filter(x => x['kpiId'] == kpiId)[0];
                 if (kpiObj && kpiObj['kpiDetail']?.hasOwnProperty('kpiFilter') && (kpiObj['kpiDetail']['kpiFilter']?.toLowerCase() == 'multiselectdropdown' || (kpiObj['kpiDetail']['kpiFilter']?.toLowerCase() == 'dropdown' && kpiObj['kpiDetail'].hasOwnProperty('hideOverallFilter') && kpiObj['kpiDetail']['hideOverallFilter']))) {
