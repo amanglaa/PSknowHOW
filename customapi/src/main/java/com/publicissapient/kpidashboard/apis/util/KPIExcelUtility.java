@@ -1038,11 +1038,10 @@ public class KPIExcelUtility {
 
 		KPIExcelData excelData = new KPIExcelData();
 		excelData.setProjectName(projectName);
+        excelData.setStartDate(dateRange.getStartDate().toString());
 		if (CommonConstant.DAYS.equalsIgnoreCase(duration)) {
-			excelData.setStartDate(dateRange.getStartDate().toString());
 			excelData.setEndDate(dateRange.getStartDate().toString());
 		} else {
-			excelData.setStartDate(dateRange.getStartDate().toString());
 			excelData.setEndDate(dateRange.getEndDate().toString());
 		}
 		excelData.setEstimatedCapacity(df2.format(capacity));

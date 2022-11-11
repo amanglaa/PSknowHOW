@@ -174,17 +174,16 @@ public class TeamCapacityServiceImpl extends JiraKPIService<Double, List<Object>
 				LocalDate currentDate = LocalDate.now();
 				List<DataCount> dataCount = new ArrayList<>();
 				for (int i = 0; i < kpiRequest.getKanbanXaxisDataPoints(); i++) {
-					List<Double> capacityList = new ArrayList<>();
 					CustomDateRange dateRange = KpiDataHelper.getStartAndEndDateForDataFiltering(currentDate,
 							kpiRequest.getDuration());
 					String projectName = projectNodeId.substring(0,
 							projectNodeId.lastIndexOf(CommonConstant.UNDERSCORE));
-					filterDataBasedOnStartAndEndDate(dateWiseKanbanCapacity, dateRange, capacityList, projectName);
+					Double capacity =filterDataBasedOnStartAndEndDate(dateWiseKanbanCapacity, dateRange, projectName);
 					String date = getRange(dateRange, kpiRequest);
-					dataCount.add(getDataCountObject(capacityList.get(0), projectName, date));
+					dataCount.add(getDataCountObject(capacity, projectName, date));
 					currentDate = getNextRangeDate(kpiRequest, currentDate);
 					if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-						KPIExcelUtility.populateTeamCapacityKanbanExcelData(capacityList.get(0), excelData, projectName,
+						KPIExcelUtility.populateTeamCapacityKanbanExcelData(capacity, excelData, projectName,
 								dateRange, kpiRequest.getDuration());
 					}
 				}
@@ -210,12 +209,12 @@ public class TeamCapacityServiceImpl extends JiraKPIService<Double, List<Object>
 		return dataCount;
 	}
 
-	private void filterDataBasedOnStartAndEndDate(Map<String, List<KanbanCapacity>> dateWiseKanbanCapacity,
-			CustomDateRange dateRange, List<Double> capacityList, String projectName) {
+	private Double filterDataBasedOnStartAndEndDate(Map<String, List<KanbanCapacity>> dateWiseKanbanCapacity,
+			CustomDateRange dateRange, String projectName) {
 		List<KanbanCapacity> kanbanCapacityList = new ArrayList<>();
 		List<KanbanCapacity> dummyList = new ArrayList<>();
 
-		Double capacity;
+		Double capacity = 0.0d;
 		for (LocalDate currentDate = dateRange.getStartDate(); currentDate.compareTo(dateRange.getStartDate()) >= 0
 				&& dateRange.getEndDate().compareTo(currentDate) >= 0; currentDate = currentDate.plusDays(1)) {
 			dummyList.add(KanbanCapacity.builder().capacity(0.0d).startDate(currentDate).endDate(currentDate)
@@ -224,8 +223,8 @@ public class TeamCapacityServiceImpl extends JiraKPIService<Double, List<Object>
 		}
 		if (CollectionUtils.isNotEmpty(kanbanCapacityList)) {
 			capacity = kanbanCapacityList.stream().mapToDouble(KanbanCapacity::getCapacity).sum();
-			capacityList.add(capacity);
 		}
+		return capacity;
 	}
 
 	/**
