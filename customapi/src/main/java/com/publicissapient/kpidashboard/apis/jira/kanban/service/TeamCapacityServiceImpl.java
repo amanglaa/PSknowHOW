@@ -92,7 +92,8 @@ public class TeamCapacityServiceImpl extends JiraKPIService<Double, List<Object>
 
 		Node root = treeAggregatorDetail.getRoot();
 		Map<String, Node> mapTmp = treeAggregatorDetail.getMapTmp();
-		List<Node> projectList = treeAggregatorDetail.getMapOfListOfProjectNodes().get(CommonConstant.HIERARCHY_LEVEL_ID_PROJECT);
+		List<Node> projectList = treeAggregatorDetail.getMapOfListOfProjectNodes()
+				.get(CommonConstant.HIERARCHY_LEVEL_ID_PROJECT);
 
 		dateWiseLeafNodeValue(mapTmp, projectList, kpiElement, kpiRequest);
 		log.debug("[TEAM CAPACITY-KANBAN-LEAF-NODE-VALUE][{}]. Values of leaf node after KPI calculation {}",
@@ -100,7 +101,7 @@ public class TeamCapacityServiceImpl extends JiraKPIService<Double, List<Object>
 
 		Map<Pair<String, String>, Node> nodeWiseKPIValue = new HashMap<>();
 		calculateAggregatedValue(root, nodeWiseKPIValue, KPICode.TEAM_CAPACITY);
-		List<DataCount> trendValues = getTrendValues(kpiRequest, nodeWiseKPIValue,KPICode.TEAM_CAPACITY);
+		List<DataCount> trendValues = getTrendValues(kpiRequest, nodeWiseKPIValue, KPICode.TEAM_CAPACITY);
 
 		kpiElement.setNodeWiseKPIValue(nodeWiseKPIValue);
 		kpiElement.setTrendValueList(trendValues);
@@ -156,7 +157,8 @@ public class TeamCapacityServiceImpl extends JiraKPIService<Double, List<Object>
 		Map<String, Object> capacityMap = fetchKPIDataFromDb(leafNodeList, startDate, endDate, kpiRequest);
 		String subGroupCategory = (String) capacityMap.get(SUBGROUPCATEGORY);
 		Map<String, Map<String, List<KanbanCapacity>>> projectAndDateWiseCapacityMap = KpiDataHelper
-				.createDateWiseCapacityMap((List<KanbanCapacity>) capacityMap.get(TICKET_LIST), subGroupCategory, filterHelperService);
+				.createDateWiseCapacityMap((List<KanbanCapacity>) capacityMap.get(TICKET_LIST), subGroupCategory,
+						filterHelperService);
 		kpiWithoutFilter(projectAndDateWiseCapacityMap, mapTmp, leafNodeList, kpiElement, kpiRequest);
 	}
 
@@ -166,8 +168,8 @@ public class TeamCapacityServiceImpl extends JiraKPIService<Double, List<Object>
 		List<KPIExcelData> excelData = new ArrayList<>();
 		leafNodeList.forEach(node -> {
 			String projectNodeId = node.getProjectFilter().getId();
-			Map<String, List<KanbanCapacity>> dateWiseKanbanCapacity = projectAndDateWiseCapacityMap.
-					get(node.getProjectFilter().getBasicProjectConfigId().toString());
+			Map<String, List<KanbanCapacity>> dateWiseKanbanCapacity = projectAndDateWiseCapacityMap
+					.get(node.getProjectFilter().getBasicProjectConfigId().toString());
 			if (MapUtils.isNotEmpty(dateWiseKanbanCapacity)) {
 				LocalDate currentDate = LocalDate.now();
 				List<DataCount> dataCount = new ArrayList<>();
@@ -177,8 +179,7 @@ public class TeamCapacityServiceImpl extends JiraKPIService<Double, List<Object>
 							kpiRequest.getDuration());
 					String projectName = projectNodeId.substring(0,
 							projectNodeId.lastIndexOf(CommonConstant.UNDERSCORE));
-					filterDataBasedOnStartAndEndDate(dateWiseKanbanCapacity, dateRange,
-							capacityList, projectName);
+					filterDataBasedOnStartAndEndDate(dateWiseKanbanCapacity, dateRange, capacityList, projectName);
 					String date = getRange(dateRange, kpiRequest);
 					dataCount.add(getDataCountObject(capacityList.get(0), projectName, date));
 					currentDate = getNextRangeDate(kpiRequest, currentDate);
@@ -226,7 +227,6 @@ public class TeamCapacityServiceImpl extends JiraKPIService<Double, List<Object>
 			capacityList.add(capacity);
 		}
 	}
-
 
 	/**
 	 *
