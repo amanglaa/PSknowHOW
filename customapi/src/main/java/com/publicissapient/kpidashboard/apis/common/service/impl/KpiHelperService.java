@@ -37,7 +37,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -105,45 +104,33 @@ public class KpiHelperService { // NOPMD
 	private static final String SPRINT_WISE_SPRINTDETAILS = "sprintWiseSprintDetailMap";
 	private static final String TOTAL_ISSUE_WITH_STORYPOINTS = "totalIssueWithStoryPoints";
 
-
 	private static final String FIELD_STATUS = "status";
 	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
-	@Autowired
-	private JiraIssueCustomHistoryRepository jiraIssueCustomHistoryRepository;
+	@Autowired private JiraIssueCustomHistoryRepository jiraIssueCustomHistoryRepository;
 
-	@Autowired
-	private JiraIssueRepository jiraIssueRepository;
+	@Autowired private JiraIssueRepository jiraIssueRepository;
 
-	@Autowired
-	private KanbanJiraIssueHistoryRepository kanbanJiraIssueHistoryRepository;
+	@Autowired private KanbanJiraIssueHistoryRepository kanbanJiraIssueHistoryRepository;
 
-	@Autowired
-	private CapacityKpiDataRepository capacityKpiDataRepository;
+	@Autowired private CapacityKpiDataRepository capacityKpiDataRepository;
 
-	@Autowired
-	private KanbanCapacityRepository kanbanCapacityRepository;
+	@Autowired private KanbanCapacityRepository kanbanCapacityRepository;
 
-	@Autowired
-	private ConfigHelperService configHelperService;
+	@Autowired private ConfigHelperService configHelperService;
 
-	@Autowired
-	private KPIVideoLinkRepository kpiVideoLinkRepository;
+	@Autowired private KPIVideoLinkRepository kpiVideoLinkRepository;
 
-	@Autowired
-	private CustomApiConfig customApiConfig;
+	@Autowired private CustomApiConfig customApiConfig;
 
-	@Autowired
-	private SprintRepository sprintRepository;
+	@Autowired private SprintRepository sprintRepository;
 
-	@Autowired
-	private FilterHelperService flterHelperService;
+	@Autowired private FilterHelperService flterHelperService;
 
 	/**
 	 * Prepares Kpi Elemnts on the basis of kpi master data.
 	 *
-	 * @param kpiList
-	 *            the kpi list
+	 * @param kpiList the kpi list
 	 */
 	public void kpiResolution(List<KpiElement> kpiList) {
 		Iterable<KpiMaster> kpiIterable = configHelperService.loadKpiMaster();
@@ -190,12 +177,9 @@ public class KpiHelperService { // NOPMD
 	/**
 	 * Process story data double.
 	 *
-	 * @param jiraIssueCustomHistory
-	 *            the feature custom history
-	 * @param status1
-	 *            the status 1
-	 * @param status2
-	 *            the status 2
+	 * @param jiraIssueCustomHistory the feature custom history
+	 * @param status1                the status 1
+	 * @param status2                the status 2
 	 * @return difference of two date as days
 	 */
 	public double processStoryData(JiraIssueCustomHistory jiraIssueCustomHistory, String status1, String status2) {
@@ -204,7 +188,7 @@ public class KpiHelperService { // NOPMD
 		if (storyDataSize >= 2 && null != status1 && null != status2) {
 			if (status2.equalsIgnoreCase(jiraIssueCustomHistory.getStorySprintDetails().get(0).getFromStatus())
 					&& status1.equalsIgnoreCase(
-							jiraIssueCustomHistory.getStorySprintDetails().get(storyDataSize - 1).getFromStatus())) {
+					jiraIssueCustomHistory.getStorySprintDetails().get(storyDataSize - 1).getFromStatus())) {
 				DateTime closeDate = new DateTime(
 						jiraIssueCustomHistory.getStorySprintDetails().get(0).getActivityDate(), DateTimeZone.UTC);
 				DateTime startDate = new DateTime(
@@ -226,10 +210,8 @@ public class KpiHelperService { // NOPMD
 	/**
 	 * This method returns DIR data based upon kpi request and leaf node list.
 	 *
-	 * @param leafNodeList
-	 *            the leaf node list
-	 * @param kpiRequest
-	 *            the kpi request
+	 * @param leafNodeList the leaf node list
+	 * @param kpiRequest   the kpi request
 	 * @return Map of string and object
 	 */
 	public Map<String, Object> fetchDIRDataFromDb(List<Node> leafNodeList, KpiRequest kpiRequest) {
@@ -241,7 +223,7 @@ public class KpiHelperService { // NOPMD
 		List<String> basicProjectConfigIds = new ArrayList<>();
 		Map<String, Map<String, Object>> uniqueProjectMapFH = new HashMap<>();
 		Map<String, Map<String, Object>> uniqueProjectMap = new HashMap<>();
-		Map<String, Map<String,List<String>>> droppedDefects = new HashMap<>();
+		Map<String, Map<String, List<String>>> droppedDefects = new HashMap<>();
 		leafNodeList.forEach(leaf -> {
 			Map<String, Object> mapOfProjectFiltersFH = new LinkedHashMap<>();
 			Map<String, Object> mapOfProjectFilters = new LinkedHashMap<>();
@@ -284,8 +266,8 @@ public class KpiHelperService { // NOPMD
 		List<String> storyIdList = new ArrayList<>();
 		sprintWiseStoryList.forEach(s -> storyIdList.addAll(s.getStoryList()));
 		mapOfFiltersFH.put("storyID", storyIdList);
-		List<JiraIssueCustomHistory> storyDataList = jiraIssueCustomHistoryRepository
-				.findFeatureCustomHistoryStoryProjectWise(mapOfFiltersFH, uniqueProjectMapFH);
+		List<JiraIssueCustomHistory> storyDataList = jiraIssueCustomHistoryRepository.findFeatureCustomHistoryStoryProjectWise(
+				mapOfFiltersFH, uniqueProjectMapFH);
 		List<String> dodStoryIdList = storyDataList.stream().map(JiraIssueCustomHistory::getStoryID)
 				.collect(Collectors.toList());
 		sprintWiseStoryList.stream().forEach(story -> {
@@ -320,7 +302,7 @@ public class KpiHelperService { // NOPMD
 		List<String> basicProjectConfigIds = new ArrayList<>();
 		Map<String, Map<String, Object>> uniqueProjectMapFH = new HashMap<>();
 		Map<String, Map<String, Object>> uniqueProjectMap = new HashMap<>();
-		Map<String, Map<String,List<String>>> droppedDefects = new HashMap<>();
+		Map<String, Map<String, List<String>>> droppedDefects = new HashMap<>();
 		leafNodeList.forEach(leaf -> {
 			Map<String, Object> mapOfProjectFiltersFH = new LinkedHashMap<>();
 			Map<String, Object> mapOfProjectFilters = new LinkedHashMap<>();
@@ -367,8 +349,8 @@ public class KpiHelperService { // NOPMD
 		List<String> storyIdList = new ArrayList<>();
 		sprintWiseStoryList.forEach(s -> storyIdList.addAll(s.getStoryList()));
 		mapOfFiltersFH.put("storyID", storyIdList);
-		List<JiraIssueCustomHistory> storyDataList = jiraIssueCustomHistoryRepository
-				.findFeatureCustomHistoryStoryProjectWise(mapOfFiltersFH, uniqueProjectMapFH);
+		List<JiraIssueCustomHistory> storyDataList = jiraIssueCustomHistoryRepository.findFeatureCustomHistoryStoryProjectWise(
+				mapOfFiltersFH, uniqueProjectMapFH);
 		List<String> dodStoryIdList = storyDataList.stream().map(JiraIssueCustomHistory::getStoryID)
 				.collect(Collectors.toList());
 
@@ -405,10 +387,8 @@ public class KpiHelperService { // NOPMD
 	 * Fetch sprint velocity data from db map. based upon kpi request and leaf
 	 * node list
 	 *
-	 * @param leafNodeList
-	 *            the leaf node list
-	 * @param kpiRequest
-	 *            the kpi request
+	 * @param leafNodeList the leaf node list
+	 * @param kpiRequest   the kpi request
 	 * @return map
 	 */
 	public Map<String, Object> fetchSprintVelocityDataFromDb(List<Node> leafNodeList, KpiRequest kpiRequest) {
@@ -436,38 +416,39 @@ public class KpiHelperService { // NOPMD
 
 			mapOfProjectFilters.put(JiraFeature.STATUS.getFieldValueInFeature(),
 					CommonUtils.convertToPatternList(fieldMapping.getJiraIssueDeliverdStatus()));
-			closedStatusMap.put(basicProjectConfigId.toString(),fieldMapping.getJiraIssueDeliverdStatus());
-			typeNameMap.put(basicProjectConfigId.toString(),fieldMapping.getJiraSprintVelocityIssueType());
+			closedStatusMap.put(basicProjectConfigId.toString(), fieldMapping.getJiraIssueDeliverdStatus());
+			typeNameMap.put(basicProjectConfigId.toString(), fieldMapping.getJiraSprintVelocityIssueType());
 
 			uniqueProjectMap.put(basicProjectConfigId.toString(), mapOfProjectFilters);
-
 
 		});
 
 		List<SprintDetails> sprintDetails = sprintRepository.findBySprintIDIn(sprintList);
 
-		Map<Pair<String,String>, Map<String, Double>> totalIssue = new HashMap<>();
+		List<String> totalIssueIds = new ArrayList<>();
 		if (CollectionUtils.isNotEmpty(sprintDetails)) {
-			
+
 			sprintDetails.stream().forEach(sprintDetail -> {
 
 				if (CollectionUtils.isNotEmpty(sprintDetail.getTotalIssues())) {
 
-					List<String> closedStatus = closedStatusMap.getOrDefault(sprintDetail.getBasicProjectConfigId().toString(),
-							new ArrayList<>());
+					List<String> closedStatus = closedStatusMap
+							.getOrDefault(sprintDetail.getBasicProjectConfigId().toString(), new ArrayList<>());
 					List<String> typeName = typeNameMap.getOrDefault(sprintDetail.getBasicProjectConfigId().toString(),
 							new ArrayList<>());
 
-					Map<String, Double> storyWiseStoryPoint = new HashMap<>();
-					sprintDetail.getTotalIssues().stream().filter(sprintIssue -> {
-						return (closedStatus.contains(sprintIssue.getStatus())
-								&& typeName.contains(sprintIssue.getTypeName()));
-					}).forEach(sprintIssue -> storyWiseStoryPoint.putIfAbsent(sprintIssue.getNumber(), sprintIssue.getStoryPoints()));
-
-					totalIssue.put(Pair.of(sprintDetail.getBasicProjectConfigId().toString(),sprintDetail.getSprintID()),storyWiseStoryPoint);
+					Set<SprintIssue> filterTotalIssues = sprintDetail.getTotalIssues().stream()
+							.filter(sprintIssue -> (closedStatus.contains(sprintIssue.getStatus())
+									&& typeName.contains(sprintIssue.getTypeName())))
+							.collect(Collectors.toSet());
+					sprintDetail.setTotalIssues(filterTotalIssues);
+					List<String> sprintWiseIssueIds = KpiDataHelper
+							.getIssuesIdListBasedOnTypeFromSprintDetails(sprintDetail, CommonConstant.TOTAL_ISSUES);
+					totalIssueIds.addAll(sprintWiseIssueIds);
 				}
-
 			});
+			mapOfFilters.put(JiraFeature.ISSUE_NUMBER.getFieldValueInFeature(),
+					totalIssueIds.stream().distinct().collect(Collectors.toList()));
 		} else {
 			mapOfFilters.put(JiraFeature.SPRINT_ID.getFieldValueInFeature(),
 					sprintList.stream().distinct().collect(Collectors.toList()));
@@ -479,20 +460,21 @@ public class KpiHelperService { // NOPMD
 		mapOfFilters.put(JiraFeature.BASIC_PROJECT_CONFIG_ID.getFieldValueInFeature(),
 				basicProjectConfigIds.stream().distinct().collect(Collectors.toList()));
 
-		if (MapUtils.isNotEmpty(totalIssue)) {
-			resultListMap.put(TOTAL_ISSUE_WITH_STORYPOINTS,totalIssue);
+		List<JiraIssue> sprintVelocityList = jiraIssueRepository.findIssuesBySprintAndType(mapOfFilters,
+				uniqueProjectMap);
+		resultListMap.put(SPRINTVELOCITYKEY, sprintVelocityList);
+
+		if (CollectionUtils.isNotEmpty(totalIssueIds)) {
 			resultListMap.put(SPRINT_WISE_SPRINTDETAILS, sprintDetails);
 		} else {
-			//start: for azure board sprint details collections put is empty due to we did not have required data of issues.
-			List<JiraIssue> sprintVelocityList = jiraIssueRepository.findIssuesBySprintAndType(mapOfFilters,
-					uniqueProjectMap);
-			resultListMap.put(SPRINTVELOCITYKEY, sprintVelocityList);
+			// start: for azure board sprint details collections put is empty due to we did
+			// not have required data of issues.
 			resultListMap.put(SPRINT_WISE_SPRINTDETAILS, null);
 		}
-		//end: for azure board sprint details collections put is empty due to we did not have required data of issues.
+		// end: for azure board sprint details collections put is empty due to we did
+		// not have required data of issues.
 
 		return resultListMap;
-
 	}
 
 	/**
