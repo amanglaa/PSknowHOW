@@ -102,35 +102,45 @@ public class KpiHelperService { // NOPMD
 	private static final String FIELD_PRIORITY = "priority";
 	private static final String FIELD_RCA = "rca";
 	private static final String SPRINT_WISE_SPRINTDETAILS = "sprintWiseSprintDetailMap";
-	private static final String TOTAL_ISSUE_WITH_STORYPOINTS = "totalIssueWithStoryPoints";
 
 	private static final String FIELD_STATUS = "status";
 	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
-	@Autowired private JiraIssueCustomHistoryRepository jiraIssueCustomHistoryRepository;
+	@Autowired
+	private JiraIssueCustomHistoryRepository jiraIssueCustomHistoryRepository;
 
-	@Autowired private JiraIssueRepository jiraIssueRepository;
+	@Autowired
+	private JiraIssueRepository jiraIssueRepository;
 
-	@Autowired private KanbanJiraIssueHistoryRepository kanbanJiraIssueHistoryRepository;
+	@Autowired
+	private KanbanJiraIssueHistoryRepository kanbanJiraIssueHistoryRepository;
 
-	@Autowired private CapacityKpiDataRepository capacityKpiDataRepository;
+	@Autowired
+	private CapacityKpiDataRepository capacityKpiDataRepository;
 
-	@Autowired private KanbanCapacityRepository kanbanCapacityRepository;
+	@Autowired
+	private KanbanCapacityRepository kanbanCapacityRepository;
 
-	@Autowired private ConfigHelperService configHelperService;
+	@Autowired
+	private ConfigHelperService configHelperService;
 
-	@Autowired private KPIVideoLinkRepository kpiVideoLinkRepository;
+	@Autowired
+	private KPIVideoLinkRepository kpiVideoLinkRepository;
 
-	@Autowired private CustomApiConfig customApiConfig;
+	@Autowired
+	private CustomApiConfig customApiConfig;
 
-	@Autowired private SprintRepository sprintRepository;
+	@Autowired
+	private SprintRepository sprintRepository;
 
-	@Autowired private FilterHelperService flterHelperService;
+	@Autowired
+	private FilterHelperService flterHelperService;
 
 	/**
 	 * Prepares Kpi Elemnts on the basis of kpi master data.
 	 *
-	 * @param kpiList the kpi list
+	 * @param kpiList
+	 *            the kpi list
 	 */
 	public void kpiResolution(List<KpiElement> kpiList) {
 		Iterable<KpiMaster> kpiIterable = configHelperService.loadKpiMaster();
@@ -177,9 +187,12 @@ public class KpiHelperService { // NOPMD
 	/**
 	 * Process story data double.
 	 *
-	 * @param jiraIssueCustomHistory the feature custom history
-	 * @param status1                the status 1
-	 * @param status2                the status 2
+	 * @param jiraIssueCustomHistory
+	 *            the feature custom history
+	 * @param status1
+	 *            the status 1
+	 * @param status2
+	 *            the status 2
 	 * @return difference of two date as days
 	 */
 	public double processStoryData(JiraIssueCustomHistory jiraIssueCustomHistory, String status1, String status2) {
@@ -188,7 +201,7 @@ public class KpiHelperService { // NOPMD
 		if (storyDataSize >= 2 && null != status1 && null != status2) {
 			if (status2.equalsIgnoreCase(jiraIssueCustomHistory.getStorySprintDetails().get(0).getFromStatus())
 					&& status1.equalsIgnoreCase(
-					jiraIssueCustomHistory.getStorySprintDetails().get(storyDataSize - 1).getFromStatus())) {
+							jiraIssueCustomHistory.getStorySprintDetails().get(storyDataSize - 1).getFromStatus())) {
 				DateTime closeDate = new DateTime(
 						jiraIssueCustomHistory.getStorySprintDetails().get(0).getActivityDate(), DateTimeZone.UTC);
 				DateTime startDate = new DateTime(
@@ -210,8 +223,10 @@ public class KpiHelperService { // NOPMD
 	/**
 	 * This method returns DIR data based upon kpi request and leaf node list.
 	 *
-	 * @param leafNodeList the leaf node list
-	 * @param kpiRequest   the kpi request
+	 * @param leafNodeList
+	 *            the leaf node list
+	 * @param kpiRequest
+	 *            the kpi request
 	 * @return Map of string and object
 	 */
 	public Map<String, Object> fetchDIRDataFromDb(List<Node> leafNodeList, KpiRequest kpiRequest) {
@@ -223,7 +238,7 @@ public class KpiHelperService { // NOPMD
 		List<String> basicProjectConfigIds = new ArrayList<>();
 		Map<String, Map<String, Object>> uniqueProjectMapFH = new HashMap<>();
 		Map<String, Map<String, Object>> uniqueProjectMap = new HashMap<>();
-		Map<String, Map<String, List<String>>> droppedDefects = new HashMap<>();
+		Map<String, Map<String,List<String>>> droppedDefects = new HashMap<>();
 		leafNodeList.forEach(leaf -> {
 			Map<String, Object> mapOfProjectFiltersFH = new LinkedHashMap<>();
 			Map<String, Object> mapOfProjectFilters = new LinkedHashMap<>();
@@ -266,8 +281,8 @@ public class KpiHelperService { // NOPMD
 		List<String> storyIdList = new ArrayList<>();
 		sprintWiseStoryList.forEach(s -> storyIdList.addAll(s.getStoryList()));
 		mapOfFiltersFH.put("storyID", storyIdList);
-		List<JiraIssueCustomHistory> storyDataList = jiraIssueCustomHistoryRepository.findFeatureCustomHistoryStoryProjectWise(
-				mapOfFiltersFH, uniqueProjectMapFH);
+		List<JiraIssueCustomHistory> storyDataList = jiraIssueCustomHistoryRepository
+				.findFeatureCustomHistoryStoryProjectWise(mapOfFiltersFH, uniqueProjectMapFH);
 		List<String> dodStoryIdList = storyDataList.stream().map(JiraIssueCustomHistory::getStoryID)
 				.collect(Collectors.toList());
 		sprintWiseStoryList.stream().forEach(story -> {
@@ -302,7 +317,7 @@ public class KpiHelperService { // NOPMD
 		List<String> basicProjectConfigIds = new ArrayList<>();
 		Map<String, Map<String, Object>> uniqueProjectMapFH = new HashMap<>();
 		Map<String, Map<String, Object>> uniqueProjectMap = new HashMap<>();
-		Map<String, Map<String, List<String>>> droppedDefects = new HashMap<>();
+		Map<String, Map<String,List<String>>> droppedDefects = new HashMap<>();
 		leafNodeList.forEach(leaf -> {
 			Map<String, Object> mapOfProjectFiltersFH = new LinkedHashMap<>();
 			Map<String, Object> mapOfProjectFilters = new LinkedHashMap<>();
@@ -349,8 +364,8 @@ public class KpiHelperService { // NOPMD
 		List<String> storyIdList = new ArrayList<>();
 		sprintWiseStoryList.forEach(s -> storyIdList.addAll(s.getStoryList()));
 		mapOfFiltersFH.put("storyID", storyIdList);
-		List<JiraIssueCustomHistory> storyDataList = jiraIssueCustomHistoryRepository.findFeatureCustomHistoryStoryProjectWise(
-				mapOfFiltersFH, uniqueProjectMapFH);
+		List<JiraIssueCustomHistory> storyDataList = jiraIssueCustomHistoryRepository
+				.findFeatureCustomHistoryStoryProjectWise(mapOfFiltersFH, uniqueProjectMapFH);
 		List<String> dodStoryIdList = storyDataList.stream().map(JiraIssueCustomHistory::getStoryID)
 				.collect(Collectors.toList());
 

@@ -93,7 +93,7 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 	 */
 	@Override
 	public KpiElement getKpiData(KpiRequest kpiRequest, KpiElement kpiElement,
-								 TreeAggregatorDetail treeAggregatorDetail) throws ApplicationException {
+			TreeAggregatorDetail treeAggregatorDetail) throws ApplicationException {
 
 		List<DataCount> trendValueList = new ArrayList<>();
 		Node root = treeAggregatorDetail.getRoot();
@@ -181,7 +181,7 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 		Map<Pair<String, String>, List<JiraIssue>> sprintWiseIssues = new HashMap<>();
 
 		List<SprintDetails> sprintDetails = (List<SprintDetails>) sprintVelocityStoryMap.get(SPRINT_WISE_SPRINTDETAILS);
-		Map<Pair<String, String> , Set<IssueDetails>> currentSprintLeafVelocityMap = new HashMap<>();
+		Map<Pair<String, String>, Set<IssueDetails>> currentSprintLeafVelocityMap = new HashMap<>();
 		if (CollectionUtils.isNotEmpty(sprintDetails)) {
 			sprintDetails.forEach(sd -> {
 				Set<IssueDetails> filterIssueDetailsSet = new HashSet<>();
@@ -214,7 +214,8 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 							.put(Pair.of(basicProjectConfigId, sprintId), sprintWiseIssuesList));
 				});
 			}
-			// end : for azure board sprint details collections empty so that we have to prepare data from jira issue.
+			// end : for azure board sprint details collections empty so that we have to
+			// prepare data from jira issue.
 		}
 
 		Map<String, ValidationData> validationDataMap = new HashMap<>();
@@ -229,8 +230,8 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 					currentNodeIdentifier, sprintWiseIssues);
 			populateValidationDataObject(kpiElement, requestTrackerId, validationDataMap, sprintWiseIssues, node,
 					currentSprintLeafVelocityMap, currentNodeIdentifier);
-			setSprintWiseLogger(node.getSprintFilter().getName(), currentSprintLeafVelocityMap.get(currentNodeIdentifier),
-					sprintVelocityForCurrentLeaf);
+			setSprintWiseLogger(node.getSprintFilter().getName(),
+					currentSprintLeafVelocityMap.get(currentNodeIdentifier), sprintVelocityForCurrentLeaf);
 
 			DataCount dataCount = new DataCount();
 			dataCount.setData(String.valueOf(Math.round(sprintVelocityForCurrentLeaf)));
@@ -246,8 +247,9 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 		});
 	}
 
-	private double calculateSprintVelocityValue(Map<Pair<String, String> , Set<IssueDetails>> currentSprintLeafVelocityMap
-			, Pair<String, String> currentNodeIdentifier, Map<Pair<String, String>, List<JiraIssue>> sprintJiraIssues) {
+	private double calculateSprintVelocityValue(
+			Map<Pair<String, String>, Set<IssueDetails>> currentSprintLeafVelocityMap,
+			Pair<String, String> currentNodeIdentifier, Map<Pair<String, String>, List<JiraIssue>> sprintJiraIssues) {
 		double sprintVelocityForCurrentLeaf = 0.0d;
 		if (CollectionUtils.isNotEmpty(sprintJiraIssues.get(currentNodeIdentifier))) {
 			List<JiraIssue> jiraIssueList = sprintJiraIssues.get(currentNodeIdentifier);
@@ -256,9 +258,9 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 		} else {
 			if (Objects.nonNull(currentSprintLeafVelocityMap.get(currentNodeIdentifier))) {
 				Set<IssueDetails> issueDetailsSet = currentSprintLeafVelocityMap.get(currentNodeIdentifier);
-				for(IssueDetails issueDetails : issueDetailsSet) {
-					sprintVelocityForCurrentLeaf = sprintVelocityForCurrentLeaf +
-							Optional.ofNullable(issueDetails.getSprintIssue().getStoryPoints()).orElse(0.0d).doubleValue();
+				for (IssueDetails issueDetails : issueDetailsSet) {
+					sprintVelocityForCurrentLeaf = sprintVelocityForCurrentLeaf + Optional
+							.ofNullable(issueDetails.getSprintIssue().getStoryPoints()).orElse(0.0d).doubleValue();
 				}
 			}
 
@@ -268,6 +270,7 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 
 	/**
 	 * Populates Validation Data Object
+	 * 
 	 * @param kpiElement
 	 * @param requestTrackerId
 	 * @param validationDataMap
@@ -278,7 +281,8 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 	 */
 	private void populateValidationDataObject(KpiElement kpiElement, String requestTrackerId,
 			Map<String, ValidationData> validationDataMap, Map<Pair<String, String>, List<JiraIssue>> sprintWiseIssues,
-			Node node, Map<Pair<String, String> , Set<IssueDetails>> currentSprintLeafVelocityMap , Pair<String, String> currentNodeIdentifier) {
+			Node node, Map<Pair<String, String>, Set<IssueDetails>> currentSprintLeafVelocityMap,
+			Pair<String, String> currentNodeIdentifier) {
 
 		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
 			List<String> defectKeyList = new ArrayList<>();
