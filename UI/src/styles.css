@@ -1281,25 +1281,13 @@ a:hover {
   text-align: left;
 }
 
-p-multiselect {
+p-multiselect.multiselect-custom {
   float: right;
   margin-right: 10px;
 }
 .trend-chart-combo-box p-multiselect{
   float: none;
 }
-/* .trend-chart-combo-box .p-multiselect .p-multiselect-label-container {
-  display: none;
-} */
-
-/* .kanban .p-multiselect-trigger .p-multiselect-trigger-icon:before {
-  content: '\2117';
-} */
-
-/* .kanban .T-icon .p-multiselect-trigger-icon:before {
-  content: '\24C9' !important;
-  font-size: 15px !important;
-} */
 
 .kanban .T-icon .p-multiselect-trigger {
   position: relative;
