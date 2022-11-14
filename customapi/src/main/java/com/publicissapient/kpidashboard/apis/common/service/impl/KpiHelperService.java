@@ -445,9 +445,9 @@ public class KpiHelperService { // NOPMD
 
 			sprintDetails.stream().forEach(sprintDetail -> {
 
-				if (CollectionUtils.isNotEmpty(sprintDetail.getTotalIssues())) {
+				if (CollectionUtils.isNotEmpty(sprintDetail.getCompletedIssues())) {
 
-					List<String> closedStatus = closedStatusMap
+					/*List<String> closedStatus = closedStatusMap
 							.getOrDefault(sprintDetail.getBasicProjectConfigId().toString(), new ArrayList<>());
 					List<String> typeName = typeNameMap.getOrDefault(sprintDetail.getBasicProjectConfigId().toString(),
 							new ArrayList<>());
@@ -456,9 +456,9 @@ public class KpiHelperService { // NOPMD
 							.filter(sprintIssue -> (closedStatus.contains(sprintIssue.getStatus())
 									&& typeName.contains(sprintIssue.getTypeName())))
 							.collect(Collectors.toSet());
-					sprintDetail.setTotalIssues(filterTotalIssues);
+					sprintDetail.setTotalIssues(filterTotalIssues);*/
 					List<String> sprintWiseIssueIds = KpiDataHelper
-							.getIssuesIdListBasedOnTypeFromSprintDetails(sprintDetail, CommonConstant.TOTAL_ISSUES);
+							.getIssuesIdListBasedOnTypeFromSprintDetails(sprintDetail, CommonConstant.COMPLETED_ISSUES);
 					totalIssueIds.addAll(sprintWiseIssueIds);
 				}
 			});

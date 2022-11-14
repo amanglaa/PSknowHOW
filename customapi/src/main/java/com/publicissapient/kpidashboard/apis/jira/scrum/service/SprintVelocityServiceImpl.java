@@ -185,7 +185,7 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 		if (CollectionUtils.isNotEmpty(sprintDetails)) {
 			sprintDetails.forEach(sd -> {
 				Set<IssueDetails> filterIssueDetailsSet = new HashSet<>();
-				sd.getTotalIssues().stream().forEach(sprintIssue -> {
+				sd.getCompletedIssues().stream().forEach(sprintIssue -> {
 					allJiraIssue.stream().forEach(jiraIssue -> {
 						if (sprintIssue.getNumber().equals(jiraIssue.getNumber())) {
 							IssueDetails issueDetails = new IssueDetails();
