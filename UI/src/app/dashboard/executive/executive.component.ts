@@ -1126,7 +1126,10 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
                     for(let key in this.colorObj){
                         let kpiFilter = trendValueList[i]?.value?.findIndex(x => this.colorObj[key]?.nodeName == x.data);
                         if(kpiFilter != -1){
-                            optionsArr?.push(trendValueList[i]?.filter);
+                            let ifExist = optionsArr.findIndex(x=>x == trendValueList[i]?.filter);
+                            if(ifExist == -1){
+                                optionsArr?.push(trendValueList[i]?.filter);
+                            }
                         }
                     }
                 }
