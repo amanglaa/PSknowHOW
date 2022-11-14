@@ -499,8 +499,8 @@
                             </div>
                         </div>
 
-                        <div class="p-d-flex">
-                            <div class="p-mb-3 p-mr-3">
+                
+                            <div class="p-mb-3">
                                 <label class="field-title">UAT Defect Identification</label>
                                 <p-dropdown id="jiraBugRaisedByIdentification" [options]="defectIdentification"
                                     placeholder="Select" formControlName="jiraBugRaisedByIdentification" pTooltip='<span class="tooltiptext">
@@ -514,20 +514,6 @@
                                     tooltipPosition="top">
                                 </p-dropdown>
                             </div>
-                            <div class="p-mb-3">
-                                <label class="field-title">QA Defect Identification</label>
-                                <p-dropdown id="jiraBugRaisedByQAIdentification" [options]="defectIdentification"
-                                    placeholder="Select" formControlName="jiraBugRaisedByQAIdentification" pTooltip='
-                                This field is used to identify if a defect is raised by
-                                        QA:<br />
-                                        1. CustomField : If a separate custom field is used.<br />
-                                        2. Labels : If a label is used to identify. Example: "QA Defect"<br /><i>
-                                            Impacted KPI: QA Defect Density</i>
-                                </span>' tooltipPosition="top" tooltipEvent="hover" [escape]="false"
-                                    tooltipPosition="top">
-                                </p-dropdown>
-                            </div>
-                        </div>
                         <div class="p-mb-3"
                             *ngIf="fieldMapping['jiraBugRaisedByIdentification'] && (fieldMapping['jiraBugRaisedByIdentification'].value === 'CustomField' )">
                             <label class="field-title">UAT Defect Custom Field</label>
@@ -559,7 +545,6 @@
                         </div>
                         <div class="p-mb-3 defect-priority-dropdown">
                             <label class="field-title">Defect priority to exclude from FTPR</label>
-                            <div class="multiselect-container">
                                 <p-multiSelect id="defectPriority" [options]="selectedPriority"
                                     placeholder="Select Priority" formControlName="defectPriority"
                                     (ngModelChange)="onSelectPriority($event)" [showHeader]="false" pTooltip='<span class="tooltiptext">
@@ -570,39 +555,7 @@
                               </span>' tooltipPosition="top" tooltipEvent="hover" [escape]="false"
                                     tooltipPosition="top">
                                 </p-multiSelect>
-                            </div>
                         </div>
-
-                        <div class="p-mb-3"
-                            *ngIf="fieldMapping['productionDefectIdentifier'] && (fieldMapping['productionDefectIdentifier'].value === 'CustomField' )">
-                            <label class="field-title">Production Defect
-                                {{fieldMapping['productionDefectIdentifier'].value}}</label>
-                            <div class="p-inputgroup">
-                                <input type="text" pInputText id="productionDefectCustomField"
-                                    formControlName="productionDefectCustomField"
-                                    placeholder="Enter Production Defect {{fieldMapping['productionDefectIdentifier'].value}}"
-                                    [style]="{'width':'210px'}" pTooltip='<span class="tooltiptext">
-                                        Provide customfield name to identify Production raised defects.<br />
-                                        <i> Example: customfield_13907</i>
-                              </span>' tooltipPosition="top" tooltipEvent="hover" [escape]="false">
-                                <button type="button" pButton pRipple icon="pi pi-search"
-                                    (click)="showDialogToAddValue(true, 'productionDefectCustomField', 'fields')"></button>
-                            </div>
-                        </div>
-                        <div class="p-mb-3"
-                            *ngIf="fieldMapping['productionDefectIdentifier'] && fieldMapping['productionDefectIdentifier'].value === 'Component'">
-                            <label class="field-title">{{fieldMapping['productionDefectIdentifier'].value}}</label>
-                            <div class="p-inputgroup">
-                                <input type="text" pInputText id="productionDefectComponentValue"
-                                    formControlName="productionDefectComponentValue"
-                                    placeholder="Enter {{fieldMapping['productionDefectIdentifier'].value}} Values"
-                                    addOnBlur="true" pTooltip='<span class="tooltiptext">
-                                        Provide label name to identify Production raised defects.
-                                  </span>' tooltipPosition="top" tooltipEvent="hover" [escape]="false">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="p-sm-6">
                         <div class="p-mb-3">
                             <label class="field-title">RCA values to exclude from FTPR</label>
                             <p-chips id="excludeRCAFromFTPR" formControlName="excludeRCAFromFTPR" addOnBlur="true"
@@ -612,6 +565,9 @@
                                 tooltipEvent="hover" [escape]="false"></p-chips>
 
                         </div>
+                    </div>
+                    <div class="p-sm-6">
+                        
                         <div class="p-mb-3">
                             <label class="field-title">RCA Value on Trend</label>
                             <p-chips id="rootCauseValue" formControlName="rootCauseValue" addOnBlur="true"
@@ -620,6 +576,19 @@
                                 <i> Example: Code Issue</i>
                                 <i>Impacted : Defect Count By RCA (tagged to Story)</i>
                     </span>' tooltipPosition="top" tooltipEvent="hover" [escape]="false"></p-chips>
+                        </div>
+                        <div class="p-mb-3">
+                            <label class="field-title">QA Defect Identification</label>
+                            <p-dropdown id="jiraBugRaisedByQAIdentification" [options]="defectIdentification"
+                                placeholder="Select" formControlName="jiraBugRaisedByQAIdentification" pTooltip='
+                            This field is used to identify if a defect is raised by
+                                    QA:<br />
+                                    1. CustomField : If a separate custom field is used.<br />
+                                    2. Labels : If a label is used to identify. Example: "QA Defect"<br /><i>
+                                        Impacted KPI: QA Defect Density</i>
+                            </span>' tooltipPosition="top" tooltipEvent="hover" [escape]="false"
+                                tooltipPosition="top">
+                            </p-dropdown>
                         </div>
                         <div class="p-mb-3"
                             *ngIf="fieldMapping['jiraBugRaisedByQAIdentification'] && (fieldMapping['jiraBugRaisedByQAIdentification'].value === 'CustomField' )">
@@ -675,6 +644,34 @@
                                         Provide label name to identify Production raised defects.
                                   </span>' tooltipPosition="top" tooltipEvent="hover" [escape]="false">
                                 </p-chips>
+                            </div>
+                        </div>
+                        <div class="p-mb-3"
+                            *ngIf="fieldMapping['productionDefectIdentifier'] && (fieldMapping['productionDefectIdentifier'].value === 'CustomField' )">
+                            <label class="field-title">Production Defect
+                                {{fieldMapping['productionDefectIdentifier'].value}}</label>
+                            <div class="p-inputgroup">
+                                <input type="text" pInputText id="productionDefectCustomField"
+                                    formControlName="productionDefectCustomField"
+                                    placeholder="Enter Production Defect {{fieldMapping['productionDefectIdentifier'].value}}"
+                                    [style]="{'width':'210px'}" pTooltip='<span class="tooltiptext">
+                                        Provide customfield name to identify Production raised defects.<br />
+                                        <i> Example: customfield_13907</i>
+                              </span>' tooltipPosition="top" tooltipEvent="hover" [escape]="false">
+                                <button type="button" pButton pRipple icon="pi pi-search"
+                                    (click)="showDialogToAddValue(true, 'productionDefectCustomField', 'fields')"></button>
+                            </div>
+                        </div>
+                        <div class="p-mb-3"
+                            *ngIf="fieldMapping['productionDefectIdentifier'] && fieldMapping['productionDefectIdentifier'].value === 'Component'">
+                            <label class="field-title">{{fieldMapping['productionDefectIdentifier'].value}}</label>
+                            <div class="p-inputgroup">
+                                <input type="text" pInputText id="productionDefectComponentValue"
+                                    formControlName="productionDefectComponentValue"
+                                    placeholder="Enter {{fieldMapping['productionDefectIdentifier'].value}} Values"
+                                    addOnBlur="true" pTooltip='<span class="tooltiptext">
+                                        Provide label name to identify Production raised defects.
+                                  </span>' tooltipPosition="top" tooltipEvent="hover" [escape]="false">
                             </div>
                         </div>
                     </div>
