@@ -1238,7 +1238,7 @@ db.getCollection('kpi_master').insert(
           "operator": "division",
           "operands": [
             "sprint velocity in last sprint.",
-            "sprint velocity in last n sprint"
+            "sprint velocity in last 3 sprint"
           ]
         }
       ]
