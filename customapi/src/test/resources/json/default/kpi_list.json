@@ -1,89 +1,84 @@
-[
-  {
-    "kpiId": "kpi14",
-    "kpiName": "Defect Injection Rate",
-    "maxValue": "200",
-    "kpiUnit": "%",
-    "isDeleted": "False",
-    "defaultOrder": 1,
-    "kpiSource": "Jira",
-    "groupId": 2,
-    "thresholdValue": "10",
-    "kanban": false,
-    "chartType": "line",
-    "kpiInfo": {
-      "definition": "DEFECT INJECTION RATE measures the total number of defects (bugs) detected for a story",
-      "formula": [
-        {
-          "lhs": "DIR for a sprint",
-          "operator": "division",
-          "operands": [
-            "No. of defects tagged to all stories closed in a sprint",
-            "Total no. of stories closed in the sprint"
-          ]
-        }
-      ],
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "It is calculated as a ‘Percentage’. Lower the percentage, better is the ‘Quality’"
-        },
-        {
-          "type": "paragraph",
-          "value": "A progress indicator shows trend of defect injection rate between last 2 sprints. A downward trend is considered positive"
-        },
-        {
-          "type": "paragraph",
-          "value": "Maturity of the KPI is calculated based on the average of the last 5 sprints"
-        },
-        {
-          "type": "paragraph",
-          "value": "*If the KPI data is not available for last 5 sprints, the Maturity level will not be shown"
-        }
-      ],
-      "maturityLevels": [
-        {
-          "level": "M5",
-          "bgColor": "#6cab61",
-          "range": "25%"
-        },
-        {
-          "level": "M4",
-          "bgColor": "#AEDB76",
-          "range": "75-25%"
-        },
-        {
-          "level": "M3",
-          "bgColor": "#eff173",
-          "range": "125%-75%"
-        },
-        {
-          "level": "M2",
-          "bgColor": "#ffc35b",
-          "range": "175% -125%"
-        },
-        {
-          "level": "M1",
-          "bgColor": "#F06667",
-          "range": "> 175%"
-        }
+[{
+  "kpiId": "kpi14",
+  "kpiName": "Defect Injection Rate",
+  "maxValue": "200",
+  "kpiUnit": "%",
+  "isDeleted": "False",
+  "defaultOrder": 1,
+  "kpiSource": "Jira",
+  "groupId": 2,
+  "thresholdValue": "10",
+  "kanban": false,
+  "chartType": "line",
+  "kpiInfo": {
+    "definition": "DEFECT INJECTION RATE measures the total number of defects (bugs) detected for a story",
+    "formula": [{
+      "lhs": "DIR for a sprint",
+      "operator": "division",
+      "operands": [
+        "No. of defects tagged to all stories closed in a sprint",
+        "Total no. of stories closed in the sprint"
       ]
+    }],
+    "details": [{
+      "type": "paragraph",
+      "value": "It is calculated as a ‘Percentage’. Lower the percentage, better is the ‘Quality’"
     },
-    "xAxisLabel": "Sprints",
-    "yAxisLabel": "Percentage",
-    "isPositiveTrend": false,
-    "showTrend": true,
-    "aggregationCriteria": "average",
-    "isAdditionalFilterSupport": true,
-    "calculateMaturity": true,
-    "maturityRange": [
-      "-175",
-      "175-125",
-      "125-75",
-      "75-25",
-      "25-"
+      {
+        "type": "paragraph",
+        "value": "A progress indicator shows trend of defect injection rate between last 2 sprints. A downward trend is considered positive"
+      },
+      {
+        "type": "paragraph",
+        "value": "Maturity of the KPI is calculated based on the average of the last 5 sprints"
+      },
+      {
+        "type": "paragraph",
+        "value": "*If the KPI data is not available for last 5 sprints, the Maturity level will not be shown"
+      }
+    ],
+    "maturityLevels": [{
+      "level": "M5",
+      "bgColor": "#6cab61",
+      "range": "25%"
+    },
+      {
+        "level": "M4",
+        "bgColor": "#AEDB76",
+        "range": "75-25%"
+      },
+      {
+        "level": "M3",
+        "bgColor": "#eff173",
+        "range": "125%-75%"
+      },
+      {
+        "level": "M2",
+        "bgColor": "#ffc35b",
+        "range": "175% -125%"
+      },
+      {
+        "level": "M1",
+        "bgColor": "#F06667",
+        "range": "> 175%"
+      }
     ]
   },
+  "xAxisLabel": "Sprints",
+  "yAxisLabel": "Percentage",
+  "isPositiveTrend": false,
+  "showTrend": true,
+  "aggregationCriteria": "average",
+  "isAdditionalFilterSupport": true,
+  "calculateMaturity": true,
+  "maturityRange": [
+    "-175",
+    "175-125",
+    "125-75",
+    "75-25",
+    "25-"
+  ]
+},
   {
     "kpiId": "kpi82",
     "kpiName": "First Time Pass Rate",
@@ -98,21 +93,18 @@
     "chartType": "line",
     "kpiInfo": {
       "definition": "FIRST TIME PASS RATE measures the percentage of tickets that pass QA first time (without stimulating a return transition or defect tagged)",
-      "formula": [
-        {
-          "lhs": "First time pass rate (FTPR) for a Sprint",
-          "operator": "division",
-          "operands": [
-            "No. of issues closed in a sprint which do not have a return transition or any defects tagged",
-            "Total no. of issues closed in the sprint"
-          ]
-        }
-      ],
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "It is calculated as a ‘Percentage’. Higher the percentage, better is the ‘Quality’"
-        },
+      "formula": [{
+        "lhs": "First time pass rate (FTPR) for a Sprint",
+        "operator": "division",
+        "operands": [
+          "No. of issues closed in a sprint which do not have a return transition or any defects tagged",
+          "Total no. of issues closed in the sprint"
+        ]
+      }],
+      "details": [{
+        "type": "paragraph",
+        "value": "It is calculated as a ‘Percentage’. Higher the percentage, better is the ‘Quality’"
+      },
         {
           "type": "paragraph",
           "value": "A progress indicator shows trend of first time pass rate between last 2 sprints. An upward trend is considered positive"
@@ -126,12 +118,11 @@
           "value": "*If the KPI data is not available for last 5 sprints, the Maturity level will not be shown"
         }
       ],
-      "maturityLevels": [
-        {
-          "level": "M5",
-          "bgColor": "#6cab61",
-          "range": ">=90%"
-        },
+      "maturityLevels": [{
+        "level": "M5",
+        "bgColor": "#6cab61",
+        "range": ">=90%"
+      },
         {
           "level": "M4",
           "bgColor": "#AEDB76",
@@ -184,21 +175,18 @@
     "chartType": "line",
     "kpiInfo": {
       "definition": "DEFECT DENSITY measures the total number of defects against the size of a story",
-      "formula": [
-        {
-          "lhs": "Defect Density",
-          "operator": "division",
-          "operands": [
-            "No. of defects tagged to all stories closed in a sprint",
-            "Total size of stories closed in the sprint"
-          ]
-        }
-      ],
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "The KPI is applicable only if the estimation is being done in 'STory Points'"
-        },
+      "formula": [{
+        "lhs": "Defect Density",
+        "operator": "division",
+        "operands": [
+          "No. of defects tagged to all stories closed in a sprint",
+          "Total size of stories closed in the sprint"
+        ]
+      }],
+      "details": [{
+        "type": "paragraph",
+        "value": "The KPI is applicable only if the estimation is being done in 'STory Points'"
+      },
         {
           "type": "paragraph",
           "value": "It is calculated as a ‘Percentage’. Lower the percentage, better is the ‘Quality’"
@@ -216,12 +204,11 @@
           "value": "If the KPI data is not available for last 5 sprints, the Maturity level will not be shown"
         }
       ],
-      "maturityLevels": [
-        {
-          "level": "M5",
-          "bgColor": "#6cab61",
-          "range": "<10%"
-        },
+      "maturityLevels": [{
+        "level": "M5",
+        "bgColor": "#6cab61",
+        "range": "<10%"
+      },
         {
           "level": "M4",
           "bgColor": "#AEDB76",
@@ -273,21 +260,18 @@
     "chartType": "line",
     "kpiInfo": {
       "definition": "DEFECT SEEPAGE RATE measures the percentage of defects leaked from the current testing stage to the subsequent stage",
-      "formula": [
-        {
-          "lhs": "DSR for a sprint",
-          "operator": "division",
-          "operands": [
-            "No. of  valid defects reported at a stage (e.g. UAT)",
-            " Total no. of defects reported in the current stage and previous stage (UAT & QA)"
-          ]
-        }
-      ],
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "It is calculated as a ‘Percentage’. Lesser the percentage, better is the ‘Quality’"
-        },
+      "formula": [{
+        "lhs": "DSR for a sprint",
+        "operator": "division",
+        "operands": [
+          "No. of  valid defects reported at a stage (e.g. UAT)",
+          " Total no. of defects reported in the current stage and previous stage (UAT & QA)"
+        ]
+      }],
+      "details": [{
+        "type": "paragraph",
+        "value": "It is calculated as a ‘Percentage’. Lesser the percentage, better is the ‘Quality’"
+      },
         {
           "type": "paragraph",
           "value": "A progress indicator shows trend of defect seepage rate between last 2 sprints. A downward trend is considered positive"
@@ -301,12 +285,11 @@
           "value": "*If the KPI data is not available for last 5 sprints, the Maturity level will not be shown"
         }
       ],
-      "maturityLevels": [
-        {
-          "level": "M5",
-          "bgColor": "#6cab61",
-          "range": "<25%"
-        },
+      "maturityLevels": [{
+        "level": "M5",
+        "bgColor": "#6cab61",
+        "range": "<25%"
+      },
         {
           "level": "M4",
           "bgColor": "#AEDB76",
@@ -358,21 +341,18 @@
     "chartType": "line",
     "kpiInfo": {
       "definition": "DEFECT REMOVAL EFFICIENCY gives a measure of the development team ability to remove defects prior to release",
-      "formula": [
-        {
-          "lhs": "DRE for a sprint",
-          "operator": "division",
-          "operands": [
-            "No. of defects fixed in a sprint",
-            "Total no. of defects reported in a sprint"
-          ]
-        }
-      ],
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "It is calculated as a ‘Percentage’. Higher the percentage, better is the ‘Quality’"
-        },
+      "formula": [{
+        "lhs": "DRE for a sprint",
+        "operator": "division",
+        "operands": [
+          "No. of defects fixed in a sprint",
+          "Total no. of defects reported in a sprint"
+        ]
+      }],
+      "details": [{
+        "type": "paragraph",
+        "value": "It is calculated as a ‘Percentage’. Higher the percentage, better is the ‘Quality’"
+      },
         {
           "type": "paragraph",
           "value": "A progress indicator shows trend of defect removal efficiency between last 2 sprints. An upward trend is considered positive"
@@ -386,12 +366,11 @@
           "value": "*If the KPI data is not available for last 5 sprints, the Maturity level will not be shown"
         }
       ],
-      "maturityLevels": [
-        {
-          "level": "M5",
-          "bgColor": "#6cab61",
-          "range": ">=90%"
-        },
+      "maturityLevels": [{
+        "level": "M5",
+        "bgColor": "#6cab61",
+        "range": ">=90%"
+      },
         {
           "level": "M4",
           "bgColor": "#AEDB76",
@@ -443,21 +422,18 @@
     "chartType": "line",
     "kpiInfo": {
       "definition": "DEFECT REJECTION RATE measures the effectiveness of a testing team",
-      "formula": [
-        {
-          "lhs": "DRR for a sprint",
-          "operator": "division",
-          "operands": [
-            "No. of defects rejected in a sprint",
-            "Total no. of defects reported in a sprint"
-          ]
-        }
-      ],
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "It is calculated as a ‘Percentage’. Lesser the percentage, better is the ‘Quality’"
-        },
+      "formula": [{
+        "lhs": "DRR for a sprint",
+        "operator": "division",
+        "operands": [
+          "No. of defects rejected in a sprint",
+          "Total no. of defects reported in a sprint"
+        ]
+      }],
+      "details": [{
+        "type": "paragraph",
+        "value": "It is calculated as a ‘Percentage’. Lesser the percentage, better is the ‘Quality’"
+      },
         {
           "type": "paragraph",
           "value": "A progress indicator shows trend of defect injection rate between last 2 sprints. A downward trend is considered positive"
@@ -471,12 +447,11 @@
           "value": "*If the KPI data is not available for last 5 sprints, the Maturity level will not be shown"
         }
       ],
-      "maturityLevels": [
-        {
-          "level": "M5",
-          "bgColor": "#6cab61",
-          "range": "<10%"
-        },
+      "maturityLevels": [{
+        "level": "M5",
+        "bgColor": "#6cab61",
+        "range": "<10%"
+      },
         {
           "level": "M4",
           "bgColor": "#AEDB76",
@@ -528,19 +503,17 @@
     "chartType": "line",
     "kpiInfo": {
       "definition": "DEFECT COUNT BY PRIORITY measures number of defects for each priority defined in a project",
-      "formula": [
-        {
-          "lhs": "Defect Count By Priority"
-        },
+      "formula": [{
+        "lhs": "Defect Count By Priority"
+      },
         {
           "rhs": "No. of defects linked to stories grouped by priority"
         }
       ],
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "It is calculated as ‘Count’. Lower the count, better is the ‘Quality’"
-        },
+      "details": [{
+        "type": "paragraph",
+        "value": "It is calculated as ‘Count’. Lower the count, better is the ‘Quality’"
+      },
         {
           "type": "paragraph",
           "value": "A progress indicator shows trend of defect count by priority between last 2 sprints. A downward trend is considered positive"
@@ -570,17 +543,14 @@
     "chartType": "line",
     "kpiInfo": {
       "definition": "DEFECT COUNT BY RCA measures number of defects along with the root cause of defects",
-      "formula": [
-        {
-          "lhs": "It is calculated as",
-          "rhs": "No. of defects linked to stories grouped by Root Cause"
-        }
-      ],
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "It is calculated as ‘Count’. Lower the count, better is the ‘Quality’"
-        },
+      "formula": [{
+        "lhs": "It is calculated as",
+        "rhs": "No. of defects linked to stories grouped by Root Cause"
+      }],
+      "details": [{
+        "type": "paragraph",
+        "value": "It is calculated as ‘Count’. Lower the count, better is the ‘Quality’"
+      },
         {
           "type": "paragraph",
           "value": "A progress indicator shows trend of defect count by RCA between last 2 sprints. A downward trend is considered positive"
@@ -609,24 +579,21 @@
     "chartType": "grouped_column_plus_line",
     "kpiInfo": {
       "definition": "Created vs Resolved defects gives a view of closed defects in an iteration vs planned + added defects in the iteration. The aim is to close all the defects that are in the iteration.",
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "If the No. of defects resolved are equal to the No. of defects created in the latest sprint, the KPI is considered having a positive trend."
-        }
-      ]
+      "details": [{
+        "type": "paragraph",
+        "value": "If the No. of defects resolved are equal to the No. of defects created in the latest sprint, the KPI is considered having a positive trend."
+      }]
     },
     "xAxisLabel": "Sprints",
     "yAxisLabel": "Count",
     "isPositiveTrend": true,
     "isTrendCalculative": true,
-    "trendCalculation": [
-      {
-        "type": "Upwards",
-        "lhs": "value",
-        "rhs": "lineValue",
-        "operator": "<"
-      },
+    "trendCalculation": [{
+      "type": "Upwards",
+      "lhs": "value",
+      "rhs": "lineValue",
+      "operator": "<"
+    },
       {
         "type": "Neutral",
         "lhs": "value",
@@ -662,21 +629,18 @@
     "chartType": "line",
     "kpiInfo": {
       "definition": "REGRESSION AUTOMATION COVERAGE measures progress of automation of regression test cases",
-      "formula": [
-        {
-          "lhs": "Regression Automation Coverage ",
-          "operator": "division",
-          "operands": [
-            "No. of regression test cases automated",
-            "Total no. of regression test cases"
-          ]
-        }
-      ],
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "It is calculated as a ‘Percentage’. Higher the percentage, better is the ‘Quality’"
-        },
+      "formula": [{
+        "lhs": "Regression Automation Coverage ",
+        "operator": "division",
+        "operands": [
+          "No. of regression test cases automated",
+          "Total no. of regression test cases"
+        ]
+      }],
+      "details": [{
+        "type": "paragraph",
+        "value": "It is calculated as a ‘Percentage’. Higher the percentage, better is the ‘Quality’"
+      },
         {
           "type": "paragraph",
           "value": "A progress indicator shows trend of regression automation coverage between last 2 sprints. An upward trend is considered positive"
@@ -686,12 +650,11 @@
           "value": "Maturity of the KPI is calculated based on the latest value"
         }
       ],
-      "maturityLevels": [
-        {
-          "level": "M5",
-          "bgColor": "#6cab61",
-          "range": ">= 80%"
-        },
+      "maturityLevels": [{
+        "level": "M5",
+        "bgColor": "#6cab61",
+        "range": ">= 80%"
+      },
         {
           "level": "M4",
           "bgColor": "#AEDB76",
@@ -743,21 +706,18 @@
     "chartType": "line",
     "kpiInfo": {
       "definition": "IN-Sprint AUTOMATION COVERAGE measures progress of automation of test cases created within the Sprint",
-      "formula": [
-        {
-          "lhs": "In-Sprint Automation Coverage ",
-          "operator": "division",
-          "operands": [
-            "No. of in-sprint test cases automated",
-            "Total no. of in-sprint test cases created"
-          ]
-        }
-      ],
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "It is calculated as a ‘Percentage’. Higher the percentage, better is the ‘Quality’"
-        },
+      "formula": [{
+        "lhs": "In-Sprint Automation Coverage ",
+        "operator": "division",
+        "operands": [
+          "No. of in-sprint test cases automated",
+          "Total no. of in-sprint test cases created"
+        ]
+      }],
+      "details": [{
+        "type": "paragraph",
+        "value": "It is calculated as a ‘Percentage’. Higher the percentage, better is the ‘Quality’"
+      },
         {
           "type": "paragraph",
           "value": "A progress indicator shows trend of in-sprint automation coverage between last 2 sprints. An upward trend is considered positive"
@@ -767,12 +727,11 @@
           "value": "Maturity of the KPI is calculated based on the average of the last 5 sprints"
         }
       ],
-      "maturityLevels": [
-        {
-          "level": "M5",
-          "bgColor": "#6cab61",
-          "range": ">= 80%"
-        },
+      "maturityLevels": [{
+        "level": "M5",
+        "bgColor": "#6cab61",
+        "range": ">= 80%"
+      },
         {
           "level": "M4",
           "bgColor": "#AEDB76",
@@ -824,16 +783,13 @@
     "chartType": "line",
     "kpiInfo": {
       "definition": "UNIT TEST COVERAGE is a measurement of the amount of code that is run by unit tests - either lines, branches, or methods.",
-      "formula": [
-        {
-          "lhs": "The calculation is done directly in Sonarqube"
-        }
-      ],
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "It is calculated in ‘Percentage’. Higher the percentage, better is the ‘Quality’"
-        },
+      "formula": [{
+        "lhs": "The calculation is done directly in Sonarqube"
+      }],
+      "details": [{
+        "type": "paragraph",
+        "value": "It is calculated in ‘Percentage’. Higher the percentage, better is the ‘Quality’"
+      },
         {
           "type": "paragraph",
           "value": "Maturity of the KPI is calculated based on the latest value"
@@ -843,12 +799,11 @@
           "value": "A progress indicator shows trend of Unit test coverage between last 2 weeks. An upward trend is considered positive"
         }
       ],
-      "maturityLevels": [
-        {
-          "level": "M5",
-          "bgColor": "#6cab61",
-          "range": ">80%"
-        },
+      "maturityLevels": [{
+        "level": "M5",
+        "bgColor": "#6cab61",
+        "range": ">80%"
+      },
         {
           "level": "M4",
           "bgColor": "#AEDB76",
@@ -902,16 +857,13 @@
     "chartType": "line",
     "kpiInfo": {
       "definition": "SONAR VIOLATIONS highlight count of issues that exist every time a piece of code breaks a coding rule. The set of coding rules is defined through the associated Quality profile for each programming language in the project.",
-      "formula": [
-        {
-          "lhs": "Issues are categorized in 3 types: Bug, Vulnerability and Code Smells"
-        }
-      ],
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "All these issues are categorized into 5 type of severity: Blocker, Critical, Major, Minor, Info   "
-        },
+      "formula": [{
+        "lhs": "Issues are categorized in 3 types: Bug, Vulnerability and Code Smells"
+      }],
+      "details": [{
+        "type": "paragraph",
+        "value": "All these issues are categorized into 5 type of severity: Blocker, Critical, Major, Minor, Info   "
+      },
         {
           "type": "paragraph",
           "value": "A progress indicator shows trend of Unit test coverage between last 2 weeks. An upward trend is considered positive"
@@ -945,16 +897,13 @@
     "chartType": "line",
     "kpiInfo": {
       "definition": "SONAR TECH DEBT explains the estimated time required to fix all maintainability Issues/ code smells",
-      "formula": [
-        {
-          "lhs": "It is calculated as effort to fix all Code Smells. The effort is calculated in minutes and converted to days by assuming 1 Day=8 Hours."
-        }
-      ],
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "It is calculated in ‘Days’. Lower the days, better is the ‘Quality’"
-        },
+      "formula": [{
+        "lhs": "It is calculated as effort to fix all Code Smells. The effort is calculated in minutes and converted to days by assuming 1 Day=8 Hours."
+      }],
+      "details": [{
+        "type": "paragraph",
+        "value": "It is calculated in ‘Days’. Lower the days, better is the ‘Quality’"
+      },
         {
           "type": "paragraph",
           "value": "A progress indicator shows trend of Sonar Tech Debt between last 2 weeks. A downward trend is considered positive."
@@ -964,12 +913,11 @@
           "value": "Maturity of the KPI is calculated based on the latest value"
         }
       ],
-      "maturityLevels": [
-        {
-          "level": "M5",
-          "bgColor": "#6cab61",
-          "range": "<10 days"
-        },
+      "maturityLevels": [{
+        "level": "M5",
+        "bgColor": "#6cab61",
+        "range": "<10 days"
+      },
         {
           "level": "M4",
           "bgColor": "#AEDB76",
@@ -1023,21 +971,18 @@
     "chartType": "line",
     "kpiInfo": {
       "definition": "CHANGE FAILURE RATE measures the proportion of builds that have failed for whatever reason over a given period of time",
-      "formula": [
-        {
-          "lhs": "CHANGE FAILURE RATE",
-          "operator": "division",
-          "operands": [
-            "Total number of failed Builds",
-            "Total number of Builds"
-          ]
-        }
-      ],
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "It is calculated as a ‘Percentage’. Lower the percentage, better is the ‘Quality’"
-        },
+      "formula": [{
+        "lhs": "CHANGE FAILURE RATE",
+        "operator": "division",
+        "operands": [
+          "Total number of failed Builds",
+          "Total number of Builds"
+        ]
+      }],
+      "details": [{
+        "type": "paragraph",
+        "value": "It is calculated as a ‘Percentage’. Lower the percentage, better is the ‘Quality’"
+      },
         {
           "type": "paragraph",
           "value": "A progress indicator shows trend of Change Failure Rate between last 2 weeks. A downward trend is considered positive"
@@ -1051,12 +996,11 @@
           "value": "*If the KPI data is not available for last 5 weeks, the Maturity level will not be shown"
         }
       ],
-      "maturityLevels": [
-        {
-          "level": "M5",
-          "bgColor": "#6cab61",
-          "range": "<10%"
-        },
+      "maturityLevels": [{
+        "level": "M5",
+        "bgColor": "#6cab61",
+        "range": "<10%"
+      },
         {
           "level": "M4",
           "bgColor": "#AEDB76",
@@ -1109,11 +1053,10 @@
     "chartType": "grouped_column_plus_line",
     "kpiInfo": {
       "definition": "TEST EXECUTION AND PASS PERCENTAGE measures the percentage of test cases that have been executed & the percentage that have passed.",
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "It is calculated as "
-        },
+      "details": [{
+        "type": "paragraph",
+        "value": "It is calculated as "
+      },
         {
           "type": "paragraph",
           "value": "No. of executed test cases out of total test cases in the latest execution of a sprint"
@@ -1135,12 +1078,11 @@
           "value": "Maturity of the KPI is calculated based on the average of the last 5 sprints"
         }
       ],
-      "maturityLevels": [
-        {
-          "level": "M5",
-          "bgColor": "#6cab61",
-          "range": "> 80%"
-        },
+      "maturityLevels": [{
+        "level": "M5",
+        "bgColor": "#6cab61",
+        "range": "> 80%"
+      },
         {
           "level": "M4",
           "bgColor": "#AEDB76",
@@ -1194,11 +1136,9 @@
     "chartType": "line",
     "kpiInfo": {
       "definition": "STORY COUNT measures the overall work taken in a sprint",
-      "formula": [
-        {
-          "lhs": "No. of stories tagged to a Sprint"
-        }
-      ]
+      "formula": [{
+        "lhs": "No. of stories tagged to a Sprint"
+      }]
     },
     "xAxisLabel": "Sprints",
     "yAxisLabel": "Count",
@@ -1222,21 +1162,18 @@
     "chartType": "line",
     "kpiInfo": {
       "definition": "Commitment reliability measures the percentage work completed at the end of a sprint in comparison to the total work in the sprint",
-      "formula": [
-        {
-          "lhs": "Commitment reliability",
-          "operator": "division",
-          "operands": [
-            "No. of issues or Size of issues completed",
-            "No. of issues or Size of issues committed"
-          ]
-        }
-      ],
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "It is calculated as a 'Percentage'. Higher the percentage during a sprint, better forecasting can be done for future sprints"
-        },
+      "formula": [{
+        "lhs": "Commitment reliability",
+        "operator": "division",
+        "operands": [
+          "No. of issues or Size of issues completed",
+          "No. of issues or Size of issues committed"
+        ]
+      }],
+      "details": [{
+        "type": "paragraph",
+        "value": "It is calculated as a 'Percentage'. Higher the percentage during a sprint, better forecasting can be done for future sprints"
+      },
         {
           "type": "paragraph",
           "value": "A progress indicator shows trend of Commitment reliability between last 2 sprints. An upward trend is considered positive"
@@ -1246,12 +1183,11 @@
           "value": "Maturity of the KPI is calculated based on the average of the last 5 sprints"
         }
       ],
-      "maturityLevels": [
-        {
-          "level": "M1",
-          "bgColor": "#6cab61",
-          "range": "<40%"
-        },
+      "maturityLevels": [{
+        "level": "M1",
+        "bgColor": "#6cab61",
+        "range": "<40%"
+      },
         {
           "level": "M2",
           "bgColor": "#AEDB76",
@@ -1308,16 +1244,14 @@
     "chartType": "line",
     "kpiInfo": {
       "definition": "Sprint Predictability signifies who stable is a team's velocity such that it can be used in forecasting milestones in future",
-      "formula": [
-        {
-          "lhs": "Sprint Predictability for a sprint",
-          "operator": "division",
-          "operands": [
-            "sprint velocity in last sprint.",
-            "sprint velocity in last 5 sprint"
-          ]
-        }
-      ]
+      "formula": [{
+        "lhs": "Sprint Predictability for a sprint",
+        "operator": "division",
+        "operands": [
+          "sprint velocity in last sprint.",
+          "sprint velocity in last 5 sprint"
+        ]
+      }]
     },
     "xAxisLabel": "Sprints",
     "yAxisLabel": "Percentage",
@@ -1341,11 +1275,9 @@
     "chartType": "line",
     "kpiInfo": {
       "definition": "SPRINT VELOCITY measures the rate at which a team can deliver every Sprint",
-      "formula": [
-        {
-          "lhs": "Sum of story points of all stories completed within a Sprint"
-        }
-      ]
+      "formula": [{
+        "lhs": "Sum of story points of all stories completed within a Sprint"
+      }]
     },
     "xAxisLabel": "Sprints",
     "yAxisLabel": "Count",
@@ -1369,11 +1301,10 @@
     "chartType": "grouped_column_plus_line",
     "kpiInfo": {
       "definition": "SPRINT CAPACITY UTILIZATION depicts the maximum amount of time a team can commit within sprint",
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "This KPI is calculated based on 2 parameters"
-        },
+      "details": [{
+        "type": "paragraph",
+        "value": "This KPI is calculated based on 2 parameters"
+      },
         {
           "type": "paragraph",
           "value": "Estimated Hours: It explains the total hours required to complete Sprint backlog"
@@ -1408,16 +1339,13 @@
     "chartType": "line",
     "kpiInfo": {
       "definition": "AVERAGE RESOLUTION TIME measures average time taken to complete an issue that could be a story or bug etc.",
-      "formula": [
-        {
-          "lhs": "Sum of resolution times of all issues completed in the Sprint/No. of issues completed within a sprint"
-        }
-      ],
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "It is calculated as a ‘Days’. Fewer the days better is the ‘Speed’"
-        },
+      "formula": [{
+        "lhs": "Sum of resolution times of all issues completed in the Sprint/No. of issues completed within a sprint"
+      }],
+      "details": [{
+        "type": "paragraph",
+        "value": "It is calculated as a ‘Days’. Fewer the days better is the ‘Speed’"
+      },
         {
           "type": "paragraph",
           "value": "A progress indicator shows trend of Average Resolution Time between last 2 sprints. A downward trend is considered positive"
@@ -1431,12 +1359,11 @@
           "value": "*If the KPI data is not available for last 5 sprints, the Maturity level will not be shown"
         }
       ],
-      "maturityLevels": [
-        {
-          "level": "M5",
-          "bgColor": "#6cab61",
-          "range": "<= 3 days"
-        },
+      "maturityLevels": [{
+        "level": "M5",
+        "bgColor": "#6cab61",
+        "range": "<= 3 days"
+      },
         {
           "level": "M4",
           "bgColor": "#AEDB76",
@@ -1490,11 +1417,10 @@
     "chartType": "line",
     "kpiInfo": {
       "definition": "MEAN TIME TO MERGE measures the efficiency of the code review process in a team",
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "It is calculated in ‘Hours’. Fewer the Hours better is the ‘Speed’"
-        },
+      "details": [{
+        "type": "paragraph",
+        "value": "It is calculated in ‘Hours’. Fewer the Hours better is the ‘Speed’"
+      },
         {
           "type": "paragraph",
           "value": "A progress indicator shows trend of Mean time to merge in last 2 weeks. A downward trend is considered positive"
@@ -1504,12 +1430,11 @@
           "value": "Maturity of the KPI is calculated based on the average of the last 5 weeks"
         }
       ],
-      "maturityLevels": [
-        {
-          "level": "M5",
-          "bgColor": "#6cab61",
-          "range": "<4 Hours"
-        },
+      "maturityLevels": [{
+        "level": "M5",
+        "bgColor": "#6cab61",
+        "range": "<4 Hours"
+      },
         {
           "level": "M4",
           "bgColor": "#AEDB76",
@@ -1563,22 +1488,20 @@
     "chartType": "grouped_column_plus_line",
     "kpiInfo": {
       "definition": "NUMBER OF CHECK-INS helps in measuring the transparency as well the how well the tasks have been broken down. NUMBER OF MERGE REQUESTS when looked at along with commits highlights the efficiency of the review process",
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "It is calculated as a Count. Higher the count better is the ‘Speed’"
-        },
+      "details": [{
+        "type": "paragraph",
+        "value": "It is calculated as a Count. Higher the count better is the ‘Speed’"
+      },
         {
           "type": "paragraph",
           "value": "A progress indicator shows trend of Number of Check-ins & Merge requests between last 2 days. An upward trend is considered positive"
         }
       ],
-      "maturityLevels": [
-        {
-          "level": "M5",
-          "bgColor": "#6cab61",
-          "range": "> 16"
-        },
+      "maturityLevels": [{
+        "level": "M5",
+        "bgColor": "#6cab61",
+        "range": "> 16"
+      },
         {
           "level": "M4",
           "bgColor": "#AEDB76",
@@ -1634,11 +1557,10 @@
     "chartType": "line",
     "kpiInfo": {
       "definition": "CODE BUILD TIME measures the time a job takes to build the code.",
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "It is calculated in  ‘Mins’. Lesser the time better is the ‘Speed’"
-        },
+      "details": [{
+        "type": "paragraph",
+        "value": "It is calculated in  ‘Mins’. Lesser the time better is the ‘Speed’"
+      },
         {
           "type": "paragraph",
           "value": "A progress indicator shows trend of Code Build Time between last 2 weeks. A downward trend is considered positive"
@@ -1648,12 +1570,11 @@
           "value": "Maturity of the KPI is calculated based on the average of 5 weeks"
         }
       ],
-      "maturityLevels": [
-        {
-          "level": "M5",
-          "bgColor": "#6cab61",
-          "range": "<5 mins"
-        },
+      "maturityLevels": [{
+        "level": "M5",
+        "bgColor": "#6cab61",
+        "range": "<5 mins"
+      },
         {
           "level": "M4",
           "bgColor": "#AEDB76",
@@ -1711,16 +1632,13 @@
     "chartType": "table",
     "kpiInfo": {
       "definition": "LEAD TIME is the time from the moment when the request was made by a client and placed on a board to when all work on this item is completed and the request was delivered to the client.",
-      "formula": [
-        {
-          "lhs": "It is calculated as the sum Ideation time, Development time & Release time"
-        }
-      ],
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "Ideation time (Intake to DOR): Time taken from issue creation to it being ready for Sprint."
-        },
+      "formula": [{
+        "lhs": "It is calculated as the sum Ideation time, Development time & Release time"
+      }],
+      "details": [{
+        "type": "paragraph",
+        "value": "Ideation time (Intake to DOR): Time taken from issue creation to it being ready for Sprint."
+      },
         {
           "type": "paragraph",
           "value": "Development time (DOR to DOD): Time taken from start of work on an issue to it being completed in the Sprint as per DOD."
@@ -1734,12 +1652,11 @@
           "value": "Each of the KPIs are calculated in 'Days' . Lower the time, better is the speed & efficiency of that phase"
         }
       ],
-      "maturityLevels": [
-        {
-          "level": "M5",
-          "bgColor": "#6cab61",
-          "range": "< 2 Days"
-        },
+      "maturityLevels": [{
+        "level": "M5",
+        "bgColor": "#6cab61",
+        "range": "< 2 Days"
+      },
         {
           "level": "M4",
           "bgColor": "#AEDB76",
@@ -1864,17 +1781,16 @@
       "30-10",
       "10-"
     ],
-    "maturityLevel": [
-      {
-        "level": "LeadTime",
-        "range": [
-          "-60",
-          "60-45",
-          "45-30",
-          "30-10",
-          "10-"
-        ]
-      },
+    "maturityLevel": [{
+      "level": "LeadTime",
+      "range": [
+        "-60",
+        "60-45",
+        "45-30",
+        "30-10",
+        "10-"
+      ]
+    },
       {
         "level": "Intake-DoR",
         "range": [
@@ -1921,17 +1837,14 @@
     "chartType": "line",
     "kpiInfo": {
       "definition": "DEPLOYMENT FREQUENCY measures how often code is deployed to production",
-      "formula": [
-        {
-          "lhs": "DEPLOYMENT FREQUENCY for a month",
-          "rhs": "It is calculated as No. of deployments done on a environment in a month"
-        }
-      ],
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "It is calculated as a 'Count'. Higher the count during a month, more valuable it is for the Business or a Project"
-        },
+      "formula": [{
+        "lhs": "DEPLOYMENT FREQUENCY for a month",
+        "rhs": "It is calculated as No. of deployments done on a environment in a month"
+      }],
+      "details": [{
+        "type": "paragraph",
+        "value": "It is calculated as a 'Count'. Higher the count during a month, more valuable it is for the Business or a Project"
+      },
         {
           "type": "paragraph",
           "value": "A progress indicator shows trend of Deployment frequency between last 2 months. An upward trend is considered positive"
@@ -1941,12 +1854,11 @@
           "value": "Maturity of the KPI is calculated based on the latest value"
         }
       ],
-      "maturityLevels": [
-        {
-          "level": "M5",
-          "bgColor": "#6cab61",
-          "range": ">10"
-        },
+      "maturityLevels": [{
+        "level": "M5",
+        "bgColor": "#6cab61",
+        "range": ">10"
+      },
         {
           "level": "M4",
           "bgColor": "#AEDB76",
@@ -1999,17 +1911,14 @@
     "chartType": "line",
     "kpiInfo": {
       "definition": "Release Frequency highlights the number of releases done in a month",
-      "formula": [
-        {
-          "lhs": "Release Frequency for a month",
-          "rhs": "Number of fix versions in JIRA for a project that have a release date falling in a particular month"
-        }
-      ],
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "It is calculated as a ‘Count’. Higher the Release Frequency, more valuable it is for the Business or a Project"
-        },
+      "formula": [{
+        "lhs": "Release Frequency for a month",
+        "rhs": "Number of fix versions in JIRA for a project that have a release date falling in a particular month"
+      }],
+      "details": [{
+        "type": "paragraph",
+        "value": "It is calculated as a ‘Count’. Higher the Release Frequency, more valuable it is for the Business or a Project"
+      },
         {
           "type": "paragraph",
           "value": "A progress indicator shows trend of Release Frequency between last 2 months. An upward trend is considered positive"
@@ -2045,17 +1954,14 @@
     "chartType": "line",
     "kpiInfo": {
       "definition": "Cost of delay (CoD) is a prioritization framework that helps a business quantify the economic value of completing a project sooner as opposed to later.",
-      "formula": [
-        {
-          "lhs": "COD for a Epic or a Feature",
-          "rhs": "User-Business Value + Time Criticality + Risk Reduction and/or Opportunity Enablement."
-        }
-      ],
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "It is calculated in ‘Days’. Higher the CoD for a feature or an Epic, more valuable it is for the Business or a Project"
-        },
+      "formula": [{
+        "lhs": "COD for a Epic or a Feature",
+        "rhs": "User-Business Value + Time Criticality + Risk Reduction and/or Opportunity Enablement."
+      }],
+      "details": [{
+        "type": "paragraph",
+        "value": "It is calculated in ‘Days’. Higher the CoD for a feature or an Epic, more valuable it is for the Business or a Project"
+      },
         {
           "type": "paragraph",
           "value": "A progress indicator shows trend of CoD between last 2 months. An upward trend is considered positive"
@@ -2082,11 +1988,10 @@
     "chartType": "grouped_column_plus_line",
     "kpiInfo": {
       "definition": "Ticket open vs closed rate by type gives a comparison of new tickets getting raised vs number of tickets getting closed grouped by issue type during a defined period.",
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "This can be filtered based on issue type"
-        },
+      "details": [{
+        "type": "paragraph",
+        "value": "This can be filtered based on issue type"
+      },
         {
           "type": "paragraph",
           "value": "If the No. of tickets closed are more than the No. of tickets opened in the latest time period, the KPI is considered having a positive trend."
@@ -2097,13 +2002,12 @@
     "yAxisLabel": "Count",
     "isPositiveTrend": false,
     "isTrendCalculative": true,
-    "trendCalculation": [
-      {
-        "type": "Upwards",
-        "lhs": "value",
-        "rhs": "lineValue",
-        "operator": "<"
-      },
+    "trendCalculation": [{
+      "type": "Upwards",
+      "lhs": "value",
+      "rhs": "lineValue",
+      "operator": "<"
+    },
       {
         "type": "Neutral",
         "lhs": "value",
@@ -2138,11 +2042,10 @@
     "chartType": "grouped_column_plus_line",
     "kpiInfo": {
       "definition": "Ticket open vs closed rate by priority gives a comparison of new tickets getting raised vs number of tickets getting closed grouped by priority during a defined period.",
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "This can be filtered based on priority."
-        },
+      "details": [{
+        "type": "paragraph",
+        "value": "This can be filtered based on priority."
+      },
         {
           "type": "paragraph",
           "value": "If the No. of tickets closed are more than the No. of tickets opened in the latest time period, the KPI is considered having a positive trend."
@@ -2153,13 +2056,12 @@
     "yAxisLabel": "Count",
     "isPositiveTrend": false,
     "isTrendCalculative": true,
-    "trendCalculation": [
-      {
-        "type": "Upwards",
-        "lhs": "value",
-        "rhs": "lineValue",
-        "operator": "<"
-      },
+    "trendCalculation": [{
+      "type": "Upwards",
+      "lhs": "value",
+      "rhs": "lineValue",
+      "operator": "<"
+    },
       {
         "type": "Neutral",
         "lhs": "value",
@@ -2194,12 +2096,10 @@
     "kpiInfo": {
       "definition": "NET OPEN TICKET COUNT BY PRIORITY measures the overall open tickets during a defined period grouped by priority. It considers the gross open and closed count during a period and then plots the net count",
       "formula": [],
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "Decrease in net open ticket count is considered as positive"
-        }
-      ]
+      "details": [{
+        "type": "paragraph",
+        "value": "Decrease in net open ticket count is considered as positive"
+      }]
     },
     "xAxisLabel": "Weeks",
     "yAxisLabel": "Count",
@@ -2224,12 +2124,10 @@
     "chartType": "line",
     "kpiInfo": {
       "definition": "NET OPEN TICKET COUNT BY RCA measures the overall open tickets during a defined period grouped by RCA. It considers the gross open and closed count during a period and then plots the net count",
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "Decrease in net open ticket count is considered as positive"
-        }
-      ]
+      "details": [{
+        "type": "paragraph",
+        "value": "Decrease in net open ticket count is considered as positive"
+      }]
     },
     "xAxisLabel": "Weeks",
     "yAxisLabel": "Count",
@@ -2255,12 +2153,10 @@
     "chartType": "line",
     "kpiInfo": {
       "definition": "Net open ticket count by status measures the overall open tickets during a defined period grouped by Status. It considers the gross open and closed count during a period and then plots the net count",
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "Decrease in net open ticket count is considered as positive"
-        }
-      ]
+      "details": [{
+        "type": "paragraph",
+        "value": "Decrease in net open ticket count is considered as positive"
+      }]
     },
     "xAxisLabel": "Weeks",
     "yAxisLabel": "Count",
@@ -2308,21 +2204,18 @@
     "chartType": "line",
     "kpiInfo": {
       "definition": "REGRESSION AUTOMATION COVERAGE measures progress of automation of regression test cases",
-      "formula": [
-        {
-          "lhs": "Regression Automation Coverage ",
-          "operator": "division",
-          "operands": [
-            "No. of regression test cases automated",
-            "Total no. of regression test cases"
-          ]
-        }
-      ],
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "It is calculated as a ‘Percentage’. Higher the percentage, better is the ‘Quality’"
-        },
+      "formula": [{
+        "lhs": "Regression Automation Coverage ",
+        "operator": "division",
+        "operands": [
+          "No. of regression test cases automated",
+          "Total no. of regression test cases"
+        ]
+      }],
+      "details": [{
+        "type": "paragraph",
+        "value": "It is calculated as a ‘Percentage’. Higher the percentage, better is the ‘Quality’"
+      },
         {
           "type": "paragraph",
           "value": "A progress indicator shows trend of regression automation coverage between last 2 sprints. An upward trend is considered positive"
@@ -2332,12 +2225,11 @@
           "value": "Maturity of the KPI is calculated based on the latest value"
         }
       ],
-      "maturityLevels": [
-        {
-          "level": "M5",
-          "bgColor": "#6cab61",
-          "range": ">= 80%"
-        },
+      "maturityLevels": [{
+        "level": "M5",
+        "bgColor": "#6cab61",
+        "range": ">= 80%"
+      },
         {
           "level": "M4",
           "bgColor": "#AEDB76",
@@ -2389,16 +2281,13 @@
     "chartType": "line",
     "kpiInfo": {
       "definition": "UNIT TEST COVERAGE is a measurement of the amount of code that is run by unit tests - either lines, branches, or methods.",
-      "formula": [
-        {
-          "lhs": "The calculation is done directly in Sonarqube"
-        }
-      ],
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "It is calculated in ‘Percentage’. Higher the percentage, better is the ‘Quality’"
-        },
+      "formula": [{
+        "lhs": "The calculation is done directly in Sonarqube"
+      }],
+      "details": [{
+        "type": "paragraph",
+        "value": "It is calculated in ‘Percentage’. Higher the percentage, better is the ‘Quality’"
+      },
         {
           "type": "paragraph",
           "value": "A progress indicator shows trend of Unit test coverage between last 2 weeks. An upward trend is considered positive"
@@ -2408,12 +2297,11 @@
           "value": "Maturity of the KPI is calculated based on the latest value"
         }
       ],
-      "maturityLevels": [
-        {
-          "level": "M5",
-          "bgColor": "#6cab61",
-          "range": ">80%"
-        },
+      "maturityLevels": [{
+        "level": "M5",
+        "bgColor": "#6cab61",
+        "range": ">80%"
+      },
         {
           "level": "M4",
           "bgColor": "#AEDB76",
@@ -2467,16 +2355,13 @@
     "chartType": "line",
     "kpiInfo": {
       "definition": "SONAR VIOLATIONS highlight count of issues that exist every time a piece of code breaks a coding rule. The set of coding rules is defined through the associated Quality profile for each programming language in the project.",
-      "formula": [
-        {
-          "lhs": "The calculation is done directly in Sonarqube."
-        }
-      ],
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "Issues are categorized in 3 types: Bug, Vulnerability and Code Smells."
-        },
+      "formula": [{
+        "lhs": "The calculation is done directly in Sonarqube."
+      }],
+      "details": [{
+        "type": "paragraph",
+        "value": "Issues are categorized in 3 types: Bug, Vulnerability and Code Smells."
+      },
         {
           "type": "paragraph",
           "value": "All these issues are categorized into 5 type of severity: Blocker, Critical, Major, Minor, Info."
@@ -2506,16 +2391,13 @@
     "chartType": "line",
     "kpiInfo": {
       "definition": "SONAR TECH DEBT explains the estimated time required to fix all maintainability Issues/ code smells",
-      "formula": [
-        {
-          "lhs": "It is calculated as effort to fix all Code Smells. The effort is calculated in minutes and converted to days by assuming 1 Day=8 Hours."
-        }
-      ],
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "It is calculated in ‘Days’. Lower the days, better is the ‘Quality’"
-        },
+      "formula": [{
+        "lhs": "It is calculated as effort to fix all Code Smells. The effort is calculated in minutes and converted to days by assuming 1 Day=8 Hours."
+      }],
+      "details": [{
+        "type": "paragraph",
+        "value": "It is calculated in ‘Days’. Lower the days, better is the ‘Quality’"
+      },
         {
           "type": "paragraph",
           "value": "A progress indicator shows trend of Sonar Tech Debt between last 2 weeks. A downward trend is considered positive."
@@ -2525,12 +2407,11 @@
           "value": "Maturity of the KPI is calculated based on the latest value"
         }
       ],
-      "maturityLevels": [
-        {
-          "level": "M5",
-          "bgColor": "#6cab61",
-          "range": "<10 days"
-        },
+      "maturityLevels": [{
+        "level": "M5",
+        "bgColor": "#6cab61",
+        "range": "<10 days"
+      },
         {
           "level": "M4",
           "bgColor": "#AEDB76",
@@ -2583,11 +2464,10 @@
     "chartType": "grouped_column_plus_line",
     "kpiInfo": {
       "definition": "TEST EXECUTION AND PASS PERCENTAGE measures the percentage of test cases that have been executed & the percentage that have passed.",
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "It is calculated as "
-        },
+      "details": [{
+        "type": "paragraph",
+        "value": "It is calculated as "
+      },
         {
           "type": "paragraph",
           "value": "No. of executed test cases out of total test cases in the latest execution during a day/week/month"
@@ -2609,12 +2489,11 @@
           "value": "Maturity of the KPI is calculated based on the latest value"
         }
       ],
-      "maturityLevels": [
-        {
-          "level": "M5",
-          "bgColor": "#6cab61",
-          "range": "> 80%"
-        },
+      "maturityLevels": [{
+        "level": "M5",
+        "bgColor": "#6cab61",
+        "range": "> 80%"
+      },
         {
           "level": "M4",
           "bgColor": "#AEDB76",
@@ -2714,11 +2593,10 @@
     "chartType": "line",
     "kpiInfo": {
       "definition": "CODE BUILD TIME measures the time a job takes to build the code.",
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "It is calculated in  ‘Mins’. Lesser the time better is the ‘Speed’"
-        },
+      "details": [{
+        "type": "paragraph",
+        "value": "It is calculated in  ‘Mins’. Lesser the time better is the ‘Speed’"
+      },
         {
           "type": "paragraph",
           "value": "A progress indicator shows trend of Code Build Time between last 2 weeks. A downward trend is considered positive"
@@ -2728,12 +2606,11 @@
           "value": "Maturity of the KPI is calculated based on the latest value"
         }
       ],
-      "maturityLevels": [
-        {
-          "level": "M5",
-          "bgColor": "#6cab61",
-          "range": "<5 mins"
-        },
+      "maturityLevels": [{
+        "level": "M5",
+        "bgColor": "#6cab61",
+        "range": "<5 mins"
+      },
         {
           "level": "M4",
           "bgColor": "#AEDB76",
@@ -2787,11 +2664,10 @@
     "chartType": "line",
     "kpiInfo": {
       "definition": "NUMBER OF CHECK-INS helps in measuring the transparency as well the how well the tasks have been broken down.",
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "It is calculated as a Count. Higher the count better is the ‘Speed’"
-        },
+      "details": [{
+        "type": "paragraph",
+        "value": "It is calculated as a Count. Higher the count better is the ‘Speed’"
+      },
         {
           "type": "paragraph",
           "value": "A progress indicator shows trend of Number of Check-ins & Merge requests between last 2 days. An upward trend is considered positive."
@@ -2801,12 +2677,11 @@
           "value": "Maturity of the KPI is calculated based on the latest value"
         }
       ],
-      "maturityLevels": [
-        {
-          "level": "M5",
-          "bgColor": "#6cab61",
-          "range": ">16"
-        },
+      "maturityLevels": [{
+        "level": "M5",
+        "bgColor": "#6cab61",
+        "range": ">16"
+      },
         {
           "level": "M4",
           "bgColor": "#AEDB76",
@@ -2864,16 +2739,13 @@
     "chartType": "table",
     "kpiInfo": {
       "definition": "LEAD TIME is the time from the moment when the request was made by a client and placed on a board to when all work on this item is completed and the request was delivered to the client.",
-      "formula": [
-        {
-          "lhs": "It is calculated as the sum following"
-        }
-      ],
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "Open to Triage: Time taken from ticket creation to it being refined & prioritized for development."
-        },
+      "formula": [{
+        "lhs": "It is calculated as the sum following"
+      }],
+      "details": [{
+        "type": "paragraph",
+        "value": "Open to Triage: Time taken from ticket creation to it being refined & prioritized for development."
+      },
         {
           "type": "paragraph",
           "value": "Triage to Complete: Time taken from start of work on a ticket to it being completed by team."
@@ -2887,12 +2759,11 @@
           "value": "Each of the KPIs are calculated in 'Days."
         }
       ],
-      "maturityLevels": [
-        {
-          "level": "M5",
-          "bgColor": "#6cab61",
-          "range": "< 2 Days"
-        },
+      "maturityLevels": [{
+        "level": "M5",
+        "bgColor": "#6cab61",
+        "range": "< 2 Days"
+      },
         {
           "level": "M4",
           "bgColor": "#AEDB76",
@@ -3017,17 +2888,16 @@
       "30-10",
       "10-"
     ],
-    "maturityLevel": [
-      {
-        "level": "LeadTime",
-        "range": [
-          "-60",
-          "60-45",
-          "45-30",
-          "30-10",
-          "10-"
-        ]
-      },
+    "maturityLevel": [{
+      "level": "LeadTime",
+      "range": [
+        "-60",
+        "60-45",
+        "45-30",
+        "30-10",
+        "10-"
+      ]
+    },
       {
         "level": "Open-Triage",
         "range": [
@@ -3074,17 +2944,14 @@
     "chartType": "line",
     "kpiInfo": {
       "definition": "Release Frequency highlights the number of releases done in a month",
-      "formula": [
-        {
-          "lhs": "Release Frequency for a month",
-          "rhs": "Number of fix versions in JIRA for a project that have a release date falling in a particular month"
-        }
-      ],
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "It is calculated as a ‘Count’. Higher the Release Frequency, more valuable it is for the Business or a Project"
-        },
+      "formula": [{
+        "lhs": "Release Frequency for a month",
+        "rhs": "Number of fix versions in JIRA for a project that have a release date falling in a particular month"
+      }],
+      "details": [{
+        "type": "paragraph",
+        "value": "It is calculated as a ‘Count’. Higher the Release Frequency, more valuable it is for the Business or a Project"
+      },
         {
           "type": "paragraph",
           "value": "A progress indicator shows trend of Release Frequency between last 2 months. An upward trend is considered positive"
@@ -3113,17 +2980,14 @@
     "chartType": "line",
     "kpiInfo": {
       "definition": "Cost of delay (CoD) is a prioritization framework that helps a business quantify the economic value of completing a project sooner as opposed to later.",
-      "formula": [
-        {
-          "lhs": "COD for a Epic or a Feature",
-          "rhs": "User-Business Value + Time Criticality + Risk Reduction and/or Opportunity Enablement."
-        }
-      ],
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "It is calculated in ‘Days’. Higher the CoD for a feature or an Epic, more valuable it is for the Business or a Project"
-        },
+      "formula": [{
+        "lhs": "COD for a Epic or a Feature",
+        "rhs": "User-Business Value + Time Criticality + Risk Reduction and/or Opportunity Enablement."
+      }],
+      "details": [{
+        "type": "paragraph",
+        "value": "It is calculated in ‘Days’. Higher the CoD for a feature or an Epic, more valuable it is for the Business or a Project"
+      },
         {
           "type": "paragraph",
           "value": "A progress indicator shows trend of CoD between last 2 months. An upward trend is considered positive"
@@ -3152,11 +3016,10 @@
     "kanban": false,
     "chartType": null,
     "kpiInfo": {
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "Planned capacity is the development team's available time represented in Hours."
-        },
+      "details": [{
+        "type": "paragraph",
+        "value": "Planned capacity is the development team's available time represented in Hours."
+      },
         {
           "type": "paragraph",
           "value": "Source of this is KnowHOW"
@@ -3185,11 +3048,10 @@
     "kanban": false,
     "chartType": null,
     "kpiInfo": {
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "Work Remaining KPI gives a depiction of the pending work in an iteration from three available dimensions"
-        },
+      "details": [{
+        "type": "paragraph",
+        "value": "Work Remaining KPI gives a depiction of the pending work in an iteration from three available dimensions"
+      },
         {
           "type": "paragraph",
           "value": "Issue count - Total no. of issues that are not completed based on DOD in the iteration."
@@ -3217,7 +3079,6 @@
     "boxType": "3_column",
     "calculateMaturity": false
   },
-  ,
   {
     "kpiId": "kpi128",
     "kpiName": "Work Completed",
@@ -3232,11 +3093,10 @@
     "kanban": false,
     "chartType": null,
     "kpiInfo": {
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "Work Completed KPI gives a depiction of the work completed in an iteration from two available dimensions"
-        },
+      "details": [{
+        "type": "paragraph",
+        "value": "Work Completed KPI gives a depiction of the work completed in an iteration from two available dimensions"
+      },
         {
           "type": "paragraph",
           "value": "Issue count - Total no. of issues that are completed based on DOD in the iteration."
@@ -3274,11 +3134,10 @@
     "kanban": false,
     "chartType": null,
     "kpiInfo": {
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "Estimate vs Actual gives a comparative view of the sum of estimated hours of all issues in an iteration as against the total time spent on these issues"
-        },
+      "details": [{
+        "type": "paragraph",
+        "value": "Estimate vs Actual gives a comparative view of the sum of estimated hours of all issues in an iteration as against the total time spent on these issues"
+      },
         {
           "type": "paragraph",
           "value": "Source of this KPI is Jira fields - Original Estimate and Logged Work"
@@ -3312,11 +3171,10 @@
     "kanban": false,
     "chartType": null,
     "kpiInfo": {
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "Issues likely to spill gives intelligence to the team about number of issues that could potential not get completed. It also represents the corresponding size of work likely to spill."
-        },
+      "details": [{
+        "type": "paragraph",
+        "value": "Issues likely to spill gives intelligence to the team about number of issues that could potential not get completed. It also represents the corresponding size of work likely to spill."
+      },
         {
           "type": "paragraph",
           "value": "Source of this KPI is Jira. To see the latest data, run the Jira processor from KnowHOW settings"
@@ -3346,11 +3204,10 @@
     "kanban": false,
     "chartType": null,
     "kpiInfo": {
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "Closures possible today gives intelligence to users about how many issues can be completed on a particular day of iteration."
-        },
+      "details": [{
+        "type": "paragraph",
+        "value": "Closures possible today gives intelligence to users about how many issues can be completed on a particular day of iteration."
+      },
         {
           "type": "paragraph",
           "value": "An issues is included as a possible closure based on 2 criteria"
@@ -3392,11 +3249,10 @@
     "kanban": false,
     "chartType": null,
     "kpiInfo": {
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "Scope change KPI highlights change in iteration scope since the start of iteration."
-        },
+      "details": [{
+        "type": "paragraph",
+        "value": "Scope change KPI highlights change in iteration scope since the start of iteration."
+      },
         {
           "type": "paragraph",
           "value": "It showcases added as well as removed issue count and the corresponding story points"
@@ -3430,11 +3286,10 @@
     "kanban": false,
     "chartType": null,
     "kpiInfo": {
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "Estimation Hygiene acts as an indicator to identify issues which are either not estimated and the issues which do not have logged work."
-        },
+      "details": [{
+        "type": "paragraph",
+        "value": "Estimation Hygiene acts as an indicator to identify issues which are either not estimated and the issues which do not have logged work."
+      },
         {
           "type": "paragraph",
           "value": "*This is just to measure the hygiene of Jira usage by a team"
@@ -3468,11 +3323,10 @@
     "kanban": false,
     "chartType": "stackedColumn",
     "kpiInfo": {
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "Daily Closures KPI gives a graphical representation of no. of issues closed on a daily basis."
-        },
+      "details": [{
+        "type": "paragraph",
+        "value": "Daily Closures KPI gives a graphical representation of no. of issues closed on a daily basis."
+      },
         {
           "type": "paragraph",
           "value": "This KPI is very useful for retrospective meetings and it clearly illustrates how the iteration was when looked in combination to other iteration board KPIs"
@@ -3506,18 +3360,14 @@
     "kanban": false,
     "chartType": "progress-bar",
     "kpiInfo": {
-      "formula": [
-        {
-          "lhs": "Testcases without story link",
-          "rhs": "# of total non-regression test cases without story link"
-        }
-      ],
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "This KPI works only at project level. Graph shows data of the project with the latest sprint from the selected filters."
-        }
-      ]
+      "formula": [{
+        "lhs": "Testcases without story link",
+        "rhs": "# of total non-regression test cases without story link"
+      }],
+      "details": [{
+        "type": "paragraph",
+        "value": "This KPI works only at project level. Graph shows data of the project with the latest sprint from the selected filters."
+      }]
     },
     "xAxisLabel": "",
     "yAxisLabel": "",
@@ -3540,18 +3390,14 @@
     "kanban": false,
     "chartType": "progress-bar",
     "kpiInfo": {
-      "formula": [
-        {
-          "lhs": "Defect Count Without Story Link",
-          "rhs": "# of total defects without Story link"
-        }
-      ],
-      "details": [
-        {
-          "type": "paragraph",
-          "value": "This Kpi works only on Project level."
-        }
-      ]
+      "formula": [{
+        "lhs": "Defect Count Without Story Link",
+        "rhs": "# of total defects without Story link"
+      }],
+      "details": [{
+        "type": "paragraph",
+        "value": "This Kpi works only on Project level."
+      }]
     },
     "xAxisLabel": "",
     "yAxisLabel": "",
