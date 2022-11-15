@@ -249,4 +249,6 @@ public class EstimationHygieneServiceImpl extends JiraKPIService<Integer, List<O
 		}
 		return toDrop;
 	}
+
 }
+

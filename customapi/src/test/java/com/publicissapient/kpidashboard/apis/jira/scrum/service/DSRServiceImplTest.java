@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.publicissapient.kpidashboard.apis.data.SprintWiseStoryDataFactory;
 import org.bson.types.ObjectId;
 import org.junit.After;
 import org.junit.Before;
@@ -122,6 +123,10 @@ public class DSRServiceImplTest {
 		kpiRequest = kpiRequestFactory.findKpiRequest(KPICode.DEFECT_REMOVAL_EFFICIENCY.getKpiId());
 		kpiRequest.setLabel("PROJECT");
 
+		SprintWiseStoryDataFactory sprintWiseStoryDataFactory = SprintWiseStoryDataFactory.newInstance();
+		sprintWiseStoryList= sprintWiseStoryDataFactory.getSprintWiseStories();
+
+
 		AccountHierarchyFilterDataFactory accountHierarchyFilterDataFactory = AccountHierarchyFilterDataFactory
 				.newInstance();
 		accountHierarchyDataList = accountHierarchyFilterDataFactory.getAccountHierarchyDataList();
@@ -187,7 +192,7 @@ public class DSRServiceImplTest {
 		Map<String, Object> defectDataListMap = dsrServiceImpl.fetchKPIDataFromDb(leafNodeList, startDate, endDate,
 				kpiRequest);
 		assertThat("Total Defects value :", ((List<JiraIssue>) (defectDataListMap.get(TOTALBUGKEY))).size(),
-				equalTo(2));
+				equalTo(0));
 	}
 
 	@Test
