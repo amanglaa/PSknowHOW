@@ -58,7 +58,6 @@
 }
 
 .dialog-panel {
-    height: 90vh;
     width: 100%;
 }
 
@@ -170,4 +169,7 @@
 .p-button.p-button-text.btn-toggle:hover{
     border: 1px solid rgba(0, 0, 0, 0.6);
     background: transparent;
+}
+:host ::ng-deep .p-dialog-content{
+    overflow-y: unset;
 }

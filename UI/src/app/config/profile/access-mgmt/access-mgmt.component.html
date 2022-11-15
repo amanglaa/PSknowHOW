@@ -159,7 +159,7 @@
       </p-table>
 
       <p-dialog header="Add Projects" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true"
-        [style]="{width: '80vw', height: '90vh'}" (onHide)="hide()">
+        [style]="{width: '80vw'}" (onHide)="hide()">
         <div class="dialog-panel" #dialogpanel>
           <app-project-filter #projectfilter (projectSelectedEvent)="projectSelectedEvent($event)"></app-project-filter>
         </div>
