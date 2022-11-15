@@ -3217,7 +3217,6 @@
     "boxType": "3_column",
     "calculateMaturity": false
   },
-  ,
   {
     "kpiId": "kpi128",
     "kpiName": "Work Completed",
