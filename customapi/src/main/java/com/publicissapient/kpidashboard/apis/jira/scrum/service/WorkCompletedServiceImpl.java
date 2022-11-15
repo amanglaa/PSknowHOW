@@ -112,7 +112,7 @@ public class WorkCompletedServiceImpl extends JiraKPIService<Integer, List<Objec
 	/**
 	 * Populates KPI value to sprint leaf nodes and gives the trend analysis at
 	 * sprint level.
-	 * 
+	 *
 	 * @param sprintLeafNodeList
 	 * @param trendValue
 	 * @param kpiElement
@@ -150,7 +150,6 @@ public class WorkCompletedServiceImpl extends JiraKPIService<Integer, List<Objec
 					List<IterationKpiModalValue> modalValues = new ArrayList<>();
 					int issueCount = 0;
 					Double storyPoint = 0.0;
-					int remHours = 0;
 					for (JiraIssue jiraIssue : issues) {
 						IterationKpiModalColoumn iterationKpiModalColoumn = new IterationKpiModalColoumn(
 								jiraIssue.getNumber(), jiraIssue.getUrl());
