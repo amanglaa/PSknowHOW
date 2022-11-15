@@ -1248,7 +1248,7 @@ db.getCollection('kpi_master').insert(
     "isPositiveTrend": true,
     "showTrend": false,
     "aggregationCriteria": "average",
-    "isAdditionalFilterSupport": false,
+    "isAdditionalFilterSupport": true,
     "calculateMaturity": false
   },
   {

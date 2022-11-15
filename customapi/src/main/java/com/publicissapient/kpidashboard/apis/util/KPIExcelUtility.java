@@ -41,6 +41,7 @@ import com.publicissapient.kpidashboard.apis.model.DeploymentFrequencyInfo;
 import com.publicissapient.kpidashboard.apis.model.CustomDateRange;
 import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
 import com.publicissapient.kpidashboard.common.constant.CommonConstant;
+import com.publicissapient.kpidashboard.common.model.jira.IssueDetails;
 import com.publicissapient.kpidashboard.common.model.jira.JiraIssueCustomHistory;
 import com.publicissapient.kpidashboard.common.model.jira.KanbanIssueCustomHistory;
 import com.publicissapient.kpidashboard.common.model.testexecution.KanbanTestExecution;
@@ -363,6 +364,10 @@ public class KPIExcelUtility {
             ResolutionTimeValidation resolutionTimeValidation = (ResolutionTimeValidation) object;
             description = StringUtils.isEmpty(resolutionTimeValidation.getIssueDescription()) ? Constant.EMPTY_STRING : resolutionTimeValidation.getIssueDescription();
         }
+		if (object instanceof IssueDetails) {
+			IssueDetails issueDetails = (IssueDetails) object;
+			description = StringUtils.isEmpty(issueDetails.getDesc()) ? Constant.EMPTY_STRING : issueDetails.getDesc();
+		}
 
 		return description;
 	}
@@ -389,6 +394,10 @@ public class KPIExcelUtility {
             ResolutionTimeValidation resolutionTimeValidation = (ResolutionTimeValidation) object;
             url = StringUtils.isEmpty(resolutionTimeValidation.getUrl()) ? Constant.EMPTY_STRING : resolutionTimeValidation.getUrl();
         }
+		if (object instanceof IssueDetails) {
+			IssueDetails issueDetails = (IssueDetails) object;
+			url = StringUtils.isEmpty(issueDetails.getUrl()) ? Constant.EMPTY_STRING : issueDetails.getUrl();
+		}
 
 		return url;
 
@@ -441,35 +450,52 @@ public class KPIExcelUtility {
 	}
 
     public static void populateSprintVelocity(String sprint, Map<String, JiraIssue> totalStoriesMap,
-                                              Map<String, Double> storyAndStoryPoint, List<KPIExcelData> kpiExcelData) {
-        if(storyAndStoryPoint==null) {
-            if (MapUtils.isNotEmpty(totalStoriesMap)) {
-                totalStoriesMap.forEach((storyId, jiraIssue) -> {
-                    KPIExcelData excelData = new KPIExcelData();
-                    excelData.setSprintName(sprint);
-                    Map<String, String> storyDetails = new HashMap<>();
-                    storyDetails.put(storyId, checkEmptyURL(jiraIssue));
-                    excelData.setStoryId(storyDetails);
-                    excelData.setIssueDesc(checkEmptyName(jiraIssue));
-                    excelData.setStoryPoints(jiraIssue.getStoryPoints().toString());
+			Set<IssueDetails> issueDetailsSet, List<KPIExcelData> kpiExcelData) {
+		if (CollectionUtils.isEmpty(issueDetailsSet)) {
+			if (MapUtils.isNotEmpty(totalStoriesMap)) {
+				totalStoriesMap.forEach((storyId, jiraIssue) -> {
+					KPIExcelData excelData = new KPIExcelData();
+					excelData.setSprintName(sprint);
+					Map<String, String> storyDetails = new HashMap<>();
+					storyDetails.put(storyId, checkEmptyURL(jiraIssue));
+					excelData.setStoryId(storyDetails);
+					excelData.setIssueDesc(checkEmptyName(jiraIssue));
+					excelData.setStoryPoints(jiraIssue.getStoryPoints().toString());
 
-                    kpiExcelData.add(excelData);
-                });
-            }
-        }else {
-            for (Map.Entry<String, Double> storyWiseStoryPointns : storyAndStoryPoint.entrySet()) {
-                KPIExcelData excelData = new KPIExcelData();
-                excelData.setSprintName(sprint);
-                Map<String, String> storyDetails = new HashMap<>();
-                JiraIssue jiraIssue = totalStoriesMap.get(storyWiseStoryPointns.getKey());
-                storyDetails.put(jiraIssue.getNumber(), checkEmptyURL(jiraIssue));
-                excelData.setStoryId(storyDetails);
-                excelData.setIssueDesc(checkEmptyName(jiraIssue));
-                excelData.setStoryPoints(Optional.ofNullable(storyWiseStoryPointns.getValue()).orElse(0.0).toString());
-                kpiExcelData.add(excelData);
-            }
-        }
-    }
+					kpiExcelData.add(excelData);
+				});
+			}
+		} else {
+			for (IssueDetails issueDetails : issueDetailsSet) {
+				KPIExcelData excelData = new KPIExcelData();
+				excelData.setSprintName(sprint);
+				Map<String, String> storyDetails = new HashMap<>();
+				storyDetails.put(issueDetails.getSprintIssue().getNumber(), checkEmptyURL(issueDetails));
+				excelData.setStoryId(storyDetails);
+				excelData.setIssueDesc(checkEmptyName(issueDetails));
+				excelData.setStoryPoints(
+						Optional.ofNullable(issueDetails.getSprintIssue().getStoryPoints()).orElse(0.0).toString());
+				kpiExcelData.add(excelData);
+			}
+		}
+	}
+
+	public static void populateSprintPredictability(String sprint, Set<IssueDetails> issueDetailsSet,
+			List<KPIExcelData> kpiExcelData) {
+		if (CollectionUtils.isNotEmpty(issueDetailsSet)) {
+			for (IssueDetails issueDetails : issueDetailsSet) {
+				KPIExcelData excelData = new KPIExcelData();
+				excelData.setSprintName(sprint);
+				Map<String, String> storyDetails = new HashMap<>();
+				storyDetails.put(issueDetails.getSprintIssue().getNumber(), checkEmptyURL(issueDetails));
+				excelData.setStoryId(storyDetails);
+				excelData.setIssueDesc(checkEmptyName(issueDetails));
+				excelData.setStoryPoints(
+						Optional.ofNullable(issueDetails.getSprintIssue().getStoryPoints()).orElse(0.0).toString());
+				kpiExcelData.add(excelData);
+			}
+		}
+	}
 
 	public static void populateSprintCapacity(String sprint, List<JiraIssue> totalStoriesList,
 			List<KPIExcelData> kpiExcelData) {
