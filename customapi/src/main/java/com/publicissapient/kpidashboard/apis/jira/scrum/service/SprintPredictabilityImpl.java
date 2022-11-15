@@ -366,7 +366,7 @@ public class SprintPredictabilityImpl extends JiraKPIService<Double, List<Object
 			}
 		});
 		kpiElement.setExcelData(excelData);
-		kpiElement.setExcelColumns(KPIExcelColumn.SPRINT_VELOCITY.getColumns());
+		kpiElement.setExcelColumns(KPIExcelColumn.SPRINT_PREDICTABILITY.getColumns());
 	}
 
 	/**
