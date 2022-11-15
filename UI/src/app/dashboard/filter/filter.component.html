@@ -64,7 +64,7 @@
                   <img src="../../../assets/img/ico-date.svg" alt="date" class="p-mr-1" />
                   <span>{{selectedDateFilter}}</span>
                </div>
-               <div class="position-relative" *ngIf="kanban">
+               <div class="position-relative" *ngIf="kanban && this.selectedTab?.toLowerCase() !== 'maturity'">
                   <div class="btn-custom p-d-flex p-align-center p-text-uppercase p-p-2 rounded p-ml-2 filter-btn"
                      #dateToggleButton [ngClass]="{'active': toggleDateDropdown}"
                      (click)="toggleDateDropdown = !toggleDateDropdown">
@@ -219,7 +219,8 @@
       
       <!-- Download button start -->
        <!--*ngIf="isSuperAdmin && ( selectedTab == 'mydashboard' || selectedTab == 'EngineeringMaturity')"-->
-      <div class="btn-custom p-p-2 rounded p-mr-3 filter-btn" *ngIf="!kanban && selectedTab?.toLowerCase() != 'maturity'" id="Filter-Download-Btn" (click)="exportToExcel($event)"
+      <div class="btn-custom p-p-2 rounded p-mr-3 filter-btn" *ngIf="!kanban && selectedTab?.toLowerCase() != 'maturity' && selectedTab?.toLowerCase() != 'iteration' && selectedTab?.toLowerCase() != 'backlog'" 
+      id="Filter-Download-Btn" (click)="exportToExcel($event)"
          [ngClass]="{'disabled': showChart}" [attr.title]="'Export View'"
          >
          <img src="../../../assets/img/ico-download.svg" alt="Download" />
