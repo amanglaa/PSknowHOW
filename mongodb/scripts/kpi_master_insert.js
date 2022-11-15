@@ -3009,12 +3009,54 @@ db.getCollection('kpi_master').insert(
     "calculateMaturity": false
   },
   {
+    "kpiId": "kpi128",
+    "kpiName": "Work Completed",
+    "maxValue": "",
+    "kpiUnit": "Hours",
+    "isDeleted": "False",
+    "defaultOrder": 4,
+    "kpiCategory": "Iteration",
+    "kpiSource": "Jira",
+    "groupId": 8,
+    "thresholdValue": "",
+    "kanban": false,
+    "chartType": null,
+    "kpiInfo": {
+      "details": [
+        {
+          "type": "paragraph",
+          "value": "Work Completed KPI gives a depiction of the work completed in an iteration from two available dimensions"
+        },
+        {
+          "type": "paragraph",
+          "value": "Issue count - Total no. of issues that are completed based on DOD in the iteration."
+        },
+        {
+          "type": "paragraph",
+          "value": "Story Points - Sum of story points of all issues completed based on DOD in the iteration"
+        },
+        {
+          "type": "paragraph",
+          "value": "Source of this KPI is Jira. To see the latest data, run the Jira processor from KnowHOW settings"
+        }
+      ]
+    },
+    "xAxisLabel": "",
+    "yAxisLabel": "",
+    "isPositiveTrend": true,
+    "showTrend": false,
+    "isSquadSupport": false,
+    "kpiFilter": "multiSelectDropDown",
+    "boxType": "3_column",
+    "calculateMaturity": false
+  },
+  {
     "kpiId": "kpi75",
     "kpiName": "Estimate vs Actual",
     "maxValue": "",
     "kpiUnit": "Hours",
     "isDeleted": "False",
-    "defaultOrder": 4,
+    "defaultOrder": 5,
     "kpiCategory": "Iteration",
     "kpiSource": "Jira",
     "groupId": 8,
@@ -3052,7 +3094,7 @@ db.getCollection('kpi_master').insert(
     "maxValue": "",
     "kpiUnit": "Count",
     "isDeleted": "False",
-    "defaultOrder": 5,
+    "defaultOrder": 6,
     "kpiCategory": "Iteration",
     "kpiSource": "Jira",
     "groupId": 8,
@@ -3077,7 +3119,7 @@ db.getCollection('kpi_master').insert(
     "showTrend": false,
     "isAdditionalFilterSupport": false,
     "kpiFilter": "multiSelectDropDown",
-    "boxType": "2_column_big",
+    "boxType": "3_column",
     "calculateMaturity": false
   },
   {
@@ -3086,7 +3128,7 @@ db.getCollection('kpi_master').insert(
     "maxValue": "",
     "kpiUnit": "Story Point",
     "isDeleted": "False",
-    "defaultOrder": 6,
+    "defaultOrder": 7,
     "kpiCategory": "Iteration",
     "kpiSource": "Jira",
     "groupId": 8,
@@ -3123,7 +3165,7 @@ db.getCollection('kpi_master').insert(
     "showTrend": false,
     "isAdditionalFilterSupport": false,
     "kpiFilter": "multiSelectDropDown",
-    "boxType": "2_column_big",
+    "boxType": "2_column",
     "calculateMaturity": false
   },
   {
@@ -3132,7 +3174,7 @@ db.getCollection('kpi_master').insert(
     "maxValue": "",
     "kpiUnit": "Count",
     "isDeleted": "False",
-    "defaultOrder": 7,
+    "defaultOrder": 8,
     "kpiCategory": "Iteration",
     "kpiSource": "Jira",
     "groupId": 8,
@@ -3170,7 +3212,7 @@ db.getCollection('kpi_master').insert(
     "maxValue": "",
     "kpiUnit": "Count",
     "isDeleted": "False",
-    "defaultOrder": 8,
+    "defaultOrder": 9,
     "kpiCategory": "Iteration",
     "kpiSource": "Jira",
     "groupId": 8,
@@ -3208,7 +3250,7 @@ db.getCollection('kpi_master').insert(
     "maxValue": "",
     "kpiUnit": "Count",
     "isDeleted": "False",
-    "defaultOrder": 9,
+    "defaultOrder": 10,
     "kpiCategory": "Iteration",
     "kpiSource": "Jira",
     "groupId": 8,
