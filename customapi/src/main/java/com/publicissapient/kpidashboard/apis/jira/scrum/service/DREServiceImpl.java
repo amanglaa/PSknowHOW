@@ -165,6 +165,11 @@ public class DREServiceImpl extends JiraKPIService<Double, List<Object>, Map<Str
 		// Fetch Story ID grouped by Sprint
 		List<SprintWiseStory> sprintWiseStoryList = jiraIssueRepository.findIssuesGroupBySprint(mapOfFilters,
 				uniqueProjectMap, kpiRequest.getFilterToShowOnTrend(), DEV);
+		List<JiraIssue> issuesBySprintAndType = jiraIssueRepository.findIssuesBySprintAndType(mapOfFilters,
+				uniqueProjectMap);
+		List<JiraIssue> storyListWoDrop = new ArrayList<>();
+		KpiHelperService.getDefectsWithoutDrop(droppedDefects, issuesBySprintAndType, storyListWoDrop);
+		KpiHelperService.removeRejectedStoriesFromSprint(sprintWiseStoryList, storyListWoDrop);
 
 		List<String> storyIdList = new ArrayList<>();
 		sprintWiseStoryList.forEach(s -> storyIdList.addAll(s.getStoryList()));

@@ -18,6 +18,32 @@
 
 package com.publicissapient.kpidashboard.apis.common.service.impl;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.bson.types.ObjectId;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.Duration;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.publicissapient.kpidashboard.apis.appsetting.service.ConfigHelperService;
 import com.publicissapient.kpidashboard.apis.config.CustomApiConfig;
 import com.publicissapient.kpidashboard.apis.constant.Constant;
@@ -54,32 +80,6 @@ import com.publicissapient.kpidashboard.common.repository.jira.KanbanJiraIssueHi
 import com.publicissapient.kpidashboard.common.repository.jira.KanbanJiraIssueRepository;
 import com.publicissapient.kpidashboard.common.repository.jira.SprintRepository;
 import com.publicissapient.kpidashboard.common.repository.kpivideolink.KPIVideoLinkRepository;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.bson.types.ObjectId;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.Duration;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Helper class for kpi requests . Utility to process for kpi requests.
@@ -105,7 +105,6 @@ public class KpiHelperService { // NOPMD
 	private static final String FIELD_RCA = "rca";
 	private static final String SPRINT_WISE_SPRINTDETAILS = "sprintWiseSprintDetailMap";
 	private static final String ISSUE_DATA = "issueData";
-
 	private static final String FIELD_STATUS = "status";
 	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
@@ -306,7 +305,7 @@ public class KpiHelperService { // NOPMD
 
 		// Fetch Defects linked with story ID's
 		List<JiraIssue> defectDataList = jiraIssueRepository.findIssuesByType(mapOfFiltersWithStoryIds);
-		
+
 		//fetch jira issue based on jira number
 		Set<JiraIssue> issueData=jiraIssueRepository.findIssueAndDescByNumber(storyIdList);
 		Map<String, JiraIssue> issueMapping = new HashMap<>();
@@ -429,6 +428,8 @@ public class KpiHelperService { // NOPMD
 		List<String> basicProjectConfigIds = new ArrayList<>();
 
 		Map<String, Map<String, Object>> uniqueProjectMap = new HashMap<>();
+		Map<String, List<String>> closedStatusMap = new HashMap<>();
+		Map<String, List<String>> typeNameMap = new HashMap<>();
 
 		leafNodeList.forEach(leaf -> {
 			ObjectId basicProjectConfigId = leaf.getProjectFilter().getBasicProjectConfigId();
@@ -440,20 +441,42 @@ public class KpiHelperService { // NOPMD
 
 			mapOfProjectFilters.put(JiraFeature.ISSUE_TYPE.getFieldValueInFeature(),
 					CommonUtils.convertToPatternList(fieldMapping.getJiraSprintVelocityIssueType()));
+
+			mapOfProjectFilters.put(JiraFeature.STATUS.getFieldValueInFeature(),
+					CommonUtils.convertToPatternList(fieldMapping.getJiraIssueDeliverdStatus()));
+			closedStatusMap.put(basicProjectConfigId.toString(), fieldMapping.getJiraIssueDeliverdStatus());
+			typeNameMap.put(basicProjectConfigId.toString(), fieldMapping.getJiraSprintVelocityIssueType());
+
 			uniqueProjectMap.put(basicProjectConfigId.toString(), mapOfProjectFilters);
 
 		});
 
 		List<SprintDetails> sprintDetails = sprintRepository.findBySprintIDIn(sprintList);
-		Set<String> totalIssue = new HashSet<>();
-		if(CollectionUtils.isNotEmpty(sprintDetails)) {
-			sprintDetails.stream().forEach(sprintDetail -> {
-				if (CollectionUtils.isNotEmpty(sprintDetail.getTotalIssues())) {
-					totalIssue.addAll(KpiDataHelper.getIssuesIdListBasedOnTypeFromSprintDetails(sprintDetail,
-							CommonConstant.TOTAL_ISSUES));
-				}
 
+		List<String> totalIssueIds = new ArrayList<>();
+		if (CollectionUtils.isNotEmpty(sprintDetails)) {
+
+			sprintDetails.stream().forEach(sprintDetail -> {
+
+				if (CollectionUtils.isNotEmpty(sprintDetail.getCompletedIssues())) {
+
+					/*List<String> closedStatus = closedStatusMap
+							.getOrDefault(sprintDetail.getBasicProjectConfigId().toString(), new ArrayList<>());
+					List<String> typeName = typeNameMap.getOrDefault(sprintDetail.getBasicProjectConfigId().toString(),
+							new ArrayList<>());
+
+					Set<SprintIssue> filterTotalIssues = sprintDetail.getTotalIssues().stream()
+							.filter(sprintIssue -> (closedStatus.contains(sprintIssue.getStatus())
+									&& typeName.contains(sprintIssue.getTypeName())))
+							.collect(Collectors.toSet());
+					sprintDetail.setTotalIssues(filterTotalIssues);*/
+					List<String> sprintWiseIssueIds = KpiDataHelper
+							.getIssuesIdListBasedOnTypeFromSprintDetails(sprintDetail, CommonConstant.COMPLETED_ISSUES);
+					totalIssueIds.addAll(sprintWiseIssueIds);
+				}
 			});
+			mapOfFilters.put(JiraFeature.ISSUE_NUMBER.getFieldValueInFeature(),
+					totalIssueIds.stream().distinct().collect(Collectors.toList()));
 		} else {
 			mapOfFilters.put(JiraFeature.SPRINT_ID.getFieldValueInFeature(),
 					sprintList.stream().distinct().collect(Collectors.toList()));
@@ -465,21 +488,23 @@ public class KpiHelperService { // NOPMD
 		mapOfFilters.put(JiraFeature.BASIC_PROJECT_CONFIG_ID.getFieldValueInFeature(),
 				basicProjectConfigIds.stream().distinct().collect(Collectors.toList()));
 
-		if (CollectionUtils.isNotEmpty(totalIssue)) {
-			resultListMap.put(SPRINTVELOCITYKEY,
-					jiraIssueRepository.findIssueByNumber(mapOfFilters, totalIssue, uniqueProjectMap));
+		if (CollectionUtils.isNotEmpty(totalIssueIds)) {
+			List<JiraIssue> sprintVelocityList = jiraIssueRepository.findIssuesBySprintAndType(mapOfFilters,
+					new HashMap<>());
+			resultListMap.put(SPRINTVELOCITYKEY, sprintVelocityList);
 			resultListMap.put(SPRINT_WISE_SPRINTDETAILS, sprintDetails);
 		} else {
-			//start: for azure board sprint details collections put is empty due to we did not have required data of issues.
+			// start: for azure board sprint details collections put is empty due to we did
+			// not have required data of issues.
 			List<JiraIssue> sprintVelocityList = jiraIssueRepository.findIssuesBySprintAndType(mapOfFilters,
 					uniqueProjectMap);
 			resultListMap.put(SPRINTVELOCITYKEY, sprintVelocityList);
 			resultListMap.put(SPRINT_WISE_SPRINTDETAILS, null);
 		}
-		//end: for azure board sprint details collections put is empty due to we did not have required data of issues.
+		// end: for azure board sprint details collections put is empty due to we did
+		// not have required data of issues.
 
 		return resultListMap;
-
 	}
 
 	/**
@@ -1250,38 +1275,16 @@ public class KpiHelperService { // NOPMD
 		}
 	}
 
-	private static void getDefectsWoDrop(Map<String, Map<String,List<String>>> droppedDefects, Set<JiraIssue> defectListWoDropSet, JiraIssue jiraIssue) {
-		if (!StringUtils.isBlank(jiraIssue.getStatus())) {
-			Map<String,List<String>> defectStatus = droppedDefects.get(jiraIssue.getBasicProjectConfigId());
-			if (null != defectStatus && !defectStatus.isEmpty()) {
-				if (CollectionUtils.isNotEmpty(defectStatus.get(Constant.DEFECT_REJECTION_STATUS))
-						&& CollectionUtils.isNotEmpty(defectStatus.get(Constant.RESOLUTION_TYPE_FOR_REJECTION))) {
-					if (StringUtils.isNotEmpty(jiraIssue.getStatus()) &&
-							!defectStatus.get(Constant.DEFECT_REJECTION_STATUS).contains(jiraIssue.getStatus())) {
-						if (StringUtils.isNotEmpty(jiraIssue.getResolution()) &&
-								!defectStatus.get(Constant.RESOLUTION_TYPE_FOR_REJECTION).contains(jiraIssue.getResolution())) {
-							defectListWoDropSet.add(jiraIssue);
-						}
-					}
-					if (StringUtils.isNotEmpty(jiraIssue.getResolution()) &&
-							!defectStatus.get(Constant.RESOLUTION_TYPE_FOR_REJECTION).contains(jiraIssue.getResolution())) {
-						if (StringUtils.isNotEmpty(jiraIssue.getStatus()) &&
-								!defectStatus.get(Constant.DEFECT_REJECTION_STATUS).contains(jiraIssue.getStatus())) {
-							defectListWoDropSet.add(jiraIssue);
-						}
-					}
-				} else if (CollectionUtils.isEmpty(defectStatus.get(Constant.DEFECT_REJECTION_STATUS)) &&
-						CollectionUtils.isNotEmpty(defectStatus.get(Constant.RESOLUTION_TYPE_FOR_REJECTION)) &&
-						!defectStatus.get(Constant.RESOLUTION_TYPE_FOR_REJECTION).contains(jiraIssue.getResolution())) {
-					defectListWoDropSet.add(jiraIssue);
-				} else if (CollectionUtils.isEmpty(defectStatus.get(Constant.RESOLUTION_TYPE_FOR_REJECTION)) &&
-						CollectionUtils.isNotEmpty(defectStatus.get(Constant.DEFECT_REJECTION_STATUS)) &&
-						!defectStatus.get(Constant.DEFECT_REJECTION_STATUS).contains(jiraIssue.getStatus())) {
-					defectListWoDropSet.add(jiraIssue);
-				}
-			} else {
+	private static void getDefectsWoDrop(Map<String, Map<String, List<String>>> droppedDefects, Set<JiraIssue> defectListWoDropSet, JiraIssue jiraIssue) {
+		Map<String, List<String>> defectStatus = droppedDefects.get(jiraIssue.getBasicProjectConfigId());
+		if (MapUtils.isNotEmpty(defectStatus)) {
+			List<String> rejectedDefect = defectStatus.getOrDefault(Constant.DEFECT_REJECTION_STATUS, new ArrayList<>());
+			List<String> resolutionTypeForRejection = defectStatus.getOrDefault(Constant.RESOLUTION_TYPE_FOR_REJECTION, new ArrayList<>());
+			if (!rejectedDefect.contains(jiraIssue.getStatus()) && !resolutionTypeForRejection.contains(jiraIssue.getResolution())) {
 				defectListWoDropSet.add(jiraIssue);
 			}
+		} else {
+			defectListWoDropSet.add(jiraIssue);
 		}
 	}
 

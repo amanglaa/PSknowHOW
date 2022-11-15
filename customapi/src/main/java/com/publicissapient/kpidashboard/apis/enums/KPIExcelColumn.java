@@ -26,7 +26,7 @@ import java.util.List;
  */
 public enum KPIExcelColumn {
 
-    CODE_BUILD_TIME("kpi8", Arrays.asList("Project Name", "Job Name", "Start Time", "End Time", "Duration", "Build Status", "Started By", "Build Url", "Weeks")),
+    CODE_BUILD_TIME("kpi8", Arrays.asList("Project Name", "Job Name", "Start Time", "End Time", "Duration", "Build Status", "Build Url", "Weeks")),
     STORY_COUNT("kpi40", Arrays.asList("Sprint Name", "Story ID", "Issue Description")),
     CODE_COMMIT("kpi11", Arrays.asList("Project Name", "Repository Url", "Branch", "Day", "No. Of Commit", "No. of Merge")),
 
@@ -37,7 +37,8 @@ public enum KPIExcelColumn {
     LEAD_TIME_KANBAN("kpi53", Arrays.asList("Project Name","Story ID","Issue Description", "Open to Triage(In Days)", "Triage to Complete (In Days)", "Complete TO Live (In Days)", "Lead Time (In Days)")),
 
     SPRINT_VELOCITY("kpi39", Arrays.asList("Sprint Name", "Story ID", "Issue Description", "Story Size(In story point)")),
-    SPRINT_CAPACITY_UTILIZATION("kpi46", Arrays.asList("Sprint Name", "Story ID", "Issue Description", "Original Time Estimate (in hours)", "Total Time Spent (in hours)")),
+	SPRINT_PREDICTABILITY("kpi5", Arrays.asList("Sprint Name", "Story ID", "Issue Description", "Story Size(In story point)")),
+	SPRINT_CAPACITY_UTILIZATION("kpi46", Arrays.asList("Sprint Name", "Story ID", "Issue Description", "Original Time Estimate (in hours)", "Total Time Spent (in hours)")),
     COMMITMENT_RELIABILITY("kpi72", Arrays.asList("Sprint Name", "Story ID", "Closed")),
 
 
@@ -85,16 +86,16 @@ public enum KPIExcelColumn {
 
     PRODUCTION_DEFECTS_AGEING("kpi127", Arrays.asList("Project Name", "Defect ID", "Issue Description", "Priority", "Created Date", "Status")),
 
-	UNIT_TEST_COVERAGE_KANBAN("kpi62", Arrays.asList("Project", "Job Name", "Unit Coverage", "Weeks")),
+	UNIT_TEST_COVERAGE_KANBAN("kpi62", Arrays.asList("Project", "Job Name", "Unit Coverage", "Day/Week/Month")),
 
-	SONAR_VIOLATIONS_KANBAN("kpi64", Arrays.asList("Project", "Job Name", "Sonar Violations", "Weeks")),
+	SONAR_VIOLATIONS_KANBAN("kpi64", Arrays.asList("Project", "Job Name", "Sonar Violations", "Day/Week/Month")),
 
-	SONAR_TECH_DEBT_KANBAN("kpi67", Arrays.asList("Project", "Job Name", "Tech Debt (in days)", "Weeks")),
+	SONAR_TECH_DEBT_KANBAN("kpi67", Arrays.asList("Project", "Job Name", "Tech Debt (in days)", "Day/Week/Month")),
 
 	TEST_EXECUTION_KANBAN("kpi71", Arrays.asList("Project", "Execution Date", "Total Test", "Executed Test",
 			"Execution %", "Passed Test", "Passed %")),
 
-	KANBAN_REGRESSION_PASS_PERCENTAGE("kpi63", Arrays.asList("Project", "Test Case ID", "Automated")),
+	KANBAN_REGRESSION_PASS_PERCENTAGE("kpi63", Arrays.asList("Project","Day/Week/Month", "Test Case ID", "Automated")),
 
 	OPEN_TICKET_AGING_BY_PRIORITY("kpi997",
 			Arrays.asList("Project", "Ticket Issue ID", "Priority", "Created Date", "Issue Status")),
@@ -118,7 +119,7 @@ public enum KPIExcelColumn {
 			Arrays.asList("Project Name", "Day/Week/Month", "Ticket Issue ID", "Issue Type", "Size (In Story Points)")),
 
 	CODE_BUILD_TIME_KANBAN("kpi66", Arrays.asList("Project Name", "Job Name", "Start Time", "End Time", "Duration",
-			"Build Status", "Started By", "Build Url")),
+			"Build Status", "Build Url")),
 
 	CODE_COMMIT_MERGE_KANBAN("kpi65",
 			Arrays.asList("Project Name", "Repository Url", "Branch", "Day", "No. Of Commit")),
