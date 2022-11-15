@@ -185,20 +185,22 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 		if (CollectionUtils.isNotEmpty(sprintDetails)) {
 			sprintDetails.forEach(sd -> {
 				Set<IssueDetails> filterIssueDetailsSet = new HashSet<>();
-				sd.getCompletedIssues().stream().forEach(sprintIssue -> {
-					allJiraIssue.stream().forEach(jiraIssue -> {
-						if (sprintIssue.getNumber().equals(jiraIssue.getNumber())) {
-							IssueDetails issueDetails = new IssueDetails();
-							issueDetails.setSprintIssue(sprintIssue);
-							issueDetails.setUrl(jiraIssue.getUrl());
-							issueDetails.setDesc(jiraIssue.getName());
-							filterIssueDetailsSet.add(issueDetails);
-						}
+				if (CollectionUtils.isNotEmpty(sd.getCompletedIssues())) {
+					sd.getCompletedIssues().stream().forEach(sprintIssue -> {
+						allJiraIssue.stream().forEach(jiraIssue -> {
+							if (sprintIssue.getNumber().equals(jiraIssue.getNumber())) {
+								IssueDetails issueDetails = new IssueDetails();
+								issueDetails.setSprintIssue(sprintIssue);
+								issueDetails.setUrl(jiraIssue.getUrl());
+								issueDetails.setDesc(jiraIssue.getName());
+								filterIssueDetailsSet.add(issueDetails);
+							}
+						});
+						Pair<String, String> currentNodeIdentifier = Pair.of(sd.getBasicProjectConfigId().toString(),
+								sd.getSprintID());
+						currentSprintLeafVelocityMap.put(currentNodeIdentifier, filterIssueDetailsSet);
 					});
-					Pair<String, String> currentNodeIdentifier = Pair.of(sd.getBasicProjectConfigId().toString(),
-							sd.getSprintID());
-					currentSprintLeafVelocityMap.put(currentNodeIdentifier, filterIssueDetailsSet);
-				});
+				}
 			});
 		} else {
 			if (CollectionUtils.isNotEmpty(allJiraIssue)) {
