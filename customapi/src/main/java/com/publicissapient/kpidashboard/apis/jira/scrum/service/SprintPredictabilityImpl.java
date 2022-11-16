@@ -170,6 +170,7 @@ public class SprintPredictabilityImpl extends JiraKPIService<Double, List<Object
 			Map<ObjectId, List<SprintDetails>> projectWiseTotalSprintDetails = totalSprintDetails.stream()
 					.collect(Collectors.groupingBy(SprintDetails::getBasicProjectConfigId));
 
+			List<SprintDetails> projectWiseSprintDetails = new ArrayList<>();
 			projectWiseTotalSprintDetails.forEach((basicProjectConfigId, sprintDetailsList) -> {
 				List<SprintDetails> sprintDetails = sprintDetailsList.stream()
 						.limit(Long.valueOf(customApiConfig.getSprintCountForFilters()) + SP_CONSTANT)
@@ -180,8 +181,9 @@ public class SprintPredictabilityImpl extends JiraKPIService<Double, List<Object
 								sprintDetail, CommonConstant.COMPLETED_ISSUES);
 						totalIssueIds.addAll(sprintWiseIssueIds);
 					}
+					projectWiseSprintDetails.addAll(sprintDetails);
 				});
-				resultListMap.put(SPRINT_WISE_SPRINT_DETAILS, sprintDetails);
+				resultListMap.put(SPRINT_WISE_SPRINT_DETAILS, projectWiseSprintDetails);
 				mapOfFilters.put(JiraFeature.ISSUE_NUMBER.getFieldValueInFeature(),
 						totalIssueIds.stream().distinct().collect(Collectors.toList()));
 
