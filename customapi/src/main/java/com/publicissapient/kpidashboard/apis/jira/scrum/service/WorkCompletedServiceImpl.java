@@ -154,7 +154,7 @@ public class WorkCompletedServiceImpl extends JiraKPIService<Integer, List<Objec
 						IterationKpiModalColoumn iterationKpiModalColoumn = new IterationKpiModalColoumn(
 								jiraIssue.getNumber(), jiraIssue.getUrl());
 						IterationKpiModalValue iterationKpiModalValue = new IterationKpiModalValue(
-								iterationKpiModalColoumn, jiraIssue.getName());
+								iterationKpiModalColoumn, jiraIssue.getName(), jiraIssue.getStatus(), jiraIssue.getTypeName());
 						modalValues.add(iterationKpiModalValue);
 						overAllmodalValues.add(iterationKpiModalValue);
 						issueCount = issueCount + 1;
@@ -190,7 +190,8 @@ public class WorkCompletedServiceImpl extends JiraKPIService<Integer, List<Objec
 			IterationKpiFiltersOptions filter2 = new IterationKpiFiltersOptions(SEARCH_BY_PRIORITY, statuses);
 			IterationKpiFilters iterationKpiFilters = new IterationKpiFilters(filter1, filter2);
 			// Modal Heads Options
-			List<String> modalHeads = Arrays.asList(MODAL_HEAD_ISSUE_ID, MODAL_HEAD_ISSUE_DESC);
+			List<String> modalHeads = Arrays.asList(MODAL_HEAD_ISSUE_ID, MODAL_HEAD_ISSUE_DESC, CommonConstant.MODAL_HEAD_ISSUE_STATUS,
+					CommonConstant.MODAL_HEAD_ISSUE_TYPE);
 			trendValue.setValue(iterationKpiValues);
 			kpiElement.setFilters(iterationKpiFilters);
 			kpiElement.setSprint(latestSprint.getName());
