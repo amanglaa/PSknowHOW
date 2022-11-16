@@ -129,7 +129,7 @@ public class EstimationHygieneServiceImpl extends JiraKPIService<Integer, List<O
 	 * sprint level.
 	 *
 	 * @param sprintLeafNodeList
-	 * @param trendValueList
+	 * @param trendValue
 	 * @param kpiElement
 	 * @param kpiRequest
 	 */
@@ -183,7 +183,7 @@ public class EstimationHygieneServiceImpl extends JiraKPIService<Integer, List<O
 						IterationKpiModalColoumn iterationKpiModalColoumn = new IterationKpiModalColoumn(
 								jiraIssue.getNumber(), jiraIssue.getUrl());
 						IterationKpiModalValue iterationKpiModalValue = new IterationKpiModalValue(
-								iterationKpiModalColoumn, jiraIssue.getName());
+								iterationKpiModalColoumn, jiraIssue.getName(), jiraIssue.getStatus(), jiraIssue.getTypeName());
 						withoutEstmodalValues.add(iterationKpiModalValue);
 						overAllWithoutEstmodalValues.add(iterationKpiModalValue);
 					}
@@ -196,7 +196,7 @@ public class EstimationHygieneServiceImpl extends JiraKPIService<Integer, List<O
 						IterationKpiModalColoumn iterationKpiModalColoumn = new IterationKpiModalColoumn(
 								jiraIssue.getNumber(), jiraIssue.getUrl());
 						IterationKpiModalValue iterationKpiModalValue = new IterationKpiModalValue(
-								iterationKpiModalColoumn, jiraIssue.getName());
+								iterationKpiModalColoumn, jiraIssue.getName(), jiraIssue.getStatus(), jiraIssue.getTypeName());
 						missingmodalValues.add(iterationKpiModalValue);
 						overAllMissingModalValues.add(iterationKpiModalValue);
 					}
@@ -231,7 +231,8 @@ public class EstimationHygieneServiceImpl extends JiraKPIService<Integer, List<O
 			IterationKpiFiltersOptions filter1 = new IterationKpiFiltersOptions(SEARCH_BY_ISSUE_TYPE, issueTypes);
 			IterationKpiFilters iterationKpiFilters = new IterationKpiFilters(filter1, null);
 			// Modal Heads Options
-			List<String> modalHeads = Arrays.asList(MODAL_HEAD_ISSUE_ID, MODAL_HEAD_ISSUE_DESC);
+			List<String> modalHeads = Arrays.asList(MODAL_HEAD_ISSUE_ID, MODAL_HEAD_ISSUE_DESC, CommonConstant.MODAL_HEAD_ISSUE_STATUS,
+					CommonConstant.MODAL_HEAD_ISSUE_TYPE);
 			trendValue.setValue(iterationKpiValues);
 			kpiElement.setFilters(iterationKpiFilters);
 			kpiElement.setSprint(latestSprint.getName());
