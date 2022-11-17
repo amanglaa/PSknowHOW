@@ -371,6 +371,11 @@ public class SprintPredictabilityImpl extends JiraKPIService<Double, List<Object
 		kpiElement.setExcelColumns(KPIExcelColumn.SPRINT_PREDICTABILITY.getColumns());
 	}
 
+	@Override
+	public Double calculateKpiValue(List<Double> valueList, String kpiName) {
+		return calculateKpiValueForDouble(valueList, kpiName);
+	}
+
 	/**
 	 * Prepares Sprint Predict Map
 	 *
