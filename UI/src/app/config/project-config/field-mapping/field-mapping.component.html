@@ -1092,7 +1092,7 @@
                         <!--Additional Filter Identifier dropdown with three values ["Component", "CustomField", "Labels"]-->
                         <div class="p-sm-3">
                             <label class="field-title">{{ filter.name }} Identifier</label>
-                            <p-dropdown id="{{ filter.code + 'Identifier'}}" [virtualScroll]="true"
+                            <p-dropdown id="{{ filter.code + 'Identifier'}}"
                                 [options]="additionalFilterIdentificationOptions" placeholder="Select"
                                 formControlName="{{ filter.code + 'Identifier'}}" (onChange)="changeControl($event)"
                                 [style]="{'width':'100%'}" pTooltip='' tooltipPosition="top" tooltipEvent="hover"
