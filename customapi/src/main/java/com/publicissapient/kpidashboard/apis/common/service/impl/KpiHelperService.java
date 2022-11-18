@@ -34,12 +34,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.publicissapient.kpidashboard.apis.model.KPIFieldMappingResponse;
-import com.publicissapient.kpidashboard.common.model.application.KPIFieldMapping;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -53,6 +50,7 @@ import com.publicissapient.kpidashboard.apis.constant.Constant;
 import com.publicissapient.kpidashboard.apis.enums.JiraFeature;
 import com.publicissapient.kpidashboard.apis.enums.JiraFeatureHistory;
 import com.publicissapient.kpidashboard.apis.filter.service.FilterHelperService;
+import com.publicissapient.kpidashboard.apis.model.KPIFieldMappingResponse;
 import com.publicissapient.kpidashboard.apis.model.KpiElement;
 import com.publicissapient.kpidashboard.apis.model.KpiRequest;
 import com.publicissapient.kpidashboard.apis.model.MasterResponse;
@@ -63,6 +61,7 @@ import com.publicissapient.kpidashboard.apis.util.KpiDataHelper;
 import com.publicissapient.kpidashboard.common.constant.CommonConstant;
 import com.publicissapient.kpidashboard.common.constant.NormalizedJira;
 import com.publicissapient.kpidashboard.common.model.application.FieldMapping;
+import com.publicissapient.kpidashboard.common.model.application.KPIFieldMapping;
 import com.publicissapient.kpidashboard.common.model.application.KpiMaster;
 import com.publicissapient.kpidashboard.common.model.application.ValidationData;
 import com.publicissapient.kpidashboard.common.model.excel.CapacityKpiData;
@@ -106,7 +105,6 @@ public class KpiHelperService { // NOPMD
 	private static final String FIELD_RCA = "rca";
 	private static final String SPRINT_WISE_SPRINTDETAILS = "sprintWiseSprintDetailMap";
 	private static final String ISSUE_DATA = "issueData";
-	private static final String TOTAL_ISSUE_WITH_STORYPOINTS = "totalIssueWithStoryPoints";
 	private static final String FIELD_STATUS = "status";
 	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
@@ -446,41 +444,39 @@ public class KpiHelperService { // NOPMD
 
 			mapOfProjectFilters.put(JiraFeature.STATUS.getFieldValueInFeature(),
 					CommonUtils.convertToPatternList(fieldMapping.getJiraIssueDeliverdStatus()));
-			closedStatusMap.put(basicProjectConfigId.toString(),fieldMapping.getJiraIssueDeliverdStatus());
-			typeNameMap.put(basicProjectConfigId.toString(),fieldMapping.getJiraSprintVelocityIssueType());
+			closedStatusMap.put(basicProjectConfigId.toString(), fieldMapping.getJiraIssueDeliverdStatus());
+			typeNameMap.put(basicProjectConfigId.toString(), fieldMapping.getJiraSprintVelocityIssueType());
 
 			uniqueProjectMap.put(basicProjectConfigId.toString(), mapOfProjectFilters);
-
 
 		});
 
 		List<SprintDetails> sprintDetails = sprintRepository.findBySprintIDIn(sprintList);
-		Set<String> issueList= new HashSet<>();
 
-		Map<Pair<String,String>, Map<String, Double>> totalIssue = new HashMap<>();
+		List<String> totalIssueIds = new ArrayList<>();
 		if (CollectionUtils.isNotEmpty(sprintDetails)) {
 
 			sprintDetails.stream().forEach(sprintDetail -> {
 
-				if (CollectionUtils.isNotEmpty(sprintDetail.getTotalIssues())) {
+				if (CollectionUtils.isNotEmpty(sprintDetail.getCompletedIssues())) {
 
-					List<String> closedStatus = closedStatusMap.getOrDefault(sprintDetail.getBasicProjectConfigId().toString(),
-							new ArrayList<>());
+					/*List<String> closedStatus = closedStatusMap
+							.getOrDefault(sprintDetail.getBasicProjectConfigId().toString(), new ArrayList<>());
 					List<String> typeName = typeNameMap.getOrDefault(sprintDetail.getBasicProjectConfigId().toString(),
 							new ArrayList<>());
 
-					Map<String, Double> storyWiseStoryPoint = new HashMap<>();
-					sprintDetail.getTotalIssues().stream().filter(sprintIssue -> {
-						return (closedStatus.contains(sprintIssue.getStatus())
-								&& typeName.contains(sprintIssue.getTypeName()));
-					}).forEach(sprintIssue -> {
-						issueList.add(sprintIssue.getNumber());
-						storyWiseStoryPoint.putIfAbsent(sprintIssue.getNumber(), sprintIssue.getStoryPoints());});
-
-					totalIssue.put(Pair.of(sprintDetail.getBasicProjectConfigId().toString(),sprintDetail.getSprintID()),storyWiseStoryPoint);
+					Set<SprintIssue> filterTotalIssues = sprintDetail.getTotalIssues().stream()
+							.filter(sprintIssue -> (closedStatus.contains(sprintIssue.getStatus())
+									&& typeName.contains(sprintIssue.getTypeName())))
+							.collect(Collectors.toSet());
+					sprintDetail.setTotalIssues(filterTotalIssues);*/
+					List<String> sprintWiseIssueIds = KpiDataHelper
+							.getIssuesIdListBasedOnTypeFromSprintDetails(sprintDetail, CommonConstant.COMPLETED_ISSUES);
+					totalIssueIds.addAll(sprintWiseIssueIds);
 				}
-
 			});
+			mapOfFilters.put(JiraFeature.ISSUE_NUMBER.getFieldValueInFeature(),
+					totalIssueIds.stream().distinct().collect(Collectors.toList()));
 		} else {
 			mapOfFilters.put(JiraFeature.SPRINT_ID.getFieldValueInFeature(),
 					sprintList.stream().distinct().collect(Collectors.toList()));
@@ -492,26 +488,23 @@ public class KpiHelperService { // NOPMD
 		mapOfFilters.put(JiraFeature.BASIC_PROJECT_CONFIG_ID.getFieldValueInFeature(),
 				basicProjectConfigIds.stream().distinct().collect(Collectors.toList()));
 
-
-		if (MapUtils.isNotEmpty(totalIssue)) {
-			resultListMap.put(TOTAL_ISSUE_WITH_STORYPOINTS,totalIssue);
+		if (CollectionUtils.isNotEmpty(totalIssueIds)) {
+			List<JiraIssue> sprintVelocityList = jiraIssueRepository.findIssuesBySprintAndType(mapOfFilters,
+					new HashMap<>());
+			resultListMap.put(SPRINTVELOCITYKEY, sprintVelocityList);
 			resultListMap.put(SPRINT_WISE_SPRINTDETAILS, sprintDetails);
-			Set<JiraIssue> issueData=jiraIssueRepository.findIssueAndDescByNumber(new ArrayList<>(issueList));
-			Map<String, JiraIssue> issueMapping = new HashMap<>();
-			issueData.stream().forEach(issue -> issueMapping.putIfAbsent(issue.getNumber(), issue));
-			resultListMap.put(ISSUE_DATA, issueMapping);
-
 		} else {
-			//start: for azure board sprint details collections put is empty due to we did not have required data of issues.
+			// start: for azure board sprint details collections put is empty due to we did
+			// not have required data of issues.
 			List<JiraIssue> sprintVelocityList = jiraIssueRepository.findIssuesBySprintAndType(mapOfFilters,
 					uniqueProjectMap);
 			resultListMap.put(SPRINTVELOCITYKEY, sprintVelocityList);
 			resultListMap.put(SPRINT_WISE_SPRINTDETAILS, null);
 		}
-		//end: for azure board sprint details collections put is empty due to we did not have required data of issues.
+		// end: for azure board sprint details collections put is empty due to we did
+		// not have required data of issues.
 
 		return resultListMap;
-
 	}
 
 	/**

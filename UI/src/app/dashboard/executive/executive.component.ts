@@ -181,6 +181,7 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
                 if (this.kpiChartData && Object.keys(this.kpiChartData)?.length > 0) {
                     for (const key in this.kpiChartData) {
                         this.kpiChartData[key] = this.generateColorObj(key, this.kpiChartData[key]);
+                        this.createTrendsData(key);
                     }
                 }
                 this.trendBoxColorObj = { ...x };
@@ -240,7 +241,6 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
         this.configGlobalData?.forEach(element => {
             if (element.shown && element.isEnabled) {
                 this.kpiConfigData[element.kpiId] = true;
-                this.createTrendsData(element.kpiId);
             } else {
                 this.kpiConfigData[element.kpiId] = false;
             }
@@ -315,6 +315,7 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
                     this.chartColorList = {};
                     this.kpiSelectedFilterObj = {};
                     this.kpiDropdowns = {};
+                    this.kpiTrendsObj = {};
                 }
                 const kpiIdsForCurrentBoard = this.configGlobalData?.map(kpiDetails => kpiDetails.kpiId);
                 this.previousBoardId = this.boardId;
@@ -347,6 +348,7 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
                 } else if (this.filterData?.length && !$event.makeAPICall) {
                     // alert('no call');
                     this.allKpiArray.forEach(element => {
+                        this.getDropdownArray(element?.kpiId);
                         // For kpi3 and kpi53 generating table column headers and table data
                         if (element.kpiId === 'kpi3' || element.kpiId === 'kpi53') {
                             //generating column headers
@@ -387,42 +389,47 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
 
 
     // download excel functionality
-    downloadExcel(kpiId, kpiName, isKanban) {
+    downloadExcel(kpiId, kpiName, isKanban,additionalFilterSupport) {
         const sprintIncluded = ['CLOSED'];
-        this.helperService.downloadExcel(kpiId, kpiName, isKanban, this.filterApplyData, this.filterData, sprintIncluded).subscribe(getData => {
-            if (getData['excelData'] || !getData?.hasOwnProperty('validationData')) {
-                this.kpiExcelData = this.excelService.generateExcelModalData(getData);
-                this.modalDetails['tableHeadings'] = this.kpiExcelData.headerNames.map(column => column.header);
-                this.modalDetails['tableValues'] = this.kpiExcelData.excelData;
-                this.modalDetails['header'] = kpiName;
-                this.displayModal = true;
-            }else{
-                if (getData['kpiId'] === 'kpi83') {
-                    let dynamicKeys = [];
-                    for (const key in getData['validationData']) {
-                        if (dynamicKeys.length === 0) {
-                            dynamicKeys = Object.keys(getData['validationData'][key][kpiName][0]);
-                        }
-                        for (const x in dynamicKeys) {
-                            getData['validationData'][key][dynamicKeys[x]] = [];
-                        }
-
-                        const arr = getData['validationData'][key][kpiName];
-                        // eslint-disable-next-line @typescript-eslint/prefer-for-of
-                        for (let i = 0; i < arr.length; i++) {
-                            for (const item in arr[i]) {
-                                getData['validationData'][key][item].push(arr[i][item]);
+        if(!(!additionalFilterSupport && this.iSAdditionalFilterSelected)){
+            this.helperService.downloadExcel(kpiId, kpiName, isKanban, this.filterApplyData, this.filterData, sprintIncluded).subscribe(getData => {
+                if (getData['excelData'] || !getData?.hasOwnProperty('validationData')) {
+                    this.kpiExcelData = this.excelService.generateExcelModalData(getData);
+                    this.modalDetails['tableHeadings'] = this.kpiExcelData.headerNames.map(column => column.header);
+                    this.modalDetails['tableValues'] = this.kpiExcelData.excelData;
+                    this.modalDetails['header'] = kpiName;
+                    this.displayModal = true;
+                }else{
+                    if (getData['kpiId'] === 'kpi83') {
+                        let dynamicKeys = [];
+                        for (const key in getData['validationData']) {
+                            if (dynamicKeys.length === 0) {
+                                dynamicKeys = Object.keys(getData['validationData'][key][kpiName][0]);
                             }
+                            for (const x in dynamicKeys) {
+                                getData['validationData'][key][dynamicKeys[x]] = [];
+                            }
+
+                            const arr = getData['validationData'][key][kpiName];
+                            // eslint-disable-next-line @typescript-eslint/prefer-for-of
+                            for (let i = 0; i < arr.length; i++) {
+                                for (const item in arr[i]) {
+                                    getData['validationData'][key][item].push(arr[i][item]);
+                                }
+                            }
+                            delete getData['validationData'][key][kpiName];
+
                         }
-                        delete getData['validationData'][key][kpiName];
-
                     }
+
+                    this.excelService.exportExcel(getData, 'individual', kpiName, isKanban);
                 }
+            });
+        }else{
+            this.modalDetails['header'] = kpiName;
+            this.displayModal = true;
+        }
 
-                this.excelService.exportExcel(getData, 'individual', kpiName, isKanban);
-            }
-
-        });
     }
 
     exportExcel(kpiName){
@@ -1111,13 +1118,20 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
         const idx = this.ifKpiExist(kpiId);
         let trendValueList = [];
         const optionsArr = [];
-
         if (idx != -1) {
             trendValueList = this.allKpiArray[idx]?.trendValueList;
             if (trendValueList?.length > 0 && trendValueList[0]?.hasOwnProperty('filter')) {
                 const obj = {};
                 for (let i = 0; i < trendValueList?.length; i++) {
-                    optionsArr?.push(trendValueList[i]?.filter);
+                    for(let key in this.colorObj){
+                        let kpiFilter = trendValueList[i]?.value?.findIndex(x => this.colorObj[key]?.nodeName == x.data);
+                        if(kpiFilter != -1){
+                            let ifExist = optionsArr.findIndex(x=>x == trendValueList[i]?.filter);
+                            if(ifExist == -1){
+                                optionsArr?.push(trendValueList[i]?.filter);
+                            }
+                        }
+                    }
                 }
                 const kpiObj = this.updatedConfigGlobalData?.filter(x => x['kpiId'] == kpiId)[0];
                 if (kpiObj && kpiObj['kpiDetail']?.hasOwnProperty('kpiFilter') && (kpiObj['kpiDetail']['kpiFilter']?.toLowerCase() == 'multiselectdropdown' || (kpiObj['kpiDetail']['kpiFilter']?.toLowerCase() == 'dropdown' && kpiObj['kpiDetail'].hasOwnProperty('hideOverallFilter') && kpiObj['kpiDetail']['hideOverallFilter']))) {

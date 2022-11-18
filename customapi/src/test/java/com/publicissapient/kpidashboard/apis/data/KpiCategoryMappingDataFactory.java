@@ -19,7 +19,9 @@ package com.publicissapient.kpidashboard.apis.data;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import com.publicissapient.kpidashboard.common.model.application.KpiCategoryMapping;
+import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -28,32 +30,30 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.publicissapient.kpidashboard.common.model.application.KpiMaster;
-
-import lombok.extern.slf4j.Slf4j;
+import com.publicissapient.kpidashboard.common.model.application.KpiCategory;
 
 /**
  * @author anisingh4
  */
 @Slf4j
-public class KpiMasterDataFactory {
+public class KpiCategoryMappingDataFactory {
 
-	private static final String FILE_PATH_KPI_LIST = "/json/default/kpi_master.json";
-	private List<KpiMaster> kpiList;
+	private static final String FILE_PATH_KPI_LIST = "/json/default/kpi_category_mapping.json";
+	private List<KpiCategoryMapping> kpiCategoryMappingList;
 	private ObjectMapper mapper;
 
-	private KpiMasterDataFactory() {
+	private KpiCategoryMappingDataFactory() {
 	}
 
-	public static KpiMasterDataFactory newInstance(String filePath) {
+	public static KpiCategoryMappingDataFactory newInstance(String filePath) {
 
-		KpiMasterDataFactory factory = new KpiMasterDataFactory();
+		KpiCategoryMappingDataFactory factory = new KpiCategoryMappingDataFactory();
 		factory.createObjectMapper();
 		factory.init(filePath);
 		return factory;
 	}
 
-	public static KpiMasterDataFactory newInstance() {
+	public static KpiCategoryMappingDataFactory newInstance() {
 
 		return newInstance(null);
 	}
@@ -63,8 +63,8 @@ public class KpiMasterDataFactory {
 
 			String resultPath = StringUtils.isEmpty(filePath) ? FILE_PATH_KPI_LIST : filePath;
 
-			kpiList = mapper.readValue(TypeReference.class.getResourceAsStream(resultPath),
-					new TypeReference<List<KpiMaster>>() {
+			kpiCategoryMappingList = mapper.readValue(TypeReference.class.getResourceAsStream(resultPath),
+					new TypeReference<List<KpiCategoryMapping>>() {
 					});
 		} catch (IOException e) {
 			log.error("Error in reading account hierarchies from file = " + filePath, e);
@@ -82,12 +82,8 @@ public class KpiMasterDataFactory {
 		}
 	}
 
-	public List<KpiMaster> getKpiList() {
-		return kpiList;
-	}
-
-	public List<KpiMaster> getSpecificKpis(List<String> kpis){
-		return kpiList.stream().filter(master -> kpis.contains(master.getKpiId())).collect(Collectors.toList());
+	public List<KpiCategoryMapping> getKpiCategoryMappingList() {
+		return kpiCategoryMappingList;
 	}
 
 }

@@ -148,9 +148,14 @@ public class SignupManager {
 	 * @param listener
 	 */
 	public void rejectAccessRequest(String username, RejectApprovalListener listener) {
+		String superAdminEmail;
+		String loggedInUser = authenticationService.getLoggedInUser();
+		if (checkForLdapUser(loggedInUser)) {
+			superAdminEmail = userInfoRepository.findByUsername(loggedInUser).getEmailAddress();
+		} else {
+			superAdminEmail = authenticationRepository.findByUsername(loggedInUser).getEmail();
+		}
 		Authentication authentication = getAuthenticationByUserName(username);
-		String superAdminEmail = authenticationRepository.findByUsername(authenticationService.getLoggedInUser())
-				.getEmail();
 		Authentication updatedAuthenticationRequest = updateAuthenticationApprovalStatus(authentication);
 		if (updatedAuthenticationRequest.isApproved()) {
 			if (listener != null) {

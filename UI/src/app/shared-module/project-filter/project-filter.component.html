@@ -61,7 +61,7 @@
     <div class="p-sm-12">
         <div class="ui-float-label">
             <label for="project">Select Projects</label>
-            <p-multiSelect *ngIf="resetDropdowns" appendTo="body" inputId="project" [style]="{'width':'100%','max-width': '100%'}"
+            <p-multiSelect *ngIf="resetDropdowns" class="multiselect-custom" appendTo="body" inputId="project" [style]="{'width':'100%','max-width': '100%'}"
                 [options]="projects" [(ngModel)]="selectedValProjects" defaultLabel="Select Projects"
                 optionLabel="projectName" display="chip" (onChange)="projectSelected()">
             </p-multiSelect>

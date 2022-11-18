@@ -246,6 +246,7 @@ public class MetaDataClientImpl implements MetadataClient {
 		fieldMapping.setJiradefecttype(issueTypeMap.get(CommonConstant.BUG));
 		fieldMapping.setJiraIssueTypeNames(issueTypeMap.get(CommonConstant.ISSUE_TYPE).stream().toArray(String[]::new));
 		fieldMapping.setJiraIssueEpicType(issueTypeMap.get(CommonConstant.EPIC).stream().collect(Collectors.toList()));
+		fieldMapping.setEpicCostOfDelay(customField.get(CommonConstant.COST_OF_DELAY));
 		fieldMapping.setEpicJobSize(customField.get(CommonConstant.JOB_SIZE));
 		fieldMapping.setEpicRiskReduction(customField.get(CommonConstant.RISK_REDUCTION));
 		fieldMapping.setEpicTimeCriticality(customField.get(CommonConstant.TIME_CRITICALITY));
@@ -271,6 +272,7 @@ public class MetaDataClientImpl implements MetadataClient {
 			fieldMapping.setJiraDor(null);
 		}
 		fieldMapping.setJiraDod(workflowMap.get(CommonConstant.DOD));
+		fieldMapping.setJiraTechDebtIssueType(issueTypeMap.get(CommonConstant.STORY));
 		List<String> rejectionList = workflowMap.get(CommonConstant.REJECTION);
 		/*if (CollectionUtils.isNotEmpty(rejectionList)) {
 			fieldMapping.setJiraDefectRejectionStatus(rejectionList.get(0));
@@ -306,6 +308,8 @@ public class MetaDataClientImpl implements MetadataClient {
 		fieldMapping.setRootCauseValue(valuesToIdentifyMap.get(CommonConstant.ROOT_CAUSE_VALUE));
 		fieldMapping.setResolutionTypeForRejection(
 				valuesToIdentifyMap.getOrDefault(CommonConstant.REJECTION_RESOLUTION, new ArrayList<>()));
+		fieldMapping.setQaRootCauseValue(
+				valuesToIdentifyMap.getOrDefault(CommonConstant.QA_ROOT_CAUSE, new ArrayList<>()));
 		fieldMapping.setJiraQADefectDensityIssueType(
 				issueTypeMap.getOrDefault(CommonConstant.STORY, new ArrayList<>()));
 
@@ -324,14 +328,22 @@ public class MetaDataClientImpl implements MetadataClient {
 				issueTypeMap.getOrDefault(CommonConstant.TICKET_VELOCITY_ISSUE_TYPE, new ArrayList<>()));
 		fieldMapping
 				.setTicketDeliverdStatus(workflowMap.getOrDefault(CommonConstant.DELIVERED, new ArrayList<>()));
+		fieldMapping.setTicketReopenStatus(
+				workflowMap.getOrDefault(CommonConstant.TICKET_REOPEN_STATUS, new ArrayList<>()));
 		fieldMapping.setJiraTicketTriagedStatus(
 				workflowMap.getOrDefault(CommonConstant.TICKET_TRIAGED_STATUS, new ArrayList<>()));
 		fieldMapping.setJiraTicketClosedStatus(
 				workflowMap.getOrDefault(CommonConstant.TICKET_CLOSED_STATUS, new ArrayList<>()));
 		fieldMapping.setJiraTicketRejectedStatus(
 				workflowMap.getOrDefault(CommonConstant.TICKET_REJECTED_STATUS, new ArrayList<>()));
+		fieldMapping.setJiraTicketResolvedStatus(
+				workflowMap.getOrDefault(CommonConstant.TICKET_RESOLVED_STATUS, new ArrayList<>()));
+		fieldMapping.setJiraTicketWipStatus(
+				workflowMap.getOrDefault(CommonConstant.TICKET_WIP_STATUS, new ArrayList<>()));
 		fieldMapping.setKanbanCycleTimeIssueType(
 				issueTypeMap.getOrDefault(CommonConstant.KANBAN_CYCLE_TIME_ISSUE_TYPE, new ArrayList<>()));
+		fieldMapping.setKanbanJiraTechDebtIssueType(
+				issueTypeMap.getOrDefault(CommonConstant.KANBAN_TECH_DEBT_ISSUE_TYPE, new ArrayList<>()));
 
 	}
 
