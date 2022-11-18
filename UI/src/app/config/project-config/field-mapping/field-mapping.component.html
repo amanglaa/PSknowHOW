@@ -545,7 +545,7 @@
                         </div>
                         <div class="p-mb-3 defect-priority-dropdown">
                             <label class="field-title">Defect priority to exclude from FTPR</label>
-                                <p-multiSelect id="defectPriority" [options]="selectedPriority"
+                                <p-multiSelect id="defectPriority" [options]="selectedPriority" appendTo="body"
                                     placeholder="Select Priority" formControlName="defectPriority"
                                     (ngModelChange)="onSelectPriority($event)" [showHeader]="false" pTooltip='<span class="tooltiptext">
                             This field is used to identify if a defect is raised by
@@ -1164,7 +1164,7 @@
             </p-dropdown>
         </div>
         <div *ngIf="!singleSelectionDropdown" class="multiselect-container p-field p-col-12">
-            <p-multiSelect *ngIf="populateDropdowns" inputId="multiSelectionDropdown"
+            <p-multiSelect *ngIf="populateDropdowns" inputId="multiSelectionDropdown" appendTo="body" 
                 [style]="{'width':'436px', 'max-width': '100%'}" [options]="fieldMappingMultiSelectValues"
                 defaultLabel="Select Values" [(ngModel)]="selectedMultiValue" optionLabel="key" display="chip">
             </p-multiSelect>
