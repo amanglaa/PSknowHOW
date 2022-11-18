@@ -26,10 +26,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.modelmapper.ModelMapper;
@@ -51,8 +54,6 @@ import com.publicissapient.kpidashboard.common.repository.application.KpiCategor
 import com.publicissapient.kpidashboard.common.repository.application.KpiCategoryRepository;
 import com.publicissapient.kpidashboard.common.repository.application.KpiMasterRepository;
 import com.publicissapient.kpidashboard.common.repository.userboardconfig.UserBoardConfigRepository;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Implementation class for UserBoardConfigService
@@ -178,7 +179,7 @@ public class UserBoardConfigServiceImpl implements UserBoardConfigService {
 					}
 					if (defaultBoardDTO.getBoardId() == existingBoardDTO.getBoardId()
 							&& !CollectionUtils.containsAll(existingBoardDTO.getKpis(), defaultBoardDTO.getKpis())) {
-						filtersKPIAndSetKPIsForExistingUser(existingBoardDTO, defaultBoardDTO);
+						filtersKPIAndSetKPIsForExistingUser(defaultBoardDTO, existingBoardDTO);
 					}
 				}));
 	}
@@ -192,10 +193,14 @@ public class UserBoardConfigServiceImpl implements UserBoardConfigService {
 	 * @param existingBoardDTO
 	 */
 	private void filtersKPIAndSetKPIsForExistingUser(BoardDTO defaultBoardDTO, BoardDTO existingBoardDTO) {
+
+
 		List<BoardKpisDTO> boardKpisList = new ArrayList<>();
+		
 		Map<String, BoardKpisDTO> kpiWiseUserBoardConfig = new HashMap<>();
 		existingBoardDTO.getKpis().stream()
 				.forEach(existingKPI -> kpiWiseUserBoardConfig.put(existingKPI.getKpiId(), existingKPI));
+		AtomicInteger iterationOrderSize= new AtomicInteger(2);
 		defaultBoardDTO.getKpis().stream().forEach(defaultKPIList -> {
 			BoardKpisDTO boardKpis = new BoardKpisDTO();
 			boardKpis.setKpiId(defaultKPIList.getKpiId());
@@ -205,6 +210,7 @@ public class UserBoardConfigServiceImpl implements UserBoardConfigService {
 				boardKpis.setShown(existingKPI.isShown());
 				boardKpis.setIsEnabled(existingKPI.getIsEnabled());
 				if (defaultBoardDTO.getBoardName().equals(ITERATION)) {
+					iterationOrderSize.getAndIncrement();
 					boardKpis.setOrder(existingKPI.getOrder());
 				} else {
 					boardKpis.setOrder(defaultKPIList.getOrder());
@@ -212,12 +218,16 @@ public class UserBoardConfigServiceImpl implements UserBoardConfigService {
 			} else {
 				boardKpis.setShown(defaultKPIList.isShown());
 				boardKpis.setIsEnabled(defaultKPIList.getIsEnabled());
-				boardKpis.setOrder(defaultKPIList.getOrder());
+				if (!defaultBoardDTO.getBoardName().equalsIgnoreCase(ITERATION)) {
+					boardKpis.setOrder(defaultKPIList.getOrder());
+				}
 			}
 			boardKpis.setKpiDetail(defaultKPIList.getKpiDetail());
 			boardKpisList.add(boardKpis);
 		});
-		defaultBoardDTO.setKpis(boardKpisList);
+		boardKpisList.stream().filter(boardKpisDTO -> boardKpisDTO.getOrder() == 0)
+				.forEach(boardKpisDTO -> boardKpisDTO.setOrder(iterationOrderSize.getAndIncrement()));
+		defaultBoardDTO.setKpis(boardKpisList.stream().sorted(Comparator.comparing(BoardKpisDTO::getOrder)).collect(Collectors.toList()));
 	}
 
 	/**
