@@ -140,6 +140,11 @@ public class ProjectToolConfigServiceImpl implements ProjectToolConfigService {
 			return new ServiceResponse(false, "Jira already configured for this project", null);
 		}
 
+		if (projectToolConfig.getToolName().equalsIgnoreCase(ProcessorConstants.JIRA_TEST)
+				&& hasTool(projectToolConfig.getBasicProjectConfigId(), ProcessorConstants.JIRA_TEST)) {
+			return new ServiceResponse(false, "Jira Test already configured for this project", null);
+		}
+
 		if (projectToolConfig.getToolName().equalsIgnoreCase(ProcessorConstants.AZURE)
 				&& hasTool(projectToolConfig.getBasicProjectConfigId(), ProcessorConstants.AZURE)) {
 			return new ServiceResponse(false, "Azure already configured for this project", null);
@@ -215,6 +220,16 @@ public class ProjectToolConfigServiceImpl implements ProjectToolConfigService {
 		projectTool.setRegressionAutomationFolderPath(projectToolConfig.getRegressionAutomationFolderPath());
 		projectTool.setInSprintAutomationFolderPath(projectToolConfig.getInSprintAutomationFolderPath());
 		projectTool.setOrganizationKey(projectToolConfig.getOrganizationKey());
+		projectTool.setJiraTestCaseType(projectToolConfig.getJiraTestCaseType());
+		projectTool.setTestAutomatedIdentification(projectToolConfig.getTestAutomatedIdentification());
+		projectTool.setTestAutomationCompletedIdentification(projectToolConfig.getTestAutomationCompletedIdentification());
+		projectTool.setTestRegressionIdentification(projectToolConfig.getTestRegressionIdentification());
+		projectTool.setTestAutomationCompletedByCustomField(projectToolConfig.getTestAutomationCompletedByCustomField());
+		projectTool.setTestRegressionByCustomField(projectToolConfig.getTestRegressionByCustomField());
+		projectTool.setJiraAutomatedTestValue(projectToolConfig.getJiraAutomatedTestValue());
+		projectTool.setJiraRegressionTestValue(projectToolConfig.getJiraRegressionTestValue());
+		projectTool.setJiraCanBeAutomatedTestValue(projectToolConfig.getJiraCanBeAutomatedTestValue());
+		projectTool.setTestCaseStatus(projectToolConfig.getTestCaseStatus());
 		log.info("Successfully update project_tools  into db");
 		toolRepository.save(projectTool);
 		cacheService.clearCache(CommonConstant.CACHE_TOOL_CONFIG_MAP);
