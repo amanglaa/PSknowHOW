@@ -778,7 +778,7 @@
             </p-dropdown>
         </div>
         <div *ngIf="!singleSelectionDropdown" class="multiselect-container p-field p-col-12">
-            <p-multiSelect *ngIf="populateDropdowns" inputId="multiSelectionDropdown"
+            <p-multiSelect *ngIf="populateDropdowns" inputId="multiSelectionDropdown" appendTo="body" 
                 [style]="{'width':'436px', 'max-width': '100%'}" [options]="fieldMappingMultiSelectValues"
                 defaultLabel="Select Values" [(ngModel)]="selectedMultiValue" optionLabel="key" display="chip">
             </p-multiSelect>

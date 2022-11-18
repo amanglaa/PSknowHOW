@@ -34,7 +34,7 @@
         <div class="ui-float-label">
             <label for="{{ field.hierarchyLevel.hierarchyLevelId }}">Select {{ field.hierarchyLevel.hierarchyLevelName
                 }}</label>
-            <p-multiSelect inputId="{{ field.hierarchyLevel.hierarchyLevelId }}" 
+            <p-multiSelect inputId="{{ field.hierarchyLevel.hierarchyLevelId }}" appendTo="body" 
                 [options]="hierarchyData[field.hierarchyLevel.hierarchyLevelId]"
                 [(ngModel)]="selectedVal[field.hierarchyLevel.hierarchyLevelId]"
                 placeholder="Select {{ field.hierarchyLevel.hierarchyLevelName }}" optionLabel="code" filter="true"
@@ -61,7 +61,7 @@
     <div class="p-sm-12">
         <div class="ui-float-label">
             <label for="project">Select Projects</label>
-            <p-multiSelect *ngIf="resetDropdowns" inputId="project" [style]="{'width':'100%','max-width': '100%'}"
+            <p-multiSelect *ngIf="resetDropdowns" appendTo="body" inputId="project" [style]="{'width':'100%','max-width': '100%'}"
                 [options]="projects" [(ngModel)]="selectedValProjects" defaultLabel="Select Projects"
                 optionLabel="projectName" display="chip" (onChange)="projectSelected()">
             </p-multiSelect>
