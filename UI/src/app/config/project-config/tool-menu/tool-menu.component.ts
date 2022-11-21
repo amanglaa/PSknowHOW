@@ -180,6 +180,15 @@ export class ToolMenuComponent implements OnInit {
             routerLink: '/dashboard/Config/JiraConfig',
             queryParams1: 'GitHub',
             index: 10
+          },
+          {
+            toolName: 'Jira Test',
+            category: 'ABC',
+            description: '-',
+            icon: 'fab fa-atlassian',
+            routerLink: '/dashboard/Config/JiraConfig',
+            queryParams1: 'JiraTest',
+            index: 11
           }
 
         ];

@@ -89,6 +89,20 @@ export class JiraConfigComponent implements OnInit {
   selectedDeploymentProject: any;
   azurePipelineApiVersion = '6.0';
   isLoading = false;
+  testCaseIdentification: Array<object> = [
+    {
+      name: 'Select',
+      code: ''
+    },
+    {
+      name: 'CustomField',
+      code: 'CustomField'
+    },
+    {
+      name: 'Labels',
+      code: 'Labels'
+    }
+  ];
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -380,6 +394,10 @@ export class JiraConfigComponent implements OnInit {
       return this.jobType;
     } else if (id === 'deploymentProject') {
       return this.deploymentProjectList;
+    }else if(id === 'testAutomatedIdentification' 
+    || id === 'testAutomationCompletedIdentification' 
+    || id === 'testRegressionIdentification'){
+      return this.testCaseIdentification;
     }
   }
   getConnectionList(toolName) {
@@ -574,7 +592,7 @@ export class JiraConfigComponent implements OnInit {
 
   };
 
-  pipeLineDropdownHandler = (value: any) => {
+  pipeLineDropdownHandler = (value: any, elementId?) => {
     //TODO: Refactor needed.
     console.log(value);
     if (value) {
@@ -583,7 +601,7 @@ export class JiraConfigComponent implements OnInit {
     }
   };
 
-  jobTypeChangeHandler = (value: string) => {
+  jobTypeChangeHandler = (value: string, elementId?) => {
     value = value['name'];
     switch (this.urlParam) {
       case 'Bamboo':
@@ -684,7 +702,7 @@ export class JiraConfigComponent implements OnInit {
     }
   };
 
-  apiVersionHanlder = (version: any) => {
+  apiVersionHanlder = (version: any, elementId?) => {
     try {
       const selectedConnectionId = this.selectedConnection?.id;
       const organizationKey = this.tool['organizationKey'].value ? this.tool['organizationKey'].value : null;
@@ -726,7 +744,7 @@ export class JiraConfigComponent implements OnInit {
     }
   };
 
-  projectKeyClickHandler = (value: any) => {
+  projectKeyClickHandler = (value: any, elementId?) => {
     try {
       this.showLoadingOnFormElement('branch');
       if (value && this.disableBranchDropDown) {
@@ -768,11 +786,11 @@ export class JiraConfigComponent implements OnInit {
     }
   };
 
-  branchSelectHandler = (value: any) => {
+  branchSelectHandler = (value: any, elementId?) => {
     console.log(value);
   };
 
-  bambooDeploymentPjojectSelectionHandler = (value: any) => {
+  bambooDeploymentPjojectSelectionHandler = (value: any, elementId?) => {
     console.log('deployment project selected called');
     console.log(value);
     this.selectedDeploymentProject = value;
@@ -781,7 +799,7 @@ export class JiraConfigComponent implements OnInit {
   };
 
 
-  bambooPlanSelectHandler = (value: any) => {
+  bambooPlanSelectHandler = (value: any, elementId?) => {
     this.showLoadingOnFormElement('branchName');
     this.bambooPlanKeyForSelectedPlan = [...this.bambooProjectDataFromAPI]
       .filter((item) => item.projectAndPlanName === value.name)[0]?.jobNameKey;
@@ -817,7 +835,7 @@ export class JiraConfigComponent implements OnInit {
     }
   };
 
-  bambooBranchSelectHandler = (value: any) => {
+  bambooBranchSelectHandler = (value: any, elementId?) => {
     this.selectedBambooBranchKey = [...this.bambooBranchDataFromAPI]
       .filter(item => item.branchName === value.name)[0]?.jobBranchKey;
     this.toolForm.controls['branchKey'].setValue(this.selectedBambooBranchKey);
@@ -1108,7 +1126,7 @@ export class JiraConfigComponent implements OnInit {
               {
                 type: 'array',
                 label: 'Test Case Regression Field Value',
-                id: 'testRegressionValue',
+                id: 'jiraTestCaseType',
                 validators: [],
                 containerClass: 'p-sm-6',
                 show: true,
@@ -1762,7 +1780,162 @@ export class JiraConfigComponent implements OnInit {
           };
         }
         break;
+      case 'JiraTest':
+        {
+          this.formTitle = 'JiraTest';
+          this.connectionTableCols = [
+            {
+              field: 'connectionName',
+              header: 'Connection Name',
+              class: 'long-text',
+            },
+            { field: 'username', header: 'User Name', class: 'long-text' },
+            { field: 'offline', header: 'Is Offline?', class: 'small-text' },
+            {
+              field: 'apiEndPoint',
+              header: 'API Endpoint',
+              class: 'long-text',
+            },
+            { field: 'apiKey', header: 'API Key', class: 'normal' },
+            { field: 'baseUrl', header: 'Base URL', class: 'long-text' },
+            { field: 'cloudEnv', header: 'Cloud Env.?', class: 'small-text' },
+            { field: 'isOAuth', header: 'OAuth', class: 'small-text' },
+          ];
 
+          this.formTemplate = {
+            group: 'JiraTest',
+            elements: [
+              {
+                type: 'text',
+                label: 'JIRATEST Project Key',
+                id: 'projectKey',
+                validators: ['required'],
+                containerClass: 'p-sm-6',
+                show: true,
+                tooltip: `User can get this value from JIRA/AZURE.<br />
+                Generally all issues name are started with Project key<br /> <i>
+                Impacted : Jira/Azure Collector and all Kpi</i>`
+              },
+              {
+                type: 'array',
+                label: 'Test Case Issue Type',
+                id: 'issueType',
+                validators: ['required'],
+                containerClass: 'p-sm-6',
+                tooltip: `Issue type of Test Case. Example: "Test", Impacted : Sprint Automation and Regression Automation`,
+                show: true,
+                // disabled: this.checkBoards
+              },
+              {
+                type: 'dropdown',
+                label: 'Test Case Automation Field',
+                id: 'testAutomatedIdentification',
+                validators: ['required'],
+                containerClass: 'p-sm-6',
+                optionsList: this.testCaseIdentification,
+                changeHandler: this.changeHandler,
+                show: true
+              },
+              {
+                type: 'text',
+                label: 'Test Case Automation Custom Field Id',
+                id: 'testAutomated1',
+                validators: [],
+                containerClass: 'p-sm-6',
+                show: false,
+                disabled: false,
+                tooltip: `Provide customfield name to identify test case is automatable or not.<br />
+                Example: customfield_13907`
+              },
+              {
+                type: 'array',
+                label: 'Values for Automation',
+                id: 'jiraCanBeAutomatedTestValue',
+                suggestions: 'filteredBoards',
+                validators: ['required'],
+                containerClass: 'p-sm-6',
+                tooltip: `Enter the field labels used in Jira/Azure to identify if a test case can be automated`,
+                show: false,
+                isLoading: false,
+              },
+              {
+                type: 'dropdown',
+                label: 'Automation completed field',
+                id: 'testAutomationCompletedIdentification',
+                validators: ['required'],
+                containerClass: 'p-sm-6',
+                optionsList: this.testCaseIdentification,
+                changeHandler: this.changeHandler,
+                show: true
+              },
+              {
+                type: 'text',
+                label: 'Automation Completed Custom Field Id',
+                id: 'testAutomationCompletedByCustomField',
+                validators: [],
+                containerClass: 'p-sm-6',
+                show: false,
+                disabled: false,
+                tooltip: `Provide customfield name to identify  if a test case is already automated`
+              },
+              {
+                type: 'array',
+                label: 'Values for Automation completed',
+                id: 'jiraAutomatedTestValue',
+                validators: ['required'],
+                containerClass: 'p-sm-6',
+                tooltip: `Enter the field labels used in Jira/Azure to identify if a test case is already automated`,
+                show: false,
+                isLoading: false,
+              },
+              {
+                type: 'dropdown',
+                label: 'Regression test case identifier',
+                id: 'testRegressionIdentification',
+                validators: ['required'],
+                containerClass: 'p-sm-6',
+                optionsList: this.testCaseIdentification,
+                changeHandler: this.changeHandler,
+                tooltip: `Jira/Azure allow addition of filtering data through custom field or labels. It can be used to identify regression test cases`,
+                show: true
+              },
+              {
+                type: 'text',
+                label: 'Regression Test Case Custom Field Id',
+                id: 'testRegressionByCustomField',
+                validators: [],
+                containerClass: 'p-sm-6',
+                show: false,
+                disabled: false,
+                tooltip: `Provide customfield name to identify the test cases part of regression suite`
+              },
+              {
+                type: 'array',
+                label: 'Values for regression test cases',
+                id: 'jiraRegressionTestValue',
+                validators: ['required'],
+                containerClass: 'p-sm-6',
+                tooltip: `Enter the field labels used in Jira/Azure to identify the test cases part of regression suite`,
+                show: false,
+                isLoading: false,
+                // disabled: this.checkBoards
+              },
+              {
+                type: 'array',
+                label: 'Status to identify abandoned Test cases',
+                id: 'testCaseStatus',
+                suggestions: 'filteredBoards',
+                validators: ['required'],
+                containerClass: 'p-sm-6',
+                tooltip: `Select status like "Abandoned", "Deprecated" etc so that these can be excluded from Regression automation coverage, In Sprint automation coverage and Test case without story link KPI`,
+                show: true,
+                isLoading: false,
+                // disabled: this.checkBoards
+              },
+            ],
+          };
+        }
+        break;
     }
 
     const group = {};
@@ -1855,7 +2028,9 @@ export class JiraConfigComponent implements OnInit {
   save() {
     this.submitted = true;
     // return if form is invalid
-    if (this.toolForm.invalid || !this.selectedConnection) {
+    console.log(this.toolForm.valid, this.selectedConnection);
+    
+    if (this.toolForm.invalid || !this.selectedConnection) { 
       this.messenger.add({
         severity: 'error',
         summary: 'Please fill all fields and select a connection.',
@@ -2104,4 +2279,24 @@ export class JiraConfigComponent implements OnInit {
 
   // Preserve original property order
   originalOrder = (a: KeyValue<number, string>, b: KeyValue<number, string>): number => 0;
+
+  changeHandler = (value:string, elementId) => {
+    value = value['name'];
+    if (value.toLowerCase() === 'customfield' && elementId === 'testAutomatedIdentification') {
+      this.showFormElements(['testAutomated1', 'jiraCanBeAutomatedTestValue']);
+    } if (value.toLowerCase() === 'labels' && elementId === 'testAutomatedIdentification') {
+      this.hideFormElements(['testAutomated1']);
+      this.showFormElements(['jiraCanBeAutomatedTestValue']);
+    } else if (value.toLowerCase() === 'customfield' && elementId === 'testAutomationCompletedIdentification') {
+      this.showFormElements(['testAutomationCompletedByCustomField', 'jiraAutomatedTestValue']);
+    } else if(value.toLowerCase() === 'labels' && elementId === 'testAutomationCompletedIdentification'){
+      this.hideFormElements(['testAutomationCompletedByCustomField']);
+      this.showFormElements(['jiraAutomatedTestValue']);
+    }else if (value.toLowerCase() === 'customfield' && elementId === 'testRegressionIdentification') {
+      this.showFormElements(['testRegressionByCustomField', 'jiraRegressionTestValue']);
+    }else if (value.toLowerCase() === 'labels' && elementId === 'testRegressionIdentification') {
+      this.hideFormElements(['testRegressionByCustomField']);
+      this.showFormElements(['jiraRegressionTestValue']);
+    }
+  }
 }
