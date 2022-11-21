@@ -101,7 +101,7 @@ export class FieldMappingComponent implements OnInit {
       },
       {
         label: 'Component',
-        value: 'Components'
+        value: 'Component'
       },
       {
         label: 'CustomField',
