@@ -118,7 +118,7 @@ public final class CommonConstant {
 	public static final String ADDITIONAL_FILTER_VALUE_ID_SEPARATOR = "_";
 
 	public static final String LABELS = "Labels";
-	public static final String COMPONENTS = "Components";
+	public static final String COMPONENT = "Component";
 	public static final String CUSTOM_FIELD = "CustomField";
 	public static final String CACHE_AGG_CRITERIA = "cache_aggregation_criteria";
 	public static final String CACHE_MATURITY_RANGE = "cache_maturity_range";
