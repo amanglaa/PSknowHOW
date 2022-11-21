@@ -100,7 +100,7 @@ export class KanbanFieldMappingComponent implements OnInit {
       },
       {
         label: 'Component',
-        value: 'Components'
+        value: 'Component'
       },
       {
         label: 'CustomField',
