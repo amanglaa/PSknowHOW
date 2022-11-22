@@ -1818,7 +1818,7 @@ export class JiraConfigComponent implements OnInit {
               {
                 type: 'array',
                 label: 'Test Case Issue Type',
-                id: 'issueType',
+                id: 'jiraTestCaseType',
                 validators: ['required'],
                 containerClass: 'p-sm-6',
                 tooltip: `Issue type of Test Case. Example: "Test", Impacted : Sprint Automation and Regression Automation`,
@@ -1838,7 +1838,7 @@ export class JiraConfigComponent implements OnInit {
               {
                 type: 'text',
                 label: 'Test Case Automation Custom Field Id',
-                id: 'testAutomated1',
+                id: 'testAutomated',
                 validators: [],
                 containerClass: 'p-sm-6',
                 show: false,
@@ -1968,6 +1968,9 @@ export class JiraConfigComponent implements OnInit {
             }
           }
         }
+        if(this.urlParam === 'JiraTest'){
+          this.toolForm.controls['jiraTestCaseType'].setValue(['test']);
+        }
         // this.tool['projectId'].disable();
         this.isEdit = true;
       }
@@ -2091,16 +2094,14 @@ export class JiraConfigComponent implements OnInit {
     let successAlert = '';
     if (this.urlParam === 'Jira') {
       successAlert = 'If Jira processor is run after adding or removing board/s, then all data prior to this change will be deleted and fresh data will be fetched based on the updated list of boards';
-    }
-
+    }    
     if (!this.isEdit) {
 
       for (const obj in submitData) {
         if (submitData[obj]?.hasOwnProperty('name') && submitData[obj]?.hasOwnProperty('code')) {
           submitData[obj] = submitData[obj].name;
         }
-      }
-
+      } 
       this.http
         .addTool(this.selectedProject.id, submitData)
         .subscribe((response) => {
@@ -2138,7 +2139,7 @@ export class JiraConfigComponent implements OnInit {
     } else {
 
       for (const obj in submitData) {
-        if (submitData[obj].hasOwnProperty('name') && submitData[obj].hasOwnProperty('code')) {
+        if (submitData[obj]?.hasOwnProperty('name') && submitData[obj]?.hasOwnProperty('code')) {
           submitData[obj] = submitData[obj].name;
         }
       }
@@ -2282,9 +2283,9 @@ export class JiraConfigComponent implements OnInit {
   changeHandler = (value:string, elementId) => {
     value = value['name'];
     if (value.toLowerCase() === 'customfield' && elementId === 'testAutomatedIdentification') {
-      this.showFormElements(['testAutomated1', 'jiraCanBeAutomatedTestValue']);
+      this.showFormElements(['testAutomated', 'jiraCanBeAutomatedTestValue']);
     } if (value.toLowerCase() === 'labels' && elementId === 'testAutomatedIdentification') {
-      this.hideFormElements(['testAutomated1']);
+      this.hideFormElements(['testAutomated']);
       this.showFormElements(['jiraCanBeAutomatedTestValue']);
     } else if (value.toLowerCase() === 'customfield' && elementId === 'testAutomationCompletedIdentification') {
       this.showFormElements(['testAutomationCompletedByCustomField', 'jiraAutomatedTestValue']);
