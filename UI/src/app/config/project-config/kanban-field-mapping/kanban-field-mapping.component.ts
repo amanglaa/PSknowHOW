@@ -342,8 +342,6 @@ export class KanbanFieldMappingComponent implements OnInit {
       storyFirstStatus: [''],
       ticketDeliverdStatus: [[]],
       jiraTicketTriagedStatus: [[]],
-      jiraTicketResolvedStatus: [[]],
-      jiraTicketWipStatus: [[]],
       jiraTicketRejectedStatus: [[]],
       jiraTicketClosedStatus: [[]],
       jiraLiveStatus: [''],
@@ -354,7 +352,6 @@ export class KanbanFieldMappingComponent implements OnInit {
       kanbanRCACountIssueType: [[]],
       jiraTicketVelocityIssueType: [[]],
       kanbanCycleTimeIssueType: [[]],
-      kanbanJiraTechDebtIssueType: [[]],
       jiraIssueEpicType: [[]],
       epicCostOfDelay: [''],
       epicRiskReduction: [''],
@@ -363,7 +360,6 @@ export class KanbanFieldMappingComponent implements OnInit {
       epicTimeCriticality: [''],
       epicJobSize: [''],
       // defect mapping
-      rootCauseValue: [[]],
 
       // custom fields mapping
       jiraStoryPointsCustomField: [''],

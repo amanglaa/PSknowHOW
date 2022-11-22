@@ -412,23 +412,6 @@
                             </div>
                         </div>
                         <div class="p-mb-3">
-                            <label class="field-title">Tech Debt Issue
-                                Type</label>
-                            <div class="p-inputgroup">
-                                <p-chips [inputStyle]="{'border-bottom-right-radius':'0'}"
-                                    inputId="jiraTechDebtIssueType" formControlName="jiraTechDebtIssueType"
-                                    placeholder="Enter Tech Debt Issue Type" addOnBlur="true" pTooltip='<span class="tooltiptext">
-                                        The issue type in JIRA/Azure which is used for managing Tech Debt in JIRA/Azure
-                                                  <br /><i>
-                                                    Example: Story, Change Request .<br />
-                                                    Impacted : Tech Debt Kpi </i>
-                                      </span>' tooltipPosition="top" tooltipEvent="hover" [escape]="false">
-                                </p-chips>
-                                <button type="button" pButton pRipple icon="pi pi-search"
-                                    (click)="showDialogToAddValue(false, 'jiraTechDebtIssueType', 'Issue_Type')"></button>
-                            </div>
-                        </div>
-                        <div class="p-mb-3">
                             <label class="field-title">Story Count
                                 Issue Type</label>
                             <div class="p-inputgroup">
@@ -567,16 +550,6 @@
                         </div>
                     </div>
                     <div class="p-sm-6">
-                        
-                        <div class="p-mb-3">
-                            <label class="field-title">RCA Value on Trend</label>
-                            <p-chips id="rootCauseValue" formControlName="rootCauseValue" addOnBlur="true"
-                                placeholder="Enter RCA Value on Trend" pTooltip='<span class="tooltiptext">
-                                Provide value of RCA that need to show on Trend line.<br />
-                                <i> Example: Code Issue</i>
-                                <i>Impacted : Defect Count By RCA (tagged to Story)</i>
-                    </span>' tooltipPosition="top" tooltipEvent="hover" [escape]="false"></p-chips>
-                        </div>
                         <div class="p-mb-3">
                             <label class="field-title">QA Defect Identification</label>
                             <p-dropdown id="jiraBugRaisedByQAIdentification" [virtualScroll]="true" [options]="defectIdentification"
