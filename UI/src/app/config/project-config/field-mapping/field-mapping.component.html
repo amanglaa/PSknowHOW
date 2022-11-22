@@ -502,7 +502,7 @@
                 
                             <div class="p-mb-3">
                                 <label class="field-title">UAT Defect Identification</label>
-                                <p-dropdown id="jiraBugRaisedByIdentification" [options]="defectIdentification" [virtualScroll]="true"
+                                <p-dropdown id="jiraBugRaisedByIdentification" [options]="defectIdentification" 
                                     placeholder="Select" formControlName="jiraBugRaisedByIdentification" pTooltip='<span class="tooltiptext">
                                 This field is used to identify if a defect is raised by
                                 third party or client:
@@ -510,7 +510,7 @@
                                 2. Labels : If a label is used to identify. Example: "TECH_DEBT" (This has to be
                                 one value).<i>
                                     Impacted : "Jira/AZURE Collector" and Defect Seepage Rate Kpi.</i>
-                                    </span>' tooltipPosition="top" tooltipEvent="hover" [escape]="false"
+                                    </span>' tooltipPosition="top" appendTo="body" tooltipEvent="hover" [escape]="false"
                                     tooltipPosition="top">
                                 </p-dropdown>
                             </div>
@@ -579,14 +579,14 @@
                         </div>
                         <div class="p-mb-3">
                             <label class="field-title">QA Defect Identification</label>
-                            <p-dropdown id="jiraBugRaisedByQAIdentification" [virtualScroll]="true" [options]="defectIdentification"
+                            <p-dropdown id="jiraBugRaisedByQAIdentification"  [options]="defectIdentification"
                                 placeholder="Select" formControlName="jiraBugRaisedByQAIdentification" pTooltip='
                             This field is used to identify if a defect is raised by
                                     QA:<br />
                                     1. CustomField : If a separate custom field is used.<br />
                                     2. Labels : If a label is used to identify. Example: "QA Defect"<br /><i>
                                         Impacted KPI: QA Defect Density</i>
-                            </span>' tooltipPosition="top" tooltipEvent="hover" [escape]="false"
+                            </span>' tooltipPosition="top" tooltipEvent="hover" appendTo="body" [escape]="false"
                                 tooltipPosition="top">
                             </p-dropdown>
                         </div>
@@ -619,8 +619,8 @@
                         </div>
                         <div class="p-mb-3">
                             <label class="field-title">Production defects identification</label>
-                            <p-dropdown id="productionDefectIdentifier" [virtualScroll]="true"
-                                [options]="productionDefectIdentificationOptions" placeholder="Select"
+                            <p-dropdown id="productionDefectIdentifier" 
+                                [options]="productionDefectIdentificationOptions" appendTo="body" placeholder="Select"
                                 formControlName="productionDefectIdentifier" pTooltip='
                             This field is used to identify if a defect is raised by
                             Production:<br />
@@ -628,7 +628,7 @@
                                       2. Labels : If a label is used to identify. Example: "Production Defect"<br /><i>
                                     3. Component : If a Component is used to identify. Example: "Production Defect"<br /><i>
                                         Impacted KPI: Production Defects Ageing</i>
-                              </span>' tooltipPosition="top" tooltipEvent="hover" [escape]="false"
+                              </span>' tooltipPosition="top" tooltipEvent="hover" appendTo="body" [escape]="false"
                                 tooltipPosition="top">
                             </p-dropdown>
                         </div>
@@ -734,8 +734,8 @@
                 <div class="p-grid">
                     <div class="p-sm-4">
                         <label class="field-title">Estimation Criteria</label>
-                        <p-dropdown id="estimationCriteria" [options]="estimationCriteriaTypes" placeholder="Select"
-                            formControlName="estimationCriteria" [virtualScroll]="true" pTooltip='<span class="tooltiptext">
+                        <p-dropdown id="estimationCriteria" [options]="estimationCriteriaTypes" appendTo="body" placeholder="Select"
+                            formControlName="estimationCriteria"  pTooltip='<span class="tooltiptext">
                                 Estimation criteria for stories.
                                       <br />
                                       <i>Example: Buffered Estimation.</i>
@@ -857,7 +857,7 @@
                     <div class="p-sm-6">
                         <div class="p-mb-3">
                             <label class="field-title">Tech Debt Identification</label>
-                            <p-dropdown id="jiraTechDebtIdentification" [virtualScroll]="true" [options]="techDebtIdentification"
+                            <p-dropdown id="jiraTechDebtIdentification"  [options]="techDebtIdentification"
                                 placeholder="Select" formControlName="jiraTechDebtIdentification" pTooltip='<span class="tooltiptext">
                                     This field is used to identify "TECH_DEBT" stories. Only Below three values are
                                           allowed in this field:
@@ -870,7 +870,7 @@
                                             to be one value).</i>
                                           <i>
                                             Impacted : Jira/Azure Processor and Tech Debt Kpi</i>
-                                  </span>' tooltipPosition="right" tooltipEvent="hover" [escape]="false">
+                                  </span>' tooltipPosition="right" appendTo="body" tooltipEvent="hover" [escape]="false">
                             </p-dropdown>
                         </div>
                         <div class="p-mb-3"
@@ -949,11 +949,11 @@
                         </div>
                         <div class="p-mb-3">
                             <label class="field-title">Test Case Automation Field</label>
-                            <p-dropdown id="testAutomatedIdentification" [options]="testCaseIdentification" [virtualScroll]="true"
+                            <p-dropdown id="testAutomatedIdentification" [options]="testCaseIdentification" 
                                 placeholder="Select field" formControlName="testAutomatedIdentification" pTooltip='<span class="tooltiptext">
                                     Jira/Azure allow addition of filtering data through custom field or labels.
                                     It can be configured to determine if a test case is automatable or not.
-                              </span>' tooltipEvent="hover" [escape]="false" tooltipPosition="top">
+                              </span>' tooltipEvent="hover" appendTo="body" [escape]="false" tooltipPosition="top">
                             </p-dropdown>
                         </div>
                         <div class="p-mb-3"
@@ -985,10 +985,10 @@
                             <label class="field-title">Automation completed field</label>
                             <p-dropdown id="testAutomationCompletedIdentification" [options]="testCaseIdentification"
                                 placeholder="Select field" formControlName="testAutomationCompletedIdentification"
-                                [virtualScroll]="true" pTooltip='<span class="tooltiptext">
+                                 pTooltip='<span class="tooltiptext">
                                     Jira/Azure allow addition of filtering data through custom field or labels.
                                     It can be configured to determine if a test case is automated or not.
-                              </span>' tooltipPosition="top" tooltipEvent="hover" [escape]="false"
+                              </span>' tooltipPosition="top" appendTo="body" tooltipEvent="hover" [escape]="false"
                                 tooltipPosition="top">
                             </p-dropdown>
                         </div>
@@ -1020,11 +1020,11 @@
                         </div>
                         <div class="p-mb-3">
                             <label class="field-title">Regression test case identifier</label>
-                            <p-dropdown id="testRegressionIdentification" [options]="testCaseIdentification" [virtualScroll]="true"
+                            <p-dropdown id="testRegressionIdentification" [options]="testCaseIdentification" 
                                 placeholder="Select field" formControlName="testRegressionIdentification" pTooltip='<span class="tooltiptext">
                                     Jira/Azure allow addition of filtering data through custom field or labels.
                                     It can be used to identify regression test cases
-                              </span>' tooltipPosition="top" tooltipEvent="hover" [escape]="false"
+                              </span>' tooltipPosition="top" appendTo="body" tooltipEvent="hover" [escape]="false"
                                 tooltipPosition="top">
                             </p-dropdown>
                         </div>
@@ -1072,13 +1072,13 @@
                 <div class="p-grid">
                     <div class="p-sm-4">
                         <label class="field-title">Additional Filter Identifier</label>
-                        <p-dropdown id="additionalFilterIdentifier" [virtualScroll]="true" [options]="additionalFilterOptions"
+                        <p-dropdown id="additionalFilterIdentifier"  [options]="additionalFilterOptions"
                             placeholder="Select" [(ngModel)]="additionalFilterIdentifier"
                             [ngModelOptions]="{standalone: true}" pTooltip='<span class="tooltiptext">
                             This field is used to identify Additional Filters. <i> Example: "SQUAD"</i>
                                 <i>
                                     Impacted : Filters</i>
-                        </span>' tooltipPosition="top" tooltipEvent="hover" [escape]="false" tooltipPosition="top"
+                        </span>' tooltipPosition="top" tooltipEvent="hover" appendTo="body" [escape]="false" tooltipPosition="top"
                             optionLabel="name">
                         </p-dropdown>
                     </div>
@@ -1092,7 +1092,7 @@
                         <!--Additional Filter Identifier dropdown with three values ["Component", "CustomField", "Labels"]-->
                         <div class="p-sm-3">
                             <label class="field-title">{{ filter.name }} Identifier</label>
-                            <p-dropdown id="{{ filter.code + 'Identifier'}}"
+                            <p-dropdown id="{{ filter.code + 'Identifier'}}" appendTo="body"
                                 [options]="additionalFilterIdentificationOptions" placeholder="Select"
                                 formControlName="{{ filter.code + 'Identifier'}}" (onChange)="changeControl($event)"
                                 [style]="{'width':'100%'}" pTooltip='' tooltipPosition="top" tooltipEvent="hover"
@@ -1157,10 +1157,10 @@
     (onShow)="recordScrollPosition()" (onHide)="scrollToPosition()">
     <div class="dialog-panel" style="width: 450px; min-height: 450px; overflow: hidden;">
         <div *ngIf="singleSelectionDropdown">
-            <p-dropdown *ngIf="populateDropdowns" [virtualScroll]="true" inputId="singleSelectionDropdown" autoWidth="false"
+            <p-dropdown *ngIf="populateDropdowns"  inputId="singleSelectionDropdown" autoWidth="false"
                 [style]="{'width':'100%', 'max-width': '100%'}" [options]="fieldMappingMultiSelectValues"
                 placeholder="Select Value" [(ngModel)]="selectedValue" optionLabel="key" optionValue="data"
-                filter="true" showClear="true">
+                filter="true" showClear="true" appendTo="body">
             </p-dropdown>
         </div>
         <div *ngIf="!singleSelectionDropdown" class="multiselect-container p-field p-col-12">
