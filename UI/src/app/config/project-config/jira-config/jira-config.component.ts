@@ -73,7 +73,7 @@ export class JiraConfigComponent implements OnInit {
   bambooPlanKeyForSelectedPlan = '';
   selectedBambooBranchKey: string;
   disableOrganizationKey = false;
-  singleToolAllowed: any[] = ['Jira', 'Zephyr', 'Azure'];
+  singleToolAllowed: any[] = ['Jira', 'Zephyr', 'Azure', 'JiraTest'];
   jenkinsJobNameList: any[] = [];
   azurePipelineList: any[] = [];
   azurePipelineResponseList: any[] = [];
@@ -124,7 +124,6 @@ export class JiraConfigComponent implements OnInit {
     this.route.queryParams.subscribe((params) => {
       if (params['toolName']) {
         this.urlParam = params['toolName'];
-
         // get pre-configured tool data
         if (
           this.sharedService.getSelectedToolConfig() &&
@@ -132,10 +131,10 @@ export class JiraConfigComponent implements OnInit {
         ) {
           this.selectedToolConfig = this.sharedService
             .getSelectedToolConfig()
-            .filter((toolConfig) => toolConfig.toolName === this.urlParam);
+            .filter((toolConfig) => toolConfig.toolName === (this.urlParam?.toLowerCase() == 'jiratest' ? 'Jira' : this.urlParam));
 
         }
-        this.getConnectionList(this.urlParam);
+        this.getConnectionList(this.urlParam?.toLowerCase() == 'jiratest' ? 'Jira' : this.urlParam);
         this.initializeFields(this.urlParam);
       } else {
         this.router.navigate(['./dashboard/Config/ProjectList']);
@@ -407,8 +406,12 @@ export class JiraConfigComponent implements OnInit {
       this.loading = false;
       if (response && response['success']) {
         this.connections = response['data'];
+        console.log(this.selectedToolConfig);
+        
         if (this.selectedToolConfig && this.selectedToolConfig.length) {
           if (this.isSingleToolAllowed(toolName)) {
+            console.log("here");
+            
             this.selectedConnection = this.connections.filter(
               (connection) =>
                 connection.id === this.selectedToolConfig[0].connectionId,
@@ -1830,7 +1833,7 @@ export class JiraConfigComponent implements OnInit {
                 type: 'dropdown',
                 label: 'Test Case Automation Field',
                 id: 'testAutomatedIdentification',
-                validators: ['required'],
+                validators: [],
                 containerClass: 'p-sm-6',
                 optionsList: this.testCaseIdentification,
                 changeHandler: this.changeHandler,
@@ -1852,7 +1855,7 @@ export class JiraConfigComponent implements OnInit {
                 label: 'Values for Automation',
                 id: 'jiraCanBeAutomatedTestValue',
                 suggestions: 'filteredBoards',
-                validators: ['required'],
+                validators: [],
                 containerClass: 'p-sm-6',
                 tooltip: `Enter the field labels used in Jira/Azure to identify if a test case can be automated`,
                 show: false,
@@ -1862,7 +1865,7 @@ export class JiraConfigComponent implements OnInit {
                 type: 'dropdown',
                 label: 'Automation completed field',
                 id: 'testAutomationCompletedIdentification',
-                validators: ['required'],
+                validators: [],
                 containerClass: 'p-sm-6',
                 optionsList: this.testCaseIdentification,
                 changeHandler: this.changeHandler,
@@ -1882,7 +1885,7 @@ export class JiraConfigComponent implements OnInit {
                 type: 'array',
                 label: 'Values for Automation completed',
                 id: 'jiraAutomatedTestValue',
-                validators: ['required'],
+                validators: [],
                 containerClass: 'p-sm-6',
                 tooltip: `Enter the field labels used in Jira/Azure to identify if a test case is already automated`,
                 show: false,
@@ -1892,7 +1895,7 @@ export class JiraConfigComponent implements OnInit {
                 type: 'dropdown',
                 label: 'Regression test case identifier',
                 id: 'testRegressionIdentification',
-                validators: ['required'],
+                validators: [],
                 containerClass: 'p-sm-6',
                 optionsList: this.testCaseIdentification,
                 changeHandler: this.changeHandler,
@@ -1913,7 +1916,7 @@ export class JiraConfigComponent implements OnInit {
                 type: 'array',
                 label: 'Values for regression test cases',
                 id: 'jiraRegressionTestValue',
-                validators: ['required'],
+                validators: [],
                 containerClass: 'p-sm-6',
                 tooltip: `Enter the field labels used in Jira/Azure to identify the test cases part of regression suite`,
                 show: false,
@@ -1925,7 +1928,7 @@ export class JiraConfigComponent implements OnInit {
                 label: 'Status to identify abandoned Test cases',
                 id: 'testCaseStatus',
                 suggestions: 'filteredBoards',
-                validators: ['required'],
+                validators: [],
                 containerClass: 'p-sm-6',
                 tooltip: `Select status like "Abandoned", "Deprecated" etc so that these can be excluded from Regression automation coverage, In Sprint automation coverage and Test case without story link KPI`,
                 show: true,
@@ -1953,7 +1956,7 @@ export class JiraConfigComponent implements OnInit {
     });
     this.toolForm = new UntypedFormGroup(group);
 
-    if (this.urlParam === 'Jira' || this.urlParam === 'Azure' || this.urlParam === 'Zephyr') {
+    if (this.urlParam === 'Jira' || this.urlParam === 'Azure' || this.urlParam === 'Zephyr' || this.urlParam === 'JiraTest') {
       if (this.selectedToolConfig && this.selectedToolConfig.length) {
         for (const obj in this.selectedToolConfig[0]) {
           if (obj !== 'queryEnabled') {
