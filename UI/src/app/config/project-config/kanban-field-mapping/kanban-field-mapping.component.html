@@ -82,41 +82,8 @@
                                     (click)="showDialogToAddValue(false, 'jiraTicketTriagedStatus', 'workflow')"></button>
                             </div>
                         </div>
-                        <div class="p-mb-3">
-                            <label class="field-title">Ticket Resolved
-                                Status</label>
-                            <div class="p-inputgroup">
-                                <p-chips [inputStyle]="{'border-bottom-right-radius':'0'}"
-                                    inputId="jiraTicketResolvedStatus" formControlName="jiraTicketResolvedStatus"
-                                    placeholder="Enter Ticket Resolved Status" addOnBlur="true" pTooltip='<span class="tooltiptext">
-                                    Status from workflow on which ticket is considered as Resolved.<br /><i>
-                                        Example : Closed <br />
-                                        Impacted : Total Ticket Count, WIP vs Closed, Throughput </i>
-                                  </span>' tooltipPosition="top" tooltipEvent="hover" [escape]="false">
-                                </p-chips>
-                                <button type="button" pButton pRipple icon="pi pi-search"
-                                    (click)="showDialogToAddValue(false, 'jiraTicketResolvedStatus', 'workflow')"></button>
-                            </div>
-                        </div>
                     </div>
                     <div class="p-sm-6">
-
-                        <div class="p-mb-3">
-                            <label class="field-title">Ticket Work In
-                                progress Status</label>
-                            <div class="p-inputgroup">
-                                <p-chips [inputStyle]="{'border-bottom-right-radius':'0'}" inputId="jiraTicketWipStatus"
-                                    formControlName="jiraTicketWipStatus"
-                                    placeholder="Enter Ticket Work In progress Status" addOnBlur="true" pTooltip='<span class="tooltiptext">
-                                    Status from workflow on which ticket is considered as In progress.<br /><i>
-                                        Example : In Development <br />
-                                        Impacted : WIP vs Closed </i>
-                                  </span>' tooltipPosition="top" tooltipEvent="hover" [escape]="false">
-                                </p-chips>
-                                <button type="button" pButton pRipple icon="pi pi-search"
-                                    (click)="showDialogToAddValue(false, 'jiraTicketWipStatus', 'workflow')"></button>
-                            </div>
-                        </div>
                         <div class="p-mb-3">
                             <label class="field-title">Ticket
                                 Rejected/Dropped Status</label>
@@ -254,24 +221,6 @@
                             </div>
                         </div>
                         <div class="p-mb-3">
-                            <label class="field-title">kanban
-                                Tech
-                                Debt
-                                Issue
-                                Type</label>
-                            <div class="p-inputgroup">
-                                <p-chips [inputStyle]="{'border-bottom-right-radius':'0'}"
-                                    inputId="kanbanJiraTechDebtIssueType" formControlName="kanbanJiraTechDebtIssueType"
-                                    placeholder="Enter kanban Jira/Azure Tech Debt Issue Type" addOnBlur="true"
-                                    pTooltip='<span class="tooltiptext">
-                                            Impacted KPI: Tech Debt
-                                        </span>' tooltipPosition="top" tooltipEvent="hover" [escape]="false">
-                                </p-chips>
-                                <button type="button" pButton pRipple icon="pi pi-search"
-                                    (click)="showDialogToAddValue(false, 'kanbanJiraTechDebtIssueType', 'Issue_Type')"></button>
-                            </div>
-                        </div>
-                        <div class="p-mb-3">
                             <label class="field-title">Epic Issue Type</label>
                             <div class="p-inputgroup">
                                 <p-chips [inputStyle]="{'border-bottom-right-radius':'0'}" inputId="jiraIssueEpicType"
@@ -284,20 +233,6 @@
                                     (click)="showDialogToAddValue(false, 'jiraIssueEpicType', 'Issue_Type')"></button>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </p-accordionTab>
-            <p-accordionTab header="Defect Mapping">
-                <div class="p-grid">
-                    <div class="p-sm-6">
-                        <label class="field-title">RCA Value on Trend</label>
-                        <p-chips [inputStyle]="{'width':'500px', 'border-bottom-right-radius':'0'}" id="rootCauseValue"
-                            formControlName="rootCauseValue" addOnBlur="true" placeholder="Enter RCA Value on Trend"
-                            pTooltip='<span class="tooltiptext">
-                                Provide value of RCA that need to show on Trend line.<br />
-                                <i> Example: Code Issue</i>
-                                <i>Impacted : Defect Count By RCA (tagged to Story)</i>
-                  </span>' tooltipPosition="top" tooltipEvent="hover" [escape]="false"></p-chips>
                     </div>
                 </div>
             </p-accordionTab>

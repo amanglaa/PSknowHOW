@@ -424,7 +424,6 @@ export class FieldMappingComponent implements OnInit {
       jiraDefectInjectionIssueType: [[]],
       jiraTestAutomationIssueType: [[]],
       jiraIntakeToDorIssueType: [[]],
-      jiraTechDebtIssueType: [[]],
       jiraStoryIdentification: [[]],
       jiraSprintCapacityIssueType: [[]],
       jiraIssueEpicType: [[]],
@@ -460,8 +459,6 @@ export class FieldMappingComponent implements OnInit {
       productionDefectIdentifier: [''],
       productionDefectComponentValue: [''],
       productionDefectValue: [[]],
-
-      rootCauseValue: [[]],
       // qaRootCauseValue: [[]],
       // test case mapping
       testAutomatedIdentification: [''],
