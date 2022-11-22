@@ -10,6 +10,7 @@ import lombok.Setter;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Model class to represent kpi_fieldmapping collection.
@@ -24,6 +25,7 @@ import java.util.List;
 public class KPIFieldMapping extends BasicModel {
     private String kpiId;
     private String kpiName;
+    private String kpiSource;
     private List<String> type;
-    private List<String> fieldNames;
+    private Map<String,List<String>> fieldNames;
 }
