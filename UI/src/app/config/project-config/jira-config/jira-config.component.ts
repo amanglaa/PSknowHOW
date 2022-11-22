@@ -406,12 +406,8 @@ export class JiraConfigComponent implements OnInit {
       this.loading = false;
       if (response && response['success']) {
         this.connections = response['data'];
-        console.log(this.selectedToolConfig);
-        
         if (this.selectedToolConfig && this.selectedToolConfig.length) {
           if (this.isSingleToolAllowed(toolName)) {
-            console.log("here");
-            
             this.selectedConnection = this.connections.filter(
               (connection) =>
                 connection.id === this.selectedToolConfig[0].connectionId,
