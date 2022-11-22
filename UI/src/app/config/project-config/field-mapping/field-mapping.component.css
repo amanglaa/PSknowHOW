@@ -74,8 +74,6 @@ transform-origin: 149px 48px;
     float: left;
 }
 input[type="file"].btn-import { 
-    z-index: -1;
-    position: absolute;
     opacity: 0;
 }
   
