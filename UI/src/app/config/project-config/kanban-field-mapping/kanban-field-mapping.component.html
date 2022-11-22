@@ -325,7 +325,7 @@
                         <div class="p-mb-3">
                             <label class="field-title">Estimation Criteria</label>
                             <p-dropdown id="estimationCriteria" [options]="estimationCriteriaTypes" placeholder="Select"
-                                formControlName="estimationCriteria" [virtualScroll]="true" pTooltip='<span class="tooltiptext">
+                                formControlName="estimationCriteria"  pTooltip='<span class="tooltiptext">
                                         Estimation criteria for stories.
                                               <br />
                                               <i>Example: Buffered Estimation.</i>
@@ -461,7 +461,7 @@
                 <div class="p-grid">
                     <div class="p-sm-4">
                         <label class="field-title">Tech Debt Identification</label>
-                        <p-dropdown id="jiraTechDebtIdentification" [options]="techDebtIdentification" [virtualScroll]="true"
+                        <p-dropdown id="jiraTechDebtIdentification" [options]="techDebtIdentification" 
                             placeholder="Select" formControlName="jiraTechDebtIdentification" pTooltip='<span class="tooltiptext">
                                 This field is used to identify "TECH_DEBT" stories. Only Below three values are
                                       allowed in this field:
@@ -544,7 +544,7 @@
                         </div>
                         <div class="p-mb-3">
                             <label class="field-title">Test Case Automation Field</label>
-                            <p-dropdown id="testAutomatedIdentification" [options]="testCaseIdentification" [virtualScroll]="true"
+                            <p-dropdown id="testAutomatedIdentification" [options]="testCaseIdentification" 
                                 placeholder="Select field" formControlName="testAutomatedIdentification" pTooltip='<span class="tooltiptext">
                                 Jira/Azure allow addition of filtering data through custom field or labels.
                                 It can be configured to determine if a test case is automatable or not.
@@ -578,7 +578,7 @@
                         </div>
                         <div class="p-mb-3">
                             <label class="field-title">Automation completed field</label>
-                            <p-dropdown id="testAutomationCompletedIdentification" [virtualScroll]="true" [options]="testCaseIdentification"
+                            <p-dropdown id="testAutomationCompletedIdentification"  [options]="testCaseIdentification"
                                 placeholder="Select field" formControlName="testAutomationCompletedIdentification"
                                 pTooltip='<span class="tooltiptext">
                                 Jira/Azure allow addition of filtering data through custom field or labels.
@@ -615,7 +615,7 @@
                         </div>
                         <div class="p-mb-3">
                             <label class="field-title">Regression test case identifier</label>
-                            <p-dropdown id="testRegressionIdentification" [options]="testCaseIdentification" [virtualScroll]="true"
+                            <p-dropdown id="testRegressionIdentification" [options]="testCaseIdentification" 
                                 placeholder="Select field" formControlName="testRegressionIdentification" pTooltip='<span class="tooltiptext">
                                 Jira/Azure allow addition of filtering data through custom field or labels.
                                 It can be used to identify regression test cases
@@ -668,7 +668,7 @@
                     <div class="p-sm-3">
                         <label class="field-title">Additional Filter Identifier</label>
                         <p-dropdown id="additionalFilterIdentifier" [options]="additionalFilterOptions"
-                            placeholder="Select" [(ngModel)]="additionalFilterIdentifier" [virtualScroll]="true"
+                            placeholder="Select" [(ngModel)]="additionalFilterIdentifier" 
                             [ngModelOptions]="{standalone: true}" pTooltip='<span class="tooltiptext">
                             This field is used to identify Additional Filters. <i> Example: "SQUAD"</i>
                                   <i>
@@ -687,7 +687,7 @@
                         <!--Additional Filter Identifier dropdown with three values ["Component", "CustomField", "Labels"]-->
                         <div class="p-sm-3">
                             <label class="field-title">{{ filter.name }} Identifier</label>
-                            <p-dropdown id="{{ filter.code + 'Identifier'}}" [virtualScroll]="true"
+                            <p-dropdown id="{{ filter.code + 'Identifier'}}" 
                                 [options]="additionalFilterIdentificationOptions" placeholder="Select"
                                 formControlName="{{ filter.code + 'Identifier'}}" (onChange)="changeControl($event)"
                                 [style]="{'width':'100%'}" pTooltip='' tooltipPosition="top" tooltipEvent="hover"
@@ -753,7 +753,7 @@
         <div *ngIf="singleSelectionDropdown">
             <p-dropdown *ngIf="populateDropdowns" inputId="singleSelectionDropdown" autoWidth="false"
                 [style]="{'width':'100%', 'max-width': '100%'}" [options]="fieldMappingMultiSelectValues"
-                placeholder="Select Value" [virtualScroll]="true" [(ngModel)]="selectedValue" optionLabel="key" optionValue="data"
+                placeholder="Select Value"  [(ngModel)]="selectedValue" optionLabel="key" optionValue="data"
                 filter="true" showClear="true">
             </p-dropdown>
         </div>
