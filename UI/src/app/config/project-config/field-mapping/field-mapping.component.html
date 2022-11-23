@@ -519,21 +519,41 @@
                                 Example: Story <hr>
                                 KPI Impacted:
                                 Story Count Kpi
-                              </span>' tooltipPosition="top" tooltipEvent="hover" tooltipStyleClass="tooltiptext"
+                              </span>' tooltipPosition="top" tooltipEvent ="hover" tooltipStyleClass="tooltiptext" [escape]="false"></span></label>
+                          <div class="p-inputgroup">
+                              <p-chips [style]="{'max-width':'initial','width':'60vw'}" inputId="jiraStoryIdentification"
+                                  formControlName="jiraStoryIdentification" placeholder="Enter Story Identification"
+                                  addOnBlur="true" >
+                              </p-chips>
+                              <button type="button" pButton pRipple icon="pi pi-search"
+                                  (click)="showDialogToAddValue(false, 'jiraStoryIdentification', 'Issue_Type')"></button>
+                          </div>
+                      </div>
+                    <div class="p-mb-3 p-d-flex p-align-center"
+                        *ngIf="fieldstoShow?.includes('jiraFTPRStoryIdentification') || fieldstoShow.length === 0">
+                        <label class="field-title">Issues types included in FTPR <span class="fa fa-info-circle" aria-hidden="true"
+                                pTooltip='<span>
+                                                Definition:
+                                                Issue types that are required to be tracked for First time pass rate (FTPR). 
+                                                <br>
+                                                Example: Story or equivalent <hr>
+                                                KPI Impacted:
+                                                First time pass rate
+                                                </span>' tooltipPosition="top" tooltipEvent="hover" tooltipStyleClass="tooltiptext"
                                 [escape]="false"></span></label>
                         <div class="p-inputgroup">
-                            <p-chips [style]="{'max-width':'initial','width':'60vw'}" inputId="jiraStoryIdentification"
-                                formControlName="jiraStoryIdentification" placeholder="Enter Story Identification"
-                                addOnBlur="true">
+                            <p-chips [style]="{'max-width':'initial','width':'60vw'}" inputId="jiraFTPRStoryIdentification"
+                                formControlName="jiraFTPRStoryIdentification" placeholder="Enter FTPR Story Identification" addOnBlur="true">
                             </p-chips>
                             <button type="button" pButton pRipple icon="pi pi-search"
-                                (click)="showDialogToAddValue(false, 'jiraStoryIdentification', 'Issue_Type')"></button>
+                                (click)="showDialogToAddValue(false, 'jiraFTPRStoryIdentification', 'Issue_Type')"></button>
                         </div>
                     </div>
-                    <div class="p-mb-3 p-d-flex p-align-center"
-                        *ngIf="fieldstoShow?.includes('jiraSprintCapacityIssueType') || fieldstoShow.length === 0">
-                        <label class="field-title">Sprint
-                            Capacity Issue Type <span class="fa fa-info-circle" aria-hidden="true" pTooltip='<span>
+                      <div class="p-mb-3 p-d-flex p-align-center"
+                          *ngIf="fieldstoShow?.includes('jiraSprintCapacityIssueType') || fieldstoShow.length === 0">
+                          <label class="field-title">Sprint
+                              Capacity Issue Type <span class="fa fa-info-circle"
+                              aria-hidden="true" pTooltip='<span>
                                 Definition:
                                 Value to identify kind of stories which are used for identification for Sprint Capacity.<br />
                                 Example: Story<hr>
