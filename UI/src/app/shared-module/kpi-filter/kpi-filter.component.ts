@@ -16,20 +16,30 @@
  *
  ******************************************************************************/
 
-li.p-multiselect-item * {
-    z-index: 1;
-}
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
-div.option {
-    margin: -25px -25px;
-    padding: 25px 25px;
-    z-index: 2;
-    width: 100%;
-}
+@Component({
+  selector: 'app-kpi-filter',
+  templateUrl: './kpi-filter.component.html',
+})
+export class KpiFilterComponent implements OnInit {
+  @Input() kpiRelationShips: any;
+  @Input() fieldMappings: any;
+  @Output() fieldsToShow = new EventEmitter<any>();
+  selectedKpi;
 
-.hierarchy-placeholder {
-    color: rgba(0, 0, 0, 0.6);
-}
-:host ::ng-deep .ui-float-label .p-multiselect{
-    width: 100%;
+  constructor() { }
+
+  ngOnInit(): void {
+  }
+
+  showFieldsPopup() {
+    this.fieldsToShow.emit(this.selectedKpi);
+  }
+
+  onClear(){
+    this.selectedKpi='';
+    this.fieldsToShow.emit(this.selectedKpi);
+  }
+
 }

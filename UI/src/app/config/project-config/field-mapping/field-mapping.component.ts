@@ -16,7 +16,7 @@
  *
  ******************************************************************************/
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
@@ -24,6 +24,7 @@ import { HttpService } from '../../../services/http.service';
 import { SharedService } from '../../../services/shared.service';
 import { GetAuthorizationService } from '../../../services/get-authorization.service';
 import { ChangeDetectionStrategy } from '@angular/core';
+import { Accordion } from 'primeng/accordion';
 declare const require: any;
 
 @Component({
@@ -33,6 +34,7 @@ declare const require: any;
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FieldMappingComponent implements OnInit {
+  @ViewChild('accordion') accordion: Accordion;
   fieldMappingForm: UntypedFormGroup;
   fieldMappingFormObj: any;
   selectedConfig: any = {};
@@ -66,6 +68,15 @@ export class FieldMappingComponent implements OnInit {
   additionalFilterIdentifier: any = {};
   additionalFiltersArray: any = [];
   additionalFilterOptions: any = [];
+  // kpi to field mapping relationships
+  kpiRelationShips: any = [];
+  fieldstoShow=[];
+  groupsToShow={
+    groupNames:[],
+    groupFields:{},
+    showAllgroups:true
+  };
+
   private setting = {
     element: {
       dynamicDownload: null as HTMLElement
@@ -77,10 +88,6 @@ export class FieldMappingComponent implements OnInit {
 
   ngOnInit(): void {
     this.techDebtIdentification = [
-      {
-        label: 'Select',
-        value: ''
-      },
       {
         label: 'CustomField',
         value: 'CustomField'
@@ -96,10 +103,6 @@ export class FieldMappingComponent implements OnInit {
     ];
     this.additionalFilterIdentificationOptions = [
       {
-        label: 'Select',
-        value: ''
-      },
-      {
         label: 'Component',
         value: 'Component'
       },
@@ -113,10 +116,6 @@ export class FieldMappingComponent implements OnInit {
       }
     ];
     this.estimationCriteriaTypes = [
-      {
-        label: 'Select',
-        value: ''
-      },
       {
         label: 'Story Point',
         value: 'Story Point'
@@ -132,10 +131,6 @@ export class FieldMappingComponent implements OnInit {
     ];
     this.defectIdentification = [
       {
-        label: 'Select',
-        value: ''
-      },
-      {
         label: 'CustomField',
         value: 'CustomField'
       },
@@ -145,10 +140,6 @@ export class FieldMappingComponent implements OnInit {
       }
     ];
     this.productionDefectIdentificationOptions = [
-      {
-        label: 'Select',
-        value: ''
-      },
       {
         label: 'CustomField',
         value: 'CustomField'
@@ -186,10 +177,6 @@ export class FieldMappingComponent implements OnInit {
     ];
     this.testCaseIdentification = [
       {
-        label: 'Select',
-        value: ''
-      },
-      {
         label: 'CustomField',
         value: 'CustomField'
       },
@@ -220,6 +207,7 @@ export class FieldMappingComponent implements OnInit {
       }
     }
     this.getMappings();
+    this.getKPIFieldMappingRelationships();
   }
 
   getMappings() {
@@ -233,6 +221,15 @@ export class FieldMappingComponent implements OnInit {
 
       this.generateAdditionalFilterMappings();
     }
+  }
+
+  getKPIFieldMappingRelationships() {
+    this.http.getKPIFieldMappingRelationships().subscribe(response => {
+      if (response['kpiFieldMappingList']) {
+        this.kpiRelationShips = response['kpiFieldMappingList'];
+        this.kpiRelationShips = this.kpiRelationShips.filter((kpi) => (kpi.type.includes('Scrum') || kpi.type.includes('Other')) && kpi.kpiSource === 'Jira');
+      }
+    });
   }
 
   generateAdditionalFilterMappings() {
@@ -424,7 +421,6 @@ export class FieldMappingComponent implements OnInit {
       jiraDefectInjectionIssueType: [[]],
       jiraTestAutomationIssueType: [[]],
       jiraIntakeToDorIssueType: [[]],
-      jiraTechDebtIssueType: [[]],
       jiraStoryIdentification: [[]],
       jiraSprintCapacityIssueType: [[]],
       jiraIssueEpicType: [[]],
@@ -460,8 +456,6 @@ export class FieldMappingComponent implements OnInit {
       productionDefectIdentifier: [''],
       productionDefectComponentValue: [''],
       productionDefectValue: [[]],
-
-      rootCauseValue: [[]],
       // qaRootCauseValue: [[]],
       // test case mapping
       testAutomatedIdentification: [''],
@@ -635,6 +629,39 @@ export class FieldMappingComponent implements OnInit {
       text: JSON.stringify(submitData)
     });
   }
+  resetRadioButton(fieldName){
+    this.fieldMappingForm.patchValue({[fieldName]: ''});
+  }
+
+  showFields(kpiRelatedFields) {
+    this.closeAllAccordionTabs();
+    this.fieldstoShow=[];
+    this.groupsToShow={
+      groupFields:{},
+      groupNames:[],
+      showAllgroups:true
+    };
+
+    if(kpiRelatedFields?.hasOwnProperty('fieldNames')){
+      for(const key in kpiRelatedFields.fieldNames){
+        this.groupsToShow.groupNames.push(key);
+        this.groupsToShow.groupFields[key]=kpiRelatedFields.fieldNames[key].length;
+        this.fieldstoShow.push(...Object.values(kpiRelatedFields.fieldNames[key]));
+      }
+      this.groupsToShow.showAllgroups =false;
+    }else{
+      this.fieldstoShow=[];
+      this.groupsToShow.showAllgroups =true;
+    }
+  }
+
+  closeAllAccordionTabs() {
+    if(this.accordion){
+        for(const tab of this.accordion.tabs) {
+              tab.selected = false;
+        }
+    }
+}
 
   handleAdditionalFilters(submitData: any): any {
     /** addiitional filters start*/
