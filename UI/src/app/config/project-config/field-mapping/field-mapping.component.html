@@ -503,6 +503,25 @@
                                   (click)="showDialogToAddValue(false, 'jiraStoryIdentification', 'Issue_Type')"></button>
                           </div>
                       </div>
+                    <div class="p-mb-3 p-d-flex p-align-center"
+                        *ngIf="fieldstoShow?.includes('jiraFTPRStoryIdentification') || fieldstoShow.length === 0">
+                        <label class="field-title">Issues types included in FTPR <span class="fa fa-info-circle" aria-hidden="true"
+                                pTooltip='<span>
+                                                Definition:
+                                                Value to identify kind of stories which are used for identification for story count. <br>
+                                                Example: Story <hr>
+                                                KPI Impacted:
+                                                Story Count Kpi
+                                              </span>' tooltipPosition="top" tooltipEvent="hover" tooltipStyleClass="tooltiptext"
+                                [escape]="false"></span></label>
+                        <div class="p-inputgroup">
+                            <p-chips [style]="{'max-width':'initial','width':'60vw'}" inputId="jiraFTPRStoryIdentification"
+                                formControlName="jiraFTPRStoryIdentification" placeholder="Enter FTPR Story Identification" addOnBlur="true">
+                            </p-chips>
+                            <button type="button" pButton pRipple icon="pi pi-search"
+                                (click)="showDialogToAddValue(false, 'jiraFTPRStoryIdentification', 'Issue_Type')"></button>
+                        </div>
+                    </div>
                       <div class="p-mb-3 p-d-flex p-align-center"
                           *ngIf="fieldstoShow?.includes('jiraSprintCapacityIssueType') || fieldstoShow.length === 0">
                           <label class="field-title">Sprint

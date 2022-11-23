@@ -422,6 +422,7 @@ export class FieldMappingComponent implements OnInit {
       jiraTestAutomationIssueType: [[]],
       jiraIntakeToDorIssueType: [[]],
       jiraStoryIdentification: [[]],
+      jiraFTPRStoryIdentification: [[]],
       jiraSprintCapacityIssueType: [[]],
       jiraIssueEpicType: [[]],
       // tech debt mapping
