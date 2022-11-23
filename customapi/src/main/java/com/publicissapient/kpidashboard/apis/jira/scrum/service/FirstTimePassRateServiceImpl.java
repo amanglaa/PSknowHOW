@@ -285,7 +285,7 @@ public class FirstTimePassRateServiceImpl extends JiraKPIService<Double, List<Ob
 					Arrays.asList(fieldMapping.getJiraDefectRejectionStatus()));
 
 			mapOfProjectFilters.put(JiraFeature.ISSUE_TYPE.getFieldValueInFeature(),
-					CommonUtils.convertToPatternList(fieldMapping.getJiraStoryIdentification()));
+					CommonUtils.convertToPatternList(fieldMapping.getJiraFTPRStoryIdentification()));
 			mapOfProjectFilters.put(JiraFeature.JIRA_ISSUE_STATUS.getFieldValueInFeature(),
 					fieldMapping.getJiraIssueDeliverdStatus());
 			KpiHelperService.getDroppedDefectsFilters(statusConfigsOfRejectedStoriesByProject, basicProjectConfigId,
