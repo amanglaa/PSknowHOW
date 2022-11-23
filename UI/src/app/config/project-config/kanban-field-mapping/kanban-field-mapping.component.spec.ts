@@ -541,7 +541,7 @@ describe('KanbanFieldMappingComponent', () => {
 
   it('should select values from popup', () => {
     component.singleSelectionDropdown = false;
-    component.selectedField = 'jiraTicketResolvedStatus';
+    component.selectedField = 'jiraTicketTriagedStatus';
     component.fieldMappingMultiSelectValues = [{
       key: 'Open',
       data: 'Open'

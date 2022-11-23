@@ -484,25 +484,6 @@
                           </div>
                       </div>
                       <div class="p-mb-3 p-d-flex p-align-center"
-                          *ngIf="fieldstoShow?.includes('jiraTechDebtIssueType') || fieldstoShow.length === 0">
-                          <label class="field-title">Tech Debt Issue
-                              Type <span class="fa fa-info-circle"
-                              aria-hidden="true" pTooltip='<span>
-                                The issue type in JIRA/Azure which is used for managing Tech Debt in JIRA/Azure <br>
-                                Example: Story, Change Request .<hr>
-                                KPI Impacted: 
-                                Tech Debt Kpi
-                              </span>' tooltipPosition="top" tooltipEvent ="hover" tooltipStyleClass="tooltiptext" [escape]="false"></span></label>
-                          <div class="p-inputgroup">
-                              <p-chips [style]="{'max-width':'initial','width':'60vw'}" inputId="jiraTechDebtIssueType"
-                                  formControlName="jiraTechDebtIssueType" placeholder="Enter Tech Debt Issue Type"
-                                  addOnBlur="true" >
-                              </p-chips>
-                              <button type="button" pButton pRipple icon="pi pi-search"
-                                  (click)="showDialogToAddValue(false, 'jiraTechDebtIssueType', 'Issue_Type')"></button>
-                          </div>
-                      </div>
-                      <div class="p-mb-3 p-d-flex p-align-center"
                           *ngIf="fieldstoShow?.includes('jiraStoryIdentification') || fieldstoShow.length === 0">
                           <label class="field-title">Story Count
                               Issue Type <span class="fa fa-info-circle"
@@ -734,35 +715,6 @@
                               <p-chips [style]="{'max-width':'initial','width':'calc(60vw + 42px)'}"
                                   id="excludeRCAFromFTPR" formControlName="excludeRCAFromFTPR" addOnBlur="true"
                                   placeholder="Enter RCA Values"></p-chips>
-                          </div>
-                      </div>
-                      <div class="p-mb-3 p-d-flex p-align-center"
-                          *ngIf="fieldstoShow?.includes('rootCauseValue') || fieldstoShow.length === 0">
-                          <label class="field-title">RCA Value on Trend <span class="fa fa-info-circle"
-                              aria-hidden="true" pTooltip='<span>
-                                Definition:
-                                Provide value of RCA that need to show on Trend line. <br>
-                                Example: Code Issue <hr>
-                                KPI Impacted : Defect Count By RCA (tagged to Story)</span>' tooltipPosition="top" tooltipEvent ="hover" tooltipStyleClass="tooltiptext" [escape]="false"></span></label>
-                          <div class="p-inputgroup">
-                              <p-chips [style]="{'max-width':'initial','width':'calc(60vw + 42px)'}" id="rootCauseValue"
-                                  formControlName="rootCauseValue" addOnBlur="true" placeholder="Enter RCA Value on Trend"
-                                  ></p-chips>
-  
-                              <!-- <div class="p-col-5 p-ml-5 p-p-0">
-                                      <label class="field-title">RCA Value for QA Defect Density</label>
-                                      <p-chips [style]="{'max-width':'500px','width':'500px'}"
-                                          [inputStyle]="{'width':'500px', 'border-bottom-right-radius':'0'}"
-                                          inputId="qaRootCauseValue" formControlName="qaRootCauseValue"
-                                          placeholder="Enter Tech Debt {{fieldMapping['jiraTechDebtIdentification'].value}}"
-                                          addOnBlur="true" pTooltip='<span>
-                                              Provide value of RCA to be used to calculate defect density(RCAs used to identify
-                                              valid defects)<br />
-                                              <i> Example: Code Issue</i><br>
-                                              <i>Impacted KPI: QA Defect Density</i>
-                                </span>' tooltipPosition="top" tooltipEvent ="hover" tooltipStyleClass="tooltiptext" [escape]="false">
-                                      </p-chips>
-                                  </div> -->
                           </div>
                       </div>
                       <div class="p-mb-3 p-d-flex p-align-center"

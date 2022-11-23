@@ -96,44 +96,6 @@
                             </div>
                         </div>
                         <div class="p-mb-3 p-d-flex p-align-center"
-                        *ngIf="fieldstoShow?.includes('jiraTicketResolvedStatus') || fieldstoShow.length === 0">
-                            <label class="field-title">Ticket Resolved Status <span class="fa fa-info-circle" aria-hidden="true" pTooltip='<span>
-                                Definition:
-                                Status from workflow on which ticket is considered as Resolved. <br>
-                                Example : Closed <hr>
-                                KPI Impacted : 
-                                Total Ticket Count, WIP vs Closed, Throughput 
-                              </span>' tooltipPosition="top" tooltipEvent="hover" [escape]="false" tooltipStyleClass="tooltiptext"></span></label>
-                            <div class="p-inputgroup">
-                                <p-chips [inputStyle]="{'border-bottom-right-radius':'0'}"
-                                [style]="{'max-width':'initial','width':'60vw'}"
-                                    inputId="jiraTicketResolvedStatus" formControlName="jiraTicketResolvedStatus"
-                                    placeholder="Enter Ticket Resolved Status" addOnBlur="true">
-                                </p-chips>
-                                <button type="button" pButton pRipple icon="pi pi-search"
-                                    (click)="showDialogToAddValue(false, 'jiraTicketResolvedStatus', 'workflow')"></button>
-                            </div>
-                        </div>
-                        <div class="p-mb-3 p-d-flex p-align-center"
-                        *ngIf="fieldstoShow?.includes('jiraTicketWipStatus') || fieldstoShow.length === 0">
-                            <label class="field-title">Ticket Work In progress Status <span class="fa fa-info-circle" aria-hidden="true" pTooltip='<span>
-                                Definition:
-                                Status from workflow on which ticket is considered as In progress. <br>
-                                Example : In Development <hr>
-                                KPI Impacted : 
-                                WIP vs Closed
-                              </span>' tooltipPosition="top" tooltipEvent="hover" [escape]="false" tooltipStyleClass="tooltiptext"></span></label>
-                            <div class="p-inputgroup">
-                                <p-chips [inputStyle]="{'border-bottom-right-radius':'0'}" inputId="jiraTicketWipStatus"
-                                [style]="{'max-width':'initial','width':'60vw'}"
-                                    formControlName="jiraTicketWipStatus"
-                                    placeholder="Enter Ticket Work In progress Status" addOnBlur="true">
-                                </p-chips>
-                                <button type="button" pButton pRipple icon="pi pi-search"
-                                    (click)="showDialogToAddValue(false, 'jiraTicketWipStatus', 'workflow')"></button>
-                            </div>
-                        </div>
-                        <div class="p-mb-3 p-d-flex p-align-center"
                         *ngIf="fieldstoShow?.includes('jiraTicketRejectedStatus') || fieldstoShow.length === 0">
                             <label class="field-title">Ticket Rejected/Dropped Status <span class="fa fa-info-circle" aria-hidden="true" pTooltip='<span>
                                 Definition:
@@ -283,23 +245,6 @@
                             </div>
                         </div>
                         <div class="p-mb-3 p-d-flex p-align-center"
-                        *ngIf="fieldstoShow?.includes('kanbanJiraTechDebtIssueType') || fieldstoShow.length === 0">
-                            <label class="field-title">kanban Tech Debt Issue Type <span class="fa fa-info-circle" aria-hidden="true"  pTooltip='<span>
-                                KPI Impacted: 
-                                Tech Debt
-                            </span>' tooltipPosition="top" tooltipEvent="hover" [escape]="false" tooltipStyleClass="tooltiptext"></span></label>
-                            <div class="p-inputgroup">
-                                <p-chips [inputStyle]="{'border-bottom-right-radius':'0'}"
-                                [style]="{'max-width':'initial','width':'60vw'}"
-                                    inputId="kanbanJiraTechDebtIssueType" formControlName="kanbanJiraTechDebtIssueType"
-                                    placeholder="Enter kanban Jira/Azure Tech Debt Issue Type" addOnBlur="true"
-                                   >
-                                </p-chips>
-                                <button type="button" pButton pRipple icon="pi pi-search"
-                                    (click)="showDialogToAddValue(false, 'kanbanJiraTechDebtIssueType', 'Issue_Type')"></button>
-                            </div>
-                        </div>
-                        <div class="p-mb-3 p-d-flex p-align-center"
                         *ngIf="fieldstoShow?.includes('jiraIssueEpicType') || fieldstoShow.length === 0">
                             <label class="field-title">Epic Issue Type <span class="fa fa-info-circle" aria-hidden="true" pTooltip='<span>
                                 Definition:
@@ -315,28 +260,6 @@
                                     (click)="showDialogToAddValue(false, 'jiraIssueEpicType', 'Issue_Type')"></button>
                             </div>
                         </div>
-                </div>
-            </p-accordionTab>
-            <p-accordionTab header="Defect Mapping"
-            [disabled]="!(groupsToShow.groupNames.includes('Defects Mapping') || groupsToShow.showAllgroups)">
-            <ng-template pTemplate="header">
-                <p-badge *ngIf="groupsToShow.groupNames.includes('Defects Mapping') && groupsToShow.groupNames.length !== 0"
-                    [value]="groupsToShow.groupFields['Defects Mapping']" styleClass="p-ml-2" severity="info"></p-badge>
-            </ng-template>
-                <div class="p-p-0">
-                    <div class="p-mb-3 p-d-flex p-align-center"
-                    *ngIf="fieldstoShow?.includes('rootCauseValue') || fieldstoShow.length === 0">
-                        <label class="field-title">RCA Value on Trend <span class="fa fa-info-circle" aria-hidden="true"  pTooltip='<span>
-                            Definition:
-                            Provide value of RCA that need to show on Trend line. <br>
-                            Example: Code Issue <hr>
-                            KPI Impacted : 
-                            Defect Count By RCA (tagged to Story)
-              </span>' tooltipPosition="top" tooltipEvent="hover" [escape]="false" tooltipStyleClass="tooltiptext"></span></label>
-                        <p-chips [inputStyle]="{'width':'500px', 'border-bottom-right-radius':'0'}" [style]="{'max-width':'initial','width':'calc(60vw + 42px)'}" id="rootCauseValue"
-                            formControlName="rootCauseValue" addOnBlur="true" placeholder="Enter RCA Value on Trend"
-                           ></p-chips>
-                    </div>
                 </div>
             </p-accordionTab>
             <p-accordionTab header="Custom Fields Mapping"
