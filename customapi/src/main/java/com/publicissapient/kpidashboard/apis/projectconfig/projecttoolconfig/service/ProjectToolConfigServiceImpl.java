@@ -370,6 +370,16 @@ public class ProjectToolConfigServiceImpl implements ProjectToolConfigService {
 			projectConfToolDto.setDeploymentProjectName(e.getDeploymentProjectName());
 			projectConfToolDto.setParameterNameForEnvironment(e.getParameterNameForEnvironment());
 			projectConfToolDtoList.add(projectConfToolDto);
+			projectConfToolDto.setJiraTestCaseType(e.getJiraTestCaseType());
+			projectConfToolDto.setTestAutomatedIdentification(e.getTestAutomatedIdentification());
+			projectConfToolDto.setTestAutomationCompletedIdentification(e.getTestAutomationCompletedIdentification());
+			projectConfToolDto.setTestRegressionIdentification(e.getTestRegressionIdentification());
+			projectConfToolDto.setTestAutomationCompletedByCustomField(e.getTestAutomationCompletedByCustomField());
+			projectConfToolDto.setTestRegressionByCustomField(e.getTestRegressionByCustomField());
+			projectConfToolDto.setJiraAutomatedTestValue(e.getJiraAutomatedTestValue());
+			projectConfToolDto.setJiraRegressionTestValue(e.getJiraRegressionTestValue());
+			projectConfToolDto.setJiraCanBeAutomatedTestValue(e.getJiraCanBeAutomatedTestValue());
+			projectConfToolDto.setTestCaseStatus(e.getTestCaseStatus());
 		});
 
 		return projectConfToolDtoList;

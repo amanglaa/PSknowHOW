@@ -89,7 +89,7 @@ export class JiraConfigComponent implements OnInit {
   selectedDeploymentProject: any;
   azurePipelineApiVersion = '6.0';
   isLoading = false;
-  testCaseIdentification: Array<object> = [
+  testCaseIdentification: any = [
     {
       name: 'Select',
       code: ''
@@ -1831,6 +1831,8 @@ export class JiraConfigComponent implements OnInit {
                 id: 'testAutomatedIdentification',
                 validators: [],
                 containerClass: 'p-sm-6',
+                filterValue: 'true',
+                filterByName: 'name',
                 optionsList: this.testCaseIdentification,
                 changeHandler: this.changeHandler,
                 show: true
@@ -1970,6 +1972,15 @@ export class JiraConfigComponent implements OnInit {
         }
         if(this.urlParam === 'JiraTest'){
           this.toolForm.controls['jiraTestCaseType'].setValue(['Test']);
+          if(this.toolForm.controls['testAutomatedIdentification']?.value){
+            this.changeHandler(this.toolForm.controls['testAutomatedIdentification']?.value, 'testAutomatedIdentification');
+          }
+          if(this.toolForm.controls['testAutomationCompletedIdentification']?.value){
+            this.changeHandler(this.toolForm.controls['testAutomationCompletedIdentification']?.value, 'testAutomationCompletedIdentification');
+          }
+          if(this.toolForm.controls['testRegressionIdentification']?.value){
+            this.changeHandler(this.toolForm.controls['testRegressionIdentification']?.value, 'testRegressionIdentification');
+          }
         }
         // this.tool['projectId'].disable();
         this.isEdit = true;
@@ -2281,7 +2292,7 @@ export class JiraConfigComponent implements OnInit {
   originalOrder = (a: KeyValue<number, string>, b: KeyValue<number, string>): number => 0;
 
   changeHandler = (value:string, elementId) => {
-    value = value['name'];
+    value = value['name'] || value;
     if (value.toLowerCase() === 'customfield' && elementId === 'testAutomatedIdentification') {
       this.showFormElements(['testAutomated', 'jiraCanBeAutomatedTestValue']);
     } if (value.toLowerCase() === 'labels' && elementId === 'testAutomatedIdentification') {

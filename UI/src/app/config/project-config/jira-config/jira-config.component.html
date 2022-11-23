@@ -208,9 +208,8 @@
                                             [autoDisplayFirst]="false" formControlName="{{form_elem.id}}"
                                             (onChange)="form_elem.changeHandler($event.value, form_elem.id)"
                                             styleClass="p-column-filter" [showClear]="false"
-                                            placeholder="Select Your Option" [(ngModel)]="form_elem.model"
-                                            [optionLabel]="'name'" [filter]="form_elem.filterValue"
-                                            [filterBy]="form_elem.filterByName"
+                                            placeholder="Select Your Option"
+                                            [optionLabel]="'name'" [optionValue]="'code'"
                                             [dropdownIcon]="form_elem.isLoading ? 'pi pi-spinner pi-spin' : 'pi pi-chevron-down'"
                                             [emptyMessage]="form_elem.isLoading ? 'Loading...' : 'No results found'">
                                         </p-dropdown>
