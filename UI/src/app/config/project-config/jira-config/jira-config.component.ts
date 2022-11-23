@@ -131,7 +131,7 @@ export class JiraConfigComponent implements OnInit {
         ) {
           this.selectedToolConfig = this.sharedService
             .getSelectedToolConfig()
-            .filter((toolConfig) => toolConfig.toolName === (this.urlParam?.toLowerCase() == 'jiratest' ? 'Jira' : this.urlParam));
+            .filter((toolConfig) => toolConfig.toolName === (this.urlParam));
 
         }
         this.getConnectionList(this.urlParam?.toLowerCase() == 'jiratest' ? 'Jira' : this.urlParam);
@@ -1969,7 +1969,7 @@ export class JiraConfigComponent implements OnInit {
           }
         }
         if(this.urlParam === 'JiraTest'){
-          this.toolForm.controls['jiraTestCaseType'].setValue(['test']);
+          this.toolForm.controls['jiraTestCaseType'].setValue(['Test']);
         }
         // this.tool['projectId'].disable();
         this.isEdit = true;

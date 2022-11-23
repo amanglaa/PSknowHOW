@@ -182,7 +182,7 @@ export class ToolMenuComponent implements OnInit {
             index: 10
           },
           {
-            toolName: 'Jira Test',
+            toolName: 'JiraTest',
             category: 'ABC',
             description: '-',
             icon: 'fab fa-atlassian',
