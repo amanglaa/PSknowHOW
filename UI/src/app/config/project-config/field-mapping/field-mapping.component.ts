@@ -241,7 +241,7 @@ export class FieldMappingComponent implements OnInit {
 
       const additionalFilters = this.filterHierarchy.filter((filter) => filter.level > this.filterHierarchy.filter(f => f.hierarchyLevelId === 'sprint')[0].level);
 
-      additionalFilterMappings.forEach(element => {
+      additionalFilterMappings?.forEach(element => {
 
         this.additionalFiltersArray.push({
           name: additionalFilters.filter((f) => f.hierarchyLevelId === element.filterId)[0].hierarchyLevelName,
