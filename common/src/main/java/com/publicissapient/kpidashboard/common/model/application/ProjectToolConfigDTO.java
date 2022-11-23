@@ -46,6 +46,7 @@ public class ProjectToolConfigDTO {
 	private String toolName;
 	private ObjectId basicProjectConfigId;
 	private ObjectId connectionId;
+	private String connectionName;
 	private String projectId;
 	private String projectKey;
 	private String jobName;
@@ -81,5 +82,7 @@ public class ProjectToolConfigDTO {
 	private String deploymentProjectId;
 
 	private String parameterNameForEnvironment;
+
+
 
 }
