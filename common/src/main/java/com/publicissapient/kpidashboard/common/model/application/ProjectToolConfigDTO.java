@@ -83,6 +83,4 @@ public class ProjectToolConfigDTO {
 
 	private String parameterNameForEnvironment;
 
-
-
 }
