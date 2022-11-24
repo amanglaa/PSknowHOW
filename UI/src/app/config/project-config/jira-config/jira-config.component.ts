@@ -414,7 +414,7 @@ export class JiraConfigComponent implements OnInit {
           // prefetch boards if projectKey is present
           if (this.urlParam === 'Jira') {
             if (this.toolForm.controls['projectKey'].value) {
-              this.fetchBoards();
+              this.fetchBoards(null, this);
             }
           }
         }
@@ -437,50 +437,57 @@ export class JiraConfigComponent implements OnInit {
   };
 
   checkBoards = () => {
-    if (!this.boardsData || !this.boardsData.length) {
+    if ((!this.boardsData || !this.boardsData.length) || this.queryEnabled) {
       return true;
     }
     return false;
   };
 
-  fetchBoards = () => {
-    if (this.selectedConnection && this.selectedConnection.id) {
-      const postData = {};
-      this.showLoadingOnFormElement('boards');
-      // this.isLoading = true;
-      postData['connectionId'] = this.selectedConnection.id;
-      postData['projectKey'] = this.toolForm.controls['projectKey'].value;
-      postData['boardType'] = this.selectedProject['Type'];
-      this.http.getAllBoards(postData).subscribe((response) => {
-        if (response && response['data']) {
-          this.boardsData = response['data'];
-          this.boardsData.forEach((board) => {
-            board['projectKey'] = this.toolForm.controls['projectKey'].value;
-          });
-          // if boards already has value
-          this.toolForm.controls['boards'].value.forEach((val) => {
-            this.boardsData = this.boardsData.filter((data) => (data.boardId + '') !== (val.boardId + ''));
-          });
-        } else {
-          this.messenger.add({
-            severity: 'error',
-            summary:
-              'No boards found for the selected Project Key.',
-          });
-          this.boardsData = [];
-          this.toolForm.controls['boards'].setValue([]);
-        }
-        this.hideLoadingOnFormElement('boards');
-        this.isLoading = false;
-      });
-
+  fetchBoards(event, self) {
+    if (self.selectedConnection && self.selectedConnection.id) {
+      if (self.toolForm.controls['projectKey'].dirty && self.toolForm.controls['projectKey'].value && self.toolForm.controls['projectKey'].value.length) {
+        const postData = {};
+        self.showLoadingOnFormElement('boards');
+        // this.isLoading = true;
+        postData['connectionId'] = self.selectedConnection.id;
+        postData['projectKey'] = self.toolForm.controls['projectKey'].value;
+        postData['boardType'] = self.selectedProject['Type'];
+        self.http.getAllBoards(postData).subscribe((response) => {
+          if (response && response['data']) {
+            self.boardsData = response['data'];
+            self.boardsData.forEach((board) => {
+              board['projectKey'] = self.toolForm.controls['projectKey'].value;
+            });
+            // if boards already has value
+            if (self.toolForm.controls['boards'].value.length) {
+              self.toolForm.controls['boards'].value.forEach((val) => {
+                self.boardsData = self.boardsData.filter((data) => (data.boardId + '') !== (val.boardId + ''));
+              });
+            }
+          } else {
+            self.messenger.add({
+              severity: 'error',
+              summary:
+                'No boards found for the selected Project Key.',
+            });
+            self.boardsData = [];
+            self.toolForm.controls['boards'].setValue([]);
+          }
+          self.hideLoadingOnFormElement('boards');
+          self.isLoading = false;
+        });
+      }
     } else {
-      this.messenger.add({
+      self.messenger.add({
         severity: 'error',
         summary:
           'Select Connection first.',
       });
     }
+  };
+
+  selectJIRAType = (event) => {
+
   };
 
   onBoardUnselect = (value) => {
@@ -862,15 +869,28 @@ export class JiraConfigComponent implements OnInit {
                Generally all issues name are started with Project key<br /> <i>
                 Impacted : Jira/Azure Collector and all Kpi</i>`
               },
+              // {
+              //   type: 'button',
+              //   label: 'Fetch Boards',
+              //   id: 'fetchBoardsBtn',
+              //   containerClass: 'p-sm-2 p-d-flex p-ai-center',
+              //   class: 'p-button-raised',
+              //   show: true,
+              //   clickEventHandler: this.fetchBoards,
+              //   disabled: this.checkProjectKey
+              // },
               {
-                type: 'button',
-                label: 'Fetch Boards',
-                id: 'fetchBoardsBtn',
-                containerClass: 'p-sm-2 p-d-flex p-ai-center',
-                class: 'p-button-raised',
+                type: 'boolean',
+                label: 'Use Boards',
+                label2: 'Use JQL Query',
+                id: 'queryEnabled',
+                model: 'queryEnabled',
+                onChangeEventHandler: this.jiraMethodChange,
+                validators: [],
+                containerClass: 'p-sm-12',
+                tooltip: ``,
+                disabled: 'false',
                 show: true,
-                clickEventHandler: this.fetchBoards,
-                disabled: this.checkProjectKey
               },
               {
                 type: 'autoComplete',
@@ -883,9 +903,19 @@ export class JiraConfigComponent implements OnInit {
                 filterEventHandler: this.filterBoards,
                 selectEventHandler: this.onBoardSelect,
                 unselectEventHandler: this.onBoardUnselect,
+                dropdownClickHandler: this.fetchBoards,
                 show: true,
                 isLoading: false,
                 disabled: this.checkBoards
+              },
+              {
+                type: 'textarea',
+                label: 'JQL Query',
+                id: 'boardQuery',
+                validators: [],
+                containerClass: 'p-sm-12',
+                disabled: 'queryEnabled',
+                show: true,
               }
             ],
           };
@@ -1788,37 +1818,60 @@ export class JiraConfigComponent implements OnInit {
               this.toolForm.controls[obj].setValue(
                 this.selectedToolConfig[0][obj],
               );
+              this.toolForm.controls[obj].markAsDirty();
             }
           } else {
             if (this.urlParam === 'Jira' || this.urlParam === 'Azure') {
               this.queryEnabled = this.selectedToolConfig[0]['queryEnabled'];
-              this.jiraMethodChange();
+              this.jiraMethodChange(null, self);
             }
           }
         }
         // this.tool['projectId'].disable();
         this.isEdit = true;
       }
+
+      if (self.urlParam === 'Jira') {
+        if(this.isEdit) {
+          this.toolForm.controls['queryEnabled'].disable();
+        }
+      }
     }
   }
 
-  jiraMethodChange(event = null) {
+  jiraMethodChange(event = null, self) {
     this.submitted = false;
     const group = {};
+    if (self.urlParam === 'Jira') {
+      if (event && event.checked) {
+        self.toolForm.controls['boards'].setValue([]);
+        self.toolForm.controls['boards'].clearValidators();
+        self.toolForm.controls['boards'].updateValueAndValidity();
 
-    const formData = {};
-    for (const obj in this.tool) {
-      formData[obj] = this.tool[obj].value;
+        self.toolForm.controls['boardQuery'].setValidators([Validators.required]);
+        self.toolForm.controls['boardQuery'].updateValueAndValidity();
+      } else {
+        self.toolForm.controls['boards'].setValidators([Validators.required]);
+        self.toolForm.controls['boards'].updateValueAndValidity();
+
+        self.toolForm.controls['boardQuery'].clearValidators();
+        self.toolForm.controls['boardQuery'].updateValueAndValidity();
+      }
     }
 
-    // if (this.queryEnabled) {
+    const formData = {};
+    for (const obj in self.tool) {
+      formData[obj] = self.tool[obj].value;
+    }
+
+    // if (self.queryEnabled) {
     //   group['queryEnabled'] = new UntypedFormControl(true);
     //   if (this.urlParam === 'Azure') {
     //     group['apiVersion'] = new UntypedFormControl('', [Validators.required]);
     //   }
     //   group['projectKey'] = new UntypedFormControl('', [Validators.required]);
     //   group['boardQuery'] = new UntypedFormControl('', [Validators.required]);
-    //   this.toolForm = new UntypedFormGroup(group);
+    //   self.toolForm = new UntypedFormGroup(group);
     // } else {
     //   group['queryEnabled'] = new UntypedFormControl(false);
     //   group['projectKey'] = new UntypedFormControl('', [Validators.required]);
@@ -1826,21 +1879,21 @@ export class JiraConfigComponent implements OnInit {
     //   if (this.urlParam === 'Azure') {
     //     group['apiVersion'] = new UntypedFormControl('', [Validators.required]);
     //   }
-    //   this.toolForm = new UntypedFormGroup(group);
+    //   self.toolForm = new UntypedFormGroup(group);
     // }
 
     for (const obj in formData) {
-      if (this.toolForm && this.toolForm.controls[obj]) {
-        this.toolForm.controls[obj].setValue(formData[obj]);
+      if (self.toolForm && self.toolForm.controls[obj]) {
+        self.toolForm.controls[obj].setValue(formData[obj]);
       }
     }
 
-    if (this.selectedToolConfig && this.selectedToolConfig.length) {
-      for (const obj in this.selectedToolConfig[0]) {
+    if (self.selectedToolConfig && self.selectedToolConfig.length) {
+      for (const obj in self.selectedToolConfig[0]) {
         if (obj !== 'queryEnabled') {
-          if (this.toolForm && this.toolForm.controls[obj]) {
-            this.toolForm.controls[obj].setValue(
-              this.selectedToolConfig[0][obj],
+          if (self.toolForm && self.toolForm.controls[obj]) {
+            self.toolForm.controls[obj].setValue(
+              self.selectedToolConfig[0][obj],
             );
           }
         }
