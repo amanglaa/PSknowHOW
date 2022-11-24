@@ -119,6 +119,15 @@
         <p-confirmDialog header="Delete Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
 
         <form [formGroup]="toolForm" autocomplete="off" class="tool-form">
+            <p-messages severity="info" *ngIf="urlParam === 'Jira'">
+                <ng-template pTemplate>
+                    <em class="pi pi-info-circle" style="font-size: 2rem"></em>
+                    <div class="p-ml-2">
+                        The option to chose between Board or JQL can only be done once for a Project configuration.
+                        If the option needs to change i.e from Board to JQL or vice versa, a new project needs to be created.
+                    </div>
+                </ng-template>
+            </p-messages>
             <div class="p-grid p-p-0">
                 <div *ngFor="let form_elem of formTemplate.elements" [ngClass]="form_elem.containerClass">
                     <div [ngSwitch]="form_elem.type">
@@ -141,7 +150,7 @@
                                     tooltipPosition="bottom" tooltipEvent="hover" [escape]="false"
                                     [ngClass]="{ 'p-invalid': submitted && tool[form_elem.id].errors }"
                                     [attr.disabled]="form_elem.disabled ? true : null"
-                                    (focusout)="form_elem.onFocusOut(InputBoxValue.value, selectedConnection)">
+                                    (blur)="form_elem.onFocusOut($event, this)">
                             </ng-container>
                         </div>
                         <div *ngSwitchCase="'autoComplete'" class="p-mb-3 p-autoComplete-custom">
@@ -157,7 +166,8 @@
                                       </span>" tooltipPosition="bottom" tooltipEvent="hover" [escape]="false"
                                     (onUnselect)="form_elem.unselectEventHandler($event)" (onSelect)="form_elem.selectEventHandler($event)"
                                     (onDropdownClick)="form_elem.dropdownClickHandler($event, this)"
-                                    [disabled]="form_elem.disabled()"></p-autoComplete>
+                                    [type]="'search'"
+                                    [disabled]="form_elem.disabled() || this.isLoading"></p-autoComplete>
                             </div>
                         </div>
                         <div *ngSwitchCase="'array'" class="p-mb-3">

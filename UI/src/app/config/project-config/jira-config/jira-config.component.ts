@@ -437,7 +437,7 @@ export class JiraConfigComponent implements OnInit {
   };
 
   checkBoards = () => {
-    if ((!this.boardsData || !this.boardsData.length) || this.queryEnabled) {
+    if (this.queryEnabled) {
       return true;
     }
     return false;
@@ -447,8 +447,8 @@ export class JiraConfigComponent implements OnInit {
     if (self.selectedConnection && self.selectedConnection.id) {
       if (self.toolForm.controls['projectKey'].dirty && self.toolForm.controls['projectKey'].value && self.toolForm.controls['projectKey'].value.length) {
         const postData = {};
-        self.showLoadingOnFormElement('boards');
-        // this.isLoading = true;
+        // self.showLoadingOnFormElement('boards');
+        self.isLoading = true;
         postData['connectionId'] = self.selectedConnection.id;
         postData['projectKey'] = self.toolForm.controls['projectKey'].value;
         postData['boardType'] = self.selectedProject['Type'];
@@ -473,11 +473,12 @@ export class JiraConfigComponent implements OnInit {
             self.boardsData = [];
             self.toolForm.controls['boards'].setValue([]);
           }
-          self.hideLoadingOnFormElement('boards');
+          // self.hideLoadingOnFormElement('boards');
           self.isLoading = false;
         });
       }
     } else {
+      self.toolForm.controls['projectKey'].setValue('');
       self.messenger.add({
         severity: 'error',
         summary:
@@ -867,7 +868,8 @@ export class JiraConfigComponent implements OnInit {
                 show: true,
                 tooltip: `User can get this value from JIRA/AZURE.<br />
                Generally all issues name are started with Project key<br /> <i>
-                Impacted : Jira/Azure Collector and all Kpi</i>`
+                Impacted : Jira/Azure Collector and all Kpi</i>`,
+                onFocusOut: this.projectKeyChanged
               },
               // {
               //   type: 'button',
@@ -903,9 +905,8 @@ export class JiraConfigComponent implements OnInit {
                 filterEventHandler: this.filterBoards,
                 selectEventHandler: this.onBoardSelect,
                 unselectEventHandler: this.onBoardUnselect,
-                dropdownClickHandler: this.fetchBoards,
                 show: true,
-                isLoading: false,
+                isLoading: this.isLoading,
                 disabled: this.checkBoards
               },
               {
@@ -1837,6 +1838,10 @@ export class JiraConfigComponent implements OnInit {
         }
       }
     }
+  }
+
+  projectKeyChanged(event, self) {
+    self.fetchBoards(event, self);
   }
 
   jiraMethodChange(event = null, self) {
