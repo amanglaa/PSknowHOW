@@ -60,11 +60,8 @@ export class JiraConfigComponent implements OnInit {
   sonarCloudVersionList: any[] = [];
   connectionType: any[] = ['Sonar Server', 'Sonar Cloud'];
   selectedConnectionType = '';
-  selectedVersion = '';
   branchList: any[] = [];
   projectKeyList: any[] = [];
-  selectedProjectKey: any;
-  selectedBranch: any;
   disableBranchDropDown = false;
   bambooProjectDataFromAPI: any[] = [];
   bambooBranchDataFromAPI: any[] = [];
@@ -601,7 +598,7 @@ export class JiraConfigComponent implements OnInit {
   };
 
   jobTypeChangeHandler = (value: string, elementId?) => {
-    value = value['name'];
+    value = value['name'] || value;
     switch (this.urlParam) {
       case 'Bamboo':
         if (value.toLowerCase() === 'build') {
@@ -1195,7 +1192,6 @@ export class JiraConfigComponent implements OnInit {
                 containerClass: 'p-sm-6',
                 optionsList: this.sonarVersionFinalList,
                 changeHandler: this.apiVersionHanlder,
-                model: this.selectedVersion,
                 show: true,
                 tooltip: `This property is used in Sonar processor.
               <br /><i>
@@ -1212,7 +1208,6 @@ export class JiraConfigComponent implements OnInit {
                 filterValue: 'true',
                 filterByName: 'name',
                 changeHandler: this.projectKeyClickHandler,
-                model: this.selectedProjectKey,
                 show: true,
                 tooltip: `This property is used in Sonar processor.
               <br /><i>
@@ -1231,7 +1226,6 @@ export class JiraConfigComponent implements OnInit {
                 filterByName: 'name',
                 optionsList: this.branchList,
                 changeHandler: this.branchSelectHandler,
-                model: this.selectedBranch,
                 isLoading: false
               },
             ],
@@ -1931,7 +1925,6 @@ export class JiraConfigComponent implements OnInit {
                 tooltip: `Select status like "Abandoned", "Deprecated" etc so that these can be excluded from Regression automation coverage, In Sprint automation coverage and Test case without story link KPI`,
                 show: true,
                 isLoading: false,
-                // disabled: this.checkBoards
               },
             ],
           };
