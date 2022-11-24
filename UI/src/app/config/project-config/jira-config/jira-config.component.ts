@@ -478,6 +478,7 @@ export class JiraConfigComponent implements OnInit {
         });
       }
     } else {
+      self.toolForm.controls['projectKey'].setValue('');
       self.messenger.add({
         severity: 'error',
         summary:

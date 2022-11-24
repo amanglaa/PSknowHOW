@@ -119,6 +119,15 @@
         <p-confirmDialog header="Delete Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
 
         <form [formGroup]="toolForm" autocomplete="off" class="tool-form">
+            <p-messages severity="info" *ngIf="urlParam === 'Jira'">
+                <ng-template pTemplate>
+                    <em class="pi pi-info-circle" style="font-size: 2rem"></em>
+                    <div class="p-ml-2">
+                        The option to chose between Board or JQL can only be done once for a Project configuration.
+                        If the option needs to change i.e from Board to JQL or vice versa, a new project needs to be created.
+                    </div>
+                </ng-template>
+            </p-messages>
             <div class="p-grid p-p-0">
                 <div *ngFor="let form_elem of formTemplate.elements" [ngClass]="form_elem.containerClass">
                     <div [ngSwitch]="form_elem.type">
