@@ -1964,7 +1964,6 @@ export class JiraConfigComponent implements OnInit {
           }
         }
         if(this.urlParam === 'JiraTest'){
-          this.toolForm.controls['jiraTestCaseType'].setValue(['Test']);
           if(this.toolForm.controls['testAutomatedIdentification']?.value){
             this.changeHandler(this.toolForm.controls['testAutomatedIdentification']?.value, 'testAutomatedIdentification');
           }
