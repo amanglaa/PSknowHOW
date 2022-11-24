@@ -41,6 +41,7 @@ import com.publicissapient.kpidashboard.jira.config.JiraProcessorConfig;
 import com.publicissapient.kpidashboard.jira.model.JiraToolConfig;
 import com.publicissapient.kpidashboard.jira.model.ProjectConfFieldMapping;
 import com.publicissapient.kpidashboard.jira.util.JiraConstants;
+import com.publicissapient.kpidashboard.jira.util.JiraProcessorUtil;
 import io.atlassian.util.concurrent.Promise;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -62,6 +63,10 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
@@ -85,6 +90,7 @@ import static com.atlassian.jira.rest.client.api.IssueRestClient.Expandos.SCHEMA
 @Service
 public class OnlineAdapter implements JiraAdapter {
 
+	private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm";
 	private static final String MSG_JIRA_CLIENT_SETUP_FAILED = "Jira client setup failed. No results obtained. Check your jira setup.";
 	private static final String ERROR_MSG_401 = "Error 401 connecting to JIRA server, your credentials are probably wrong. Note: Ensure you are using JIRA user name not your email address.";
 	private static final String ERROR_MSG_NO_RESULT_WAS_AVAILABLE = "No result was available from Jira unexpectedly - defaulting to blank response. The reason for this fault is the following : {}";
@@ -180,14 +186,102 @@ public class OnlineAdapter implements JiraAdapter {
 		return searchResult;
 	}
 
-	public List<Issue> getEpicIssues(List<String> epicKeyList) {
+	/**
+	 * Gets all issues from JIRA
+	 *
+	 * @param startDateTimeByIssueType
+	 *            map of start dataTime of issue types
+	 * @param userTimeZone
+	 *            user timezone
+	 * @param pageStart
+	 *            page start
+	 * @param dataExist
+	 *            dataExist on db or not
+	 *
+	 * @return list of issues
+	 */
+	@Override
+	public SearchResult getIssues(ProjectConfFieldMapping projectConfig,
+								  Map<String, LocalDateTime> startDateTimeByIssueType, String userTimeZone, int pageStart,
+								  boolean dataExist) {
+		SearchResult searchResult = null;
+
+		if (client == null) {
+			log.warn(MSG_JIRA_CLIENT_SETUP_FAILED);
+		} else if (StringUtils.isEmpty(projectConfig.getProjectToolConfig().getProjectKey()) ||
+				StringUtils.isEmpty(projectConfig.getProjectToolConfig().getBoardQuery())) {
+			log.info("Either Project key is empty or boardQuery not provided. key {} boardquery {}"
+			, projectConfig.getProjectToolConfig().getProjectKey(), projectConfig.getProjectToolConfig().getBoardQuery());
+		} else {
+			StringBuilder query = new StringBuilder("project in (")
+					.append(projectConfig.getProjectToolConfig().getProjectKey()).append(") AND ");
+			try {
+				Map<String, String> startDateTimeStrByIssueType = new HashMap<>();
+
+				startDateTimeByIssueType.forEach((type, localDateTime) -> {
+					ZonedDateTime zonedDateTime = localDateTime.atZone(ZoneId.of(userTimeZone));
+					DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
+					String dateTimeStr = zonedDateTime.format(formatter);
+					startDateTimeStrByIssueType.put(type, dateTimeStr);
+
+				});
+
+				query.append(JiraProcessorUtil.processJql(projectConfig.getJira().getBoardQuery(),
+						startDateTimeStrByIssueType, dataExist));
+				log.info("jql= " + query.toString());
+				Instant start = Instant.now();
+
+				Promise<SearchResult> promisedRs = client.getProcessorSearchClient().searchJql(query.toString(),
+						jiraProcessorConfig.getPageSize(), pageStart, JiraConstants.ISSUE_FIELD_SET);
+				searchResult = promisedRs.claim();
+				Instant finish = Instant.now();
+				long timeElapsed = Duration.between(start, finish).toMillis();
+				log.info("Time taken to fetch the data is {} milliseconds", timeElapsed);
+				if (searchResult != null) {
+					log.info("Processing issues {} - {} out of {}", pageStart,
+							Math.min(pageStart + getPageSize() - 1, searchResult.getTotal()), searchResult.getTotal());
+				}
+			} catch (RestClientException e) {
+				if (e.getStatusCode().isPresent() && e.getStatusCode().get() == 401) {
+					log.error(ERROR_MSG_401);
+				} else {
+					log.info(NO_RESULT_QUERY, query);
+					log.error(ERROR_MSG_NO_RESULT_WAS_AVAILABLE, e.getCause());
+				}
+			}
+
+		}
+
+		return searchResult;
+	}
+
+	public List<Issue> getEpicIssuesQuery(List<String> epicKeyList) {
 		List<Issue> issueList = new ArrayList<>();
+		SearchResult searchResult = null;
 		try {
-			epicKeyList.forEach(epicKey -> {
-				Promise<Issue> promise = client.getCustomIssueClient().
-						getIssue(epicKey, ImmutableList.of(SCHEMA, NAMES, CHANGELOG));
-				issueList.add(promise.claim());
-			});
+			if(CollectionUtils.isNotEmpty(epicKeyList)) {
+				String query = "key in ("+String.join(",",epicKeyList)+")";
+				int pageStart = 0;
+				int totalEpic = 0;
+				int fetchedEpic = 0;
+				do {
+					Promise<SearchResult> promise = client.getSearchClient().searchJql(query,
+							jiraProcessorConfig.getPageSize(), pageStart, null);
+					searchResult = promise.claim();
+					if (searchResult != null) {
+						if (totalEpic == 0) {
+							totalEpic = searchResult.getTotal();
+						}
+						searchResult.getIssues().forEach(issue -> {
+							issueList.add(issue);
+						});
+						fetchedEpic += searchResult.getMaxResults();
+						pageStart += searchResult.getMaxResults() + 1;
+					}
+				} while (totalEpic < fetchedEpic);
+			}else{
+				log.info("No Epic Found to fetch");
+			}
 		} catch (RestClientException e) {
 			log.error("error fetching epic", e.getCause());
 		}
@@ -798,7 +892,7 @@ public class OnlineAdapter implements JiraAdapter {
 		} catch (IOException ioe) {
 			log.error("IOException", ioe);
 		}
-		return getEpicIssues(epicList);
+		return getEpicIssuesQuery(epicList);
 	}
 
 	private boolean populateData(String sprintReportObj, List<String> epicList) {

@@ -29,7 +29,9 @@ import com.publicissapient.kpidashboard.common.model.jira.BoardDetails;
 import com.publicissapient.kpidashboard.common.model.jira.SprintDetails;
 import com.publicissapient.kpidashboard.jira.model.ProjectConfFieldMapping;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 public interface JiraAdapter {
 
@@ -52,6 +54,25 @@ public interface JiraAdapter {
 	 */
 	SearchResult getIssues(BoardDetails boardDetails, ProjectConfFieldMapping projectConfig, String startDateTimeByIssueType,
 						   String userTimeZone, int pageStart, boolean dataExist);
+
+	/**
+	 * Gets all issues from JIRA
+	 *
+	 * @param projectConfig
+	 *            projectConfig Object
+	 * @param startDateTimeByIssueType
+	 *            map of start dataTime of issue types
+	 * @param userTimeZone
+	 *            user timezone
+	 * @param pageStart
+	 *            page start
+	 * @param dataExist
+	 *            data exist in db or not
+	 * @return list of issues
+	 */
+	SearchResult getIssues(ProjectConfFieldMapping projectConfig, Map<String, LocalDateTime> startDateTimeByIssueType,
+						   String userTimeZone, int pageStart, boolean dataExist);
+
 	/**
 	 * Gets page size from feature settings
 	 *
