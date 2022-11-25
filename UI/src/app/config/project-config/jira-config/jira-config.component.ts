@@ -437,7 +437,7 @@ export class JiraConfigComponent implements OnInit {
   };
 
   checkBoards = () => {
-    if (this.queryEnabled) {
+    if (this.queryEnabled || (!this.toolForm.controls['projectKey'].value)) {
       return true;
     }
     return false;
