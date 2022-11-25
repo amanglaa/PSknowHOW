@@ -37,6 +37,7 @@ import com.publicissapient.kpidashboard.apis.model.TreeAggregatorDetail;
 import com.publicissapient.kpidashboard.apis.util.CommonUtils;
 import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
 import com.publicissapient.kpidashboard.common.constant.NormalizedJira;
+import com.publicissapient.kpidashboard.common.constant.ProcessorConstants;
 import com.publicissapient.kpidashboard.common.model.application.DataCount;
 import com.publicissapient.kpidashboard.common.model.application.FieldMapping;
 import com.publicissapient.kpidashboard.common.model.application.ProjectToolConfig;
@@ -78,6 +79,8 @@ public final class AutomationPercentageServiceImpl extends ZephyrKPIService<Doub
     private static final String TOTAL = "Total In-Sprint test cases";
     private static final String DEV = "DeveloperKpi";
     private static final String ISSUE_DATA = "issueData";
+    private static final String TOOL_ZEPHYR = ProcessorConstants.ZEPHYR;
+    private static final String TOOL_JIRA_TEST = ProcessorConstants.JIRA_TEST;
     @Autowired
     private JiraIssueRepository jiraIssueRepository;
     @Autowired
@@ -142,7 +145,10 @@ public final class AutomationPercentageServiceImpl extends ZephyrKPIService<Doub
         Map<ObjectId, FieldMapping> basicProjetWiseConfig = configHelperService.getFieldMappingMap();
         leafNodeList.forEach(leaf -> {
             ObjectId basicProjectConfigId = leaf.getProjectFilter().getBasicProjectConfigId();
-            List<ProjectToolConfig> tools = getAllZephyrTool(toolMap, basicProjectConfigId);
+            List<ProjectToolConfig> zephyrTools = getToolBasedOnTool(toolMap, basicProjectConfigId, TOOL_ZEPHYR);
+
+            List<ProjectToolConfig> jiraTestTools = getToolBasedOnTool(toolMap, basicProjectConfigId, TOOL_JIRA_TEST);
+
 
             Map<String, Object> mapOfProjectFilters = new LinkedHashMap<>();
             Map<String, Object> mapOfFolderPathFilters = new LinkedHashMap<>();
@@ -156,9 +162,9 @@ public final class AutomationPercentageServiceImpl extends ZephyrKPIService<Doub
             mapOfProjectFilters.put(JiraFeature.ISSUE_TYPE.getFieldValueInFeature(),
                     CommonUtils.convertToPatternList(fieldMapping.getJiraTestAutomationIssueType()));
             // if Zephyr scale as a tool is setup with project
-            if (CollectionUtils.isNotEmpty(tools)) {
+            if (CollectionUtils.isNotEmpty(zephyrTools)) {
                 List<String> sprintAutomationFolderPath = new ArrayList<>();
-                tools.forEach(tool -> {
+                zephyrTools.forEach(tool -> {
                     if (CollectionUtils.isNotEmpty(tool.getInSprintAutomationFolderPath())) {
                         sprintAutomationFolderPath.addAll(tool.getInSprintAutomationFolderPath());
                     }
@@ -167,18 +173,21 @@ public final class AutomationPercentageServiceImpl extends ZephyrKPIService<Doub
                     mapOfFolderPathFilters.put(JiraFeature.ATM_TEST_FOLDER.getFieldValueInFeature(),
                             CommonUtils.convertTestFolderToPatternList(sprintAutomationFolderPath));
                 }
-            }
 
-            if (CollectionUtils.isNotEmpty(fieldMapping.getTestCaseStatus())) {
-                mapOfProjectFiltersNotIn.put(JiraFeature.TEST_CASE_STATUS.getFieldValueInFeature(),
-                        CommonUtils.convertTestFolderToPatternList(fieldMapping.getTestCaseStatus()));
+                uniqueProjectMapFolder.put(basicProjectConfigId.toString(), mapOfFolderPathFilters);
             }
-
             // if Zephyr squad as a jira plguin is setup with project
-            uniqueProjectMapFolder.put(basicProjectConfigId.toString(), mapOfFolderPathFilters);
+			if (CollectionUtils.isNotEmpty(jiraTestTools)) {
+				jiraTestTools.forEach(tool -> {
+					if (CollectionUtils.isNotEmpty(tool.getTestCaseStatus())) {
+						mapOfProjectFiltersNotIn.put(JiraFeature.TEST_CASE_STATUS.getFieldValueInFeature(),
+								CommonUtils.convertTestFolderToPatternList(tool.getTestCaseStatus()));
+					}
+				});
+				uniqueProjectMapNotIn.put(basicProjectConfigId.toString(), mapOfProjectFiltersNotIn);
+			}
 
             uniqueProjectMap.put(basicProjectConfigId.toString(), mapOfProjectFilters);
-            uniqueProjectMapNotIn.put(basicProjectConfigId.toString(), mapOfProjectFiltersNotIn);
 
         });
         // additional filter

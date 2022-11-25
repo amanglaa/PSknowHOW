@@ -87,7 +87,9 @@ public abstract class ZephyrKPIService<R, S, T> extends ToolsKPIService<R, S> im
 	@Autowired
 	private ConfigHelperService configHelperService;
 
-	private static final String TOOL_NAME = ProcessorConstants.ZEPHYR;
+	private static final String TOOL_ZEPHYR = ProcessorConstants.ZEPHYR;
+	
+	private static final String TOOL_JIRA_TEST = ProcessorConstants.JIRA_TEST;
 	private static final String TESTCASEKEY = "testCaseData";
 	private static final String AUTOMATED_TESTCASE_KEY = "automatedTestCaseData";
 
@@ -231,12 +233,12 @@ public abstract class ZephyrKPIService<R, S, T> extends ToolsKPIService<R, S> im
 	 * @return List of ProjectToolConfig
 	 */
 
-	public List<ProjectToolConfig> getAllZephyrTool(Map<ObjectId, Map<String, List<ProjectToolConfig>>> toolMap,
-			ObjectId basicProjectConfId) {
+	public List<ProjectToolConfig> getToolBasedOnTool(Map<ObjectId, Map<String, List<ProjectToolConfig>>> toolMap,
+			ObjectId basicProjectConfId , String toolName) {
 		List<ProjectToolConfig> tools = new ArrayList<>();
 		if (MapUtils.isNotEmpty(toolMap) && toolMap.get(basicProjectConfId) != null
-				&& toolMap.get(basicProjectConfId).containsKey(TOOL_NAME)) {
-			List<ProjectToolConfig> tool = toolMap.get(basicProjectConfId).get(TOOL_NAME);
+				&& toolMap.get(basicProjectConfId).containsKey(toolName)) {
+			List<ProjectToolConfig> tool = toolMap.get(basicProjectConfId).get(toolName);
 			tools.addAll(tool);
 		}
 		return tools;
@@ -257,26 +259,26 @@ public abstract class ZephyrKPIService<R, S, T> extends ToolsKPIService<R, S> im
 		List<String> basicProjectConfigIds = new ArrayList<>();
 		Map<ObjectId, Map<String, List<ProjectToolConfig>>> toolMap = (Map<ObjectId, Map<String, List<ProjectToolConfig>>>) cacheService
 				.cacheProjectToolConfigMapData();
-		Map<ObjectId, FieldMapping> basicProjetWiseConfig = configHelperService.getFieldMappingMap();
 		leafNodeList.forEach(leaf -> {
 			ObjectId basicProjectConfigId = leaf.getProjectFilter().getBasicProjectConfigId();
 			Map<String, Object> mapOfProjectFilters = new LinkedHashMap<>();
 			Map<String, Object> mapOfProjectFiltersNotIn = new LinkedHashMap<>();
 			basicProjectConfigIds.add(basicProjectConfigId.toString());
 
-			FieldMapping fieldMapping = basicProjetWiseConfig.get(basicProjectConfigId);
+			List<ProjectToolConfig> zephyrTools = getToolBasedOnTool(toolMap, basicProjectConfigId, TOOL_ZEPHYR);
 
-			List<ProjectToolConfig> tools = getAllZephyrTool(toolMap, basicProjectConfigId);
+			List<ProjectToolConfig> jiraTestTools = getToolBasedOnTool(toolMap, basicProjectConfigId, TOOL_JIRA_TEST);
 
 			List<String> regressionLabels = new ArrayList<>();
 			List<String> regressionAutomationFolderPath = new ArrayList<>();
 			// if Zephyr scale as a tool is setup with project
-			if (CollectionUtils.isNotEmpty(tools)) {
-				setZephyrScaleConfig(tools, regressionLabels, regressionAutomationFolderPath);
-
-			} else {
-				setZephyrSquadConfig(fieldMapping, regressionLabels, regressionAutomationFolderPath);
+			if (CollectionUtils.isNotEmpty(zephyrTools)) {
+				setZephyrScaleConfig(zephyrTools, regressionLabels, regressionAutomationFolderPath);
 			}
+			if (CollectionUtils.isNotEmpty(jiraTestTools)) {
+				setZephyrSquadConfig(jiraTestTools, regressionLabels, mapOfProjectFiltersNotIn);
+			}
+
 			if (CollectionUtils.isNotEmpty(regressionLabels)) {
 				mapOfProjectFilters.put(JiraFeature.LABELS.getFieldValueInFeature(),
 						CommonUtils.convertToPatternList(regressionLabels));
@@ -284,11 +286,6 @@ public abstract class ZephyrKPIService<R, S, T> extends ToolsKPIService<R, S> im
 			if (CollectionUtils.isNotEmpty(regressionAutomationFolderPath)) {
 				mapOfProjectFilters.put(JiraFeature.ATM_TEST_FOLDER.getFieldValueInFeature(),
 						CommonUtils.convertTestFolderToPatternList(regressionAutomationFolderPath));
-			}
-
-			if (CollectionUtils.isNotEmpty(fieldMapping.getTestCaseStatus())) {
-				mapOfProjectFiltersNotIn.put(JiraFeature.TEST_CASE_STATUS.getFieldValueInFeature(),
-						CommonUtils.convertTestFolderToPatternList(fieldMapping.getTestCaseStatus()));
 			}
 
 			uniqueProjectMap.put(basicProjectConfigId.toString(), mapOfProjectFilters);
@@ -339,19 +336,23 @@ public abstract class ZephyrKPIService<R, S, T> extends ToolsKPIService<R, S> im
 	}
 
 	/**
-	 * @param fieldMapping
+	 * @param jiraTestTools
 	 * @param regressionLabels
+	 * @param mapOfProjectFiltersNotIn
 	 */
-	public void setZephyrSquadConfig(FieldMapping fieldMapping, List<String> regressionLabels,
-			List<String> automationFolderPath) {
-		if (CollectionUtils.isNotEmpty(fieldMapping.getJiraRegressionTestValue())) {
-			regressionLabels.addAll(fieldMapping.getJiraRegressionTestValue());
-		}
-		if (CollectionUtils.isNotEmpty(fieldMapping.getTestRegressionValue())) {
-			regressionLabels.addAll(fieldMapping.getTestRegressionValue());
-		}
-		if (CollectionUtils.isNotEmpty(fieldMapping.getRegressionAutomationFolderPath())) {
-			automationFolderPath.addAll(fieldMapping.getRegressionAutomationFolderPath());
-		}
+	public void setZephyrSquadConfig(List<ProjectToolConfig> jiraTestTools, List<String> regressionLabels
+			, Map<String, Object> mapOfProjectFiltersNotIn) {
+		jiraTestTools.forEach(tool -> {
+			if (CollectionUtils.isNotEmpty(tool.getJiraRegressionTestValue())) {
+				regressionLabels.addAll(tool.getJiraRegressionTestValue());
+			}
+			if (CollectionUtils.isNotEmpty(tool.getJiraRegressionTestValue())) {
+				regressionLabels.addAll(tool.getJiraRegressionTestValue());
+			}
+			if (CollectionUtils.isNotEmpty(tool.getTestCaseStatus())) {
+				mapOfProjectFiltersNotIn.put(JiraFeature.TEST_CASE_STATUS.getFieldValueInFeature(),
+						CommonUtils.convertTestFolderToPatternList(tool.getTestCaseStatus()));
+			}
+		});
 	}
 }

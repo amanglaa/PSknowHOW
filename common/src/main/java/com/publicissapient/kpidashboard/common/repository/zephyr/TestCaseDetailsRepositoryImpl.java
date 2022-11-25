@@ -185,7 +185,7 @@ public class TestCaseDetailsRepositoryImpl implements TestCaseDetailsRepositoryC
 		Query query = new Query(criteria);
 		if (!CollectionUtils.isEmpty(projectCriteriaList)) {
 			Criteria criteriaAggregatedAtProjectLevel = new Criteria()
-					.orOperator(projectCriteriaList.toArray(new Criteria[0]));
+					.andOperator(projectCriteriaList.toArray(new Criteria[0]));
 			Criteria criteriaProjectLevelAdded = new Criteria().andOperator(criteria, criteriaAggregatedAtProjectLevel);
 
 			query = new Query(criteriaProjectLevelAdded);
