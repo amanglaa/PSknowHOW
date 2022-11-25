@@ -168,7 +168,7 @@ public class EstimateVsActualServiceImpl extends JiraKPIService<Integer, List<Ob
 					IterationKpiModalColoumn iterationKpiModalColoumn = new IterationKpiModalColoumn(
 							jiraIssue.getNumber(), jiraIssue.getUrl());
 					IterationKpiModalValue iterationKpiModalValue = new IterationKpiModalValue(iterationKpiModalColoumn,
-							jiraIssue.getName());
+							jiraIssue.getName(), jiraIssue.getStatus(), jiraIssue.getTypeName());
 					modalValues.add(iterationKpiModalValue);
 					overAllmodalValues.add(iterationKpiModalValue);
 
@@ -207,7 +207,8 @@ public class EstimateVsActualServiceImpl extends JiraKPIService<Integer, List<Ob
 			IterationKpiFiltersOptions filter1 = new IterationKpiFiltersOptions(SEARCH_BY_ISSUE_TYPE, issueTypes);
 			IterationKpiFilters iterationKpiFilters = new IterationKpiFilters(filter1, null);
 			// Modal Heads Options
-			List<String> modalHeads = Arrays.asList(MODAL_HEAD_ISSUE_ID, MODAL_HEAD_ISSUE_DESC);
+			List<String> modalHeads = Arrays.asList(MODAL_HEAD_ISSUE_ID, MODAL_HEAD_ISSUE_DESC, CommonConstant.MODAL_HEAD_ISSUE_STATUS,
+					CommonConstant.MODAL_HEAD_ISSUE_TYPE);
 			trendValue.setValue(iterationKpiValues);
 			kpiElement.setFilters(iterationKpiFilters);
 			kpiElement.setSprint(latestSprint.getName());

@@ -93,6 +93,11 @@ public class OfflineAdapter implements JiraAdapter {
     }
 
     @Override
+    public SearchResult getIssues(ProjectConfFieldMapping projectConfig, Map<String, LocalDateTime> startDateTimeByIssueType, String userTimeZone, int pageStart, boolean dataExist) {
+        return null;
+    }
+
+    @Override
 	public List<Field> getField() {
     	return new ArrayList<>();
 	}
