@@ -1828,6 +1828,7 @@ export class JiraConfigComponent implements OnInit {
                 checked: true
               };
               this.jiraMethodChange(fakeEvent, self);
+              
             }
           }
         }
