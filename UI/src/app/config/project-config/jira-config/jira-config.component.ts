@@ -2094,8 +2094,6 @@ export class JiraConfigComponent implements OnInit {
   save() {
     this.submitted = true;
     // return if form is invalid
-    console.log(this.toolForm.valid, this.selectedConnection);
-    
     if (this.toolForm.invalid || !this.selectedConnection) { 
       this.messenger.add({
         severity: 'error',
