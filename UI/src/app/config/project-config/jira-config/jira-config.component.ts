@@ -437,7 +437,7 @@ export class JiraConfigComponent implements OnInit {
   };
 
   checkBoards = () => {
-    if (this.queryEnabled) {
+    if (this.queryEnabled || (!this.toolForm.controls['projectKey'].value)) {
       return true;
     }
     return false;
@@ -1824,7 +1824,10 @@ export class JiraConfigComponent implements OnInit {
           } else {
             if (this.urlParam === 'Jira' || this.urlParam === 'Azure') {
               this.queryEnabled = this.selectedToolConfig[0]['queryEnabled'];
-              this.jiraMethodChange(null, self);
+              const fakeEvent = {
+                checked: true
+              };
+              this.jiraMethodChange(fakeEvent, self);
             }
           }
         }
