@@ -31,7 +31,6 @@ public final class CommonConstant {
 	public static final String GITLAB_KPI_CACHE = "gitLabKpiCache";
 	public static final String JENKINS_KPI_CACHE = "jenkinsKpiCache";
 	public static final String TESTING_KPI_CACHE = "testingKpiCache";
-	public static final String ZEPHYR_KPI_CACHE = "zephyrKpiCache"; // needed to deleted
 	public static final String JIRAKANBAN_KPI_CACHE = "jiraKanbanKpiCache";
 	public static final String CACHE_ACCOUNT_HIERARCHY = "accountHierarchy";
 	public static final String CACHE_ACCOUNT_HIERARCHY_KANBAN = "accountHierarchyKanban";

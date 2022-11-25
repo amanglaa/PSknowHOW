@@ -37,6 +37,7 @@ import com.publicissapient.kpidashboard.apis.model.TreeAggregatorDetail;
 import com.publicissapient.kpidashboard.apis.util.CommonUtils;
 import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
 import com.publicissapient.kpidashboard.common.constant.NormalizedJira;
+import com.publicissapient.kpidashboard.common.constant.ProcessorConstants;
 import com.publicissapient.kpidashboard.common.model.application.DataCount;
 import com.publicissapient.kpidashboard.common.model.application.FieldMapping;
 import com.publicissapient.kpidashboard.common.model.application.ProjectToolConfig;
@@ -68,6 +69,8 @@ public class TestWithoutStoryServiceImpl extends ZephyrKPIService<Double, List<O
 	private static final String TEST_TITLE = "Test Cases without any story link";
 	private static final String STORY_LIST = "stories";
 	private static final String TOTAL_TEST_CASES = "Total Test Cases";
+	private static final String TOOL_ZEPHYR = ProcessorConstants.ZEPHYR;
+	private static final String TOOL_JIRA_TEST = ProcessorConstants.JIRA_TEST;
 	@Autowired
 	private JiraIssueRepository jiraIssueRepository;
 	@Autowired
@@ -126,16 +129,20 @@ public class TestWithoutStoryServiceImpl extends ZephyrKPIService<Double, List<O
 			List<String> regressionLabels = new ArrayList<>();
 			List<String> sprintAutomationFolderPath = new ArrayList<>();
 			basicProjectConfigIds.add(basicProjectConfigId.toString());
-			List<ProjectToolConfig> tools = getAllZephyrTool(toolMap, basicProjectConfigId);
+			List<ProjectToolConfig> zephyrTools = getToolBasedOnTool(toolMap, basicProjectConfigId, TOOL_ZEPHYR);
+
+			List<ProjectToolConfig> jiraTestTools = getToolBasedOnTool(toolMap, basicProjectConfigId, TOOL_JIRA_TEST);
+
 			FieldMapping fieldMapping = basicProjetWiseConfig.get(basicProjectConfigId);
 			Map<String, Object> mapOfProjectFilters = new LinkedHashMap<>();
 			Map<String, Object> mapOfStoriesFilter = new LinkedHashMap<>();
 			Map<String, Object> mapOfProjectFiltersNotIn = new LinkedHashMap<>();
 
-			if (CollectionUtils.isNotEmpty(tools)) {
-				setZephyrScaleConfig(tools, regressionLabels, sprintAutomationFolderPath);
-			} else {
-				setZephyrSquadConfig(fieldMapping, regressionLabels, sprintAutomationFolderPath);
+			if (CollectionUtils.isNotEmpty(zephyrTools)) {
+				setZephyrScaleConfig(zephyrTools, regressionLabels, sprintAutomationFolderPath);
+			}
+			if (CollectionUtils.isNotEmpty(jiraTestTools)){
+				setZephyrSquadConfig(jiraTestTools, regressionLabels, mapOfProjectFiltersNotIn);
 			}
 			mapOfProjectFilters.put(JiraFeature.LABELS.getFieldValueInFeature(), Arrays.asList("Regression"));
 			if (CollectionUtils.isNotEmpty(regressionLabels)) {
@@ -143,10 +150,6 @@ public class TestWithoutStoryServiceImpl extends ZephyrKPIService<Double, List<O
 						CommonUtils.convertToPatternList(regressionLabels));
 			}
 
-			if (CollectionUtils.isNotEmpty(fieldMapping.getTestCaseStatus())) {
-				mapOfProjectFiltersNotIn.put(JiraFeature.TEST_CASE_STATUS.getFieldValueInFeature(),
-						CommonUtils.convertTestFolderToPatternList(fieldMapping.getTestCaseStatus()));
-			}
 			if (MapUtils.isNotEmpty(mapOfProjectFiltersNotIn)) {
 				uniqueProjectMapNotIn.put(basicProjectConfigId.toString(), mapOfProjectFiltersNotIn);
 			}
