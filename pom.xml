@@ -96,6 +96,7 @@
             <modules>
                 <module>common</module>
                 <module>processors/zephyr</module>
+                <module>processors/jiratest</module>
                 <module>processors/bitbucket</module>
                 <module>processors/gitlab</module>
                 <module>processors/github</module>
