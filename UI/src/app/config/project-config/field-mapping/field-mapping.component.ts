@@ -425,10 +425,6 @@ export class FieldMappingComponent implements OnInit {
       jiraFTPRStoryIdentification: [[]],
       jiraSprintCapacityIssueType: [[]],
       jiraIssueEpicType: [[]],
-      // tech debt mapping
-      jiraTechDebtIdentification: [''],
-      jiraTechDebtValue: [[]],
-      jiraTechDebtCustomField: [''],
       // custom field mapping
       sprintName: [''],
       rootCause: [''],

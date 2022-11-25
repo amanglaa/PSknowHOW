@@ -21,10 +21,16 @@ package com.publicissapient.kpidashboard.apis.projectconfig.fieldmapping.service
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import com.publicissapient.kpidashboard.common.constant.ProcessorConstants;
+import com.publicissapient.kpidashboard.common.model.ProcessorExecutionTraceLog;
+import com.publicissapient.kpidashboard.common.repository.tracelog.ProcessorExecutionTraceLogRepository;
+import com.publicissapient.kpidashboard.common.service.ProcessorExecutionTraceLogService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
@@ -76,7 +82,7 @@ public class FieldMappingServiceImpl implements FieldMappingService {
 	private UserAuthorizedProjectsService authorizedProjectsService;
 
 	@Autowired
-	private JiraIssueRepository jiraIssueRepository;
+	private ProcessorExecutionTraceLogRepository processorExecutionTraceLogRepository;
 
 	@Autowired
 	private KanbanJiraIssueRepository kanbanJiraIssueRepository;
@@ -304,16 +310,22 @@ public class FieldMappingServiceImpl implements FieldMappingService {
 	private void updateJiraData(ObjectId basicProjectConfigId, FieldMapping fieldMapping,
 			FieldMapping existingFieldMapping) {
 		Optional<ProjectBasicConfig> projectBasicConfigOpt = projectBasicConfigRepository.findById(basicProjectConfigId);
-		List<String> fieldsToUnset = new ArrayList<>();
-		fieldsToUnset.add(JiraFeature.CHANGE_DATE.getFieldValueInFeature());
 		if(projectBasicConfigOpt.isPresent()) {
 			ProjectBasicConfig projectBasicConfig=projectBasicConfigOpt.get();
-		if (!projectBasicConfig.getIsKanban() && isMappingUpdated(fieldMapping, existingFieldMapping)) {
-			jiraIssueRepository.updateByBasicProjectConfigId(basicProjectConfigId.toString(), fieldsToUnset);
-		}
-		if (projectBasicConfig.getIsKanban() && isKanbanMappingUpdated(fieldMapping, existingFieldMapping)) {
-			kanbanJiraIssueRepository.updateByBasicProjectConfigId(basicProjectConfigId.toString(), fieldsToUnset);
-		}
+			if ((!projectBasicConfig.getIsKanban() && isMappingUpdated(fieldMapping, existingFieldMapping)) ||
+					(projectBasicConfig.getIsKanban() && isKanbanMappingUpdated(fieldMapping, existingFieldMapping))) {
+				Optional<ProcessorExecutionTraceLog> traceLogs = processorExecutionTraceLogRepository
+						.findByProcessorNameAndBasicProjectConfigId(ProcessorConstants.JIRA,
+								basicProjectConfigId.toHexString());
+				ProcessorExecutionTraceLog processorExecutionTraceLog = null;
+
+				if (traceLogs.isPresent()) {
+					processorExecutionTraceLog = traceLogs.get();
+					processorExecutionTraceLog.setLastSuccessfulRun(null);
+					processorExecutionTraceLog.setLastSavedEntryUpdatedDateByType(new HashMap<>());
+					processorExecutionTraceLogRepository.save(processorExecutionTraceLog);
+				}
+			}
 		}
 	}
 

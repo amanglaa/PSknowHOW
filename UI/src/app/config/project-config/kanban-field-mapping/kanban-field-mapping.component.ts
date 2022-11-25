@@ -373,11 +373,6 @@ export class KanbanFieldMappingComponent implements OnInit {
       estimationCriteria: [''],
       storyPointToHourMapping: [''],
 
-      // tech debt mapping
-      jiraTechDebtIdentification: [''],
-      jiraTechDebtValue: [[]],
-      jiraTechDebtCustomField: [''],
-
       // test case mapping
       testAutomatedIdentification: [''],
       testAutomationCompletedIdentification: [''],
