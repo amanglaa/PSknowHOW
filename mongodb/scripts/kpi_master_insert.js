@@ -1237,11 +1237,25 @@ db.getCollection('kpi_master').insert(
           "lhs": "Sprint Predictability for a sprint",
           "operator": "division",
           "operands": [
-            "sprint velocity in last sprint.",
-            "sprint velocity in last 3 sprint"
+            "sprint velocity in current sprint.",
+            "sprint velocity in previous 3 sprint"
           ]
         }
-      ]
+      ],
+      "details": [
+              {
+                "type": "paragraph",
+                "value": "If previous 3 sprints are not available, then Predictability of targeted sprint will be 100"
+              },
+              {
+                "type": "paragraph",
+                "value": "If only previous 2 sprints are available, then it is calculating average of 2 sprints"
+              },
+              {
+                "type": "paragraph",
+                "value": "If only one previous sprint is available, then it is calculating as targeted sprint velocity divided by previous sprint velocity"
+              }
+            ]
     },
     "xAxisLabel": "Sprints",
     "yAxisLabel": "Percentage",
