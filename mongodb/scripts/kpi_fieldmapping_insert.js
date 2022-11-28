@@ -195,7 +195,7 @@ db.getCollection('kpi_fieldmapping').insert(
         kpiName: 'Value delivered (Cost of Delay)',
 		kpiSource: 'Jira',
         type: ['Scrum'],
-        fieldNames : { }
+        fieldNames : {'Custom Fields Mapping' : ['epicCostOfDelay'] }
       },
 	  {
         kpiId: 'kpi5',
@@ -271,7 +271,7 @@ db.getCollection('kpi_fieldmapping').insert(
         type: ['Kanban'],
 		kpiSource: 'Jira',
         kpiName: 'Value delivered (Cost of Delay)',
-        fieldNames : { }
+        fieldNames : {'Custom Fields Mapping' : ['epicCostOfDelay'] }
       },
       {
         kpiId: 'kpi74',
