@@ -1992,9 +1992,10 @@ export class JiraConfigComponent implements OnInit {
             if (this.urlParam === 'Jira' || this.urlParam === 'Azure') {
               this.queryEnabled = this.selectedToolConfig[0]['queryEnabled'];
               const fakeEvent = {
-                checked: true
+                checked: this.queryEnabled
               };
               this.jiraMethodChange(fakeEvent, self);
+
             }
           }
         }
