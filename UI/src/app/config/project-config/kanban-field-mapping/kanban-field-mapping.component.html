@@ -739,78 +739,71 @@
                                  Example: SQUAD <hr>
                                  KPI Impacted: 
                                  Filters
-                              </span>' tooltipPosition="top" tooltipEvent="hover" [escape]="false" tooltipPosition="top"></span></label>
-                            <div [style]="{'width':'calc(60vw + 42px)'}">
-                                <div class="p-d-flex p-align-center p-w-100">
-                                    <div class="p-w-100">
-                                        <p-dropdown id="additionalFilterIdentifier" [options]="additionalFilterOptions" placeholder="Select"
-                                            [(ngModel)]="additionalFilterIdentifier" [ngModelOptions]="{standalone: true}"
-                                            [style]="{'width':'100%', 'max-width': '100%','border-bottom-right-radius':'0px','border-top-right-radius':'0px'}"
-                                            optionLabel="name" (onChange)="disableAdditionalFilterAdd=false">
-                                        </p-dropdown>
+                              </span>' tooltipPosition="top" tooltipEvent="hover" [escape]="false"
+                            tooltipPosition="top"></span></label>
+                    <div [style]="{'width':'calc(60vw + 42px)'}">
+                        <div class="p-d-flex p-align-center p-w-100">
+                            <div class="p-w-100">
+                                <p-dropdown id="additionalFilterIdentifier" [options]="additionalFilterOptions"
+                                    placeholder="Select" [(ngModel)]="additionalFilterIdentifier"
+                                    [ngModelOptions]="{standalone: true}"
+                                    [style]="{'width':'100%', 'max-width': '100%','border-bottom-right-radius':'0px','border-top-right-radius':'0px'}"
+                                    optionLabel="name" (onChange)="disableAdditionalFilterAdd=false">
+                                </p-dropdown>
+                            </div>
+                            <div>
+                                <p-button pRipple label="Add" class="p-button-raised configure-btn p-mt-1"
+                                    [style]="{'padding':'15px','border-top-left-radius': '0px','border-bottom-left-radius': '0px'}"
+                                    (click)="addAdditionalFilterMappings()" [disabled]="disableAdditionalFilterAdd"></p-button>
+                            </div>
+                        </div>
+
+
+                        <div class="p-p-2 p-mt-2 position-relative additional-fields-container"
+                            *ngFor="let filter of additionalFiltersArray">
+                            <div class="">
+                                <!--Additional Filter Identifier dropdown with three values ["Component", "CustomField", "Labels"]-->
+                                <div class="p-m-2">
+                                    <div class="p-d-flex">
+                                        <label class="field-title">{{ filter.name }} Identifier </label>
+                                        <div class="">
+                                            <button pButton pRipple type="button" icon="pi pi-times"
+                                                class="p-button p-button-secondary p-button-close"
+                                                (click)="removeAdditionFilterMapping(filter)"></button>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <p-button pRipple label="Add" class="p-button-raised configure-btn p-mt-1"
-                                            [style]="{'padding':'15px','border-top-left-radius': '0px','border-bottom-left-radius': '0px'}"
-                                            (click)="addAdditionalFilterMappings()"  [disabled]="disableAdditionalFilterAdd"></p-button>
+                                    <div class="p-d-flex p-justify-between">
+                                        <div class="p-inputgroup">
+                                            <ng-container
+                                                *ngFor="let additionalFilter of additionalFilterIdentificationOptions">
+                                                <p-radioButton placeholder="Select"
+                                                    formControlName="{{ filter.code + 'Identifier'}}"
+                                                    value="{{additionalFilter.value}}"
+                                                    label="{{additionalFilter.value}}" class="p-m-2"
+                                                    (onClick)="changeControl($event)">
+                                                </p-radioButton>
+                                            </ng-container>
+                                        </div>
+                                        <button pButton pRipple type="button" label="Reset" class="p-button-raised"
+                                            (click)="resetRadioButton(filter.code + 'Identifier')"></button>
                                     </div>
                                 </div>
-                            
-                    
-                                <div class="p-p-2 p-mt-2 position-relative additional-fields-container" *ngFor="let filter of additionalFiltersArray">
-                                    <div class="">
-                                        <!--Additional Filter Identifier dropdown with three values ["Component", "CustomField", "Labels"]-->
-                                        <div class="p-m-2">
-                                            <div class="p-d-flex">
-                                                <label class="field-title">{{ filter.name }} Identifier </label>
-                                                <div class="">
-                                                    <button pButton pRipple type="button" icon="pi pi-times"
-                                                        class="p-button p-button-secondary p-button-close"
-                                                        (click)="removeAdditionFilterMapping(filter)"></button>
-                                                </div>
-                                            </div>
-                                            <div class="p-d-flex p-justify-between">
-                                            <div class="p-inputgroup">
-                                                <ng-container *ngFor="let additionalFilter of additionalFilterIdentificationOptions">
-                                                    <p-radioButton placeholder="Select" formControlName="{{ filter.code + 'Identifier'}}"
-                                                        value="{{additionalFilter.value}}" label="{{additionalFilter.value}}" class="p-m-2"
-                                                        (onClick)="changeControl($event, filter)">
-                                                    </p-radioButton>
-                                                </ng-container>
-                                            </div>
-                                            <button pButton pRipple type="button" label="Reset" class="p-button-raised" (click)="resetRadioButton(filter.code + 'Identifier')"></button>
-                                        </div>
-                                        </div>
-                                        <!-- Single value text input for Custom Field-->
-                                        <!-- -->
-                                        <div class="p-m-2" *ngIf="fieldMapping[ filter.code + 'Identifier'].value === 'CustomField'">
-                                            <label class="field-title">{{fieldMapping[filter.code + 'Identifier'].value}}</label>
-                                            <div class="p-inputgroup p-mt-2">
-                                                <input type="text" pInputText id="{{filter.code + 'IdentSingleValue'}}"
-                                                    formControlName="{{filter.code + 'IdentSingleValue'}}"
-                                                    placeholder="Enter {{fieldMapping[filter.code + 'Identifier'].value}}"
-                                                    [style]="{'width':'100%','max-width':'100%'}">
-                                                <button [hidden]="fieldMapping[filter.code + 'Identifier'].value !== 'CustomField'"
-                                                    type="button" pButton pRipple icon="pi pi-search"
-                                                    (click)="showDialogToAddValue(true, filter.code + 'IdentSingleValue' , 'fields')">
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <!-- Multivalue field for Component and Labels-->
-                                        <!--  -->
-                                        <div class="p-m-2"
-                                            *ngIf="fieldMapping[ filter.code + 'Identifier'].value === 'Labels' || fieldMapping[filter.code + 'Identifier'].value === 'Component'">
-                                            <label class="field-title">{{fieldMapping[filter.code + 'Identifier'].value}}</label>
-                                            <div class="p-mt-2">
-                                                <p-chips [style]="{'width':'100%','max-width':'100%','display':'block'}"
-                                                    inputId="{{ filter.code + 'IdentMultiValue' }}"
-                                                    formControlName="{{ filter.code + 'IdentMultiValue' }}"
-                                                    placeholder="Enter {{fieldMapping[filter.code + 'Identifier'].value}}" addOnBlur="true"
-                                                    pTooltip='' tooltipPosition="top" tooltipEvent ="hover" tooltipStyleClass="tooltiptext" [escape]="false">
-                                                </p-chips>
-                                            </div>
-                                        </div>
-                    
+                                <!-- Single value text input for Custom Field-->
+                                <!-- -->
+                                <div class="p-m-2"
+                                    *ngIf="fieldMapping[ filter.code + 'Identifier'].value === 'CustomField'">
+                                    <label class="field-title">{{fieldMapping[filter.code +
+                                        'Identifier'].value}}</label>
+                                    <div class="p-inputgroup p-mt-2">
+                                        <input type="text" pInputText id="{{filter.code + 'IdentSingleValue'}}"
+                                            formControlName="{{filter.code + 'IdentSingleValue'}}"
+                                            placeholder="Enter {{fieldMapping[filter.code + 'Identifier'].value}}"
+                                            [style]="{'width':'100%','max-width':'100%'}">
+                                        <button
+                                            [hidden]="fieldMapping[filter.code + 'Identifier'].value !== 'CustomField'"
+                                            type="button" pButton pRipple icon="pi pi-search"
+                                            (click)="showDialogToAddValue(true, filter.code + 'IdentSingleValue' , 'fields')">
+                                        </button>
                                     </div>
                                 </div>
                                 <!-- Multivalue field for Component and Labels-->
