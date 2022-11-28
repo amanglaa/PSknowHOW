@@ -146,7 +146,7 @@ public class KanbanJiraIssueClientImpl extends JiraIssueClient {
 		setStartDate(jiraProcessorConfig);
 		ProcessorExecutionTraceLog processorExecutionTraceLog = createTraceLog(
 				projectConfig.getBasicProjectConfigId().toHexString());
-
+		boolean processorFetchingComplete = false;
 		try {
 			boolean dataExist = (kanbanJiraRepo
 					.findTopByBasicProjectConfigId(projectConfig.getBasicProjectConfigId().toString()) != null);
@@ -188,11 +188,12 @@ public class KanbanJiraIssueClientImpl extends JiraIssueClient {
 				List<Issue> epicIssue = jiraAdapter.getEpic(projectConfig,board.getBoardId());
 				saveJiraIssueDetails(epicIssue, projectConfig);
 			}
+			processorFetchingComplete = true;
 		} catch (JSONException e) {
 			log.error("JIRA Processor | Error while updating Story information in kanban client", e);
 			lastSavedKanbanJiraIssueChangedDateByType.clear();
 		} finally {
-			boolean isAttemptSuccess = isAttemptSuccess(total, savedIsuesCount);
+			boolean isAttemptSuccess = isAttemptSuccess(total, savedIsuesCount, processorFetchingComplete);
 			if (!isAttemptSuccess) {
 				processorExecutionTraceLog.setLastSuccessfulRun(null);
 				lastSavedKanbanJiraIssueChangedDateByType.clear();
@@ -213,7 +214,7 @@ public class KanbanJiraIssueClientImpl extends JiraIssueClient {
 		setStartDate(jiraProcessorConfig);
 		ProcessorExecutionTraceLog processorExecutionTraceLog = createTraceLog(
 				projectConfig.getBasicProjectConfigId().toHexString());
-
+		boolean processorFetchingComplete = false;
 		try {
 
 			boolean dataExist = (kanbanJiraRepo
@@ -257,11 +258,12 @@ public class KanbanJiraIssueClientImpl extends JiraIssueClient {
 					break;
 				}
 			}
+			processorFetchingComplete = true;
 		} catch (JSONException e) {
 			log.error("JIRA Processor | Error while updating Story information in kanban client", e);
 			lastSavedKanbanJiraIssueChangedDateByType.clear();
 		} finally {
-			boolean isAttemptSuccess = isAttemptSuccess(total, savedIsuesCount);
+			boolean isAttemptSuccess = isAttemptSuccess(total, savedIsuesCount, processorFetchingComplete);
 			if (!isAttemptSuccess) {
 				processorExecutionTraceLog.setLastSuccessfulRun(null);
 				lastSavedKanbanJiraIssueChangedDateByType.clear();
@@ -363,8 +365,8 @@ public class KanbanJiraIssueClientImpl extends JiraIssueClient {
 		return capturedDate;
 	}
 
-	private boolean isAttemptSuccess(int total, int savedCount) {
-		return savedCount > 0 && total == savedCount;
+	private boolean isAttemptSuccess(int total, int savedCount, boolean processorFetchingComplete) {
+		return savedCount > 0 && total == savedCount && processorFetchingComplete;
 	}
 
 	/**
