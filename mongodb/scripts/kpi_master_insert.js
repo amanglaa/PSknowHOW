@@ -1237,8 +1237,8 @@ db.getCollection('kpi_master').insert(
           "lhs": "Sprint Predictability for a sprint",
           "operator": "division",
           "operands": [
-            "sprint velocity in current sprint.",
-            "sprint velocity in previous 3 sprint"
+             "sprint velocity of the targeted sprint.",
+             "average sprint velocity of previous 3 sprints"
           ]
         }
       ],
