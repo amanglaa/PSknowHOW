@@ -256,12 +256,12 @@ export class FieldMappingComponent implements OnInit {
         }
         if (element['identifyFrom'] === 'CustomField') {
           if (!this.fieldMappingForm.controls[element.filterId + 'IdentSingleValue']) {
-            this.fieldMappingForm.addControl(element.filterId + 'IdentSingleValue', this.formBuilder.control('', [Validators.required]));
+            this.fieldMappingForm.addControl(element.filterId + 'IdentSingleValue', this.formBuilder.control(''));
             this.fieldMappingForm.controls[element.filterId + 'IdentSingleValue'].setValue(element['identificationField']);
           }
         } else {
           if (!this.fieldMappingForm.controls[element.filterId + 'IdentMultiValue']) {
-            this.fieldMappingForm.addControl(element.filterId + 'IdentMultiValue', this.formBuilder.control('', [Validators.required]));
+            this.fieldMappingForm.addControl(element.filterId + 'IdentMultiValue', this.formBuilder.control(''));
             this.fieldMappingForm.controls[element.filterId + 'IdentMultiValue'].setValue(element['values']);
           }
         }
