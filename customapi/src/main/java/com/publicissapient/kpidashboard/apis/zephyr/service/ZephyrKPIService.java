@@ -346,9 +346,6 @@ public abstract class ZephyrKPIService<R, S, T> extends ToolsKPIService<R, S> im
 			if (CollectionUtils.isNotEmpty(tool.getJiraRegressionTestValue())) {
 				regressionLabels.addAll(tool.getJiraRegressionTestValue());
 			}
-			if (CollectionUtils.isNotEmpty(tool.getJiraRegressionTestValue())) {
-				regressionLabels.addAll(tool.getJiraRegressionTestValue());
-			}
 			if (CollectionUtils.isNotEmpty(tool.getTestCaseStatus())) {
 				mapOfProjectFiltersNotIn.put(JiraFeature.TEST_CASE_STATUS.getFieldValueInFeature(),
 						CommonUtils.convertTestFolderToPatternList(tool.getTestCaseStatus()));

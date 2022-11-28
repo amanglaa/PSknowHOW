@@ -238,6 +238,10 @@ public class ProjectToolConfigServiceImpl implements ProjectToolConfigService {
 		toolRepository.save(projectTool);
 		cacheService.clearCache(CommonConstant.CACHE_TOOL_CONFIG_MAP);
 		cacheService.clearCache(CommonConstant.CACHE_PROJECT_TOOL_CONFIG_MAP);
+		if (projectTool.getToolName().equalsIgnoreCase(ProcessorConstants.ZEPHYR)
+				|| projectTool.getToolName().equalsIgnoreCase(ProcessorConstants.JIRA_TEST)) {
+			cacheService.clearCache(CommonConstant.TESTING_KPI_CACHE);
+		}
 		return new ServiceResponse(true, "updated the project_tools Successfully", projectTool);
 	}
 
