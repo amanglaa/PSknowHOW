@@ -210,12 +210,12 @@ export class KanbanFieldMappingComponent implements OnInit {
         }
         if (element['identifyFrom'] === 'CustomField') {
           if (!this.fieldMappingForm.controls[element.filterId + 'IdentSingleValue']) {
-            this.fieldMappingForm.addControl(element.filterId + 'IdentSingleValue', this.formBuilder.control('', [Validators.required]));
+            this.fieldMappingForm.addControl(element.filterId + 'IdentSingleValue', this.formBuilder.control(''));
             this.fieldMappingForm.controls[element.filterId + 'IdentSingleValue'].setValue(element['identificationField']);
           }
         } else {
           if (!this.fieldMappingForm.controls[element.filterId + 'IdentMultiValue']) {
-            this.fieldMappingForm.addControl(element.filterId + 'IdentMultiValue', this.formBuilder.control('', [Validators.required]));
+            this.fieldMappingForm.addControl(element.filterId + 'IdentMultiValue', this.formBuilder.control(''));
             this.fieldMappingForm.controls[element.filterId + 'IdentMultiValue'].setValue(element['values']);
           }
         }
@@ -425,21 +425,15 @@ export class KanbanFieldMappingComponent implements OnInit {
     }
   }
 
-  changeControl(event) {
+  changeControl(event, additionalFilterIdentifier) {
     if (event.value === 'Component' || event.value === 'Labels') {
-      if (!this.fieldMappingForm.controls[this.additionalFilterIdentifier.code + 'IdentMultiValue']) {
-        this.fieldMappingForm.addControl(this.additionalFilterIdentifier.code + 'IdentMultiValue', this.formBuilder.control('', [Validators.required]));
-      }
-      if (this.fieldMappingForm.controls[this.additionalFilterIdentifier.code + 'IdentSingleValue']) {
-        this.fieldMappingForm.removeControl(this.additionalFilterIdentifier.code + 'IdentSingleValue');
+      if (!this.fieldMappingForm.controls[additionalFilterIdentifier.code + 'IdentMultiValue']) {
+        this.fieldMappingForm.addControl(additionalFilterIdentifier.code + 'IdentMultiValue', this.formBuilder.control(''));
       }
 
     } else {
-      if (!this.fieldMappingForm.controls[this.additionalFilterIdentifier.code + 'IdentSingleValue']) {
-        this.fieldMappingForm.addControl(this.additionalFilterIdentifier.code + 'IdentSingleValue', this.formBuilder.control('', [Validators.required]));
-      }
-      if (this.fieldMappingForm.controls[this.additionalFilterIdentifier.code + 'IdentMultiValue']) {
-        this.fieldMappingForm.removeControl(this.additionalFilterIdentifier.code + 'IdentMultiValue');
+      if (!this.fieldMappingForm.controls[additionalFilterIdentifier.code + 'IdentSingleValue']) {
+        this.fieldMappingForm.addControl(additionalFilterIdentifier.code + 'IdentSingleValue', this.formBuilder.control(''));
       }
     }
   }
