@@ -84,7 +84,7 @@ export class GroupstackchartComponent implements OnChanges {
     const thresholdValue = this.thresholdValue;
     const barWidth = 20;
     // let width = this.dataLength * barWidth * 8;
-    const width = this.dataLength <= 5 ? document.getElementById('groupstackchart').offsetWidth - 70 : this.dataLength * barWidth * 4;
+    const width = this.dataLength <= 5 ? document.getElementById('groupstackchart').offsetWidth - 70 : this.dataLength * barWidth * 8;
     // let spacingVariable = width > 1500 ? 145 : width > 1000 ? 120 : width > 600 ? 70 : 50;
     const spacingVariable = 50;
     const height = 190;
