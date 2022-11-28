@@ -165,6 +165,7 @@ public class ScrumJiraIssueClientImpl extends JiraIssueClient {// NOPMD
 		setStartDate(jiraProcessorConfig);
 		ProcessorExecutionTraceLog processorExecutionTraceLog = createTraceLog(
 				projectConfig.getBasicProjectConfigId().toHexString());
+		boolean processorFetchingComplete = false;
 		try {
 			boolean dataExist = (jiraIssueRepository
 					.findTopByBasicProjectConfigId(projectConfig.getBasicProjectConfigId().toString()) != null);
@@ -224,11 +225,12 @@ public class ScrumJiraIssueClientImpl extends JiraIssueClient {// NOPMD
 					break;
 				}
 			}
+			processorFetchingComplete = true;
 		} catch (JSONException e) {
 			log.error("Error while updating Story information in scrum client", e);
 			lastSavedJiraIssueChangedDateByType.clear();
 		} finally {
-			boolean isAttemptSuccess = isAttemptSuccess(total, savedIsuesCount);
+			boolean isAttemptSuccess = isAttemptSuccess(total, savedIsuesCount, processorFetchingComplete);
 			if (!isAttemptSuccess) {
 				lastSavedJiraIssueChangedDateByType.clear();
 				processorExecutionTraceLog.setLastSuccessfulRun(null);
@@ -250,6 +252,7 @@ public class ScrumJiraIssueClientImpl extends JiraIssueClient {// NOPMD
 		setStartDate(jiraProcessorConfig);
 		ProcessorExecutionTraceLog processorExecutionTraceLog = createTraceLog(
 				projectConfig.getBasicProjectConfigId().toHexString());
+		boolean processorFetchingComplete = false;
 		try {
 			sprintClient.createSprintDetailBasedOnBoard(projectConfig, jiraAdapter);
 			boolean dataExist = (jiraIssueRepository
@@ -306,11 +309,12 @@ public class ScrumJiraIssueClientImpl extends JiraIssueClient {// NOPMD
 				saveJiraIssueDetails(epicIssue, projectConfig, setForCacheClean,
 						jiraAdapter, true);
 			}
+			processorFetchingComplete = true;
 		} catch (JSONException e) {
 			log.error("Error while updating Story information in scrum client", e);
 			lastSavedJiraIssueChangedDateByType.clear();
 		} finally {
-			boolean isAttemptSuccess = isAttemptSuccess(total, savedIsuesCount);
+			boolean isAttemptSuccess = isAttemptSuccess(total, savedIsuesCount, processorFetchingComplete);
 			if (!isAttemptSuccess) {
 				lastSavedJiraIssueChangedDateByType.clear();
 				processorExecutionTraceLog.setLastSuccessfulRun(null);
@@ -359,8 +363,8 @@ public class ScrumJiraIssueClientImpl extends JiraIssueClient {// NOPMD
 		return capturedDate;
 	}
 
-	private boolean isAttemptSuccess(int total, int savedCount) {
-		return savedCount > 0 && total == savedCount;
+	private boolean isAttemptSuccess(int total, int savedCount, boolean processorFetchingComplete) {
+		return savedCount > 0 && total == savedCount && processorFetchingComplete;
 	}
 
 	private List<Issue> getIssuesFromResult(SearchResult searchResult) {

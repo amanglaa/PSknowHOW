@@ -234,8 +234,10 @@ public final class CommonUtils {
 		List<Pattern> regexList = new ArrayList<>();
 		if (CollectionUtils.isNotEmpty(stringList)) {
 			for (String value : stringList) {
-				regexList.add(Pattern.compile(Constant.TILDA_SYMBOL + value + Constant.DOLLAR_SYMBOL,
+				regexList.add(Pattern.compile(Constant.TILDA_SYMBOL+Pattern.quote(value)
+								+Constant.DOLLAR_SYMBOL,
 						Pattern.CASE_INSENSITIVE));
+
 			}
 		}
 		return regexList;

@@ -1276,13 +1276,13 @@
                                 <p-dropdown id="additionalFilterIdentifier" [options]="additionalFilterOptions" placeholder="Select"
                                     [(ngModel)]="additionalFilterIdentifier" [ngModelOptions]="{standalone: true}"
                                     [style]="{'width':'100%', 'max-width': '100%','border-bottom-right-radius':'0px','border-top-right-radius':'0px'}"
-                                    optionLabel="name">
+                                    optionLabel="name" (onChange)="disableAdditionalFilterAdd=false">
                                 </p-dropdown>
                             </div>
                             <div>
                                 <p-button pRipple label="Add" class="p-button-raised configure-btn p-mt-1"
                                     [style]="{'padding':'15px','border-top-left-radius': '0px','border-bottom-left-radius': '0px'}"
-                                    (click)="addAdditionalFilterMappings()"></p-button>
+                                    (click)="addAdditionalFilterMappings()" [disabled]="disableAdditionalFilterAdd"></p-button>
                             </div>
                         </div>
             
@@ -1303,7 +1303,7 @@
                                         <ng-container *ngFor="let additionalFilter of additionalFilterIdentificationOptions">
                                             <p-radioButton placeholder="Select" formControlName="{{ filter.code + 'Identifier'}}"
                                                 value="{{additionalFilter.value}}" label="{{additionalFilter.value}}" class="p-m-2"
-                                                (onClick)="changeControl($event)">
+                                                (onClick)="changeControl($event, filter)">
                                             </p-radioButton>
                                         </ng-container>
                                     </div>
