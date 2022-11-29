@@ -262,6 +262,7 @@ public class MetaDataClientImpl implements MetadataClient {
 			fieldMapping.setStoryFirstStatus(CommonConstant.OPEN);
 			fieldMapping.setJiraDefectCreatedStatus(CommonConstant.OPEN);
 		}
+		fieldMapping.setIssueStatusExcluMissingWork(firstStatusList);
 		fieldMapping.setRootCause(customField.get(CommonConstant.ROOT_CAUSE));
 		fieldMapping.setJiraStatusForDevelopment(workflowMap.get(CommonConstant.DEVELOPMENT));
 		fieldMapping.setJiraStatusForQa(workflowMap.get(CommonConstant.QA));
@@ -305,6 +306,8 @@ public class MetaDataClientImpl implements MetadataClient {
 				.setJiraIntakeToDorIssueType(issueTypeMap.getOrDefault(CommonConstant.STORY, new ArrayList<>()));
 		fieldMapping
 				.setJiraStoryIdentification(issueTypeMap.getOrDefault(CommonConstant.STORY, new ArrayList<>()));
+		fieldMapping
+				.setJiraFTPRStoryIdentification(issueTypeMap.getOrDefault(CommonConstant.STORY, new ArrayList<>()));
 		fieldMapping.setRootCauseValue(valuesToIdentifyMap.get(CommonConstant.ROOT_CAUSE_VALUE));
 		fieldMapping.setResolutionTypeForRejection(
 				valuesToIdentifyMap.getOrDefault(CommonConstant.REJECTION_RESOLUTION, new ArrayList<>()));

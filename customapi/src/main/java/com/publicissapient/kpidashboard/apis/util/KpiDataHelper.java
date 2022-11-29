@@ -28,8 +28,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.publicissapient.kpidashboard.common.constant.NormalizedJira;
+import com.publicissapient.kpidashboard.common.model.application.FieldMapping;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ObjectUtils;
@@ -319,5 +322,15 @@ public final class KpiDataHelper {
 		} else {
 			return new ArrayList<>();
 		}
+	}
+
+	public static void prepareFieldMappingDefectTypeTransformation(Map<String, Object> mapOfProjectFilters,
+																   FieldMapping fieldMapping, List<String> kpiWiseDefectsFieldMapping, String key) {
+		if (Optional.ofNullable(fieldMapping.getJiradefecttype()).isPresent()
+				&& CollectionUtils.containsAny(kpiWiseDefectsFieldMapping, fieldMapping.getJiradefecttype())) {
+			kpiWiseDefectsFieldMapping.removeIf(x -> fieldMapping.getJiradefecttype().contains(x));
+			kpiWiseDefectsFieldMapping.add(NormalizedJira.DEFECT_TYPE.getValue());
+		}
+		mapOfProjectFilters.put(key, CommonUtils.convertToPatternList(kpiWiseDefectsFieldMapping));
 	}
 }

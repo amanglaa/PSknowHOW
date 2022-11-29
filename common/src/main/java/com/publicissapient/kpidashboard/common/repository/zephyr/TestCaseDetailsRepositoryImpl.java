@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import com.publicissapient.kpidashboard.common.model.jira.JiraIssue;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -122,7 +121,7 @@ public class TestCaseDetailsRepositoryImpl implements TestCaseDetailsRepositoryC
 	}
 
 	public List<TestCaseDetails> findNonRegressionTestDetails(Map<String, List<String>> mapOfFilters,
-															Map<String, Map<String, Object>> uniqueProjectMap,Map<String, Map<String, Object>> uniqueProjectMapNotIn) {
+			Map<String, Map<String, Object>> uniqueProjectMap, Map<String, Map<String, Object>> uniqueProjectMapNotIn) {
 		Criteria criteria = new Criteria();
 
 		criteria = getCommonFiltersCriteria(mapOfFilters, criteria);
@@ -160,9 +159,10 @@ public class TestCaseDetailsRepositoryImpl implements TestCaseDetailsRepositoryC
 
 		return operations.find(query, TestCaseDetails.class);
 	}
-@Override
+
+	@Override
 	public List<TestCaseDetails> findTestDetails(Map<String, List<String>> mapOfFilters,
-							  Map<String, Map<String, Object>> uniqueProjectMap, Map<String, Map<String, Object>> uniqueProjectMapNotIn) {
+			Map<String, Map<String, Object>> uniqueProjectMap, Map<String, Map<String, Object>> uniqueProjectMapNotIn) {
 		Criteria criteria = new Criteria();
 
 		// map of common filters Project and Sprint
@@ -186,7 +186,7 @@ public class TestCaseDetailsRepositoryImpl implements TestCaseDetailsRepositoryC
 		Query query = new Query(criteria);
 		if (!CollectionUtils.isEmpty(projectCriteriaList)) {
 			Criteria criteriaAggregatedAtProjectLevel = new Criteria()
-					.orOperator(projectCriteriaList.toArray(new Criteria[0]));
+					.andOperator(projectCriteriaList.toArray(new Criteria[0]));
 			Criteria criteriaProjectLevelAdded = new Criteria().andOperator(criteria, criteriaAggregatedAtProjectLevel);
 
 			query = new Query(criteriaProjectLevelAdded);

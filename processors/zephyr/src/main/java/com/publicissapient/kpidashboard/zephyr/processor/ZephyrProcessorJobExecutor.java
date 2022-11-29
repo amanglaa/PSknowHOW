@@ -194,7 +194,7 @@ public class ZephyrProcessorJobExecutor extends ProcessorJobExecutor<ZephyrProce
 		}
 
 		if (testCaseCount.get() > 0) {
-			cacheRestClient(CommonConstant.CACHE_CLEAR_ENDPOINT, CommonConstant.ZEPHYR_KPI_CACHE);
+			cacheRestClient(CommonConstant.CACHE_CLEAR_ENDPOINT, CommonConstant.TESTING_KPI_CACHE);
 		}
 		long end = System.currentTimeMillis();
 		MDC.put(PROCESSOR_START_TIME, String.valueOf(start));
