@@ -25,13 +25,15 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -43,17 +45,21 @@ import com.publicissapient.kpidashboard.apis.model.KpiRequest;
 import com.publicissapient.kpidashboard.common.constant.CommonConstant;
 import com.publicissapient.kpidashboard.common.model.application.AdditionalFilterCategory;
 import com.publicissapient.kpidashboard.common.model.excel.KanbanCapacity;
+import com.publicissapient.kpidashboard.common.model.jira.JiraIssue;
 import com.publicissapient.kpidashboard.common.model.jira.KanbanIssueCustomHistory;
 import com.publicissapient.kpidashboard.common.model.jira.KanbanJiraIssue;
 import com.publicissapient.kpidashboard.common.model.jira.SprintDetails;
 import com.publicissapient.kpidashboard.common.model.jira.SprintIssue;
 import com.publicissapient.kpidashboard.common.model.jira.SprintWiseStory;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * The class contains methods for helping kpi to prepare data
  *
  * @author anisingh4
  */
+@Slf4j
 public final class KpiDataHelper {
 	private static final String DATE_FORMAT = "yyyy-MM-dd";
 
@@ -77,13 +83,16 @@ public final class KpiDataHelper {
 		}
 		Map<String, AdditionalFilterCategory> addFilterCat = flterHelperService.getAdditionalFilterHierarchyLevel();
 		Map<String, AdditionalFilterCategory> addFilterCategory = addFilterCat.entrySet().stream()
-	            .collect(Collectors.toMap(entry -> entry.getKey().toUpperCase(), Map.Entry::getValue));
-		
+				.collect(Collectors.toMap(entry -> entry.getKey().toUpperCase(), Map.Entry::getValue));
+
 		if (MapUtils.isNotEmpty(kpiRequest.getSelectedMap())) {
 			for (Map.Entry<String, List<String>> entry : kpiRequest.getSelectedMap().entrySet()) {
-				if(CollectionUtils.isNotEmpty(entry.getValue()) && null!=addFilterCategory.get(entry.getKey().toUpperCase())) {
-					mapOfFilters.put(JiraFeature.ADDITIONAL_FILTERS_FILTERID.getFieldValueInFeature(),Arrays.asList(entry.getKey()));
-					mapOfFilters.put(JiraFeature.ADDITIONAL_FILTERS_FILTERVALUES_VALUEID.getFieldValueInFeature(),entry.getValue());
+				if (CollectionUtils.isNotEmpty(entry.getValue())
+						&& null != addFilterCategory.get(entry.getKey().toUpperCase())) {
+					mapOfFilters.put(JiraFeature.ADDITIONAL_FILTERS_FILTERID.getFieldValueInFeature(),
+							Arrays.asList(entry.getKey()));
+					mapOfFilters.put(JiraFeature.ADDITIONAL_FILTERS_FILTERVALUES_VALUEID.getFieldValueInFeature(),
+							entry.getValue());
 					subGroupCategory = entry.getKey();
 				}
 			}
@@ -96,8 +105,8 @@ public final class KpiDataHelper {
 	 *
 	 * @param subGroupCategory
 	 * @param sprintWiseStoryList
-	 * @return {@code Map<String , Map <String , List <String>>>} Map of sprint
-	 *         and subcategory wise list of featureId
+	 * @return {@code Map<String , Map <String , List <String>>>} Map of sprint and
+	 *         subcategory wise list of featureId
 	 */
 	public static Map<Pair<String, String>, Map<String, List<String>>> createSubCategoryWiseMap(String subGroupCategory,
 			List<SprintWiseStory> sprintWiseStoryList, String filterToShowOnTrend) {
@@ -149,7 +158,8 @@ public final class KpiDataHelper {
 	 * @return
 	 */
 	public static Map<String, List<KanbanIssueCustomHistory>> createProjectWiseMapKanbanHistory(
-			List<KanbanIssueCustomHistory> ticketList, String subGroupCategory, FilterHelperService flterHelperService) {
+			List<KanbanIssueCustomHistory> ticketList, String subGroupCategory,
+			FilterHelperService flterHelperService) {
 		Map<String, List<KanbanIssueCustomHistory>> projectAndDateWiseTicketMap = new HashMap<>();
 		Map<String, AdditionalFilterCategory> addFilterCat = flterHelperService.getAdditionalFilterHierarchyLevel();
 		List<String> addFilterCategoryList = new ArrayList(addFilterCat.keySet());
@@ -174,8 +184,8 @@ public final class KpiDataHelper {
 		List<String> addFilterCategoryList = new ArrayList(addFilterCat.keySet());
 		Map<String, Map<String, List<KanbanCapacity>>> projectAndDateWiseCapacityMap = new HashMap<>();
 		if (Constant.DATE.equals(subGroupCategory) || addFilterCategoryList.contains(subGroupCategory)) {
-			Map<String, List<KanbanCapacity>> projectWiseCapacityMap =  ticketList.stream()
-						.collect(Collectors.groupingBy(ticket->ticket.getBasicProjectConfigId().toString(), Collectors.toList()));
+			Map<String, List<KanbanCapacity>> projectWiseCapacityMap = ticketList.stream().collect(
+					Collectors.groupingBy(ticket -> ticket.getBasicProjectConfigId().toString(), Collectors.toList()));
 
 			projectWiseCapacityMap.forEach((project, capacityList) -> {
 				Map<String, List<KanbanCapacity>> dateWiseCapacityMap = new HashMap<>();
@@ -193,11 +203,9 @@ public final class KpiDataHelper {
 		return projectAndDateWiseCapacityMap;
 	}
 
-
 	public static LocalDate convertStringToDate(String dateString) {
 		return LocalDate.parse(dateString.split("T")[0]);
 	}
-
 
 	public static CustomDateRange getStartAndEndDate(KpiRequest kpiRequest) {
 		int dataPoint = (int) ObjectUtils.defaultIfNull(kpiRequest.getKanbanXaxisDataPoints(), 7) + 1;
@@ -302,22 +310,54 @@ public final class KpiDataHelper {
 	public static List<String> getIssuesIdListBasedOnTypeFromSprintDetails(SprintDetails sprintDetails,
 			String issueType) {
 		if (issueType.equalsIgnoreCase(CommonConstant.COMPLETED_ISSUES)) {
-			return CollectionUtils.emptyIfNull(sprintDetails.getCompletedIssues()).stream().filter(Objects::nonNull).map(SprintIssue::getNumber)
-					.distinct().collect(Collectors.toList());
-		} else if (issueType.equalsIgnoreCase(CommonConstant.NOT_COMPLETED_ISSUES)) {
-			return CollectionUtils.emptyIfNull(sprintDetails.getNotCompletedIssues()).stream().filter(Objects::nonNull).map(SprintIssue::getNumber)
-					.distinct().collect(Collectors.toList());
-		} else if (issueType.equalsIgnoreCase(CommonConstant.PUNTED_ISSUES)) {
-			return CollectionUtils.emptyIfNull(sprintDetails.getPuntedIssues()).stream().filter(Objects::nonNull).map(SprintIssue::getNumber)
-					.distinct().collect(Collectors.toList());
-		} else if (issueType.equalsIgnoreCase(CommonConstant.COMPLETED_ISSUES_ANOTHER_SPRINT)) {
-			return CollectionUtils.emptyIfNull(sprintDetails.getCompletedIssuesAnotherSprint()).stream().filter(Objects::nonNull)
+			return CollectionUtils.emptyIfNull(sprintDetails.getCompletedIssues()).stream().filter(Objects::nonNull)
 					.map(SprintIssue::getNumber).distinct().collect(Collectors.toList());
+		} else if (issueType.equalsIgnoreCase(CommonConstant.NOT_COMPLETED_ISSUES)) {
+			return CollectionUtils.emptyIfNull(sprintDetails.getNotCompletedIssues()).stream().filter(Objects::nonNull)
+					.map(SprintIssue::getNumber).distinct().collect(Collectors.toList());
+		} else if (issueType.equalsIgnoreCase(CommonConstant.PUNTED_ISSUES)) {
+			return CollectionUtils.emptyIfNull(sprintDetails.getPuntedIssues()).stream().filter(Objects::nonNull)
+					.map(SprintIssue::getNumber).distinct().collect(Collectors.toList());
+		} else if (issueType.equalsIgnoreCase(CommonConstant.COMPLETED_ISSUES_ANOTHER_SPRINT)) {
+			return CollectionUtils.emptyIfNull(sprintDetails.getCompletedIssuesAnotherSprint()).stream()
+					.filter(Objects::nonNull).map(SprintIssue::getNumber).distinct().collect(Collectors.toList());
 		} else if (issueType.equalsIgnoreCase(CommonConstant.TOTAL_ISSUES)) {
-			return CollectionUtils.emptyIfNull(sprintDetails.getTotalIssues()).stream().filter(Objects::nonNull).map(SprintIssue::getNumber)
-					.distinct().collect(Collectors.toList());
+			return CollectionUtils.emptyIfNull(sprintDetails.getTotalIssues()).stream().filter(Objects::nonNull)
+					.map(SprintIssue::getNumber).distinct().collect(Collectors.toList());
 		} else {
 			return new ArrayList<>();
 		}
+	}
+
+	/**
+	 * replace some details of jira issue as per sprint report
+	 *
+	 * @param sprintDetails
+	 * @param sprintIssues
+	 * @param allJiraIssue
+	 * @return
+	 */
+	public static Set<JiraIssue> getFilteredJiraIssuesListBasedOnTypeFromSprintDetails(SprintDetails sprintDetails,
+			Set<SprintIssue> sprintIssues, List<JiraIssue> allJiraIssue) {
+		Set<JiraIssue> filteredIssues = new HashSet<>();
+		if (CollectionUtils.isNotEmpty(sprintIssues)) {
+			sprintIssues.stream().forEach(sprintIssue -> allJiraIssue.stream().forEach(jiraIssue -> {
+				if (sprintIssue.getNumber().equals(jiraIssue.getNumber()) && (jiraIssue.getBasicProjectConfigId()
+						.equalsIgnoreCase(sprintDetails.getBasicProjectConfigId().toString()))) {
+					JiraIssue filterJiraIssue = null;
+					try {
+						filterJiraIssue = (JiraIssue) jiraIssue.clone();
+					} catch (CloneNotSupportedException e) {
+						filterJiraIssue = jiraIssue;
+						log.error("[KPIDataHelper]. exception while clone ing object jira issue{}", e);
+					}
+					filterJiraIssue.setStoryPoints(sprintIssue.getStoryPoints());
+					filterJiraIssue.setPriority(sprintIssue.getPriority());
+					filterJiraIssue.setStatus(sprintIssue.getStatus());
+					filteredIssues.add(filterJiraIssue);
+				}
+			}));
+		}
+		return filteredIssues;
 	}
 }
