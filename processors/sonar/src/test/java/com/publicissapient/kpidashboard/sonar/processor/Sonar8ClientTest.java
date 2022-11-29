@@ -137,10 +137,9 @@ public class Sonar8ClientTest {
 	@Test
 	public void testGetPastSonarDetails() {
 		SonarProcessorItem project = getProject();
-		int pageIndex = 1;
 		String historyUrl = String.format(
 				new StringBuilder(project.getInstanceUrl()).append(URL_MEASURE_HISTORY).append(PAGE).toString(), project.getKey(),
-				METRICS, DEFAULT_DATE, pageIndex);
+				METRICS, DEFAULT_DATE, 1);
 
 		doThrow(new RestClientException("rest client exception")).when(rest).exchange(ArgumentMatchers.eq(historyUrl),
 				ArgumentMatchers.eq(HttpMethod.GET), ArgumentMatchers.any(HttpEntity.class), ArgumentMatchers.eq(String.class));
@@ -184,7 +183,6 @@ public class Sonar8ClientTest {
 
 		SONAR_SERVER.setUsername(USER_NAME);
 		SONAR_SERVER.setPassword(PASSWORD);
-		System.out.println(historyUrl);
 		List<SonarHistory> codeQualityHistories = sonar8Client.getPastSonarDetails(getProject(),
 				new HttpEntity<>(createHeaders(SONAR_SERVER.getUsername(), SONAR_SERVER.getPassword())), METRICS);
 		Assert.assertNotNull("History data available: ", codeQualityHistories);
