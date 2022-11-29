@@ -121,7 +121,7 @@ public class TestCaseDetailsRepositoryImpl implements TestCaseDetailsRepositoryC
 	}
 
 	public List<TestCaseDetails> findNonRegressionTestDetails(Map<String, List<String>> mapOfFilters,
-															Map<String, Map<String, Object>> uniqueProjectMap,Map<String, Map<String, Object>> uniqueProjectMapNotIn) {
+			Map<String, Map<String, Object>> uniqueProjectMap, Map<String, Map<String, Object>> uniqueProjectMapNotIn) {
 		Criteria criteria = new Criteria();
 
 		criteria = getCommonFiltersCriteria(mapOfFilters, criteria);
@@ -159,9 +159,10 @@ public class TestCaseDetailsRepositoryImpl implements TestCaseDetailsRepositoryC
 
 		return operations.find(query, TestCaseDetails.class);
 	}
-@Override
+
+	@Override
 	public List<TestCaseDetails> findTestDetails(Map<String, List<String>> mapOfFilters,
-							  Map<String, Map<String, Object>> uniqueProjectMap, Map<String, Map<String, Object>> uniqueProjectMapNotIn) {
+			Map<String, Map<String, Object>> uniqueProjectMap, Map<String, Map<String, Object>> uniqueProjectMapNotIn) {
 		Criteria criteria = new Criteria();
 
 		// map of common filters Project and Sprint

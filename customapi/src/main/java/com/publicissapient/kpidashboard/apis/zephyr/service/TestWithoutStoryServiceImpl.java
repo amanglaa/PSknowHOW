@@ -130,9 +130,9 @@ public class TestWithoutStoryServiceImpl extends ZephyrKPIService<Double, List<O
 			List<String> regressionLabels = new ArrayList<>();
 			List<String> sprintAutomationFolderPath = new ArrayList<>();
 			basicProjectConfigIds.add(basicProjectConfigId.toString());
-			List<ProjectToolConfig> zephyrTools = getToolBasedOnTool(toolMap, basicProjectConfigId, TOOL_ZEPHYR);
+			List<ProjectToolConfig> zephyrTools = getToolConfigBasedOnProcessors(toolMap, basicProjectConfigId, TOOL_ZEPHYR);
 
-			List<ProjectToolConfig> jiraTestTools = getToolBasedOnTool(toolMap, basicProjectConfigId, TOOL_JIRA_TEST);
+			List<ProjectToolConfig> jiraTestTools = getToolConfigBasedOnProcessors(toolMap, basicProjectConfigId, TOOL_JIRA_TEST);
 
 			FieldMapping fieldMapping = basicProjetWiseConfig.get(basicProjectConfigId);
 			Map<String, Object> mapOfProjectFilters = new LinkedHashMap<>();

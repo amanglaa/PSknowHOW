@@ -52,7 +52,6 @@ import com.publicissapient.kpidashboard.apis.util.CommonUtils;
 import com.publicissapient.kpidashboard.common.constant.NormalizedJira;
 import com.publicissapient.kpidashboard.common.constant.ProcessorConstants;
 import com.publicissapient.kpidashboard.common.model.application.AdditionalFilterCategory;
-import com.publicissapient.kpidashboard.common.model.application.FieldMapping;
 import com.publicissapient.kpidashboard.common.model.application.ProjectToolConfig;
 import com.publicissapient.kpidashboard.common.model.zephyr.TestCaseDetails;
 import com.publicissapient.kpidashboard.common.repository.zephyr.TestCaseDetailsRepository;
@@ -226,14 +225,14 @@ public abstract class ZephyrKPIService<R, S, T> extends ToolsKPIService<R, S> im
 	}
 
 	/**
-	 * Returns list of Zephyr tool associated with project
+	 * Returns list of Zephyr/Jira Test tool associated with project
 	 *
 	 * @param toolMap
 	 * @param basicProjectConfId
 	 * @return List of ProjectToolConfig
 	 */
 
-	public List<ProjectToolConfig> getToolBasedOnTool(Map<ObjectId, Map<String, List<ProjectToolConfig>>> toolMap,
+	public List<ProjectToolConfig> getToolConfigBasedOnProcessors(Map<ObjectId, Map<String, List<ProjectToolConfig>>> toolMap,
 			ObjectId basicProjectConfId , String toolName) {
 		List<ProjectToolConfig> tools = new ArrayList<>();
 		if (MapUtils.isNotEmpty(toolMap) && toolMap.get(basicProjectConfId) != null
@@ -265,9 +264,9 @@ public abstract class ZephyrKPIService<R, S, T> extends ToolsKPIService<R, S> im
 			Map<String, Object> mapOfProjectFiltersNotIn = new LinkedHashMap<>();
 			basicProjectConfigIds.add(basicProjectConfigId.toString());
 
-			List<ProjectToolConfig> zephyrTools = getToolBasedOnTool(toolMap, basicProjectConfigId, TOOL_ZEPHYR);
+			List<ProjectToolConfig> zephyrTools = getToolConfigBasedOnProcessors(toolMap, basicProjectConfigId, TOOL_ZEPHYR);
 
-			List<ProjectToolConfig> jiraTestTools = getToolBasedOnTool(toolMap, basicProjectConfigId, TOOL_JIRA_TEST);
+			List<ProjectToolConfig> jiraTestTools = getToolConfigBasedOnProcessors(toolMap, basicProjectConfigId, TOOL_JIRA_TEST);
 
 			List<String> regressionLabels = new ArrayList<>();
 			List<String> regressionAutomationFolderPath = new ArrayList<>();
@@ -301,7 +300,8 @@ public abstract class ZephyrKPIService<R, S, T> extends ToolsKPIService<R, S> im
 				Arrays.asList(NormalizedJira.TEST_TYPE.getValue()));
 
 
-		List<TestCaseDetails> testCasesList = testCaseDetailsRepository.findTestDetails(mapOfFilters, uniqueProjectMap,uniqueProjectMapNotIn);
+		List<TestCaseDetails> testCasesList = testCaseDetailsRepository.findTestDetails(mapOfFilters, uniqueProjectMap,
+				uniqueProjectMapNotIn);
 
 		Map<String, List<TestCaseDetails>> towerWiseTotalMap = testCasesList.stream()
 				.collect(Collectors.groupingBy(TestCaseDetails::getBasicProjectConfigId, Collectors.toList()));

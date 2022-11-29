@@ -145,9 +145,9 @@ public final class AutomationPercentageServiceImpl extends ZephyrKPIService<Doub
         Map<ObjectId, FieldMapping> basicProjetWiseConfig = configHelperService.getFieldMappingMap();
         leafNodeList.forEach(leaf -> {
             ObjectId basicProjectConfigId = leaf.getProjectFilter().getBasicProjectConfigId();
-            List<ProjectToolConfig> zephyrTools = getToolBasedOnTool(toolMap, basicProjectConfigId, TOOL_ZEPHYR);
+            List<ProjectToolConfig> zephyrTools = getToolConfigBasedOnProcessors(toolMap, basicProjectConfigId, TOOL_ZEPHYR);
 
-            List<ProjectToolConfig> jiraTestTools = getToolBasedOnTool(toolMap, basicProjectConfigId, TOOL_JIRA_TEST);
+            List<ProjectToolConfig> jiraTestTools = getToolConfigBasedOnProcessors(toolMap, basicProjectConfigId, TOOL_JIRA_TEST);
 
 
             Map<String, Object> mapOfProjectFilters = new LinkedHashMap<>();
