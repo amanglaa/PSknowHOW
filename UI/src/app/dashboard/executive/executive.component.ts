@@ -23,7 +23,6 @@ import { ExcelService } from '../../services/excel.service';
 import { SharedService } from '../../services/shared.service';
 import { HelperService } from '../../services/helper.service';
 import { faList, faChartPie } from '@fortawesome/free-solid-svg-icons';
-import { Constants } from 'src/app/model/Constants';
 import { ActivatedRoute } from '@angular/router';
 import { mergeMap } from 'rxjs/operators';
 import * as Excel from 'exceljs';
@@ -1314,13 +1313,20 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
         }
         if(item?.value?.length > 1 && kpiData?.kpiDetail?.showTrend) {
             if(kpiData?.kpiDetail?.trendCalculative){
-                let lhs = kpiData?.kpiDetail?.trendCalculation?.length > 0 ? kpiData?.kpiDetail?.trendCalculation[0]?.lhs : '';
-                let rhs = kpiData?.kpiDetail?.trendCalculation?.length > 0 ? kpiData?.kpiDetail?.trendCalculation[0]?.rhs : '';
+                let lhsKey = kpiData?.kpiDetail?.trendCalculation?.length > 0 ? kpiData?.kpiDetail?.trendCalculation[0]?.lhs : '';
+                let rhsKey = kpiData?.kpiDetail?.trendCalculation?.length > 0 ? kpiData?.kpiDetail?.trendCalculation[0]?.rhs : '';
+                console.log(item?.value);
+                
+                let lhs = item?.value[item?.value?.length - 1][lhsKey];
+                let rhs = item?.value[item?.value?.length - 1][rhsKey];
+                console.log("lhs", lhs);
+                console.log("rhs", rhs);
                 if(lhs < rhs){
                     trend = '+ve';
                 }else if(lhs > rhs){
                     trend = '-ve';
                 }else if(lhs == rhs && kpiData?.kpiId == 'kpi126'){
+                    
                     trend = '+ve';
                 }else{
                     trend = '-- --';
