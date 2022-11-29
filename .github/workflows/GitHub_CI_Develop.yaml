@@ -126,6 +126,12 @@ jobs:
             customapi:
               - 'customapi/src/**'
       - uses: dorny/paths-filter@v2
+        id: processors
+        with:
+          filters: |
+            processors:
+              - 'processors/**'
+      - uses: dorny/paths-filter@v2
         id: jira-processors
         with:
           filters: |
@@ -159,17 +165,17 @@ jobs:
         id: testazure
         if: steps.azure-processors.outputs.azure-processors == 'true'
         run: |
-               mvn clean install -PazureProcessor 
-      - name: Building and Testing nonJira processor
-        id: testnonjira
-        if: steps.nonazure-processors.outputs.nonazure-processors == 'true'
-        run: |
-               mvn clean install -PnonJiraProcessor
+               mvn clean install -PazureProcessor
       - name: Building and Testing nonAzureProcessor
         id: testnonazure
+        if: steps.nonazure-processors.outputs.nonazure-processors == 'true'
+        run: |
+               mvn clean install -PnonAzureBoardsProcessor
+      - name: Building and Testing nonJira processor
+        id: testnonjira
         if: steps.processors.outputs.processors == 'true'
         run: |
-               mvn clean install -PnonAzureBoardsProcessor 
+               mvn clean install -PnonJiraProcessor
       
       # - name: Checking code Quality using SonarQube for processor
       #   id: Sonarprocessor
