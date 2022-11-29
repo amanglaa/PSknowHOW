@@ -240,6 +240,9 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
         this.configGlobalData?.forEach(element => {
             if (element.shown && element.isEnabled) {
                 this.kpiConfigData[element.kpiId] = true;
+                if(!this.kpiTrendsObj.hasOwnProperty(element.kpiId)){
+                    this.createTrendsData(element.kpiId);
+                }
             } else {
                 this.kpiConfigData[element.kpiId] = false;
             }

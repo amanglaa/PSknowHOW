@@ -39,11 +39,10 @@ export class TrendIndicatorComponent implements OnInit {
     // } else {
     //   this.isTrendObject = false;
     // }
-    // if (this.kpiData && this.kpiData['kpiId'] == 'kpi997') {
-    //   this.dataTrend = ['NA'];
-    //   this.lastValue = 'NA';
-    // }
-    
+
+    if (this.kpiData && this.kpiData['kpiId'] === 'kpi997') {
+      this.dataTrend['value'] ='NA';
+    }
   }
 
   ngOnDestroy() {
