@@ -131,7 +131,7 @@ jobs:
           filters: |
             jira-processors:
               - 'processors/jira/**'
-       - uses: dorny/paths-filter@v2
+      - uses: dorny/paths-filter@v2
         id: azure-processors
         with:
           filters: |
