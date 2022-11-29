@@ -127,7 +127,7 @@
                                     <tag>${project.version}</tag>
                                     <buildArgs>
                                         <ZEPHYR_JAR_FILE>processors/zephyr/target/zephyr-processor-exec.jar</ZEPHYR_JAR_FILE>
-                                        <JIRATEST_JAR_FILE>processors/jiratest/target/jiratest-processor-exec.jar</JIRATEST_JAR_FILE>
+                                        <JIRA_TEST_JAR_FILE>processors/jiratest/target/jiratest-processor-exec.jar</JIRA_TEST_JAR_FILE>
                                         <BITBUCKET_JAR_FILE>processors/bitbucket/target/bitbucket-processor-exec.jar</BITBUCKET_JAR_FILE>
                                         <GITLAB_JAR_FILE>processors/gitlab/target/gitlab-processor-exec.jar</GITLAB_JAR_FILE>
                                         <GITHUB_JAR_FILE>processors/github/target/github-processor-exec.jar</GITHUB_JAR_FILE>
