@@ -133,7 +133,7 @@ export class IterationComponent implements OnInit, OnDestroy {
     this.enableByUser = disabledKpis?.length ? true : false;
     // noKpis - if true, all kpis are not shown to the user (not showing kpis to the user)
     this.updatedConfigGlobalData = this.configGlobalData.filter(item => item.shown && item.isEnabled);
-    this.upDatedConfigData = this.updatedConfigGlobalData.slice(1);
+    this.upDatedConfigData = this.updatedConfigGlobalData.filter(kpi => kpi.kpiId !== 'kpi121');
     if (this.updatedConfigGlobalData?.length === 0) {
       this.noKpis = true;
     } else {
@@ -655,13 +655,17 @@ iAdjust = 1;
   }
 
   drop(event: CdkDragDrop<string[]>) {
-    console.log(event);
     if (event?.previousIndex !== event.currentIndex) {
       moveItemInArray(this.upDatedConfigData, event.previousIndex, event.currentIndex);
       this.upDatedConfigData.map((kpi, index) => kpi.order = index + 3);
       const disabledKpis = this.configGlobalData.filter(item => item.shown && !item.isEnabled);
       disabledKpis.map((kpi, index) => kpi.order = this.upDatedConfigData.length + index + 3);
-      this.service.kpiListNewOrder.next([this.updatedConfigGlobalData[0], ...this.upDatedConfigData, ...disabledKpis]);
+      const hiddenkpis = this.configGlobalData.filter(item => !item.shown);
+      hiddenkpis.map((kpi, index) => kpi.order = this.upDatedConfigData.length +disabledKpis.length + index + 3);
+      const capacityKpi = this.updatedConfigGlobalData.find(kpi => kpi.kpiId === 'kpi121');
+      if(capacityKpi){
+        this.service.kpiListNewOrder.next([capacityKpi, ...this.upDatedConfigData, ...disabledKpis,...hiddenkpis]);
+      }
     }
   }
 }
