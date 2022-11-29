@@ -48,7 +48,6 @@ import com.publicissapient.kpidashboard.common.repository.jira.KanbanJiraIssueRe
 import com.publicissapient.kpidashboard.common.repository.zephyr.TestCaseDetailsRepository;
 import com.publicissapient.kpidashboard.common.model.application.FieldMapping;
 import com.publicissapient.kpidashboard.common.repository.jira.SprintRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author anisingh4

@@ -221,7 +221,7 @@ public class KanbanJiraIssueClientImpl extends JiraIssueClient {
 					.findTopByBasicProjectConfigId(projectConfig.getBasicProjectConfigId().toString()) != null);
 
 			Map<String, LocalDateTime> maxChangeDatesByIssueType = getLastChangedDatesByIssueType(
-					projectConfig.getBasicProjectConfigId(), projectConfig.getFieldMapping(), dataExist);
+					projectConfig.getBasicProjectConfigId(), projectConfig.getFieldMapping());
 
 			Map<String, LocalDateTime> maxChangeDatesByIssueTypeWithAddedTime = new HashMap<>();
 
@@ -587,7 +587,8 @@ public class KanbanJiraIssueClientImpl extends JiraIssueClient {
 	}
 
 	private Map<String, LocalDateTime> getLastChangedDatesByIssueType(ObjectId basicProjectConfigId,
-			FieldMapping fieldMapping, boolean dataExist) {
+																	  FieldMapping fieldMapping) {
+
 		String[] jiraIssueTypeNames = fieldMapping.getJiraIssueTypeNames();
 		Set<String> uniqueIssueTypes = new HashSet<>(Arrays.asList(jiraIssueTypeNames));
 
@@ -600,9 +601,8 @@ public class KanbanJiraIssueClientImpl extends JiraIssueClient {
 		if (CollectionUtils.isNotEmpty(traceLogs)) {
 			projectTraceLog = traceLogs.get(0);
 		}
-
 		LocalDateTime configuredStartDate = LocalDateTime.parse(jiraProcessorConfig.getStartDate(),
-				DateTimeFormatter.ofPattern(JiraConstants.SETTING_JIRA_START_DATE_FORMAT));
+				DateTimeFormatter.ofPattern(QUERYDATEFORMAT));
 
 		for (String issueType : uniqueIssueTypes) {
 
@@ -610,7 +610,6 @@ public class KanbanJiraIssueClientImpl extends JiraIssueClient {
 				Map<String, LocalDateTime> lastSavedEntryUpdatedDateByType = projectTraceLog
 						.getLastSavedEntryUpdatedDateByType();
 				if (MapUtils.isNotEmpty(lastSavedEntryUpdatedDateByType)) {
-					dataExist = isDataExist(dataExist);
 					LocalDateTime maxDate = lastSavedEntryUpdatedDateByType.get(issueType);
 					lastUpdatedDateByIssueType.put(issueType, maxDate != null ? maxDate : configuredStartDate);
 				} else {

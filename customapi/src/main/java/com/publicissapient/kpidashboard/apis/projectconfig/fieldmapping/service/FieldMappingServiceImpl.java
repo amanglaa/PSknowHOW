@@ -162,7 +162,6 @@ public class FieldMappingServiceImpl implements FieldMappingService {
 	private void clearCache() {
 		cacheService.clearCache(CommonConstant.JIRAKANBAN_KPI_CACHE);
 		cacheService.clearCache(CommonConstant.JIRA_KPI_CACHE);
-		cacheService.clearCache(CommonConstant.ZEPHYR_KPI_CACHE);
 	}
 
 	/**
