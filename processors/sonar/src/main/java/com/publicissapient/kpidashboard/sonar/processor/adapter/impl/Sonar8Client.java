@@ -20,6 +20,10 @@ package com.publicissapient.kpidashboard.sonar.processor.adapter.impl;
 
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,9 +31,9 @@ import java.util.Locale;
 
 import com.publicissapient.kpidashboard.common.model.ToolCredential;
 import com.publicissapient.kpidashboard.common.service.ToolCredentialProvider;
+import com.publicissapient.kpidashboard.common.util.DateUtil;
 import com.publicissapient.kpidashboard.sonar.util.SonarUtils;
 import org.apache.commons.collections.CollectionUtils;
-import org.joda.time.DateTime;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -456,9 +460,9 @@ public class Sonar8Client implements SonarClient {
 
 		String url = "";
 
+		List<SonarHistory> codeList = new ArrayList<>();
 		try {
 			int pageIndex = 1;
-			List<SonarHistory> codeList = new ArrayList<>();
 			do {
 				url = createHistoryUrl(project,metrics,lastUpdated,pageIndex);
 				ResponseEntity<String> response = restOperations.exchange(url, HttpMethod.GET, httpHeaders,
@@ -495,14 +499,13 @@ public class Sonar8Client implements SonarClient {
 					break;
 				}
 			} while (pageIndex < 100);
-			return codeList;
 
-		} catch (ParseException | RestClientException ex) {
+		} catch (ParseException | RestClientException | NullPointerException ex) {
 			log.error("Unable to Parse Response for url: {}", url);
 			log.error(ex.getMessage(), ex);
 		}
 
-		return new ArrayList<>();
+		return codeList;
 	}
 	private String createHistoryUrl(SonarProcessorItem project, String metrics, String lastUpdated, int pageIndex) {
 		String url = "";
@@ -535,10 +538,11 @@ public class Sonar8Client implements SonarClient {
 			if (!CollectionUtils.isEmpty(sonarMeasureData.getHistory())
 					&& sonarMeasureData.getHistory().size() > singleHistory) {
 				metric.setMetricValue(sonarMeasureData.getHistory().get(singleHistory).getValue());
-				sonarHistory
-						.setDate(new DateTime(sonarMeasureData.getHistory().get(singleHistory).getDate()).getMillis());
-				sonarHistory.setTimestamp(
-						new DateTime(sonarMeasureData.getHistory().get(singleHistory).getDate()).getMillis());
+				LocalDateTime date = LocalDateTime.parse(
+						sonarMeasureData.getHistory().get(singleHistory).getDate().substring(0, 19),
+						DateTimeFormatter.ofPattern(DateUtil.TIME_FORMAT));
+				sonarHistory.setDate(ZonedDateTime.of(date, ZoneId.systemDefault()).toInstant().toEpochMilli());
+				sonarHistory.setTimestamp(ZonedDateTime.of(date, ZoneId.systemDefault()).toInstant().toEpochMilli());
 			}
 			sonarHistory.getMetrics().add(metric);
 		}
