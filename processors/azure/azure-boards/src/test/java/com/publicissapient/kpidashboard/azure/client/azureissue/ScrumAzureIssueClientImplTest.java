@@ -257,7 +257,6 @@ public class ScrumAzureIssueClientImplTest {
 
 		jiraType = new ArrayList<>();
 		jiraType.add("40");
-		fieldMapping.setJiraAutomatedTestValue(jiraType);
 
 		jiraType = new ArrayList<>();
 		jiraType.add("10");
@@ -291,8 +290,6 @@ public class ScrumAzureIssueClientImplTest {
 		jiraType = new ArrayList<>();
 		jiraType.add("Ready for Sign-off");
 		fieldMapping.setJiraDod(jiraType);
-		fieldMapping.setJiraTestCaseType(new String[] { "Story" });
-		fieldMapping.setTestAutomated("40");
 		jiraType = new ArrayList<>();
 		jiraType.add("2.1.0");
 		fieldMapping.setTestRegressionValue(jiraType);
@@ -342,7 +339,6 @@ public class ScrumAzureIssueClientImplTest {
 
 		jiraType = new ArrayList<>();
 		jiraType.add("40");
-		fieldMapping.setJiraAutomatedTestValue(jiraType);
 
 		jiraType = new ArrayList<>();
 		jiraType.add("10");
@@ -397,8 +393,6 @@ public class ScrumAzureIssueClientImplTest {
 		jiraSegData.add("Ready for Testing");
 		fieldMapping.setJiraStatusForQa(jiraSegData);
 		fieldMapping.setDevicePlatform("customfield_18181");
-		fieldMapping.setJiraTestCaseType(new String[] { "Test Case" });
-		fieldMapping.setTestAutomated("40");
 		jiraSegData = new ArrayList<>();
 		jiraSegData.add("2.1.0");
 		fieldMapping.setTestRegressionValue(jiraSegData);

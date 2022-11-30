@@ -157,7 +157,6 @@ public class AgileDataCleanUpServiceTest {
 
 		FieldMapping fieldMapping = new FieldMapping();
 		String[] values = new String[]{"Bug","Defect"};
-		fieldMapping.setJiraTestCaseType(values);
 		when(fieldMappingRepository.findByBasicProjectConfigId(Mockito.any())).thenReturn(fieldMapping);
         when(projectToolConfigRepository.findById(Mockito.anyString())).thenReturn(projectToolConfig);
 		doNothing().when(sprintRepository).deleteByBasicProjectConfigId(Mockito.any());

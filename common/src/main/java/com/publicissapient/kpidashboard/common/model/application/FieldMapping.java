@@ -170,19 +170,6 @@ public class FieldMapping extends BasicModel {
 	private List<String> productionDefectValue;
 	private String productionDefectComponentValue;
 
-	// testCaseMapping
-	private String[] jiraTestCaseType;
-	private String testAutomatedIdentification;
-	private String testAutomationCompletedIdentification;
-	private String testRegressionIdentification;
-	private String testAutomated;
-	private String testAutomationCompletedByCustomField;
-	private String testRegressionByCustomField;
-	private List<String> jiraAutomatedTestValue;
-	private List<String> jiraRegressionTestValue;
-	private List<String> jiraCanBeAutomatedTestValue;
-	private List<String> testCaseStatus;
-
 	@Builder.Default
 	private String estimationCriteria = "Story Point";
 
@@ -219,23 +206,5 @@ public class FieldMapping extends BasicModel {
 		this.jiraIssueTypeNames = jiraIssueTypeNames == null ? null : jiraIssueTypeNames.clone();
 	}
 
-	/**
-	 * Get jira test case type string [ ].
-	 *
-	 * @return the string [ ]
-	 */
-	public String[] getJiraTestCaseType() {
-		return jiraTestCaseType == null ? null : jiraTestCaseType.clone();
-	}
-
-	/**
-	 * Sets jira test case type.
-	 *
-	 * @param jiraTestCaseType
-	 *            the jira test case type
-	 */
-	public void setJiraTestCaseType(String[] jiraTestCaseType) {
-		this.jiraTestCaseType = jiraTestCaseType == null ? null : jiraTestCaseType.clone();
-	}
 
 }

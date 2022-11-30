@@ -129,7 +129,6 @@ public class RegressionPercentageKanbanServiceImplTest {
 		List<String> jiraRegressionTestValue = new ArrayList<>();
 		jiraRegressionTestValue.add("Jira Regression");
 		projectOne.setTestRegressionValue(regressionAutomationValue);
-		projectOne.setJiraRegressionTestValue(Arrays.asList(""));
 		projectOne.setRegressionAutomationFolderPath(Arrays.asList("/KnowHOW/knowHowFolderwiseTestcase/Dashboard/kpi widjets/Iteration Dashboard"));
 
 
@@ -144,7 +143,6 @@ public class RegressionPercentageKanbanServiceImplTest {
 		regressionAutomationValues.add("Regression");
 		List<String> jiraRegressionTestValues = new ArrayList<>();
 		jiraRegressionTestValues.add("Jira Regression");
-		projectTwo.setJiraRegressionTestValue(jiraRegressionTestValues);
 		projectTwo.setTestRegressionValue(regressionAutomationValues);
 		projectTwo.setRegressionAutomationLabels(regressionAutomationLabels);
 		projectTwo.setRegressionAutomationFolderPath(Arrays.asList("regressionLabel/abc"));

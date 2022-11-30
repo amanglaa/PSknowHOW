@@ -246,7 +246,6 @@ public class OfflineDataProcessorImplTest {
 
         jiraType = new ArrayList<>();
         jiraType.add("Automation");
-        fieldMapping.setJiraAutomatedTestValue(jiraType);
 
         jiraType = new ArrayList<>();
         jiraType.add("10");
@@ -281,8 +280,6 @@ public class OfflineDataProcessorImplTest {
         jiraType = new ArrayList<>();
         jiraType.add("Ready for Sign-off");
         fieldMapping.setJiraDod(jiraType);
-        fieldMapping.setJiraTestCaseType(new String[]{"Story"});
-        fieldMapping.setTestAutomated("40");
         jiraType = new ArrayList<>();
         jiraType.add("2.1.0");
         fieldMapping.setTestRegressionValue(jiraType);
@@ -375,10 +372,7 @@ public class OfflineDataProcessorImplTest {
 
         jiraType = new ArrayList<>();
         jiraType.add("AutomationAutomation");
-        fieldMapping.setJiraAutomatedTestValue(jiraType);
 
-        fieldMapping.setJiraTestCaseType(new String[]{"Test Case"});
-        fieldMapping.setTestAutomated("40");
         jiraSegData = new ArrayList<>();
         jiraSegData.add("2.1.0");
         fieldMapping.setTestRegressionValue(jiraSegData);
