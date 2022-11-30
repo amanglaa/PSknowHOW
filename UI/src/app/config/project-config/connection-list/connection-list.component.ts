@@ -815,11 +815,11 @@ export class ConnectionListComponent implements OnInit {
     }
 
 
-    if (field === 'cloudEnv') {
+    if (field === 'cloudEnv' && type.toLowerCase() === 'sonar') {
       if (event.checked) {
-        this.basicConnectionForm.controls['accessTokenEnabled'].setValue(true);
+        this.basicConnectionForm.controls['accessTokenEnabled']?.setValue(true);
       } else {
-        this.basicConnectionForm.controls['accessTokenEnabled'].setValue(false);
+        this.basicConnectionForm.controls['accessTokenEnabled']?.setValue(false);
       }
     }
 
