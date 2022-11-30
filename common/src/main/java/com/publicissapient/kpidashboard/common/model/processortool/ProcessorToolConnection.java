@@ -81,6 +81,7 @@ public class ProcessorToolConnection {
 	private boolean offline;
 	private String offlineFilePath;
 	private boolean cloudEnv;
+	private boolean accessTokenEnabled;
 	private String organizationKey;
 	//TestCase Fields for Zephyr tool
 	private List<String> regressionAutomationLabels;

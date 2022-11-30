@@ -288,7 +288,7 @@ public abstract class JiraIssueClient {// NOPMD //NOSONAR
 		} else {
 			List<String> assigneeKey = new ArrayList<>();
 			List<String> assigneeName = new ArrayList<>();
-			if (user.getName().isEmpty() || (user.getName() == null)) {
+			if ((user.getName() == null) || user.getName().isEmpty()) {
 				assigneeKey = new ArrayList<>();
 				assigneeName = new ArrayList<>();
 			} else {
