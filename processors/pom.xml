@@ -60,6 +60,7 @@
             </activation>
             <modules>
                 <module>jira</module>
+                <module>jiratest</module>
                 <module>zephyr</module>
                 <module>bitbucket</module>
                 <module>gitlab</module>

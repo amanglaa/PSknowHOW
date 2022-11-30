@@ -594,15 +594,15 @@ db.getCollection('kpi_master').insert(
         "operator": "<"
       },
       {
-        "type": "Neutral",
+        "type": "Upwards",
         "lhs": "value",
         "rhs": "lineValue",
-        "operator": "<"
+        "operator": "="
       },
       {
         "type": "Downwards",
         "lhs": "value",
-        "erhs": "lineValue",
+        "rhs": "lineValue",
         "operator": ">"
       }
     ],
@@ -1984,7 +1984,7 @@ db.getCollection('kpi_master').insert(
       {
         "type": "Downwards",
         "lhs": "value",
-        "erhs": "lineValue",
+        "rhs": "lineValue",
         "operator": ">"
       }
     ],
@@ -2040,7 +2040,7 @@ db.getCollection('kpi_master').insert(
       {
         "type": "Downwards",
         "lhs": "value",
-        "erhs": "lineValue",
+        "rhs": "lineValue",
         "operator": ">"
       }
     ],

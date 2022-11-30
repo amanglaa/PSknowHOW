@@ -88,6 +88,7 @@ public class Sonar8ClientTest {
 	private static final String PASSWORD = "password";
 	private static final String ACCESSTOKEN = "erdtygdgwqeufd";
 	private static final String EXCEPTION = "rest client exception";
+	private static final String PAGE = "&p=%s";
 	
 	@Before
 	public void init() {
@@ -137,8 +138,8 @@ public class Sonar8ClientTest {
 	public void testGetPastSonarDetails() {
 		SonarProcessorItem project = getProject();
 		String historyUrl = String.format(
-				new StringBuilder(project.getInstanceUrl()).append(URL_MEASURE_HISTORY).toString(), project.getKey(),
-				METRICS, DEFAULT_DATE);
+				new StringBuilder(project.getInstanceUrl()).append(URL_MEASURE_HISTORY).append(PAGE).toString(), project.getKey(),
+				METRICS, DEFAULT_DATE, 1);
 
 		doThrow(new RestClientException("rest client exception")).when(rest).exchange(ArgumentMatchers.eq(historyUrl),
 				ArgumentMatchers.eq(HttpMethod.GET), ArgumentMatchers.any(HttpEntity.class), ArgumentMatchers.eq(String.class));
@@ -175,8 +176,8 @@ public class Sonar8ClientTest {
 		String historyJson = getJson("sonar8_measures_history.json");
 		SonarProcessorItem project = getProject();
 		String historyUrl = String.format(
-				new StringBuilder(project.getInstanceUrl()).append(URL_MEASURE_HISTORY).toString(), project.getKey(),
-				METRICS, DEFAULT_DATE);
+				new StringBuilder(project.getInstanceUrl()).append(URL_MEASURE_HISTORY).append(PAGE).toString(), project.getKey(),
+				METRICS, DEFAULT_DATE, 1);
 		doReturn(new ResponseEntity<>(historyJson, HttpStatus.OK)).when(rest).exchange(ArgumentMatchers.eq(historyUrl),
 				ArgumentMatchers.eq(HttpMethod.GET), ArgumentMatchers.any(HttpEntity.class), ArgumentMatchers.eq(String.class));
 
@@ -193,8 +194,8 @@ public class Sonar8ClientTest {
 		String historyJson = getJson("sonar8_measures_history.json");
 		SonarProcessorItem project = getProject();
 		String historyUrl = String.format(
-				new StringBuilder(project.getInstanceUrl()).append(URL_MEASURE_HISTORY).toString(), project.getKey(),
-				METRICS, DEFAULT_DATE);
+				new StringBuilder(project.getInstanceUrl()).append(URL_MEASURE_HISTORY).append(PAGE).toString(), project.getKey(),
+				METRICS, DEFAULT_DATE, 1);
 		doReturn(new ResponseEntity<>(historyJson, HttpStatus.OK)).when(rest).exchange(ArgumentMatchers.eq(historyUrl),
 				ArgumentMatchers.eq(HttpMethod.GET), ArgumentMatchers.any(HttpEntity.class), ArgumentMatchers.eq(String.class));
 

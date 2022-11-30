@@ -297,8 +297,8 @@ public final class CommonUtils {
 		cacheManagerMap.put(KPISource.JENKINS.name(), CommonConstant.JENKINS_KPI_CACHE);
 		cacheManagerMap.put(KPISource.JENKINSKANBAN.name(), CommonConstant.JENKINS_KPI_CACHE);
 
-		cacheManagerMap.put(KPISource.ZEPHYR.name(), CommonConstant.ZEPHYR_KPI_CACHE);
-		cacheManagerMap.put(KPISource.ZEPHYRKANBAN.name(), CommonConstant.ZEPHYR_KPI_CACHE);
+		cacheManagerMap.put(KPISource.ZEPHYR.name(), CommonConstant.TESTING_KPI_CACHE);
+		cacheManagerMap.put(KPISource.ZEPHYRKANBAN.name(), CommonConstant.TESTING_KPI_CACHE);
 
 		cacheManagerMap.put(Constant.KPI_REQUEST_TRACKER_ID_KEY, "requestTrackerCache");
 
