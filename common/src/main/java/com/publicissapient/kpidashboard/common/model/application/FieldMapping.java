@@ -90,7 +90,7 @@ public class FieldMapping extends BasicModel {
 	private List<String> jiraTestAutomationIssueType;
 	// value of the automated test case Eg. Yes, Cannot Automate, No
 
-	private List<String> jiraCanNotAutomatedTestValue; // TODO delete this field
+	private List<String> jiraCanNotAutomatedTestValue; // TODO delete this fiel
 
 	private List<String> jiraSprintVelocityIssueType;
 

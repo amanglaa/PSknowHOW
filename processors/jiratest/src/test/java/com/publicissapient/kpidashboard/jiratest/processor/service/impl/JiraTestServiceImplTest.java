@@ -208,8 +208,8 @@ class JiraTestServiceImplTest {
 		String[] testCaseType = new String[2];
 		testCaseType[0] = "Test";
 		testCaseType[1] = "TestCase";
-		toolInfo.setJiraTestCaseType(testCaseType);
 		toolInfo.setTestAutomatedIdentification("CustomField");
+		toolInfo.setJiraTestCaseType(testCaseType);
 		toolInfo.setTestAutomationCompletedIdentification("CustomField");
 		toolInfo.setTestRegressionIdentification("Labels");
 		toolInfo.setTestAutomationCompletedByCustomField("customfield_43701");
