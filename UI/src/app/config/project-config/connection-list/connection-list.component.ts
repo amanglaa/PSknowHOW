@@ -589,9 +589,6 @@ export class ConnectionListComponent implements OnInit {
       reqData['baseUrl'] = this.basicConnectionForm.controls['baseUrl']['value'];
     }
 
-    if(this.connection.hasOwnProperty('accessTokenEnabled') && this.connection['accessTokenEnabled'] && this.connection.hasOwnProperty('username')){
-      delete reqData['username'];
-    }
 
     if(this.connection['type'].toLowerCase() === 'sonar' && this.connection['cloudEnv'] === true){
       reqData['accessTokenEnabled'] =true;
@@ -752,6 +749,12 @@ export class ConnectionListComponent implements OnInit {
     if(this.selectedConnectionType.toLowerCase() === 'sonar' && !!this.basicConnectionForm.controls['vault'] && this.connection['vault'] === true){
       this.basicConnectionForm.controls['password'].disable();
       this.basicConnectionForm.controls['accessToken'].disable();
+      this.basicConnectionForm.controls['accessTokenEnabled'].disable();
+    }
+    if(this.selectedConnectionType.toLowerCase() === 'sonar' && !!this.basicConnectionForm.controls['accessTokenEnabled'] && !!this.connection['accessTokenEnabled'] === true){
+      this.basicConnectionForm.controls['username'].disable();
+      this.basicConnectionForm.controls['password'].disable();
+      this.basicConnectionForm.controls['accessToken'].enable();
     }
   }
 
@@ -848,6 +851,9 @@ export class ConnectionListComponent implements OnInit {
       reqData['accessToken'] = '';
       reqData['apiKey'] = '';
     }
+    if(this.connection['type'].toLowerCase() === 'sonar' && this.connection['cloudEnv'] === true){
+      reqData['accessTokenEnabled'] =true;
+    }
     this.testConnectionMsg = '';
     this.testConnectionValid = true;
 
@@ -917,7 +923,7 @@ export class ConnectionListComponent implements OnInit {
       });
         break;
       case 'Sonar':
-        this.testConnectionService.testSonar(reqData['baseUrl'], reqData['username'], reqData['password'], reqData['accessToken'], reqData['cloudEnv'], reqData['vault']).subscribe(next => {
+        this.testConnectionService.testSonar(reqData['baseUrl'], reqData['username'], reqData['password'], reqData['accessToken'], reqData['cloudEnv'], reqData['vault'], reqData['accessTokenEnabled']).subscribe(next => {
           if (next.success && next.data === 200) {
             this.testConnectionMsg = 'Valid Connection';
             this.testConnectionValid = true;
@@ -1164,6 +1170,8 @@ export class ConnectionListComponent implements OnInit {
 
   enableDisableFieldsOnAccessTokenORPasswordToggle() {
     if (this.connection['accessTokenEnabled'] === true) {
+      this.basicConnectionForm.controls['username'].setValue('');
+      this.basicConnectionForm.controls['username'].disable();
       this.basicConnectionForm.controls['password'].setValue('');
       this.basicConnectionForm.controls['password'].disable();
       this.basicConnectionForm.controls['accessToken']?.enable();
