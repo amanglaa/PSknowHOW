@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -177,16 +178,18 @@ public class TestCaseDetailsRepositoryImpl implements TestCaseDetailsRepositoryC
 		});
 
 		uniqueProjectMapNotIn.forEach((project, filterMap) -> {
-			Criteria projectCriteria = new Criteria();
-			projectCriteria.and(BASIC_PROJ_CONF_ID).is(project);
-			filterMap.forEach((subk, subv) -> projectCriteria.and(subk).nin((List<Pattern>) subv));
-			projectCriteriaList.add(projectCriteria);
+			if(MapUtils.isNotEmpty(filterMap)) {
+				Criteria projectCriteria = new Criteria();
+				projectCriteria.and(BASIC_PROJ_CONF_ID).is(project);
+				filterMap.forEach((subk, subv) -> projectCriteria.and(subk).nin((List<Pattern>) subv));
+				projectCriteriaList.add(projectCriteria);
+			}
 		});
 
 		Query query = new Query(criteria);
 		if (!CollectionUtils.isEmpty(projectCriteriaList)) {
 			Criteria criteriaAggregatedAtProjectLevel = new Criteria()
-					.andOperator(projectCriteriaList.toArray(new Criteria[0]));
+					.orOperator(projectCriteriaList.toArray(new Criteria[0]));
 			Criteria criteriaProjectLevelAdded = new Criteria().andOperator(criteria, criteriaAggregatedAtProjectLevel);
 
 			query = new Query(criteriaProjectLevelAdded);
