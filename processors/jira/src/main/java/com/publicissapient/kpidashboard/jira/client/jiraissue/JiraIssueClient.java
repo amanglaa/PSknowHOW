@@ -288,7 +288,7 @@ public abstract class JiraIssueClient {// NOPMD //NOSONAR
 		} else {
 			List<String> assigneeKey = new ArrayList<>();
 			List<String> assigneeName = new ArrayList<>();
-			if (user.getName().isEmpty() || (user.getName() == null)) {
+			if ((user.getName() == null) || user.getName().isEmpty()) {
 				assigneeKey = new ArrayList<>();
 				assigneeName = new ArrayList<>();
 			} else {
@@ -337,81 +337,6 @@ public abstract class JiraIssueClient {// NOPMD //NOSONAR
 		return fieldValue.toString();
 	}
 
-	protected Map<String, List<String>> checkIdentifier(FieldMapping fieldMapping) {
-		Map<String, List<String>> identifierMap = new HashMap<>();
-
-		List<String> identiferLabel = new ArrayList<>();
-		List<String> identiferCustomField = new ArrayList<>();
-		if (fieldMapping.getTestAutomatedIdentification() != null
-				&& fieldMapping.getTestAutomatedIdentification().trim().equalsIgnoreCase(JiraConstants.LABELS)) {
-			identiferLabel.add(JiraConstants.CAN_BE_AUTOMATED);
-		}
-		if (fieldMapping.getTestAutomationCompletedIdentification() != null && fieldMapping
-				.getTestAutomationCompletedIdentification().trim().equalsIgnoreCase(JiraConstants.LABELS)) {
-			identiferLabel.add(JiraConstants.AUTOMATION);
-		}
-		identifierMap.put(JiraConstants.LABELS, identiferLabel);
-		if (fieldMapping.getTestAutomatedIdentification() != null
-				&& fieldMapping.getTestAutomatedIdentification().trim().equalsIgnoreCase(JiraConstants.CUSTOM_FIELD)) {
-			identiferCustomField.add(JiraConstants.CAN_BE_AUTOMATED);
-		}
-		if (fieldMapping.getTestAutomationCompletedIdentification() != null && fieldMapping
-				.getTestAutomationCompletedIdentification().trim().equalsIgnoreCase(JiraConstants.CUSTOM_FIELD)) {
-			identiferCustomField.add(JiraConstants.AUTOMATION);
-		}
-		identifierMap.put(JiraConstants.CUSTOM_FIELD, identiferCustomField);
-		return identifierMap;
-	}
-
-	protected Map<String, String> processLabels(List<String> value, Issue issue, FieldMapping fieldMapping) {
-		Map<String, String> resultMap = new HashMap<>();
-		String testAutomatedFlag = null;
-		String testCanBeAutomatedFlag = null;
-		String automatedValue = null;
-
-		for (String identifier : value) {
-			if (identifier.equalsIgnoreCase(JiraConstants.AUTOMATION)
-					&& hasAtLeastOneCommonElement(issue.getLabels(), fieldMapping.getJiraAutomatedTestValue())) {
-				automatedValue = fieldMapping.getJiraAutomatedTestValue().get(0);
-				testAutomatedFlag = NormalizedJira.YES_VALUE.getValue();
-			}
-			if (identifier.equalsIgnoreCase(JiraConstants.CAN_BE_AUTOMATED)
-					&& hasAtLeastOneCommonElement(issue.getLabels(), fieldMapping.getJiraCanBeAutomatedTestValue())) {
-				testCanBeAutomatedFlag = NormalizedJira.YES_VALUE.getValue();
-			}
-		}
-		resultMap.put(TESTAUTOMATEDFLAG, testAutomatedFlag);
-		resultMap.put(TESTCANBEAUTOMATEDFLAG, testCanBeAutomatedFlag);
-		resultMap.put(AUTOMATEDVALUE, automatedValue);
-		return resultMap;
-	}
-
-	protected Map<String, String> processCustomField(List<String> value, FieldMapping fieldMapping,
-			Map<String, IssueField> fields) {
-		Map<String, String> resultMap = new HashMap<>();
-		String automatedValue = null;
-		String testAutomatedFlag = null;
-		String testCanBeAutomatedFlag = null;
-		for (String identifier : value) {
-			if (identifier.equalsIgnoreCase(JiraConstants.AUTOMATION)) {
-				testAutomatedFlag = processJson(fieldMapping.getTestAutomationCompletedByCustomField(), fields,
-						fieldMapping.getJiraAutomatedTestValue());
-				if (testAutomatedFlag.equalsIgnoreCase(NormalizedJira.YES_VALUE.getValue())) {
-					automatedValue = fieldMapping.getJiraAutomatedTestValue().get(0);
-				}
-
-			}
-			if (identifier.equalsIgnoreCase(JiraConstants.CAN_BE_AUTOMATED)) {
-				testCanBeAutomatedFlag = processJson(fieldMapping.getTestAutomated(), fields,
-						fieldMapping.getJiraCanBeAutomatedTestValue());
-			}
-		}
-
-		resultMap.put(TESTAUTOMATEDFLAG, testAutomatedFlag);
-		resultMap.put(TESTCANBEAUTOMATEDFLAG, testCanBeAutomatedFlag);
-		resultMap.put(AUTOMATEDVALUE, automatedValue);
-		return resultMap;
-	}
 
 	private boolean hasAtLeastOneCommonElement(Set<String> issueLabels, List<String> configuredLabels) {
 		if (org.apache.commons.collections4.CollectionUtils.isEmpty(issueLabels)) {

@@ -483,9 +483,9 @@ public class Sonar8Client implements SonarClient {
 
 		String url = "";
 
+		List<SonarHistory> codeList = new ArrayList<>();
 		try {
 			int pageIndex = 1;
-			List<SonarHistory> codeList = new ArrayList<>();
 			do {
 				url = createHistoryUrl(project,metrics,lastUpdated,pageIndex);
 				ResponseEntity<String> response = restOperations.exchange(url, HttpMethod.GET, httpHeaders,
@@ -522,14 +522,13 @@ public class Sonar8Client implements SonarClient {
 					break;
 				}
 			} while (pageIndex < 100);
-			return codeList;
 
-		} catch (ParseException | RestClientException ex) {
+		} catch (ParseException | RestClientException | NullPointerException ex) {
 			log.error("Unable to Parse Response for url: {}", url);
 			log.error(ex.getMessage(), ex);
 		}
 
-		return new ArrayList<>();
+		return codeList;
 	}
 	private String createHistoryUrl(SonarProcessorItem project, String metrics, String lastUpdated, int pageIndex) {
 		String url = "";
