@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.util.Strings;
 import org.bson.types.ObjectId;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONTokener;
@@ -448,6 +449,7 @@ public class JiraTestServiceImpl implements JiraTestService {
 			testCaseDetail.setIsTestCanBeAutomated(
 					finalMap.getOrDefault(TEST_CAN_BE_AUTOMATED_FLAG, testCanBeAutomatedValue));
 
+			setRegressionLabel(jiraTestToolInfo, fields , testCaseDetail);
 		} catch (Exception e) {
 			log.error("JIRA Processor |Error while parsing test automated field", e);
 		}
@@ -569,6 +571,39 @@ public class JiraTestServiceImpl implements JiraTestService {
 			log.error("JIRA Processor |Error while parsing test automated field", e);
 		}
 		return automationFlag;
+	}
+
+	private String processJsonForCustomFields(String fieldMapping, Map<String, IssueField> fields, List<String> jiraTestValue) {
+		String fetchedValueFromJson = Strings.EMPTY;
+		try {
+			if (fields.get(fieldMapping) != null && fields.get(fieldMapping).getValue() != null) {
+				String data = fields.get(fieldMapping).getValue().toString();
+				Object json = new JSONTokener(data).nextValue();
+
+				if (json instanceof org.codehaus.jettison.json.JSONObject) {
+					fetchedValueFromJson = ((org.codehaus.jettison.json.JSONObject) fields.get(fieldMapping).getValue())
+							.getString(JiraConstants.VALUE);
+					if (jiraTestValue.contains(fetchedValueFromJson)) {
+						return fetchedValueFromJson;
+					}
+				} else if (json instanceof org.codehaus.jettison.json.JSONArray) {
+					JSONParser parser = new JSONParser();
+					org.json.simple.JSONObject jsonObject;
+					JSONArray array = (JSONArray) parser.parse(fields.get(fieldMapping).getValue().toString());
+					for (int i = 0; i < array.size(); i++) {
+						jsonObject = (org.json.simple.JSONObject) parser.parse(array.get(i).toString());
+						fetchedValueFromJson = jsonObject.get(JiraConstants.VALUE).toString();
+					}
+					if (jiraTestValue.contains(fetchedValueFromJson)) {
+						return fetchedValueFromJson;
+					}
+				}
+			}
+
+		} catch (JSONException | org.json.simple.parser.ParseException e) {
+			log.error("JIRA Processor |Error while parsing test automated field", e);
+		}
+		return fetchedValueFromJson;
 	}
 
 	protected Map<String, String> processMap(Map<String, String> labelMap, Map<String, String> customfieldMap) {
@@ -878,5 +913,33 @@ public class JiraTestServiceImpl implements JiraTestService {
 	private String encodeCredentialsToBase64(String username, String password) {
 		String cred = username + ":" + password;
 		return Base64.getEncoder().encodeToString(cred.getBytes());
+	}
+
+	/**
+	 * Sets the regression labels..
+	 *
+	 * @param jiraTestToolInfo
+	 *            processorToolConnection
+	 * @param customFieldMap
+	 *            map of custom fields
+	 * @param testCaseDetails
+	 *            scrum test case
+	 */
+	private void setRegressionLabel(ProcessorToolConnection jiraTestToolInfo, Map<String, IssueField> customFieldMap,
+			TestCaseDetails testCaseDetails) {
+		if (CollectionUtils.isNotEmpty(jiraTestToolInfo.getTestRegressionValue())
+				&& (jiraTestToolInfo.getTestRegressionByCustomField() != null)) {
+			String regressionLabels = processJsonForCustomFields(jiraTestToolInfo.getTestRegressionByCustomField(),
+					customFieldMap, jiraTestToolInfo.getJiraRegressionTestValue());
+			if (StringUtils.isNotEmpty(regressionLabels)) {
+				Set<String> regressionCustomValueList = new HashSet<>(Arrays.asList(regressionLabels.split(", ")));
+				if (CollectionUtils.containsAny(jiraTestToolInfo.getTestRegressionValue(), regressionCustomValueList)) {
+					if (CollectionUtils.isNotEmpty(testCaseDetails.getLabels())) {
+						regressionCustomValueList.addAll(testCaseDetails.getLabels());
+					}
+					testCaseDetails.setLabels(new ArrayList<>(regressionCustomValueList));
+				}
+			}
+		}
 	}
 }
