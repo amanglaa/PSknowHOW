@@ -240,6 +240,9 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
         this.configGlobalData?.forEach(element => {
             if (element.shown && element.isEnabled) {
                 this.kpiConfigData[element.kpiId] = true;
+                if(!this.kpiTrendsObj.hasOwnProperty(element.kpiId)){
+                    this.createTrendsData(element.kpiId);
+                }
             } else {
                 this.kpiConfigData[element.kpiId] = false;
             }
@@ -1352,7 +1355,7 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
             this.kpiTrendsObj[kpiId] = [];
             for(let i = 0; i < this.kpiChartData[kpiId]?.length; i++){
                 if(this.kpiChartData[kpiId][i]?.value?.length > 0){
-                    let trendObj = {}
+                    let trendObj = {};
                     const [latest, trend] = this.checkLatestAndTrendValue(enabledKpiObj, this.kpiChartData[kpiId][i]);
                     trendObj = {
                         "hierarchyName": this.kpiChartData[kpiId][i]?.data,
@@ -1361,8 +1364,11 @@ export class ExecutiveComponent implements OnInit, OnDestroy {
                         "maturity": kpiId != 'kpi3' && kpiId != 'kpi53' ? 
                                     this.checkMaturity(this.kpiChartData[kpiId][i]) 
                                     : 'M'+this.kpiChartData[kpiId][i]?.maturity,
+                    };
+                    if(kpiId === 'kpi997'){
+                        trendObj['value'] = 'NA';
                     }
-                    this.kpiTrendsObj[kpiId]?.push(trendObj); 
+                    this.kpiTrendsObj[kpiId]?.push(trendObj);
                 }
             }
         }
