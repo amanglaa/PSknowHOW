@@ -578,7 +578,7 @@ public class ConnectionServiceImpl implements ConnectionService {
 
 	private Connection checkConnDetailsSonar(Connection inputConn, Connection currConn, String api) {
 		Connection existingConnection = null;
-		if (inputConn.isCloudEnv()) {
+		if (inputConn.isCloudEnv() || (!inputConn.isCloudEnv() && inputConn.isAccessTokenEnabled())) {
 			boolean sameURLCheck = api.equals("save") && inputConn.getBaseUrl().equals(currConn.getBaseUrl());
 			existingConnection = checkVaultConnection(inputConn, currConn, existingConnection, sameURLCheck);
 		} else {
@@ -614,7 +614,7 @@ public class ConnectionServiceImpl implements ConnectionService {
 			setEncryptedPatField(conn);
 			break;
 		case ProcessorConstants.SONAR:
-			if (conn.isCloudEnv()) {
+			if (conn.isCloudEnv() || (!conn.isCloudEnv() && conn.isAccessTokenEnabled())) {
 				setEncryptedAccessTokenForDb(conn);
 			} else {
 				setEncryptedPasswordFieldForDb(conn);
