@@ -1153,7 +1153,7 @@ export class JiraConfigComponent implements OnInit {
               {
                 type: 'array',
                 label: 'Test Case Regression Field Value',
-                id: 'jiraTestCaseType',
+                id: 'testRegressionValue',
                 validators: [],
                 containerClass: 'p-sm-6',
                 show: true,

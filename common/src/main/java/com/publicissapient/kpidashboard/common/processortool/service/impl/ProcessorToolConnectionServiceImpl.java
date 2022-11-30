@@ -146,6 +146,7 @@ public class ProcessorToolConnectionServiceImpl implements ProcessorToolConnecti
 		processorToolConnection.setOffline(connection.isOffline());
 		processorToolConnection.setOfflineFilePath(connection.getOfflineFilePath());
 		processorToolConnection.setCloudEnv(connection.isCloudEnv());
+		processorToolConnection.setAccessTokenEnabled(connection.isAccessTokenEnabled());
 		processorToolConnection.setRegressionAutomationLabels(toolConfig.getRegressionAutomationLabels());
 		processorToolConnection.setTestAutomationStatusLabel(toolConfig.getTestAutomationStatusLabel());
 		processorToolConnection.setAutomatedTestValue(toolConfig.getAutomatedTestValue());

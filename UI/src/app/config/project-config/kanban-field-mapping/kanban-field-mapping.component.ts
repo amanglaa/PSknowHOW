@@ -375,18 +375,7 @@ export class KanbanFieldMappingComponent implements OnInit {
       storyPointToHourMapping: [''],
 
       // test case mapping
-      testAutomatedIdentification: [''],
-      testAutomationCompletedIdentification: [''],
-      testRegressionIdentification: [''],
-      testAutomated: [''],
-      testAutomationCompletedByCustomField: [''],
-      testRegressionByCustomField: [''],
-      jiraCanBeAutomatedTestValue: [[]],
-      jiraRegressionTestValue: [[]],
       jiraCanNotAutomatedTestValue: [[]],
-      jiraAutomatedTestValue: [[]],
-      jiraTestCaseType: [[]],
-      testCaseStatus:[[]],
       regressionAutomationLabels: [[]],
       //squad mapping
       squadIdentifier: [''],
@@ -463,8 +452,6 @@ export class KanbanFieldMappingComponent implements OnInit {
 
   cleanTestCaseMappingForm() {
 
-    this.fieldMappingForm.controls['jiraTestCaseType'].setValue([]);
-    this.fieldMappingForm.controls['testAutomated'].setValue('');
     this.fieldMappingForm.controls['jiraCanNotAutomatedTestValue'].setValue([]);
     this.fieldMappingForm.controls['jiraAutomatedTestValue'].setValue([]);
     this.fieldMappingForm.controls['regressionAutomationLabels'].setValue([]);
