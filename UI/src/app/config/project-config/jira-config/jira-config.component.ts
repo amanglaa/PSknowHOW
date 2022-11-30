@@ -726,7 +726,7 @@ export class JiraConfigComponent implements OnInit {
               });
 
               this.hideLoadingOnFormElement('projectKey');
-              this.disableBranchDropDown = this.isVersionSupported(version.name);
+              this.disableBranchDropDown = this.isVersionSupported(version);
             } else {
               this.projectKeyList = [];
               this.branchList = [];
@@ -755,8 +755,8 @@ export class JiraConfigComponent implements OnInit {
         this.http
           .getBranchListForProject(
             this.selectedConnection.id,
-            this.toolForm.get('apiVersion').value.name,
-            value.name,
+            this.toolForm.get('apiVersion').value,
+            value,
           )
           .subscribe((data) => {
             if (data.success) {
