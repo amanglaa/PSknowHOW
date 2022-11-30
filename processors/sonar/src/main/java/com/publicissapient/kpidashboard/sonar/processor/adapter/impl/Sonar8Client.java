@@ -230,7 +230,7 @@ public class Sonar8Client implements SonarClient {
 			response = searchProjectsSonarCloud(baseUrl, password, nextPageIndex, paging.getPageSize(),
 					sonarServer.getOrganizationKey());
 		} else if (!sonarServer.isCloudEnv() && sonarServer.isAccessTokenEnabled()) {
-			response = searchProjectsWithAccessToken(baseUrl, username, password, nextPageIndex, paging.getPageSize());
+			response = searchProjectsWithAccessToken(baseUrl, password, nextPageIndex, paging.getPageSize());
 		} else {
 			response = searchProjects(baseUrl, username, password, nextPageIndex, paging.getPageSize());
 		}
@@ -270,8 +270,6 @@ public class Sonar8Client implements SonarClient {
 	 *
 	 * @param baseUrl
 	 *            the base url
-	 * @param username
-	 *            the username
 	 * @param password
 	 *            the password
 	 * @param pageIndex
@@ -280,13 +278,13 @@ public class Sonar8Client implements SonarClient {
 	 *            the page size
 	 * @return SearchProjectsResponse containing projects and paging info
 	 */
-	private SearchProjectsResponse searchProjectsWithAccessToken(String baseUrl, String username, String password, int pageIndex,
+	private SearchProjectsResponse searchProjectsWithAccessToken(String baseUrl, String password, int pageIndex,
 												  int pageSize) {
 
 		String resUrl = String.format(RESOURCE_ENDPOINT, pageIndex, pageSize);
 		String url = baseUrl + resUrl;
 
-		HttpEntity<?> httpEntity = new HttpEntity<>(SonarProcessorUtils.getHeaders(password));
+		HttpEntity<?> httpEntity = new HttpEntity<>(SonarProcessorUtils.getHeaders(password,true));
 
 		return getSearchProjectsResponse(restOperations.exchange(url, HttpMethod.GET, httpEntity, String.class), url);
 

@@ -145,11 +145,7 @@ public class TestConnectionServiceImpl implements TestConnectionService {
 								   String password, boolean isSonarWithAccessToken) {
 		boolean isValidConnection;
 		HttpStatus status = null;
-		if(isSonarWithAccessToken){
-			getApiResponseWithBasicAuth(password, "", apiUrl, toolName);
-		}else {
-			getApiResponseWithBasicAuth(connection.getUsername(), password, apiUrl, toolName);
-		}
+		status = getApiResponseWithBasicAuth(connection.getUsername(), password, apiUrl, toolName, isSonarWithAccessToken);
 		isValidConnection = status.is2xxSuccessful();
 		return isValidConnection;
 	}
@@ -186,8 +182,7 @@ public class TestConnectionServiceImpl implements TestConnectionService {
 				String accessToken = rsaEncryptionService.decrypt(password, customApiConfig.getRsaPrivateKey());
 				isValid = testConnectionForTools(apiUrl, accessToken);
 			} else if (!connection.isCloudEnv() && connection.isAccessTokenEnabled()) {
-				String accessToken = rsaEncryptionService.decrypt(password, customApiConfig.getRsaPrivateKey());
-				isValid = testConnectionForTools(apiUrl, accessToken);
+				isValid = testConnection(connection, toolName, apiUrl, password, true);
 			}else{
 				isValid = testConnection(connection, toolName, apiUrl, password, false);
 			}
@@ -201,7 +196,7 @@ public class TestConnectionServiceImpl implements TestConnectionService {
 
 	private boolean testConnectionForGitHub(String apiUrl, String username, String password) {
 
-		HttpHeaders httpHeaders = createHeadersWithAuthentication(username, password);
+		HttpHeaders httpHeaders = createHeadersWithAuthentication(username, password, false);
 		HttpEntity<?> requestEntity = new HttpEntity<>(httpHeaders);
 		ResponseEntity<String> result = restTemplate.exchange(URI.create(apiUrl), HttpMethod.GET, requestEntity,
 				String.class);
@@ -275,9 +270,7 @@ public class TestConnectionServiceImpl implements TestConnectionService {
 
 	/**
 	 * Create API URL using base URL and API path for bitbucket
-	 * 
-	 * @param baseUrl
-	 * @param apiEndPoint
+	 * @param connection connection
 	 * @return apiURL
 	 */
 	private String createBitBucketUrl(Connection connection) {
@@ -298,9 +291,15 @@ public class TestConnectionServiceImpl implements TestConnectionService {
 	 * @param password
 	 * @return
 	 */
-	private HttpHeaders createHeadersWithAuthentication(String username, String password) {
+	private HttpHeaders createHeadersWithAuthentication(String username, String password, boolean isSonarWithAccessToken) {
 		String decryptedPswd = rsaEncryptionService.decrypt(password, customApiConfig.getRsaPrivateKey());
-		String plainCreds = username + ":" + decryptedPswd;
+		String plainCreds = null;
+
+		if(isSonarWithAccessToken){
+			plainCreds = decryptedPswd + ":";
+		}else{
+			plainCreds = username + ":" + decryptedPswd;
+		}
 		byte[] base64CredsBytes = Base64.getEncoder().encode(plainCreds.getBytes());
 		String base64Creds = new String(base64CredsBytes);
 		HttpHeaders headers = new HttpHeaders();
@@ -316,11 +315,12 @@ public class TestConnectionServiceImpl implements TestConnectionService {
 	 * @param apiUrl
 	 * @return API response
 	 */
-	private HttpStatus getApiResponseWithBasicAuth(String username, String password, String apiUrl, String toolName) {
+	private HttpStatus getApiResponseWithBasicAuth(String username, String password, String apiUrl, String toolName
+			, boolean isSonarWithAccessToken) {
 		RestTemplate rest = new RestTemplate();
 		HttpHeaders httpHeaders;
 		ResponseEntity<?> responseEntity;
-		httpHeaders = createHeadersWithAuthentication(username, password);
+		httpHeaders = createHeadersWithAuthentication(username, password, isSonarWithAccessToken);
 		HttpEntity<?> requestEntity = new HttpEntity<>(httpHeaders);
 		try {
 			responseEntity = rest.exchange(URI.create(apiUrl), HttpMethod.GET, requestEntity, String.class);
