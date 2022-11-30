@@ -584,7 +584,7 @@ export class FilterComponent implements OnInit {
                         this.filterApplyData['selectedMap'][temp[j].labelName]?.push(temp[j].nodeId);
                         this.filterApplyData['ids'].push(temp[j].nodeId);
                     }
-                    if (temp[j].labelName != 'sprint' || this.filterApplyData['selectedMap']['sprint']?.length == 0) {
+                    if (this.filterApplyData['selectedMap']['sprint']?.length == 0 || temp[j].labelName != 'sprint') {
                         this.filterApplyData['selectedMap']['project'].push(this.selectedFilterArray[i]?.nodeId);
                     }
                 }
