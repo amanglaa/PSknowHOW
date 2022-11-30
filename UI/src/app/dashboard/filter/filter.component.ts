@@ -568,9 +568,11 @@ export class FilterComponent implements OnInit {
 
     createFilterApplyData() {
         this.resetFilterApplyObj();
+        let isAdditionalFilterFlag: boolean = false;
         for (let i = 0; i < this.selectedFilterArray?.length; i++) {
 
-            if (this.selectedFilterArray[i]?.additionalFilters?.length > 0) {
+            if (this.selectedFilterArray[i]?.additionalFilters?.length > 0 || isAdditionalFilterFlag) {
+                isAdditionalFilterFlag = true;
                 const temp = this.selectedFilterArray[i]?.additionalFilters;
                 for (let j = 0; j < temp?.length; j++) {
                     if (this.filterApplyData['level'] < temp[j].level) {
