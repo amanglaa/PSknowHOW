@@ -72,6 +72,7 @@ export class KanbanFieldMappingComponent implements OnInit {
     groupFields: {},
     showAllgroups: true
   };
+  disableAdditionalFilterAdd =true;
 
   private setting = {
     element: {
@@ -594,7 +595,7 @@ export class KanbanFieldMappingComponent implements OnInit {
           additionalFilterObj['values'] = [];
         } else {
           additionalFilterObj['identificationField'] = '';
-          additionalFilterObj['values'] = submitData[element.hierarchyLevelId + 'IdentMultiValue'];
+          additionalFilterObj['values'] = submitData[element.hierarchyLevelId + 'IdentMultiValue'] ? submitData[element.hierarchyLevelId + 'IdentMultiValue'] : [];
         }
         submitData['additionalFilterConfig'].push(additionalFilterObj);
       }
