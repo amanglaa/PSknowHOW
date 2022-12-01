@@ -455,9 +455,6 @@ export class FieldMappingComponent implements OnInit {
       productionDefectComponentValue: [''],
       productionDefectValue: [[]],
       // qaRootCauseValue: [[]],
-      // test case mapping
-      jiraCanNotAutomatedTestValue: [[]],
-      regressionAutomationLabels: [[]],
       excludeRCAFromFTPR: [[]]
     };
 

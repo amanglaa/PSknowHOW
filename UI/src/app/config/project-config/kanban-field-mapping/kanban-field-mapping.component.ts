@@ -373,10 +373,6 @@ export class KanbanFieldMappingComponent implements OnInit {
       rootCause: [''],
       estimationCriteria: [''],
       storyPointToHourMapping: [''],
-
-      // test case mapping
-      jiraCanNotAutomatedTestValue: [[]],
-      regressionAutomationLabels: [[]],
       //squad mapping
       squadIdentifier: [''],
       squadIdentMultiValue: [[]],
