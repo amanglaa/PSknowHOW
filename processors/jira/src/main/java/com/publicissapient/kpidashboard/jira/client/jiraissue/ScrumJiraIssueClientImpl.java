@@ -532,7 +532,6 @@ public class ScrumJiraIssueClientImpl extends JiraIssueClient {// NOPMD
 				jiraIssue.setTypeName(JiraProcessorUtil.deodeUTF8String(issueType.getName()));
 
 				setDefectIssueType(jiraIssue, issueType, fieldMapping);
-				setTestTypeIssue(jiraIssue, issueType, fieldMapping);
 
 				// Label
 				jiraIssue.setLabels(JiraIssueClientUtil.getLabelsList(issue));
@@ -1579,14 +1578,6 @@ public class ScrumJiraIssueClientImpl extends JiraIssueClient {// NOPMD
 		if (null != issue.getTimeTracking()) {
 			jiraIssue.setOriginalEstimateMinutes(issue.getTimeTracking().getOriginalEstimateMinutes());
 			jiraIssue.setRemainingEstimateMinutes(issue.getTimeTracking().getRemainingEstimateMinutes());
-		}
-	}
-
-	void setTestTypeIssue(JiraIssue jiraIssue, IssueType issueType, FieldMapping fieldMapping) {
-
-		if (null != fieldMapping.getJiraTestCaseType() && Arrays.asList(fieldMapping.getJiraTestCaseType()).stream()
-				.anyMatch(testType -> testType.equals(issueType.getName()))) {
-			jiraIssue.setTypeName(NormalizedJira.TEST_TYPE.getValue());
 		}
 	}
 
