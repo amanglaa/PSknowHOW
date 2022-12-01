@@ -273,7 +273,7 @@ public final class AutomationPercentageServiceImpl extends ZephyrKPIService<Doub
                 .groupingBy(sws -> Pair.of(sws.getBasicProjectConfigId(), sws.getSprint()), Collectors.toList()));
 
         List<TestCaseDetails> testCaseList = (List<TestCaseDetails>) defectDataListMap.get(TESTCASEKEY);
-        Set<JiraIssue> defectList= (Set<JiraIssue>) defectDataListMap.get(ISSUE_DATA);
+        List<JiraIssue> defectList= (List<JiraIssue>) defectDataListMap.get(ISSUE_DATA);
         Map<String, Set<JiraIssue>> projectWiseStories = defectList.stream().collect(Collectors.groupingBy(JiraIssue::getBasicProjectConfigId, Collectors.toSet()));
         Map<Pair<String, String>, List<TestCaseDetails>> sprintWiseAutoTestMap = new HashMap<>();
         Map<Pair<String, String>, List<TestCaseDetails>> sprintWiseTotalTestMap = new HashMap<>();
