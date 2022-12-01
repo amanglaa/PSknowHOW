@@ -166,7 +166,7 @@ public class TestWithoutStoryServiceImpl extends ZephyrKPIService<Double, List<O
 			if (Optional.ofNullable(fieldMapping.getJiraStoryIdentification()).isPresent()) {
 
 				if (Optional.ofNullable(fieldMapping.getJiraStoryIdentification()).isPresent()) {
-					KpiDataHelper.prepareFieldMappingDefectTypeTransformation(mapOfProjectFilters, fieldMapping,
+					KpiDataHelper.prepareFieldMappingDefectTypeTransformation(mapOfStoriesFilter, fieldMapping,
 							fieldMapping.getJiraStoryIdentification(), JiraFeature.ISSUE_TYPE.getFieldValueInFeature());
 				}
 
