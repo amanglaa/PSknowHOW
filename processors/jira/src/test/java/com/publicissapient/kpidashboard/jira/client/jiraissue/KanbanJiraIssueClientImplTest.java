@@ -206,7 +206,6 @@ public class KanbanJiraIssueClientImplTest {
         srs[0]="KnowHOW";
         srs[1]="KnowHOW1";
         fieldMapping.setJiraIssueTypeNames(srs);
-        fieldMapping.setJiraTestCaseType(new String[]{"Bug","Defect"});
         Map<String, IssueField> map = new HashMap<>();
         IssueField issueField = null;
         map.put("111", issueField);

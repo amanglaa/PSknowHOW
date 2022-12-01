@@ -459,7 +459,6 @@ public class KanbanJiraIssueClientImpl extends JiraIssueClient {
 				// Type
 				jiraIssue.setTypeId(JiraProcessorUtil.deodeUTF8String(issueType.getId()));
 				jiraIssue.setTypeName(JiraProcessorUtil.deodeUTF8String(issueType.getName()));
-				setTestTypeIssue(jiraIssue, issueType, fieldMapping);
 
 				// Label
 				jiraIssue.setLabels(JiraIssueClientUtil.getLabelsList(issue));
@@ -1331,14 +1330,6 @@ public class KanbanJiraIssueClientImpl extends JiraIssueClient {
 				+ jiraIssue.getTimeCriticality();
 		jiraIssue.setCostOfDelay(costOfDelay);
 
-	}
-
-	void setTestTypeIssue(KanbanJiraIssue jiraIssue, IssueType issueType, FieldMapping fieldMapping) {
-
-		if (null != fieldMapping.getJiraTestCaseType() && Arrays.asList(fieldMapping.getJiraTestCaseType()).stream()
-				.anyMatch(testType -> testType.equals(issueType.getName()))) {
-			jiraIssue.setTypeName(NormalizedJira.TEST_TYPE.getValue());
-		}
 	}
 
 	private void setStoryLinkWithDefect(Issue issue, KanbanJiraIssue jiraIssue) {
