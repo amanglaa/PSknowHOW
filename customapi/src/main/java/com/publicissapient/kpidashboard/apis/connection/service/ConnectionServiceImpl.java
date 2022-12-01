@@ -497,6 +497,7 @@ public class ConnectionServiceImpl implements ConnectionService {
 		existingConnection.setVault(connection.isVault());
 		existingConnection.setUpdatedAt(DateUtil.dateTimeFormatter(LocalDateTime.now(), DateUtil.TIME_FORMAT));
 		existingConnection.setConnPrivate(connection.isConnPrivate());
+		existingConnection.setAccessTokenEnabled(connection.isAccessTokenEnabled());
 		existingConnection.setUpdatedBy(authenticationService.getLoggedInUser());
 	}
 
