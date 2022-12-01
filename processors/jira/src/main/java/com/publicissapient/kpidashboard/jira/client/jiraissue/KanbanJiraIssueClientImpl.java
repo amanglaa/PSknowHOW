@@ -192,6 +192,10 @@ public class KanbanJiraIssueClientImpl extends JiraIssueClient {
 		} catch (JSONException e) {
 			log.error("JIRA Processor | Error while updating Story information in kanban client", e);
 			lastSavedKanbanJiraIssueChangedDateByType.clear();
+		}catch (InterruptedException e) {
+			log.error("Interrupted exception thrown.", e);
+			lastSavedKanbanJiraIssueChangedDateByType.clear();
+			processorFetchingComplete = false;
 		} finally {
 			boolean isAttemptSuccess = isAttemptSuccess(total, savedIsuesCount, processorFetchingComplete);
 			if (!isAttemptSuccess) {
@@ -262,6 +266,10 @@ public class KanbanJiraIssueClientImpl extends JiraIssueClient {
 		} catch (JSONException e) {
 			log.error("JIRA Processor | Error while updating Story information in kanban client", e);
 			lastSavedKanbanJiraIssueChangedDateByType.clear();
+		}catch (InterruptedException e) {
+			log.error("Interrupted exception thrown.", e);
+			lastSavedKanbanJiraIssueChangedDateByType.clear();
+			processorFetchingComplete = false;
 		} finally {
 			boolean isAttemptSuccess = isAttemptSuccess(total, savedIsuesCount, processorFetchingComplete);
 			if (!isAttemptSuccess) {
