@@ -278,7 +278,6 @@ public class OfflineDataProcessorImplTest {
         fieldMapping.setJiraDod(jiraType);
         jiraType = new ArrayList<>();
         jiraType.add("2.1.0");
-        fieldMapping.setTestRegressionValue(jiraType);
 
 
         List<String> jiraSegData = new ArrayList<>();
@@ -367,7 +366,6 @@ public class OfflineDataProcessorImplTest {
 
         jiraSegData = new ArrayList<>();
         jiraSegData.add("2.1.0");
-        fieldMapping.setTestRegressionValue(jiraSegData);
 
 
         jiraSegData = new ArrayList<>();

@@ -302,9 +302,6 @@ public class ScrumJiraIssueClientImplTest {
 		jiraType = new ArrayList<>();
 		jiraType.add("Ready for Sign-off");
 		fieldMapping.setJiraDod(jiraType);
-		jiraType = new ArrayList<>();
-		jiraType.add("2.1.0");
-		fieldMapping.setTestRegressionValue(jiraType);
 		fieldMapping.setStoryFirstStatus("In Analysis");
 		jiraType = new ArrayList<>();
 		jiraType.add("In Analysis");
@@ -401,9 +398,6 @@ public class ScrumJiraIssueClientImplTest {
 		jiraSegData.add("Ready for Testing");
 		fieldMapping.setJiraStatusForQa(jiraSegData);
 		fieldMapping.setDevicePlatform("customfield_18181");
-		jiraSegData = new ArrayList<>();
-		jiraSegData.add("2.1.0");
-		fieldMapping.setTestRegressionValue(jiraSegData);
 
 		jiraSegData = new ArrayList<>();
 		jiraSegData.add("segregationLabel");
