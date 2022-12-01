@@ -330,10 +330,9 @@ public class TestConnectionServiceImpl implements TestConnectionService {
 		}
 
 		Object responseBody = responseEntity.getBody();
-		if (toolName.equalsIgnoreCase(Constant.TOOL_SONAR) && responseBody != null
-				&& responseBody.toString().contains("false")) {
+		if (toolName.equalsIgnoreCase(Constant.TOOL_SONAR) && ((responseBody != null
+				&& responseBody.toString().contains("false")) || responseBody.toString().contains("</html>"))) {
 			return HttpStatus.UNAUTHORIZED;
-
 		}
 		if (toolName.equalsIgnoreCase(Constant.TOOL_BITBUCKET)
 				&& responseEntity.getStatusCode().equals(HttpStatus.OK)) {
