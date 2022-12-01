@@ -63,7 +63,6 @@ public class FieldMapping extends BasicModel {
 	private List<String> jiraStatusForDevelopment;
 	@Builder.Default
 	private List<String> jiraStatusForQa = Arrays.asList("Ready For Testing", "In Testing");
-	private List<String> testRegressionValue; // TODO delete this field
 	// type of test cases
 	private List<String> jiraDefectInjectionIssueType;
 	private List<String> jiraDod;
@@ -79,8 +78,6 @@ public class FieldMapping extends BasicModel {
 	private String jiraBugRaisedByCustomField;
 	private List<String> jiraDefectRemovalStatus;
 	private List<String> jiraDefectRemovalIssueType;
-	private List<String> regressionAutomationFolderPath;// TODO delete this field
-	private List<String> inSprintAutomationFolderPath;// TODO delete this field
 	/**
 	 * Device Platform (iOS/Android/Desktop)
 	 */
@@ -89,8 +86,6 @@ public class FieldMapping extends BasicModel {
 	// parent issue type for the test
 	private List<String> jiraTestAutomationIssueType;
 	// value of the automated test case Eg. Yes, Cannot Automate, No
-
-	private List<String> jiraCanNotAutomatedTestValue; // TODO delete this fiel
 
 	private List<String> jiraSprintVelocityIssueType;
 
@@ -108,8 +103,6 @@ public class FieldMapping extends BasicModel {
 	private List<String> jiraStoryIdentification;
 
 	private String jiraLiveStatus;
-
-	private List<String> regressionAutomationLabels;// TODO delete this field
 
 	private List<String> ticketCountIssueType;
 
@@ -142,8 +135,6 @@ public class FieldMapping extends BasicModel {
 	private List<String> jiraCommitmentReliabilityIssueType;
 
 	private List<String> resolutionTypeForRejection;
-
-	private List<String> jiraWasteStatus; // TODO delete this field
 	private List<String> qaRootCauseValue;
 	private List<String> jiraQADefectDensityIssueType;
 	private String jiraBugRaisedByQACustomField;

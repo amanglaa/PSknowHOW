@@ -259,10 +259,6 @@ public class ScrumAzureIssueClientImplTest {
 		jiraType.add("40");
 
 		jiraType = new ArrayList<>();
-		jiraType.add("10");
-		fieldMapping.setJiraCanNotAutomatedTestValue(jiraType);
-
-		jiraType = new ArrayList<>();
 		jiraType.add("Client Testing (UAT)");
 		fieldMapping.setJiraBugRaisedByValue(jiraType);
 
@@ -339,10 +335,6 @@ public class ScrumAzureIssueClientImplTest {
 
 		jiraType = new ArrayList<>();
 		jiraType.add("40");
-
-		jiraType = new ArrayList<>();
-		jiraType.add("10");
-		fieldMapping.setJiraCanNotAutomatedTestValue(jiraType);
 
 		fieldMapping.setJiraStoryPointsCustomField("customfield_56789");
 		fieldMapping.setJiraTechDebtIdentification("CustomField");

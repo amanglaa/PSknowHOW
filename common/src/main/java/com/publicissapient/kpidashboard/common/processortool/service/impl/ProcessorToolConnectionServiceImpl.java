@@ -161,8 +161,8 @@ public class ProcessorToolConnectionServiceImpl implements ProcessorToolConnecti
 		processorToolConnection.setDeploymentProjectName(toolConfig.getDeploymentProjectName());
 		processorToolConnection.setDeploymentProjectId(toolConfig.getDeploymentProjectId());
 		processorToolConnection.setParameterNameForEnvironment(toolConfig.getParameterNameForEnvironment());
-		processorToolConnection.setJiraTestCaseType(toolConfig.getJiraTestCaseType());
 		processorToolConnection.setVault(connection.isVault());
+		processorToolConnection.setJiraTestCaseType(toolConfig.getJiraTestCaseType());
 		processorToolConnection.setTestAutomatedIdentification(toolConfig.getTestAutomatedIdentification());
 		processorToolConnection.setTestAutomationCompletedIdentification(toolConfig.getTestAutomationCompletedIdentification());
 		processorToolConnection.setTestRegressionIdentification(toolConfig.getTestRegressionIdentification());

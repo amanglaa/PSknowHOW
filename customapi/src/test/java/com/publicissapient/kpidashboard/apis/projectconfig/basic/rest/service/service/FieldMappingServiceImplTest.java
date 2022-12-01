@@ -366,10 +366,6 @@ public class FieldMappingServiceImplTest {
 		fieldMapping.setJiraTechDebtCustomField(fieldMapping.getJiraTechDebtCustomField());
 		// defect
 		fieldMapping.setRootCauseValue(fieldMapping.getRootCauseValue());
-		// test case
-		fieldMapping.setRegressionAutomationFolderPath(Arrays.asList(""));
-		fieldMapping.setJiraCanNotAutomatedTestValue(Arrays.asList(""));
-		fieldMapping.setTestRegressionValue(Arrays.asList(""));
 
 		return fieldMapping;
 	}
@@ -405,10 +401,6 @@ public class FieldMappingServiceImplTest {
 		fieldMapping.setJiraBugRaisedByValue(Arrays.asList("UAT_Defect"));
 		fieldMapping.setJiraBugRaisedByQACustomField("");
 		fieldMapping.setJiraBugRaisedByQAValue(Arrays.asList(""));
-		// test case
-		fieldMapping.setRegressionAutomationFolderPath(Arrays.asList(""));
-		fieldMapping.setJiraCanNotAutomatedTestValue(Arrays.asList(""));
-		fieldMapping.setTestRegressionValue(Arrays.asList(""));
 
 		return fieldMapping;
 	}

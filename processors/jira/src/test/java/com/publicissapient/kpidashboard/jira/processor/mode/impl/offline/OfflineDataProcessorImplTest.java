@@ -247,10 +247,6 @@ public class OfflineDataProcessorImplTest {
         jiraType = new ArrayList<>();
         jiraType.add("Automation");
 
-        jiraType = new ArrayList<>();
-        jiraType.add("10");
-        fieldMapping.setJiraCanNotAutomatedTestValue(jiraType);
-
 
         jiraType = new ArrayList<>();
         jiraType.add("Client Testing (UAT)");
@@ -319,10 +315,6 @@ public class OfflineDataProcessorImplTest {
         jiraType = new ArrayList<>();
         jiraType.add("Closed");
         fieldMapping.setJiraDefectRemovalStatus(jiraType);
-
-        jiraType = new ArrayList<>();
-        jiraType.add("10");
-        fieldMapping.setJiraCanNotAutomatedTestValue(jiraType);
 
         fieldMapping.setJiraStoryPointsCustomField("customfield_20803");
         fieldMapping.setJiraTechDebtIdentification("CustomField");

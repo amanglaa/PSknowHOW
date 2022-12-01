@@ -224,6 +224,7 @@ public class ProjectToolConfigServiceImpl implements ProjectToolConfigService {
 		projectTool.setRegressionAutomationFolderPath(projectToolConfig.getRegressionAutomationFolderPath());
 		projectTool.setInSprintAutomationFolderPath(projectToolConfig.getInSprintAutomationFolderPath());
 		projectTool.setOrganizationKey(projectToolConfig.getOrganizationKey());
+		projectTool.setJiraTestCaseType(projectToolConfig.getJiraTestCaseType());
 		projectTool.setTestAutomatedIdentification(projectToolConfig.getTestAutomatedIdentification());
 		projectTool.setTestAutomationCompletedIdentification(projectToolConfig.getTestAutomationCompletedIdentification());
 		projectTool.setTestRegressionIdentification(projectToolConfig.getTestRegressionIdentification());
@@ -378,6 +379,7 @@ public class ProjectToolConfigServiceImpl implements ProjectToolConfigService {
 			projectConfToolDto.setParameterNameForEnvironment(e.getParameterNameForEnvironment());
 			projectConfToolDto.setConnectionName(checkConnectionName(e.getConnectionId()));
 			projectConfToolDtoList.add(projectConfToolDto);
+			projectConfToolDto.setJiraTestCaseType(e.getJiraTestCaseType());
 			projectConfToolDto.setTestAutomatedIdentification(e.getTestAutomatedIdentification());
 			projectConfToolDto.setTestAutomationCompletedIdentification(e.getTestAutomationCompletedIdentification());
 			projectConfToolDto.setTestRegressionIdentification(e.getTestRegressionIdentification());

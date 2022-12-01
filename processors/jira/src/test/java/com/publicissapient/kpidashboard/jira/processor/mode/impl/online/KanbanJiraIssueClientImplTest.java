@@ -244,10 +244,6 @@ public class KanbanJiraIssueClientImplTest {
 		jiraType.add("40");
 
 		jiraType = new ArrayList<>();
-		jiraType.add("10");
-		fieldMapping.setJiraCanNotAutomatedTestValue(jiraType);
-
-		jiraType = new ArrayList<>();
 		jiraType.add("Client Testing (UAT)");
 		fieldMapping.setJiraBugRaisedByValue(jiraType);
 
@@ -324,10 +320,6 @@ public class KanbanJiraIssueClientImplTest {
 
 		jiraType = new ArrayList<>();
 		jiraType.add("40");
-
-		jiraType = new ArrayList<>();
-		jiraType.add("10");
-		fieldMapping.setJiraCanNotAutomatedTestValue(jiraType);
 
 		fieldMapping.setJiraStoryPointsCustomField("customfield_56789");
 		fieldMapping.setJiraTechDebtIdentification("CustomField");
