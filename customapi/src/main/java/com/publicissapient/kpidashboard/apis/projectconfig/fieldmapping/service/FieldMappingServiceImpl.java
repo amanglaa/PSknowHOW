@@ -202,13 +202,6 @@ public class FieldMappingServiceImpl implements FieldMappingService {
 			isUpdated = checkFieldsForUpdation(unsaved, saved, productionDefectFieldList);
 		}
 
-		if (!isUpdated && isZephyrTestTool(unsaved)) {
-			List<String> testCaseFieldList = Arrays.asList("jiraTestCaseType", "testAutomated",
-					"jiraCanNotAutomatedTestValue", "testAutomationStatusLabel", "jiraAutomatedTestValue","testAutomatedIdentification","testAutomationCompletedIdentification"
-					,"jiraAutomatedTestValue","testAutomationCompletedByCustomField","testRegressionByCustomField","jiraRegressionTestValue","testRegressionIdentification");
-			isUpdated = checkFieldsForUpdation(unsaved, saved, testCaseFieldList);
-		}
-
 		return isUpdated;
 	}
 
@@ -232,14 +225,6 @@ public class FieldMappingServiceImpl implements FieldMappingService {
 		if (!isUpdated && CommonConstant.CUSTOM_FIELD.equalsIgnoreCase(unsaved.getJiraTechDebtIdentification())) {
 			List<String> tachDebtFieldList = Arrays.asList("jiraTechDebtCustomField", "jiraTechDebtValue");
 			isUpdated = checkFieldsForUpdation(unsaved, saved, tachDebtFieldList);
-		}
-
-		if (!isUpdated && isZephyrTestTool(unsaved)) {
-			List<String> testCaseFieldList = Arrays.asList("jiraTestCaseType", "testAutomated",
-					"jiraCanNotAutomatedTestValue", "testAutomationStatusLabel", "jiraAutomatedTestValue","testAutomatedIdentification","testAutomationCompletedIdentification"
-					,"jiraAutomatedTestValue","testAutomationCompletedByCustomField","testRegressionByCustomField","jiraRegressionTestValue","testRegressionIdentification");
-
-			isUpdated = checkFieldsForUpdation(unsaved, saved, testCaseFieldList);
 		}
 
 		return isUpdated;
@@ -335,9 +320,5 @@ public class FieldMappingServiceImpl implements FieldMappingService {
 	 * @param fieldMapping
 	 * @return
 	 */
-	private boolean isZephyrTestTool(FieldMapping fieldMapping) {
-
-		return null != fieldMapping.getJiraTestCaseType() && fieldMapping.getJiraTestCaseType().length > 0;
-	}
 
 }

@@ -27,7 +27,6 @@ import com.atlassian.jira.rest.client.api.domain.Project;
 import com.atlassian.jira.rest.client.api.domain.SearchResult;
 import com.atlassian.jira.rest.client.api.domain.Status;
 import com.atlassian.jira.rest.client.api.domain.Version;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.publicissapient.kpidashboard.common.model.connection.Connection;
 import com.publicissapient.kpidashboard.common.model.jira.BoardDetails;
@@ -76,11 +75,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-
-import static com.atlassian.jira.rest.client.api.IssueRestClient.Expandos.CHANGELOG;
-import static com.atlassian.jira.rest.client.api.IssueRestClient.Expandos.NAMES;
-import static com.atlassian.jira.rest.client.api.IssueRestClient.Expandos.SCHEMA;
 
 /**
  * Default JIRA client which interacts with Java JIRA API to extract data for
@@ -141,7 +137,7 @@ public class OnlineAdapter implements JiraAdapter {
     @Override
     public SearchResult getIssues(BoardDetails boardDetails, ProjectConfFieldMapping projectConfig,
                                   String startDateTimeByIssueType, String userTimeZone, int pageStart,
-                                  boolean dataExist) {
+                                  boolean dataExist) throws InterruptedException{
         SearchResult searchResult = null;
 
         if (client == null) {
@@ -164,6 +160,9 @@ public class OnlineAdapter implements JiraAdapter {
                     log.info("Processing issues {} - {} out of {}", pageStart,
                             Math.min(pageStart + getPageSize() - 1, searchResult.getTotal()), searchResult.getTotal());
                 }
+                log.info("Fetch jira board issues Api call delay started");
+                TimeUnit.MILLISECONDS.sleep(jiraProcessorConfig.getSubsequentApiCallDelayInMilli());
+                log.info("Fetch jira board issues Api call delay ended");
             } catch (RestClientException e) {
                 if (e.getStatusCode().isPresent() && e.getStatusCode().get() == 401) {
                     log.error(ERROR_MSG_401);
@@ -190,7 +189,7 @@ public class OnlineAdapter implements JiraAdapter {
     @Override
     public SearchResult getIssues(ProjectConfFieldMapping projectConfig,
                                   Map<String, LocalDateTime> startDateTimeByIssueType, String userTimeZone, int pageStart,
-                                  boolean dataExist) {
+                                  boolean dataExist) throws InterruptedException{
         SearchResult searchResult = null;
 
         if (client == null) {
@@ -228,6 +227,9 @@ public class OnlineAdapter implements JiraAdapter {
                     log.info("Processing issues {} - {} out of {}", pageStart,
                             Math.min(pageStart + getPageSize() - 1, searchResult.getTotal()), searchResult.getTotal());
                 }
+                log.info("Fetch jira issues Api call delay started");
+                TimeUnit.MILLISECONDS.sleep(jiraProcessorConfig.getSubsequentApiCallDelayInMilli());
+                log.info("Fetch jira issues Api call delay ended");
             } catch (RestClientException e) {
                 if (e.getStatusCode().isPresent() && e.getStatusCode().get() == 401) {
                     log.error(ERROR_MSG_401);
@@ -242,7 +244,7 @@ public class OnlineAdapter implements JiraAdapter {
         return searchResult;
     }
 
-    public List<Issue> getEpicIssuesQuery(List<String> epicKeyList) {
+    public List<Issue> getEpicIssuesQuery(List<String> epicKeyList) throws InterruptedException{
         List<Issue> issueList = new ArrayList<>();
         SearchResult searchResult = null;
         try {
@@ -265,6 +267,9 @@ public class OnlineAdapter implements JiraAdapter {
                         fetchedEpic += searchResult.getMaxResults();
                         pageStart += searchResult.getMaxResults() + 1;
                     }
+                    log.info("epic Api call delay started");
+                    TimeUnit.MILLISECONDS.sleep(jiraProcessorConfig.getSubsequentApiCallDelayInMilli());
+                    log.info("epic Api call delay ended");
                 } while (totalEpic < fetchedEpic);
             } else {
                 log.info("No Epic Found to fetch");
@@ -850,7 +855,7 @@ public class OnlineAdapter implements JiraAdapter {
     }
 
 
-    public List<Issue> getEpic(ProjectConfFieldMapping projectConfig, String boardId) {
+    public List<Issue> getEpic(ProjectConfFieldMapping projectConfig, String boardId) throws InterruptedException {
         List<String> epicList = new ArrayList<>();
         try {
             JiraToolConfig jiraToolConfig = projectConfig.getJira();
@@ -864,6 +869,7 @@ public class OnlineAdapter implements JiraAdapter {
                     String jsonResponse = getDataFromServer(projectConfig, (HttpURLConnection) connection);
                     isLast = populateData(jsonResponse, epicList);
                     startIndex = epicList.size() + 1;
+                    TimeUnit.MILLISECONDS.sleep(jiraProcessorConfig.getSubsequentApiCallDelayInMilli());
                 } while (!isLast);
             }
         } catch (RestClientException rce) {

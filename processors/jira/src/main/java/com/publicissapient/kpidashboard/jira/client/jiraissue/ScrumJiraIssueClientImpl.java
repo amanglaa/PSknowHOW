@@ -94,6 +94,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -229,7 +230,11 @@ public class ScrumJiraIssueClientImpl extends JiraIssueClient {// NOPMD
 		} catch (JSONException e) {
 			log.error("Error while updating Story information in scrum client", e);
 			lastSavedJiraIssueChangedDateByType.clear();
-		} finally {
+		} catch (InterruptedException e) {
+			log.error("Interrupted exception thrown.", e);
+			lastSavedJiraIssueChangedDateByType.clear();
+			processorFetchingComplete = false;
+		}finally {
 			boolean isAttemptSuccess = isAttemptSuccess(total, savedIsuesCount, processorFetchingComplete);
 			if (!isAttemptSuccess) {
 				lastSavedJiraIssueChangedDateByType.clear();
@@ -313,7 +318,11 @@ public class ScrumJiraIssueClientImpl extends JiraIssueClient {// NOPMD
 		} catch (JSONException e) {
 			log.error("Error while updating Story information in scrum client", e);
 			lastSavedJiraIssueChangedDateByType.clear();
-		} finally {
+		} catch (InterruptedException e) {
+			log.error("Interrupted exception thrown.", e);
+			lastSavedJiraIssueChangedDateByType.clear();
+			processorFetchingComplete = false;
+		}finally {
 			boolean isAttemptSuccess = isAttemptSuccess(total, savedIsuesCount, processorFetchingComplete);
 			if (!isAttemptSuccess) {
 				lastSavedJiraIssueChangedDateByType.clear();
@@ -468,7 +477,7 @@ public class ScrumJiraIssueClientImpl extends JiraIssueClient {// NOPMD
 	 *             Error If JSON is invalid
 	 */
 	public List<JiraIssue> saveJiraIssueDetails(List<Issue> currentPagedJiraRs, ProjectConfFieldMapping projectConfig,
-			Set<SprintDetails> setForCacheClean, JiraAdapter jiraAdapter, boolean dataFromBoard) throws JSONException {
+			Set<SprintDetails> setForCacheClean, JiraAdapter jiraAdapter, boolean dataFromBoard) throws JSONException,InterruptedException {
 
 		List<JiraIssue> jiraIssuesToSave = new ArrayList<>();
 		List<JiraIssueCustomHistory> jiraIssueHistoryToSave = new ArrayList<>();
@@ -532,7 +541,6 @@ public class ScrumJiraIssueClientImpl extends JiraIssueClient {// NOPMD
 				jiraIssue.setTypeName(JiraProcessorUtil.deodeUTF8String(issueType.getName()));
 
 				setDefectIssueType(jiraIssue, issueType, fieldMapping);
-				setTestTypeIssue(jiraIssue, issueType, fieldMapping);
 
 				// Label
 				jiraIssue.setLabels(JiraIssueClientUtil.getLabelsList(issue));
@@ -1579,14 +1587,6 @@ public class ScrumJiraIssueClientImpl extends JiraIssueClient {// NOPMD
 		if (null != issue.getTimeTracking()) {
 			jiraIssue.setOriginalEstimateMinutes(issue.getTimeTracking().getOriginalEstimateMinutes());
 			jiraIssue.setRemainingEstimateMinutes(issue.getTimeTracking().getRemainingEstimateMinutes());
-		}
-	}
-
-	void setTestTypeIssue(JiraIssue jiraIssue, IssueType issueType, FieldMapping fieldMapping) {
-
-		if (null != fieldMapping.getJiraTestCaseType() && Arrays.asList(fieldMapping.getJiraTestCaseType()).stream()
-				.anyMatch(testType -> testType.equals(issueType.getName()))) {
-			jiraIssue.setTypeName(NormalizedJira.TEST_TYPE.getValue());
 		}
 	}
 
