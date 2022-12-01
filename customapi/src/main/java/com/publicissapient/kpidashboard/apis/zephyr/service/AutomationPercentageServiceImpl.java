@@ -273,6 +273,8 @@ public final class AutomationPercentageServiceImpl extends ZephyrKPIService<Doub
                 .groupingBy(sws -> Pair.of(sws.getBasicProjectConfigId(), sws.getSprint()), Collectors.toList()));
 
         List<TestCaseDetails> testCaseList = (List<TestCaseDetails>) defectDataListMap.get(TESTCASEKEY);
+        Set<JiraIssue> defectList= (Set<JiraIssue>) defectDataListMap.get(ISSUE_DATA);
+        Map<String, Set<JiraIssue>> projectWiseStories = defectList.stream().collect(Collectors.groupingBy(JiraIssue::getBasicProjectConfigId, Collectors.toSet()));
         Map<Pair<String, String>, List<TestCaseDetails>> sprintWiseAutoTestMap = new HashMap<>();
         Map<Pair<String, String>, List<TestCaseDetails>> sprintWiseTotalTestMap = new HashMap<>();
         Map<Pair<String, String>, Double> sprintWisePercentage = new HashMap<>();
@@ -312,8 +314,9 @@ public final class AutomationPercentageServiceImpl extends ZephyrKPIService<Doub
                 automationForCurrentLeaf = sprintWisePercentage.get(currentNodeIdentifier);
             }
             mapTmp.get(node.getId()).setValue(automationForCurrentLeaf);
+
             populateExcelDataObject(requestTrackerId, currentSprintLeafNodeDefectDataMap,
-                    excelData, validationKey, defectDataListMap);
+                    excelData, validationKey, projectWiseStories.get(node.getProjectFilter().getBasicProjectConfigId().toString()));
             log.debug("[TEST-AUTOMATION-SPRINT-WISE][{}]. TEST-AUTOMATION for sprint {}  is {}", requestTrackerId,
                     node.getSprintFilter().getName(), automationForCurrentLeaf);
             setHowerMap(sprintWiseAutoTestMap, sprintWiseTotalTestMap, currentNodeIdentifier, howerMap);
@@ -366,14 +369,14 @@ public final class AutomationPercentageServiceImpl extends ZephyrKPIService<Doub
 
     private void populateExcelDataObject(String requestTrackerId,
                                          Map<String, Object> currentSprintLeafNodeDefectDataMap, List<KPIExcelData> excelData,
-                                         String sprint, Map<String, Object> defectDataListMap) {
+                                         String sprint, Set<JiraIssue> projectWiseJiraIssues) {
 
         if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
             List<TestCaseDetails> automatedTest = (List<TestCaseDetails>) currentSprintLeafNodeDefectDataMap
                     .get(AUTOMATEDTESTCASEKEY);
             List<TestCaseDetails> totalTest = (List<TestCaseDetails>) currentSprintLeafNodeDefectDataMap
                     .get(TESTCASEKEY);
-            KPIExcelUtility.populateInSprintAutomationExcelData(sprint, totalTest, automatedTest, (Set<JiraIssue>) defectDataListMap.get(ISSUE_DATA), excelData);
+            KPIExcelUtility.populateInSprintAutomationExcelData(sprint, totalTest, automatedTest, projectWiseJiraIssues, excelData);
         }
     }
 
