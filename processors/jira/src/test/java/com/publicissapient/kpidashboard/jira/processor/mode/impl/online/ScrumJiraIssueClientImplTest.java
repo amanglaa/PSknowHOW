@@ -170,7 +170,7 @@ public class ScrumJiraIssueClientImplTest {
 	}
 
 	@Test
-	public void testProcessesJiraIssues() throws URISyntaxException {
+	public void testProcessesJiraIssues() throws URISyntaxException, InterruptedException {
 		when(jiraIssueRepository.findTopByBasicProjectConfigId(any())).thenReturn(null);
 		when(jiraProcessorRepository.findByProcessorName(ProcessorConstants.JIRA)).thenReturn(jiraProcessor);
 		when(jiraProcessor.getId()).thenReturn(new ObjectId("5e16c126e4b098db673cc372"));
