@@ -726,7 +726,7 @@ export class JiraConfigComponent implements OnInit {
               });
 
               this.hideLoadingOnFormElement('projectKey');
-              this.disableBranchDropDown = this.isVersionSupported(version.name);
+              this.disableBranchDropDown = this.isVersionSupported(version);
             } else {
               this.projectKeyList = [];
               this.branchList = [];
@@ -755,8 +755,8 @@ export class JiraConfigComponent implements OnInit {
         this.http
           .getBranchListForProject(
             this.selectedConnection.id,
-            this.toolForm.get('apiVersion').value.name,
-            value.name,
+            this.toolForm.get('apiVersion').value,
+            value,
           )
           .subscribe((data) => {
             if (data.success) {
@@ -806,7 +806,7 @@ export class JiraConfigComponent implements OnInit {
   bambooPlanSelectHandler = (value: any, elementId?) => {
     this.showLoadingOnFormElement('branchName');
     this.bambooPlanKeyForSelectedPlan = [...this.bambooProjectDataFromAPI]
-      .filter((item) => item.projectAndPlanName === value.name)[0]?.jobNameKey;
+      .filter((item) => item.projectAndPlanName === value)[0]?.jobNameKey;
     this.toolForm.controls['planKey'].setValue(this.bambooPlanKeyForSelectedPlan);
     if (this.bambooPlanKeyForSelectedPlan) {
       try {
@@ -841,7 +841,7 @@ export class JiraConfigComponent implements OnInit {
 
   bambooBranchSelectHandler = (value: any, elementId?) => {
     this.selectedBambooBranchKey = [...this.bambooBranchDataFromAPI]
-      .filter(item => item.branchName === value.name)[0]?.jobBranchKey;
+      .filter(item => item.branchName === value)[0]?.jobBranchKey;
     this.toolForm.controls['branchKey'].setValue(this.selectedBambooBranchKey);
   };
 
