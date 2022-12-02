@@ -522,10 +522,10 @@ export class FilterComponent implements OnInit {
             }
 
             if (!applySource) {
-                for (let i = 0; i < this.selectedFilterArray?.length; i++) {
-                    this.selectedFilterArray[i]['additionalFilters'] = [];
-                }
-                this.resetAdditionalFiltersToInitialValue();
+                // for (let i = 0; i < this.selectedFilterArray?.length; i++) {
+                //     this.selectedFilterArray[i]['additionalFilters'] = [];
+                // }
+                // this.resetAdditionalFiltersToInitialValue();
                 this.filterAdditionalFilters();
             }
             if (applySource?.toLowerCase() == 'date' && this.kanban) {
@@ -568,11 +568,10 @@ export class FilterComponent implements OnInit {
 
     createFilterApplyData() {
         this.resetFilterApplyObj();
-        let isAdditionalFilterFlag: boolean = false;
+        let isAdditionalFilterFlag: boolean = this.selectedFilterArray?.filter(item => item?.additionalFilters?.length > 0)?.length > 0 ? true : false;
         for (let i = 0; i < this.selectedFilterArray?.length; i++) {
 
-            if (this.selectedFilterArray[i]?.additionalFilters?.length > 0 || isAdditionalFilterFlag) {
-                isAdditionalFilterFlag = true;
+            if (isAdditionalFilterFlag) {
                 const temp = this.selectedFilterArray[i]?.additionalFilters;
                 for (let j = 0; j < temp?.length; j++) {
                     if (this.filterApplyData['level'] < temp[j].level) {
@@ -584,7 +583,7 @@ export class FilterComponent implements OnInit {
                         this.filterApplyData['selectedMap'][temp[j].labelName]?.push(temp[j].nodeId);
                         this.filterApplyData['ids'].push(temp[j].nodeId);
                     }
-                    if (this.filterApplyData['selectedMap']['sprint']?.length == 0 || temp[j].labelName != 'sprint') {
+                    if (temp[j].labelName != 'sprint' || this.filterApplyData['selectedMap']['sprint']?.length == 0) {
                         this.filterApplyData['selectedMap']['project'].push(this.selectedFilterArray[i]?.nodeId);
                     }
                 }

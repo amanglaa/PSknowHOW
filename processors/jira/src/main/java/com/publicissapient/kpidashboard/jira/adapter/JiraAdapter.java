@@ -28,6 +28,7 @@ import com.atlassian.jira.rest.client.api.domain.Version;
 import com.publicissapient.kpidashboard.common.model.jira.BoardDetails;
 import com.publicissapient.kpidashboard.common.model.jira.SprintDetails;
 import com.publicissapient.kpidashboard.jira.model.ProjectConfFieldMapping;
+import org.springframework.data.mongodb.core.aggregation.ArrayOperators;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -53,7 +54,7 @@ public interface JiraAdapter {
 	 * @return list of issues
 	 */
 	SearchResult getIssues(BoardDetails boardDetails, ProjectConfFieldMapping projectConfig, String startDateTimeByIssueType,
-						   String userTimeZone, int pageStart, boolean dataExist);
+						   String userTimeZone, int pageStart, boolean dataExist) throws InterruptedException;
 
 	/**
 	 * Gets all issues from JIRA
@@ -71,7 +72,7 @@ public interface JiraAdapter {
 	 * @return list of issues
 	 */
 	SearchResult getIssues(ProjectConfFieldMapping projectConfig, Map<String, LocalDateTime> startDateTimeByIssueType,
-						   String userTimeZone, int pageStart, boolean dataExist);
+						   String userTimeZone, int pageStart, boolean dataExist) throws InterruptedException;
 
 	/**
 	 * Gets page size from feature settings
@@ -141,7 +142,7 @@ public interface JiraAdapter {
 	public void getSprintReport(ProjectConfFieldMapping projectConfig, String sprintId, String boardId,
 			SprintDetails sprint, SprintDetails dbSprintDetails);
 
-	List<Issue> getEpic(ProjectConfFieldMapping projectConfig, String boardId);
+	List<Issue> getEpic(ProjectConfFieldMapping projectConfig, String boardId) throws InterruptedException;
 
 
 }
