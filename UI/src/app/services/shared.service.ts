@@ -44,6 +44,8 @@ export class SharedService implements OnInit {
   public title = <any>{};
   public logoImage;
   public dashConfigData;
+  iterationCongifData=new BehaviorSubject({});
+  kpiListNewOrder= new BehaviorSubject([]);
   private subject = new Subject<any>();
   private accountType;
   private selectedProject;
@@ -56,6 +58,7 @@ export class SharedService implements OnInit {
   public activateKanban;
   public selectedTypeObs = new BehaviorSubject('scrum');
   public boardId = 1;
+  public isDownloadExcel;
 
   // make filterdata and masterdata persistent across dashboards
   private filterData = {};
@@ -78,6 +81,8 @@ export class SharedService implements OnInit {
   setNoData = new Subject<boolean>();
   clickedItem = new Subject<any>();
   public xLabelValue: any;
+  selectedLevel:object={};
+  selectedTrends:Array<object> = [];
   constructor() {
     this.passDataToDashboard = new EventEmitter();
     this.onTabRefresh = new EventEmitter();
@@ -87,7 +92,7 @@ export class SharedService implements OnInit {
     this.passAllProjectsData = new EventEmitter();
     this.passEventToNav = new EventEmitter();
     this.activateKanban = new EventEmitter();
-    // this.engineeringMaturityExcelData = new EventEmitter();
+    this.isDownloadExcel = new EventEmitter();
   }
 
 
@@ -281,6 +286,21 @@ export class SharedService implements OnInit {
   }
   setShowTableView(val){
     this.showTableView.next(val);
+  }
+  setGlobalDownload(val){
+    this.isDownloadExcel.emit(val);
+  }
+  setSelectedLevel(val){
+    this.selectedLevel = {...val};
+  }
+  getSelectedLevel(){
+    return this.selectedLevel;
+  }
+  setSelectedTrends(values){
+    this.selectedTrends = [...values];
+  }
+  getSelectedTrends(){
+    return this.selectedTrends;
   }
 }
 

@@ -16,7 +16,7 @@
  *
  ******************************************************************************/
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
@@ -24,6 +24,7 @@ import { HttpService } from '../../../services/http.service';
 import { SharedService } from '../../../services/shared.service';
 import { GetAuthorizationService } from '../../../services/get-authorization.service';
 import { ChangeDetectionStrategy } from '@angular/core';
+import { Accordion } from 'primeng/accordion';
 declare const require: any;
 
 @Component({
@@ -33,6 +34,7 @@ declare const require: any;
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FieldMappingComponent implements OnInit {
+  @ViewChild('accordion') accordion: Accordion;
   fieldMappingForm: UntypedFormGroup;
   fieldMappingFormObj: any;
   selectedConfig: any = {};
@@ -66,6 +68,16 @@ export class FieldMappingComponent implements OnInit {
   additionalFilterIdentifier: any = {};
   additionalFiltersArray: any = [];
   additionalFilterOptions: any = [];
+  // kpi to field mapping relationships
+  kpiRelationShips: any = [];
+  fieldstoShow=[];
+  groupsToShow={
+    groupNames:[],
+    groupFields:{},
+    showAllgroups:true
+  };
+  disableAdditionalFilterAdd =true;
+
   private setting = {
     element: {
       dynamicDownload: null as HTMLElement
@@ -77,10 +89,6 @@ export class FieldMappingComponent implements OnInit {
 
   ngOnInit(): void {
     this.techDebtIdentification = [
-      {
-        label: 'Select',
-        value: ''
-      },
       {
         label: 'CustomField',
         value: 'CustomField'
@@ -96,10 +104,6 @@ export class FieldMappingComponent implements OnInit {
     ];
     this.additionalFilterIdentificationOptions = [
       {
-        label: 'Select',
-        value: ''
-      },
-      {
         label: 'Component',
         value: 'Component'
       },
@@ -113,10 +117,6 @@ export class FieldMappingComponent implements OnInit {
       }
     ];
     this.estimationCriteriaTypes = [
-      {
-        label: 'Select',
-        value: ''
-      },
       {
         label: 'Story Point',
         value: 'Story Point'
@@ -132,10 +132,6 @@ export class FieldMappingComponent implements OnInit {
     ];
     this.defectIdentification = [
       {
-        label: 'Select',
-        value: ''
-      },
-      {
         label: 'CustomField',
         value: 'CustomField'
       },
@@ -145,10 +141,6 @@ export class FieldMappingComponent implements OnInit {
       }
     ];
     this.productionDefectIdentificationOptions = [
-      {
-        label: 'Select',
-        value: ''
-      },
       {
         label: 'CustomField',
         value: 'CustomField'
@@ -186,10 +178,6 @@ export class FieldMappingComponent implements OnInit {
     ];
     this.testCaseIdentification = [
       {
-        label: 'Select',
-        value: ''
-      },
-      {
         label: 'CustomField',
         value: 'CustomField'
       },
@@ -220,6 +208,7 @@ export class FieldMappingComponent implements OnInit {
       }
     }
     this.getMappings();
+    this.getKPIFieldMappingRelationships();
   }
 
   getMappings() {
@@ -235,6 +224,15 @@ export class FieldMappingComponent implements OnInit {
     }
   }
 
+  getKPIFieldMappingRelationships() {
+    this.http.getKPIFieldMappingRelationships().subscribe(response => {
+      if (response['kpiFieldMappingList']) {
+        this.kpiRelationShips = response['kpiFieldMappingList'];
+        this.kpiRelationShips = this.kpiRelationShips.filter((kpi) => (kpi.type.includes('Scrum') || kpi.type.includes('Other')) && kpi.kpiSource === 'Jira');
+      }
+    });
+  }
+
   generateAdditionalFilterMappings() {
     this.addAdditionalFilterOptions();
     this.selectedFieldMapping = this.sharedService.getSelectedFieldMapping();
@@ -244,7 +242,7 @@ export class FieldMappingComponent implements OnInit {
 
       const additionalFilters = this.filterHierarchy.filter((filter) => filter.level > this.filterHierarchy.filter(f => f.hierarchyLevelId === 'sprint')[0].level);
 
-      additionalFilterMappings.forEach(element => {
+      additionalFilterMappings?.forEach(element => {
 
         this.additionalFiltersArray.push({
           name: additionalFilters.filter((f) => f.hierarchyLevelId === element.filterId)[0].hierarchyLevelName,
@@ -259,12 +257,12 @@ export class FieldMappingComponent implements OnInit {
         }
         if (element['identifyFrom'] === 'CustomField') {
           if (!this.fieldMappingForm.controls[element.filterId + 'IdentSingleValue']) {
-            this.fieldMappingForm.addControl(element.filterId + 'IdentSingleValue', this.formBuilder.control('', [Validators.required]));
+            this.fieldMappingForm.addControl(element.filterId + 'IdentSingleValue', this.formBuilder.control(''));
             this.fieldMappingForm.controls[element.filterId + 'IdentSingleValue'].setValue(element['identificationField']);
           }
         } else {
           if (!this.fieldMappingForm.controls[element.filterId + 'IdentMultiValue']) {
-            this.fieldMappingForm.addControl(element.filterId + 'IdentMultiValue', this.formBuilder.control('', [Validators.required]));
+            this.fieldMappingForm.addControl(element.filterId + 'IdentMultiValue', this.formBuilder.control(''));
             this.fieldMappingForm.controls[element.filterId + 'IdentMultiValue'].setValue(element['values']);
           }
         }
@@ -424,14 +422,10 @@ export class FieldMappingComponent implements OnInit {
       jiraDefectInjectionIssueType: [[]],
       jiraTestAutomationIssueType: [[]],
       jiraIntakeToDorIssueType: [[]],
-      jiraTechDebtIssueType: [[]],
       jiraStoryIdentification: [[]],
+      jiraFTPRStoryIdentification: [[]],
       jiraSprintCapacityIssueType: [[]],
       jiraIssueEpicType: [[]],
-      // tech debt mapping
-      jiraTechDebtIdentification: [''],
-      jiraTechDebtValue: [[]],
-      jiraTechDebtCustomField: [''],
       // custom field mapping
       sprintName: [''],
       rootCause: [''],
@@ -460,23 +454,7 @@ export class FieldMappingComponent implements OnInit {
       productionDefectIdentifier: [''],
       productionDefectComponentValue: [''],
       productionDefectValue: [[]],
-
-      rootCauseValue: [[]],
       // qaRootCauseValue: [[]],
-      // test case mapping
-      testAutomatedIdentification: [''],
-      testAutomationCompletedIdentification: [''],
-      testRegressionIdentification: [''],
-      testAutomated: [''],
-      testAutomationCompletedByCustomField: [''],
-      testRegressionByCustomField: [''],
-      jiraCanBeAutomatedTestValue: [[]],
-      jiraRegressionTestValue: [[]],
-      jiraCanNotAutomatedTestValue: [[]],
-      jiraAutomatedTestValue: [[]],
-      jiraTestCaseType: [[]],
-      testCaseStatus:[[]],
-      regressionAutomationLabels: [[]],
       excludeRCAFromFTPR: [[]]
     };
 
@@ -512,21 +490,15 @@ export class FieldMappingComponent implements OnInit {
     }
   }
 
-  changeControl(event) {
+  changeControl(event,additionalFilterIdentifier) {
     if (event.value === 'Component' || event.value === 'Labels') {
-      if (!this.fieldMappingForm.controls[this.additionalFilterIdentifier.code + 'IdentMultiValue']) {
-        this.fieldMappingForm.addControl(this.additionalFilterIdentifier.code + 'IdentMultiValue', this.formBuilder.control('', [Validators.required]));
-      }
-      if (this.fieldMappingForm.controls[this.additionalFilterIdentifier.code + 'IdentSingleValue']) {
-        this.fieldMappingForm.removeControl(this.additionalFilterIdentifier.code + 'IdentSingleValue');
+      if (!this.fieldMappingForm.controls[additionalFilterIdentifier.code + 'IdentMultiValue']) {
+        this.fieldMappingForm.addControl(additionalFilterIdentifier.code + 'IdentMultiValue', this.formBuilder.control(''));
       }
 
     } else {
-      if (!this.fieldMappingForm.controls[this.additionalFilterIdentifier.code + 'IdentSingleValue']) {
-        this.fieldMappingForm.addControl(this.additionalFilterIdentifier.code + 'IdentSingleValue', this.formBuilder.control('', [Validators.required]));
-      }
-      if (this.fieldMappingForm.controls[this.additionalFilterIdentifier.code + 'IdentMultiValue']) {
-        this.fieldMappingForm.removeControl(this.additionalFilterIdentifier.code + 'IdentMultiValue');
+      if (!this.fieldMappingForm.controls[additionalFilterIdentifier.code + 'IdentSingleValue']) {
+        this.fieldMappingForm.addControl(additionalFilterIdentifier.code + 'IdentSingleValue', this.formBuilder.control(''));
       }
     }
   }
@@ -635,6 +607,39 @@ export class FieldMappingComponent implements OnInit {
       text: JSON.stringify(submitData)
     });
   }
+  resetRadioButton(fieldName){
+    this.fieldMappingForm.patchValue({[fieldName]: ''});
+  }
+
+  showFields(kpiRelatedFields) {
+    this.closeAllAccordionTabs();
+    this.fieldstoShow=[];
+    this.groupsToShow={
+      groupFields:{},
+      groupNames:[],
+      showAllgroups:true
+    };
+
+    if(kpiRelatedFields?.hasOwnProperty('fieldNames')){
+      for(const key in kpiRelatedFields.fieldNames){
+        this.groupsToShow.groupNames.push(key);
+        this.groupsToShow.groupFields[key]=kpiRelatedFields.fieldNames[key].length;
+        this.fieldstoShow.push(...Object.values(kpiRelatedFields.fieldNames[key]));
+      }
+      this.groupsToShow.showAllgroups =false;
+    }else{
+      this.fieldstoShow=[];
+      this.groupsToShow.showAllgroups =true;
+    }
+  }
+
+  closeAllAccordionTabs() {
+    if(this.accordion){
+        for(const tab of this.accordion.tabs) {
+              tab.selected = false;
+        }
+    }
+}
 
   handleAdditionalFilters(submitData: any): any {
     /** addiitional filters start*/
@@ -651,7 +656,7 @@ export class FieldMappingComponent implements OnInit {
           additionalFilterObj['values'] = [];
         } else {
           additionalFilterObj['identificationField'] = '';
-          additionalFilterObj['values'] = submitData[element.hierarchyLevelId + 'IdentMultiValue'];
+          additionalFilterObj['values'] = submitData[element.hierarchyLevelId + 'IdentMultiValue'] ? submitData[element.hierarchyLevelId + 'IdentMultiValue'] : [];
         }
         submitData['additionalFilterConfig'].push(additionalFilterObj);
       }
