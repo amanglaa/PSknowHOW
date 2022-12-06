@@ -9,7 +9,7 @@ pipeline {
 		}
 		stage('Checkout') {
 			steps {
-               checkout scm: [$class: 'GitSCM', userRemoteConfigs: [[url: 'https://github.com/PublicisSapient/KnowHow.git',credentialsId: 'githubcred']], branches: [[name: '${SBRANCH}']]], poll: false
+               checkout scm: [$class: 'GitSCM', userRemoteConfigs: [[url: 'https://github.com/PublicisSapient/PSknowHOW.git',credentialsId: 'githubcred']], branches: [[name: '${SBRANCH}']]], poll: false
 			}
 		}
 		stage('Capture Version') {
