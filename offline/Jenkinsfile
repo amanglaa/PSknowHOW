@@ -17,9 +17,6 @@ pipeline {
                 script {
 					def pom = readMavenPom file: 'pom.xml'
 					env.version = pom.version
-					echo "${pom.version}"
-					echo "${env.version}"
-
 					if(env.version.contains("SNAPSHOT")) {
 						env.version=env.version.replaceAll("-SNAPSHOT","")
 					}
