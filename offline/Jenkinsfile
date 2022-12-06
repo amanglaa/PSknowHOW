@@ -25,6 +25,7 @@ pipeline {
 					}
 
 					version = env.version
+					println version
                 }
 			}
 		}
