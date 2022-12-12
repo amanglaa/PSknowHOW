@@ -29,6 +29,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.publicissapient.kpidashboard.apis.enums.KPIExcelColumn;
+import com.publicissapient.kpidashboard.apis.model.KPIExcelData;
+import com.publicissapient.kpidashboard.apis.util.KPIExcelUtility;
 import com.publicissapient.kpidashboard.common.model.jira.IssueDetails;
 import lombok.extern.slf4j.Slf4j;
 
@@ -220,7 +223,7 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 			// prepare data from jira issue.
 		}
 
-		Map<String, ValidationData> validationDataMap = new HashMap<>();
+		List<KPIExcelData> excelData = new ArrayList<>();
 		sprintLeafNodeList.forEach(node -> {
 			// Leaf node wise data
 			String trendLineName = node.getProjectFilter().getName();
@@ -230,8 +233,7 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 
 			double sprintVelocityForCurrentLeaf = calculateSprintVelocityValue(currentSprintLeafVelocityMap,
 					currentNodeIdentifier, sprintWiseIssues);
-			populateValidationDataObject(kpiElement, requestTrackerId, validationDataMap, sprintWiseIssues, node,
-					currentSprintLeafVelocityMap, currentNodeIdentifier);
+			populateExcelDataObject(requestTrackerId, excelData, sprintWiseIssues, currentSprintLeafVelocityMap, node);
 			setSprintWiseLogger(node.getSprintFilter().getName(),
 					currentSprintLeafVelocityMap.get(currentNodeIdentifier), sprintVelocityForCurrentLeaf);
 
@@ -247,6 +249,8 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 			mapTmp.get(node.getId()).setValue(new ArrayList<DataCount>(Arrays.asList(dataCount)));
 			trendValueList.add(dataCount);
 		});
+		kpiElement.setExcelData(excelData);
+		kpiElement.setExcelColumns(KPIExcelColumn.SPRINT_VELOCITY.getColumns());
 	}
 
 	private double calculateSprintVelocityValue(
@@ -270,58 +274,33 @@ public class SprintVelocityServiceImpl extends JiraKPIService<Double, List<Objec
 		return sprintVelocityForCurrentLeaf;
 	}
 
-	/**
-	 * Populates Validation Data Object
-	 * 
-	 * @param kpiElement
-	 * @param requestTrackerId
-	 * @param validationDataMap
-	 * @param sprintWiseIssues
-	 * @param node
-	 * @param currentSprintLeafVelocityMap
-	 * @param currentNodeIdentifier
-	 */
-	private void populateValidationDataObject(KpiElement kpiElement, String requestTrackerId,
-			Map<String, ValidationData> validationDataMap, Map<Pair<String, String>, List<JiraIssue>> sprintWiseIssues,
-			Node node, Map<Pair<String, String>, Set<IssueDetails>> currentSprintLeafVelocityMap,
-			Pair<String, String> currentNodeIdentifier) {
-
+	private void populateExcelDataObject(String requestTrackerId, List<KPIExcelData> excelData,
+			Map<Pair<String, String>, List<JiraIssue>> sprintWiseIssues,
+			Map<Pair<String, String>, Set<IssueDetails>> currentSprintLeafVelocityMap, Node node) {
 		if (requestTrackerId.toLowerCase().contains(KPISource.EXCEL.name().toLowerCase())) {
-			List<String> defectKeyList = new ArrayList<>();
-			List<String> storyPointList = new ArrayList<>();
+			Pair<String, String> currentNodeIdentifier = Pair
+					.of(node.getProjectFilter().getBasicProjectConfigId().toString(), node.getSprintFilter().getId());
 
 			if (CollectionUtils.isNotEmpty(sprintWiseIssues.get(currentNodeIdentifier))) {
 				List<JiraIssue> jiraIssues = sprintWiseIssues.get(currentNodeIdentifier);
-				for (JiraIssue jiraIssue : jiraIssues) {
-					defectKeyList.add(jiraIssue.getNumber());
-					storyPointList.add(jiraIssue.getEstimate());
-				}
+				Map<String, JiraIssue> totalSprintStoryMap = new HashMap<>();
+				jiraIssues.stream().forEach(issue -> totalSprintStoryMap.putIfAbsent(issue.getNumber(), issue));
+				KPIExcelUtility.populateSprintVelocity(node.getSprintFilter().getName(), totalSprintStoryMap, null,
+						excelData);
 			} else {
 				if (MapUtils.isNotEmpty(currentSprintLeafVelocityMap)
 						&& CollectionUtils.isNotEmpty(currentSprintLeafVelocityMap.get(currentNodeIdentifier))) {
-					for (IssueDetails issueDetails : currentSprintLeafVelocityMap.get(currentNodeIdentifier)) {
-						defectKeyList.add(issueDetails.getSprintIssue().getNumber());
-						storyPointList.add(Optional.ofNullable(issueDetails.getSprintIssue().getStoryPoints())
-								.orElse(0.0).toString());
-					}
+					Set<IssueDetails> issueDetailsSet = currentSprintLeafVelocityMap.get(currentNodeIdentifier);
+					KPIExcelUtility.populateSprintVelocity(node.getSprintFilter().getName(), null, issueDetailsSet,
+							excelData);
 				}
 			}
-
-			String keyForValidation = node.getSprintFilter().getName();
-
-			ValidationData validationData = new ValidationData();
-			validationData.setStoryKeyList(defectKeyList);
-			validationData.setStoryPointList(storyPointList);
-
-			validationDataMap.put(keyForValidation, validationData);
-
-			kpiElement.setMapOfSprintAndData(validationDataMap);
 		}
 	}
 
 	/**
 	 * Sets DB query Logger
-	 * 
+	 *
 	 * @param jiraIssues
 	 */
 	private void setDbQueryLogger(List<JiraIssue> jiraIssues) {

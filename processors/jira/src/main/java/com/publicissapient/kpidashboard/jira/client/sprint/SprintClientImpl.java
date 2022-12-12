@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -45,6 +46,7 @@ import com.publicissapient.kpidashboard.common.service.AesEncryptionService;
 import com.publicissapient.kpidashboard.jira.config.JiraProcessorConfig;
 import com.publicissapient.kpidashboard.jira.model.JiraToolConfig;
 import com.publicissapient.kpidashboard.jira.util.JiraConstants;
+import com.publicissapient.kpidashboard.jira.util.JiraProcessorUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
@@ -101,7 +103,7 @@ public class SprintClientImpl implements SprintClient {
 	 */
 	@Override
 	public void processSprints(ProjectConfFieldMapping projectConfig, Set<SprintDetails> sprintDetailsSet,
-			JiraAdapter jiraAdapter) {
+			JiraAdapter jiraAdapter) throws InterruptedException{
 		ObjectId jiraProcessorId = jiraProcessorRepository.findByProcessorName(ProcessorConstants.JIRA).getId();
 		if (CollectionUtils.isNotEmpty(sprintDetailsSet)) {
 			List<String> sprintIds = sprintDetailsSet.stream().map(SprintDetails::getSprintID)
@@ -110,7 +112,7 @@ public class SprintClientImpl implements SprintClient {
 			Map<String, SprintDetails> dbSprintDetailMap = dbSprints.stream()
 					.collect(Collectors.toMap(SprintDetails::getSprintID, Function.identity()));
 			List<SprintDetails> sprintToSave = new ArrayList<>();
-			sprintDetailsSet.forEach(sprint -> {
+			for(SprintDetails sprint : sprintDetailsSet ) {
 				boolean fetchReport = false;
 				String boardId = sprint.getOriginBoardId().get(0);
 				sprint.setProcessorId(jiraProcessorId);
@@ -137,11 +139,14 @@ public class SprintClientImpl implements SprintClient {
 				}
 
 				if(fetchReport){
+					log.info("Sprint report Api call delay started");
+					TimeUnit.MILLISECONDS.sleep(jiraProcessorConfig.getSubsequentApiCallDelayInMilli());
+					log.info("Sprint report Api call delay ended");
 					getSprintReport(sprint, jiraAdapter, projectConfig, boardId,
 							dbSprintDetailMap.get(sprint.getSprintID()));
 					sprintToSave.add(sprint);
 				}
-			});
+			}
 			sprintRepository.saveAll(sprintToSave);
 			log.info("{} sprints found", sprintDetailsSet.size());
 		}
@@ -156,15 +161,16 @@ public class SprintClientImpl implements SprintClient {
 	}
 
 
-	public void createSprintDetailBasedOnBoard(ProjectConfFieldMapping projectConfig, JiraAdapter jiraAdapter) {
+	public void createSprintDetailBasedOnBoard(ProjectConfFieldMapping projectConfig, JiraAdapter jiraAdapter)
+			throws InterruptedException {
 		List<BoardDetails> boardDetailsList = projectConfig.getProjectToolConfig().getBoards();
-		boardDetailsList.forEach(boardDetails -> {
+		for(BoardDetails boardDetails : boardDetailsList){
 			List<SprintDetails> sprintDetailsList = getSprints(projectConfig,boardDetails.getBoardId());
 			if (CollectionUtils.isNotEmpty(sprintDetailsList)) {
 				Set<SprintDetails> sprintDetailSet = limitSprint(sprintDetailsList);
 				processSprints(projectConfig, sprintDetailSet, jiraAdapter);
 			}
-		});
+		}
 	}
 
 	private Set<SprintDetails> limitSprint(List<SprintDetails> sprintDetailsList) {
@@ -240,14 +246,14 @@ public class SprintClientImpl implements SprintClient {
 						+ projectConfig.getProjectName() + JiraConstants.COMBINE_IDS_SYMBOL
 						+ projectConfig.getBasicProjectConfigId();
 				sprintDetails.setSprintID(sprintId);
-				sprintDetails.setStartDate(
-						sprintJson.get(STARTDATE) == null ? null : sprintJson.get(STARTDATE).toString());
+				sprintDetails.setStartDate(sprintJson.get(STARTDATE) == null ? null
+						: JiraProcessorUtil.getFormattedDateForSprintDetails(sprintJson.get(STARTDATE).toString()));
 				sprintDetails.setEndDate(
-						sprintJson.get(ENDDATE) == null ? null : sprintJson.get(ENDDATE).toString());
+						sprintJson.get(ENDDATE) == null ? null : JiraProcessorUtil.getFormattedDateForSprintDetails(sprintJson.get(ENDDATE).toString()));
 				sprintDetails.setCompleteDate(sprintJson.get(COMPLETEDATE) == null ? null
-						: sprintJson.get(COMPLETEDATE).toString());
+						: JiraProcessorUtil.getFormattedDateForSprintDetails(sprintJson.get(COMPLETEDATE).toString()));
 				sprintDetails.setActivatedDate(sprintJson.get(ACTIVATEDDATE) == null ? null
-						: sprintJson.get(ACTIVATEDDATE).toString());
+						: JiraProcessorUtil.getFormattedDateForSprintDetails(sprintJson.get(ACTIVATEDDATE).toString()));
 				sprintDetails.setGoal(sprintJson.get(GOAL) == null ? null : sprintJson.get(GOAL).toString());
 				sprintDetailsSet.add(sprintDetails);
 			}

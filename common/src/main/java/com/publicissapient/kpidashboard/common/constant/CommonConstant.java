@@ -30,7 +30,7 @@ public final class CommonConstant {
 	public static final String BITBUCKET_KPI_CACHE = "bitbucketKpiCache";
 	public static final String GITLAB_KPI_CACHE = "gitLabKpiCache";
 	public static final String JENKINS_KPI_CACHE = "jenkinsKpiCache";
-	public static final String ZEPHYR_KPI_CACHE = "zephyrKpiCache";
+	public static final String TESTING_KPI_CACHE = "testingKpiCache";
 	public static final String JIRAKANBAN_KPI_CACHE = "jiraKanbanKpiCache";
 	public static final String CACHE_ACCOUNT_HIERARCHY = "accountHierarchy";
 	public static final String CACHE_ACCOUNT_HIERARCHY_KANBAN = "accountHierarchyKanban";
@@ -128,6 +128,9 @@ public final class CommonConstant {
 	public static final String PUNTED_ISSUES = "puntedIssues";
 	public static final String COMPLETED_ISSUES_ANOTHER_SPRINT = "issuesCompletedInAnotherSprint";
 	public static final String NOT_COMPLETED_ISSUES = "issuesNotCompletedInCurrentSprint";
+	public static final String CACHE_KPI_FIELD_MAPPING = "cache_kpi_field_mapping";
+	public static final String MODAL_HEAD_ISSUE_STATUS = "Issue Status";
+	public static final String MODAL_HEAD_ISSUE_TYPE = "Issue Type";
 
 
 
